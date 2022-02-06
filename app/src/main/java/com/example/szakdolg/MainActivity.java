@@ -13,6 +13,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FireBaseCon fireBaseCon = new FireBaseCon();
+        fireBaseCon.mAuth.signOut();
+
+
         if (fireBaseCon.isUserSigned()){
             Toast.makeText(this, "User signed", Toast.LENGTH_SHORT).show();
         }else{
