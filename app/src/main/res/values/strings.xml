@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SzakDolg</string>
+    <string name="edt_email">Email Address</string>
+    <string name="edt_pass">Password</string>
 </resources>
