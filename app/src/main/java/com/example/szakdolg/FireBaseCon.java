@@ -27,10 +27,7 @@ public class FireBaseCon {
             return false;
         }
     }
-
-
-
-    public Boolean loginUser(String email, String pass) {
+    public void loginUser(String email, String pass) {
         try {
             mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -40,14 +37,28 @@ public class FireBaseCon {
                     }
                 }
             });
-            return true;
+
         }catch (Exception e){
             Log.d("FireBase", e.toString());
-            return false;
+
         }
 
     }
+    public void registerNewUser(String email, String pass){
+        try {
+            mAuth.createUserWithEmailAndPassword(email, pass).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                @Override
+                public void onSuccess(AuthResult authResult) {
+                    Log.d("FireBase", "Log in was success");
+                }
+            });
+        }catch (Exception e){
+            Log.e("FireBase", e.toString());
+        }
 
+
+
+    }
 
 
 

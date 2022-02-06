@@ -12,10 +12,12 @@ import android.widget.EditText;
 public class LoginActivity extends AppCompatActivity {
     private EditText editMail;
     private EditText editPass;
+    private Button btnReg;
     private FireBaseCon fb;
     public void initView(){
         editMail = findViewById(R.id.edtLgnEmail);
         editPass = findViewById(R.id.edtLgnPass);
+        btnReg = findViewById(R.id.btnLgnReg);
 
     }
 
@@ -25,20 +27,29 @@ public class LoginActivity extends AppCompatActivity {
         initView();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+        btnReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     //TODO Hiba kezeles
     public void onClickLogin(View view){
 
         try {
-            if (fb.loginUser(editMail.getText().toString(), editPass.getText().toString())){
+            fb.loginUser(editMail.getText().toString(), editPass.getText().toString());
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
-            }
+
         }catch (Exception e){
             Log.d("FireBase", "Ajajajaj");
         }
-
-
     }
+
+
 }

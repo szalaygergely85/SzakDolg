@@ -10,10 +10,10 @@
         android:id="@+id/edtLgnEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="256dp"
+        android:layout_marginTop="100dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
         android:hint="@string/edt_email"
+        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:ems="10"
-        android:inputType="textPassword"
         android:hint="@string/edt_pass"
+        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,13 +34,37 @@
 
     <Button
         android:id="@+id/btnLgnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="117dp"
+        android:layout_height="40dp"
         android:layout_marginTop="36dp"
-        android:text="Login"
+        android:onClick="onClickLogin"
+        android:text="@string/btn_log"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtLgnPass"
-        android:onClick="onClickLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/edtLgnPass" />
+
+    <Button
+        android:id="@+id/btnLgnReg"
+        android:layout_width="117dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="60dp"
+        android:text="Register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLgnLogin" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
+        android:text="@string/txt_or"
+        app:layout_constraintBottom_toTopOf="@+id/btnLgnReg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLgnLogin"
+        app:layout_constraintVertical_bias="0.0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
