@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SzakDolg">
         <activity
+            android:name=".MessageBoardActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
