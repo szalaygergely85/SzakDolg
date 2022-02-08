@@ -4,11 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.194" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_chat.xml" value="0.1" />
+        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_chat.xml" value="0.22" />
         <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_main.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_message_board_actvitiy.xml" value="0.18541666666666667" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_register.xml" value="0.5" />
+        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_register.xml" value="0.22" />
         <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/chat_item.xml" value="0.25" />
         <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/message_board_item.xml" value="0.33" />
       </map>

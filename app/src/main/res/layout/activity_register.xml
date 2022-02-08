@@ -1,59 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    tools:context=".RegisterActivity"
+    android:padding="40dp"
+    >
 
 
     <EditText
         android:id="@+id/edtRegEmail"
-        android:layout_width="275dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="52dp"
-        android:ems="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
         android:hint="@string/edt_email"
         android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_above="@id/edtRegPass1"
+        android:layout_marginBottom="20dp"
+        />
 
     <EditText
         android:id="@+id/edtRegPass1"
-        android:layout_width="275dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="28dp"
-        android:ems="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="@string/edt_pass"
+        android:maxLines="1"
         android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtRegEmail" />
+        android:layout_above="@id/edtRegPass2"
+        android:layout_marginBottom="20dp"/>
 
     <EditText
         android:id="@+id/edtRegPass2"
-        android:layout_width="275dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
         android:ems="10"
         android:hint="@string/edt_pass"
         android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtRegPass1" />
-
+        android:layout_above="@id/btnRegReg"
+        />
 
     <Button
+        android:layout_marginTop="20dp"
         android:id="@+id/btnRegReg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtRegPass2" />"
+        android:text="@string/btn_reg"
+
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>"
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
