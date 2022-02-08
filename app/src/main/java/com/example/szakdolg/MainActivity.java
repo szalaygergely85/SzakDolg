@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
+        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
         startActivity(intent);
     }
 }
