@@ -5,6 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,13 +15,26 @@ import java.util.Date;
 public class ChatActivity extends AppCompatActivity {
 
     private RecyclerView chatRecView;
+    private Button btnSend;
+    private EditText edtMess;
+    FireBaseCon fireBase;
+
+
+     private void initView(){
+        chatRecView = findViewById(R.id.recViewChat);
+        btnSend = findViewById(R.id.btnChatSend);
+        edtMess = findViewById(R.id.edtChatMes);
+     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        initView();
+        fireBase = new FireBaseCon();
 
-        chatRecView = findViewById(R.id.chatRecView);
+
 
         ArrayList<Chat> chat = new ArrayList<>();
         chat.add(new Chat("Hello",new Date(),"Sasha"));
@@ -43,5 +59,21 @@ public class ChatActivity extends AppCompatActivity {
 
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+    btnSend.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            fireBase.sendMessage("Gege", edtMess.getText().toString());
+        }
+    });
+
+
     }
 }

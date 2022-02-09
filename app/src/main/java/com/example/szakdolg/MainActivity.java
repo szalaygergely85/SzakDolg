@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FireBaseCon fireBaseCon = new FireBaseCon();
-
+        fireBaseCon.loginUser("szalaygergely@gmail.com", "mmnvjt");
 
         if (fireBaseCon.isUserSigned()){
             Toast.makeText(this, "User signed", Toast.LENGTH_SHORT).show();
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
         startActivity(intent);
     }
 }

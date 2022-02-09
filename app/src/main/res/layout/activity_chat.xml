@@ -9,31 +9,31 @@
     tools:context=".ChatActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chatRecView"
+        android:id="@+id/recViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="false"
-        android:layout_above="@id/sendBar"
+        android:layout_above="@id/relLayChatSendBar"
         />
 
     <RelativeLayout
-        android:id="@+id/sendBar"
+        android:id="@+id/relLayChatSendBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnChatSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="Send" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName2"
+            android:id="@+id/edtChatMes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/button2"
+            android:layout_toStartOf="@id/btnChatSend"
             android:hint="Message" />
     </RelativeLayout>
 </RelativeLayout>
