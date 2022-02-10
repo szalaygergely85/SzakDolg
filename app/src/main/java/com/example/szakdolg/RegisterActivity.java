@@ -56,6 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "nem yoo", Toast.LENGTH_SHORT).show();
                 }
                 if(fireBaseCon.isUserSigned()) {
+                    fireBaseCon.createUser();
                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                     startActivity(intent);
                 }

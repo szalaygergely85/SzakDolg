@@ -17,7 +17,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;
-    FireBaseCon fireBase;
+    private FireBaseCon fireBase;
 
 
      private void initView(){

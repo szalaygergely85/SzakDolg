@@ -28,7 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         fb = new FireBaseCon();
         initView();
     }
@@ -43,20 +42,16 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
-                Log.d("FireBase", "tesseh");
             }
         });
-
         btnLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    fb.loginUser(editMail.getText().toString(), editPass.getText().toString());
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
+                fb.loginUser(editMail.getText().toString(), editPass.getText().toString());
 
-                }catch (Exception e){
-                    Log.d("FireBase", "Ajajajaj");
+                if(fb.isUserSigned()) {
+                    Intent intent = new Intent(LoginActivity.this, MessageBoardActivity.class);
+                    startActivity(intent);
                 }
             }
         });

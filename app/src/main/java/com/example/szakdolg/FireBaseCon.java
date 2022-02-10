@@ -27,6 +27,8 @@ public class FireBaseCon {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
     }
+
+
     public Boolean isUserSigned() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -38,31 +40,56 @@ public class FireBaseCon {
     public String getUserId(){
         return mAuth.getCurrentUser().getUid();
     }
+    public String getUserEmail(){
+        return mAuth.getCurrentUser().getEmail();
+    }
     public void loginUser(String email, String pass) {
-        try {
-            mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Log.d("FireBase", "User logged in successful");
-                    }
-                }
-            });
-        }catch (Exception e){
-            Log.d("FireBase", e.toString());
-        }
+        Log.d("FireBase", "User logged in successful");
+        mAuth.signInWithEmailAndPassword(email, pass).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("FireBase", "User log in was a failure");
+            }
+        });
+    }
+    public void logoutUser(){
+        mAuth.signOut();
     }
     public void registerNewUser(String email, String pass){
-        try {
+
             mAuth.createUserWithEmailAndPassword(email, pass).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                 @Override
                 public void onSuccess(AuthResult authResult) {
-                    Log.d("FireBase", "Log in was success");
+                    Log.d("FireBase", "Register was success");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("FireBase", "Register Failed");
+                }
+            }).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    loginUser(email, pass);
                 }
             });
-        }catch (Exception e){
-            Log.e("FireBase", e.toString());
+    }
+    public void createUser(){
+
+        if (isUserSigned()){
+
+            Map<String, Object> user = new HashMap<>();
+            user.put("userID", getUserId());
+            user.put("userEmail", getUserEmail());
+            db.collection("Users").document(getUserId()).set(user).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("FireBase", "User creation failed");
+
+                }
+            });
         }
+
     }
     public void sendMessage(String To, String Message){
         Date date = new Date();
@@ -75,7 +102,7 @@ public class FireBaseCon {
         message.put("time", time.toString());
 
 
-        db.collection(To).document(time.toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection(getUserId()).document("Messages").collection(To).document(time.toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Log.d("FireStore", "Siker");
@@ -86,5 +113,9 @@ public class FireBaseCon {
                 Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
             }
         });
+    }
+    public void messageAllMessageList(){
+
+
     }
 }
