@@ -17,8 +17,9 @@ public class MainActivity extends AppCompatActivity {
 
         FireBaseCon fireBaseCon = new FireBaseCon();
 
+      //  fireBaseCon.logoutUser();
+        fireBaseCon.loginUser("szalaygergely@gmail.com", "mmnvjt");
 
-       fireBaseCon.loginUser("szalaygergely@gmail.com", "mmnvjt");
 
         if (fireBaseCon.isUserSigned()){
             Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);

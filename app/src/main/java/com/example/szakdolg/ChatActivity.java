@@ -18,6 +18,7 @@ public class ChatActivity extends AppCompatActivity {
     private Button btnSend;
     private EditText edtMess;
     private FireBaseCon fireBase;
+    private String uID;
 
 
      private void initView(){
@@ -32,7 +33,12 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         initView();
+
+        uID = (String) this.getIntent().getSerializableExtra("uID");
+
+
         fireBase = new FireBaseCon();
+        fireBase.getMessages(uID);
 
 
 
@@ -70,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
     btnSend.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            fireBase.sendMessage("Gege", edtMess.getText().toString());
+            fireBase.sendMessage(uID, edtMess.getText().toString());
         }
     });
 

@@ -1,55 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     tools:context=".RegisterActivity"
-    android:padding="40dp"
     >
-
-
-    <EditText
-        android:id="@+id/edtRegEmail"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:hint="@string/edt_email"
-        android:inputType="textEmailAddress"
-        android:layout_above="@id/edtRegPass1"
-        android:layout_marginBottom="20dp"
-        />
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/edtRegPass1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/edt_pass"
-        android:maxLines="1"
-        android:inputType="textPassword"
-        android:layout_above="@id/edtRegPass2"
-        android:layout_marginBottom="20dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="40dp">
 
-    <EditText
-        android:id="@+id/edtRegPass2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:ems="10"
-        android:hint="@string/edt_pass"
-        android:inputType="textPassword"
-        android:layout_above="@id/btnRegReg"
-        />
+            <EditText
+                android:id="@+id/edtRegName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="Display Name"
+                android:inputType="textPersonName"
+                android:maxLines="1" />
 
-    <Button
-        android:layout_marginTop="20dp"
-        android:id="@+id/btnRegReg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_reg"
+            <EditText
+                android:id="@+id/edtRegEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="@string/edt_email"
+                android:inputType="textEmailAddress"
+                android:maxLines="1" />
 
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>"
+            <EditText
+                android:id="@+id/edtRegPass1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="@string/edt_pass"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/edtRegPass2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="@string/edt_pass"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/edtRegPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="Phone number"
+                android:inputType="phone"
+                android:maxLines="1" />
 
 
-</RelativeLayout>
+
+            <Button
+                android:id="@+id/btnRegReg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:text="@string/btn_reg" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>
