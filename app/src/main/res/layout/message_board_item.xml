@@ -4,12 +4,12 @@
     android:layout_height="wrap_content"
     android:padding="10dp"
     android:id="@+id/parent">
+
     <ImageView
+        android:id="@+id/mesBrdImage"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/mesBrdImage"
-        android:src="@drawable/ic_launcher_foreground"
-        />
+        android:src="@drawable/ic_launcher_foreground" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,6 +26,7 @@
         android:layout_toRightOf="@id/mesBrdImage"
         android:layout_below="@id/mesBrdName"
         android:id="@+id/mesBrdMessage" />
+
 
 
 </RelativeLayout>

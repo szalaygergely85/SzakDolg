@@ -3,12 +3,17 @@ package com.example.szakdolg;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
     //TODO more field
@@ -49,17 +54,21 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (email!=null && pass.equals(pass2)) {
                     Toast.makeText(RegisterActivity.this, "yooooo", Toast.LENGTH_SHORT).show();
-                    Log.e("test2", email);
-                    Log.e("test", pass);
-                    fireBaseCon.registerNewUser(email, pass);
+
+                    Map<String, String> user = new HashMap<>();
+                    user.put("email", email);
+                    user.put("pass", pass);
+
+                    fireBaseCon.registerNewUser(user);
+                    if(fireBaseCon.isUserSigned()) {
+                        // fireBaseCon.createUser(fireBaseCon.getUserId(), fireBaseCon.getUserEmail());
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
                 }else{
                     Toast.makeText(RegisterActivity.this, "nem yoo", Toast.LENGTH_SHORT).show();
                 }
-                if(fireBaseCon.isUserSigned()) {
-                    fireBaseCon.createUser();
-                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }
+
             }
         });
 

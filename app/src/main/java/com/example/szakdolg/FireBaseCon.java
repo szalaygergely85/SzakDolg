@@ -55,28 +55,22 @@ public class FireBaseCon {
     public void logoutUser(){
         mAuth.signOut();
     }
-    public void registerNewUser(String email, String pass){
+    public void registerNewUser(Map user){
 
-            mAuth.createUserWithEmailAndPassword(email, pass).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                @Override
-                public void onSuccess(AuthResult authResult) {
-                    Log.d("FireBase", "Register was success");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
+          mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+              @Override
+              public void onComplete(@NonNull Task<AuthResult> task) {
+                  createUser();
+              }
+          }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.e("FireBase", "Register Failed");
-                }
-            }).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    loginUser(email, pass);
                 }
             });
     }
     public void createUser(){
 
-        if (isUserSigned()){
 
             Map<String, Object> user = new HashMap<>();
             user.put("userID", getUserId());
@@ -85,10 +79,8 @@ public class FireBaseCon {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.e("FireBase", "User creation failed");
-
                 }
             });
-        }
 
     }
     public void sendMessage(String To, String Message){
@@ -114,7 +106,7 @@ public class FireBaseCon {
             }
         });
     }
-    public void messageAllMessageList(){
+    public void getAllMessageList(){
 
 
     }
