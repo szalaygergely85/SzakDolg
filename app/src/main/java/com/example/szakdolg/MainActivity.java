@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
        fireBaseCon.loginUser("szalaygergely@gmail.com", "mmnvjt");
 
         if (fireBaseCon.isUserSigned()){
-            Intent intent = new Intent(MainActivity.this, ContactsActivity.class);
+            Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
             startActivity(intent);
             Toast.makeText(this, "User signed", Toast.LENGTH_SHORT).show();
             finish();

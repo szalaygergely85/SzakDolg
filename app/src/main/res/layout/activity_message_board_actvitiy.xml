@@ -20,6 +20,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_add_message"/>
-        android:src="@drawable/ic_add_message"/>
+        android:src="@drawable/ic_add_message"
+        android:id="@+id/btnMesBrdNew"/>
+
 </RelativeLayout >
