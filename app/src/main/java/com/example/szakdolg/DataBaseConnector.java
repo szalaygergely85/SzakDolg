@@ -1,5 +1,8 @@
 package com.example.szakdolg;
 
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,15 +26,108 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FireBaseCon {
+public class DataBaseConnector {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private SQLiteDatabase mydatabase;
 
-    public FireBaseCon() {
+    public DataBaseConnector() {
+
+        //FireBase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+
+        //SQL
+
+
+        mydatabase = SQLiteDatabase.openOrCreateDatabase("MESSENGER",MODE_PRIVATE, null);
+        mydatabase.execSQL("DROP TABLE MyContacts");
+        mydatabase.execSQL("DROP TABLE Messages");
+        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
+        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Fr VARCHAR, ToID VARCHAR, Text VARCHAR, Read BOOLEAN);");
+    }
+    //SQL-Firebase
+
+    /**
+     * Download all not Downloaded messages from Firebase to SQLite
+     */
+    public void downloadMessages(){
+        if(isUserSigned()){
+            db.collection(getUserId()).whereEqualTo("downloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (!document.get("message").toString().equals(null) &&
+                                    !document.get("from").toString().equals(null) &&
+                                    !document.get("to").toString().equals(null) &&
+                                    !document.get("time").toString().equals(null)) {
+                                String mess = document.get("message").toString();
+                                String from = document.get("from").toString();
+                                String to = document.get("to").toString();
+                                String time = document.get("time").toString();
+                                Log.d("jolesz", from);
+                                try {
+                                    mydatabase.execSQL("INSERT INTO Messages VALUES(" + time + "', '" + from + "', '" + to + "' , '" + mess + "', 'false');");
+                                } catch (SQLException e) {
+                                    Log.e("SQL", e.toString());
+                                }
+
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
+    /**
+     * Download all Contacts form Firebase to SQLite
+     */
+    public void downloadContacts(){
+        db.collection(getUserId()).whereEqualTo("docType", "contacts").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String uID = document.get("uID").toString();
+                        String uName =document.get("uName").toString();
+                        String uEmail =document.get("uEmail").toString();
+                        String uPhone =document.get("uPhone").toString();
+
+                        try {
+                            mydatabase.execSQL("INSERT INTO Contacts VALUES(" + uID + "', '" + uName + "', '" + uEmail + "' , '" + uPhone + "', 'false');");
+                        } catch (SQLException e) {
+                            Log.e("SQL", e.toString());
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Get Contacts from SQLite
+     * @return ArrayList<Contact>
+     */
+    public ArrayList<Contact> getContacts() {
+        ArrayList<Contact> contacts = new ArrayList<>();
+        Cursor result = mydatabase.rawQuery("Select Contacts.userID, Contacts.userName, Contacts.userEmail, Contacts.userPhone from Contacts", null);
+
+        if (result.moveToFirst()) {
+            do {
+                String id = result.getString(0);
+                String name = result.getString(1);
+                String email = result.getString(2);
+                String phone = result.getString(3);
+                contacts.add(new Contact(id, name, email, phone));
+            } while (result.moveToNext());
+        }
+        return contacts;
+    }
+
+
+    //FireBase
     public Boolean isUserSigned() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -122,8 +218,6 @@ public class FireBaseCon {
             }
         });
     }
-    public void getAllMessageList(){
-    }
     public void getMessages(String uID){
         Log.d("FireBase", uID);
         Log.d("FireBase", getUserId());
@@ -142,18 +236,5 @@ public class FireBaseCon {
         });
 
     }
-    public ArrayList<Contact> getContacts() {
-        ArrayList<Contact> contacts = new ArrayList<>();
 
-        db.collection(getUserId()).whereEqualTo("docType", "contacts").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    contacts.add(new Contact(document.get("uName").toString(), document.get("uEmail").toString(), document.get("uPhone").toString()));
-                    Log.d("FireBase", contacts.toString());
-                }
-            }
-        });
-        return contacts;
-    }
 }

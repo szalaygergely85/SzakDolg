@@ -1,14 +1,24 @@
 package com.example.szakdolg;
 
 public class Contact {
+    private String ID;
     private String name;
     private String email;
     private String phone;
 
-    public Contact(String name, String email, String phone) {
+    public Contact(String ID, String name, String email, String phone) {
+        this.ID = ID;
         this.name = name;
         this.email = email;
         this.phone = phone;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
     public String getName() {
@@ -38,7 +48,8 @@ public class Contact {
     @Override
     public String toString() {
         return "Contact{" +
-                "name='" + name + '\'' +
+                "ID='" + ID + '\'' +
+                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';

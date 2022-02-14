@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder>{
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
-    FireBaseCon fireBaseCon = new FireBaseCon();
+    DataBaseConnector dataBaseConnector = new DataBaseConnector();
 
     public ContactsAdapter(Context mContext) {
         this.mContext = mContext;
@@ -40,7 +40,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra("uID", fireBaseCon.getContactUID(contact.get(position).getEmail()));
+                intent.putExtra("uID", contact.get(position).getID());
                // mContext.startActivity(intent);
                 Toast.makeText(view.getContext(), contact.get(position).getEmail(), Toast.LENGTH_SHORT).show();
             }

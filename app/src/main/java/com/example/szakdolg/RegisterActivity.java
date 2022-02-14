@@ -3,18 +3,13 @@ package com.example.szakdolg;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.PhoneAuthCredential;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +21,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editName;
     private EditText editPhone;
     private Button btnReg;
-    private FireBaseCon fireBaseCon;
+    private DataBaseConnector dataBaseConnector;
 
     public void initView(){
         editEmail = findViewById(R.id.edtRegEmail);
@@ -35,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
         editName = findViewById(R.id.edtRegName);
         editPhone = findViewById(R.id.edtRegPhone);
         btnReg = findViewById(R.id.btnRegReg);
-        fireBaseCon = new FireBaseCon();
+        dataBaseConnector = new DataBaseConnector();
 
     }
 
@@ -70,8 +65,8 @@ public class RegisterActivity extends AppCompatActivity {
                     user.put("pass", pass);
                     user.put("phone", phone);
                     user.put("name", name);
-                    fireBaseCon.registerNewUser(user);
-                    if(fireBaseCon.isUserSigned()) {
+                    dataBaseConnector.registerNewUser(user);
+                    if(dataBaseConnector.isUserSigned()) {
                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                         startActivity(intent);
                     }

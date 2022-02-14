@@ -17,7 +17,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;
-    private FireBaseCon fireBase;
+    private DataBaseConnector fireBase;
     private String uID;
 
 
@@ -37,7 +37,7 @@ public class ChatActivity extends AppCompatActivity {
         uID = (String) this.getIntent().getSerializableExtra("uID");
 
 
-        fireBase = new FireBaseCon();
+        fireBase = new DataBaseConnector();
         fireBase.getMessages(uID);
 
 

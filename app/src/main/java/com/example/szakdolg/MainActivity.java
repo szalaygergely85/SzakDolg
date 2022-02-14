@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,13 +14,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        FireBaseCon fireBaseCon = new FireBaseCon();
+        DataBaseConnector dataBaseConnector = new DataBaseConnector();
 
       //  fireBaseCon.logoutUser();
-        fireBaseCon.loginUser("szalaygergely@gmail.com", "mmnvjt");
+        dataBaseConnector.loginUser("szalaygergely@gmail.com", "mmnvjt");
 
 
-        if (fireBaseCon.isUserSigned()){
+        if (dataBaseConnector.isUserSigned()){
             Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
             startActivity(intent);
             Toast.makeText(this, "User signed", Toast.LENGTH_SHORT).show();

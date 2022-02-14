@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +13,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editPass;
     private Button btnReg;
     private Button btnLog;
-    private FireBaseCon fb;
+    private DataBaseConnector fb;
 
 
     public void initView(){
@@ -28,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        fb = new FireBaseCon();
+        fb = new DataBaseConnector();
         initView();
     }
 
