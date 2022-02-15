@@ -16,11 +16,15 @@ public class MainActivity extends AppCompatActivity {
 
         DataBaseConnector dataBaseConnector = new DataBaseConnector();
 
-      //  fireBaseCon.logoutUser();
+
         dataBaseConnector.loginUser("szalaygergely@gmail.com", "mmnvjt");
 
 
+
         if (dataBaseConnector.isUserSigned()){
+           //
+            // dataBaseConnector.downloadMessages();
+            // dataBaseConnector.downloadContacts();
             Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
             startActivity(intent);
             Toast.makeText(this, "User signed", Toast.LENGTH_SHORT).show();

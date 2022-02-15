@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,22 +14,25 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder>{
+public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder>{
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
+
     DataBaseConnector dataBaseConnector = new DataBaseConnector();
 
-    public ContactsAdapter(Context mContext) {
+    public SearchContactAdapter(Context mContext) {
         this.mContext = mContext;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false);
-        ViewHolder holder = new ViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_search_item, parent, false);
+        SearchContactAdapter.ViewHolder holder = new SearchContactAdapter.ViewHolder(view);
         return holder;
     }
 
@@ -35,14 +40,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.txtName.setText(contact.get(position).getName());
         holder.txtEmail.setText(contact.get(position).getEmail());
-        holder.txtPhone.setText(contact.get(position).getPhone());
-        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+        holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra("uID", contact.get(position).getID());
-                 mContext.startActivity(intent);
-                Toast.makeText(view.getContext(), contact.get(position).getEmail(), Toast.LENGTH_SHORT).show();
+                //TODO add Database this
             }
         });
     }
@@ -58,16 +59,18 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
+
         private TextView txtName;
         private TextView txtEmail;
-        private TextView txtPhone;
-        private RelativeLayout relativeLayout;
+        private ImageButton btnAdd;
+        private FirebaseFirestore db;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtName = itemView.findViewById(R.id.txtContName);
-            txtEmail = itemView.findViewById(R.id.txtContEmail);
-            txtPhone = itemView.findViewById(R.id.txtContPhone);
-            relativeLayout = itemView.findViewById(R.id.relLayContact);
+            txtName = itemView.findViewById(R.id.txtContItemName);
+            txtEmail = itemView.findViewById(R.id.txtContItemEmail);
+            btnAdd = itemView.findViewById(R.id.btnContItemAdd);
         }
     }
 }
+

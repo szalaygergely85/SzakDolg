@@ -4,23 +4,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
 public class ContactsActivity extends AppCompatActivity {
     private RecyclerView contsRecView;
-    private DataBaseConnector fireBase;
+    private DataBaseConnector database;
     ArrayList<Contact> contacts;
+    private FloatingActionButton btnNewContact;
+
+    private void initView(){
+        btnNewContact = findViewById(R.id.btnConNew);
+        contsRecView =findViewById(R.id.recViewContacts);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
-        fireBase = new DataBaseConnector();
-        contsRecView =findViewById(R.id.recViewContacts);
+        initView();
+        database = new DataBaseConnector();
+
         contacts = new ArrayList<>();
-       contacts = fireBase.getContacts();
+        contacts = database.getContacts();
 
         /*
         contacts.add(new Contact("Gege","szalaygergely@gmail.com", "06501061606"));
@@ -38,7 +49,13 @@ public class ContactsActivity extends AppCompatActivity {
         contactsAdapter.setContact(contacts);
         contsRecView.setAdapter(contactsAdapter);
         contsRecView.setLayoutManager(new LinearLayoutManager(this));
-
+        btnNewContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ContactsActivity.this, SearchContactsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 }

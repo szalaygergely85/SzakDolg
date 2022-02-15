@@ -1,5 +1,6 @@
 package com.example.szakdolg;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,12 +40,17 @@ public class DataBaseConnector {
 
         //SQL
 
+        try {
+            mydatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.example.szakdolg/databases/szakD.db",null);
+            //mydatabase.execSQL("DROP TABLE Contacts");
+            //mydatabase.execSQL("DROP TABLE Messages");
+            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
+            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Fr VARCHAR, ToID VARCHAR, Text VARCHAR, Read BOOLEAN);");
 
-        mydatabase = SQLiteDatabase.openOrCreateDatabase("MESSENGER",MODE_PRIVATE, null);
-        mydatabase.execSQL("DROP TABLE MyContacts");
-        mydatabase.execSQL("DROP TABLE Messages");
-        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
-        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Fr VARCHAR, ToID VARCHAR, Text VARCHAR, Read BOOLEAN);");
+        }catch (Exception e){
+            Log.e("SQL", e.toString());
+        }
+
     }
     //SQL-Firebase
 
@@ -96,7 +102,7 @@ public class DataBaseConnector {
                         String uPhone =document.get("uPhone").toString();
 
                         try {
-                            mydatabase.execSQL("INSERT INTO Contacts VALUES(" + uID + "', '" + uName + "', '" + uEmail + "' , '" + uPhone + "', 'false');");
+                            mydatabase.execSQL("INSERT INTO Contacts VALUES('" + uID + "', '" + uName + "', '" + uEmail + "' , '" + uPhone + "');");
                         } catch (SQLException e) {
                             Log.e("SQL", e.toString());
                         }
