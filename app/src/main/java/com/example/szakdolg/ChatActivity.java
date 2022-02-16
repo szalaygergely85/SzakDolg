@@ -38,11 +38,12 @@ public class ChatActivity extends AppCompatActivity {
 
 
         fireBase = new DataBaseConnector();
-        fireBase.getMessages(uID);
+        //fireBase.getMessages(uID);
 
 
 
         ArrayList<Chat> chat = new ArrayList<>();
+        /*
         chat.add(new Chat("Hello",new Date(),"Sasha"));
         chat.add(new Chat("Hello",new Date(),"Sasha"));
         chat.add(new Chat("Hello",new Date(), "Gege"));
@@ -57,9 +58,8 @@ public class ChatActivity extends AppCompatActivity {
         chat.add(new Chat("How are you?", new Date(),"Sasha"));
         chat.add(new Chat("How are you?", new Date(),"Sasha"));
         chat.add(new Chat("How are you?", new Date(),"Sasha"));
-        chat.add(new Chat("How are you?", new Date(),"Sasha"));
-
-
+        chat.add(new Chat("How are you?", new Date(),"Sasha"));*/
+        chat= fireBase.getMessgesSQL(uID);
         ChatAdapter adapter = new ChatAdapter();
         adapter.setChats(chat);
 

@@ -43,6 +43,7 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dataBaseConnector.addContactFB(contact.get(position));
                 //TODO add Database this
             }
         });

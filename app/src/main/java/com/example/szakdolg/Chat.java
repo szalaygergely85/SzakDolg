@@ -4,12 +4,12 @@ import java.util.Date;
 
 public class Chat {
     private String message;
-  //  private Date date;
+
     private String sender;
 
-    public Chat(String message, Date date, String sender) {
+    public Chat(String message, String sender) {
         this.message = message;
-  //      this.date = date;
+  //
         this.sender = sender;
     }
 
@@ -21,9 +21,7 @@ public class Chat {
         this.message = message;
     }
 
-    /*public Date getDate() {
-       return date;
-    }*/
+
 
     public void setDate(Date date) {
       //  this.date = date;

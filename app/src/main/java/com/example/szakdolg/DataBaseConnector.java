@@ -132,8 +132,59 @@ public class DataBaseConnector {
         return contacts;
     }
 
+    /**
+     * Add a contact to SQLite
+     * @param cont
+     */
+    public void addContactSQLite(Map<String, Object> cont){
+
+        try {
+            mydatabase.execSQL("INSERT INTO Contacts VALUES('" + cont.get("uID").toString() + "', '" + cont.get("uName").toString() + "', '" + cont.get("uEmail").toString() + "' , '" + cont.get("uPhone").toString() + "');");
+
+        } catch (SQLException e) {
+            Log.e("SQL", e.toString());
+        }
+
+    }
+
+    public ArrayList<Chat> getMessgesSQL(String frUiD){
+        ArrayList<Chat> message = new ArrayList<>();
+        Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text FROM Messages WHERE Messages.Fr='" + frUiD + "' OR Messages.ToID='" + frUiD+ "'", null);
+
+        if (result.moveToFirst()) {
+            do {
+                String fr = result.getString(0);
+                String to = result.getString(1);
+                String mess = result.getString(2);
+                message.add(new Chat(fr, mess));
+            } while (result.moveToNext());
+        }
+        return message;
+
+    }
 
     //FireBase
+
+    /**
+     * add new contacts to the contacts list on Firebase
+     * also call the function to add in SQLite.
+     * @param contact
+     */
+    public void addContactFB(Contact contact){
+        Map<String, Object> cont = new HashMap<>();
+        cont.put("docType", "contacts");
+        cont.put("uID", contact.getID());
+        cont.put("uName", contact.getName());
+        cont.put("uEmail", contact.getEmail());
+        cont.put("uPhone", contact.getPhone());
+        db.collection(getUserId()).document(contact.getID()).set(cont).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                addContactSQLite(cont);
+            }
+        });
+
+    }
     public Boolean isUserSigned() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -212,7 +263,8 @@ public class DataBaseConnector {
         message.put("isRead", false);
 
 
-        db.collection(getUserId()).document(time.toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+        db.collection(To).document(time.toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 Log.d("FireStore", "Siker");
