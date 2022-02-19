@@ -1,11 +1,6 @@
 package com.example.szakdolg;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -13,7 +8,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,7 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +24,7 @@ public class FirebaseConnect {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     SQLConnect sqlConnect = new SQLConnect();
+    boolean done = false;
     public FirebaseConnect() {
 
         //FireBase
@@ -60,7 +54,7 @@ public class FirebaseConnect {
                                 message.put("time", document.get("time").toString());
                                 message.put("isRead", false);
                                 Log.d("SQL", document.get("message").toString());
-                            sqlConnect.sendMessageSql(message);
+                            sqlConnect.addMessageSql(message);
 
                             }
                         }
@@ -127,6 +121,21 @@ public class FirebaseConnect {
     }
 
     /**
+     * check if we really created the user on FireBase
+     * @return
+     */
+    public boolean isUserCreated(String userID){
+
+        db.collection("Users").document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+              done = true;
+
+            }
+        });
+        return done;
+    }
+    /**
      * Get logged in users ID
      * @return
      */
@@ -157,14 +166,22 @@ public class FirebaseConnect {
      * @param email
      * @param pass
      */
-    public void loginUser(String email, String pass) {
+    public boolean loginUser(String email, String pass) {
+
         Log.d("FireBase", "User logged in successful");
         mAuth.signInWithEmailAndPassword(email, pass).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.e("FireBase", "User log in was a failure");
             }
+        }).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d("async", "login completed");
+                done = true;
+            }
         });
+        return done;
     }
 
     /**
@@ -179,11 +196,12 @@ public class FirebaseConnect {
      * @param user
      */
     public void registerNewUser(Map user){
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
           mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
               @Override
               public void onComplete(@NonNull Task<AuthResult> task) {
                   createUser(user);
+                  Log.e("FireBase", "Register was success");
               }
           }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -226,6 +244,8 @@ public class FirebaseConnect {
         message.put("message", Message);
         message.put("time", time.toString());
         message.put("isRead", false);
+        message.put("isDownloaded", false);
+
 
 
 
@@ -233,7 +253,7 @@ public class FirebaseConnect {
             @Override
             public void onSuccess(Void unused) {
                 Log.d("FireStore", "Siker");
-                sqlConnect.sendMessageSql(message);
+                sqlConnect.addMessageSql(message);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -243,22 +263,5 @@ public class FirebaseConnect {
         });
         return (new Chat(Message, To));
     }
-    public void getMessages(String uID){
-        Log.d("FireBase", uID);
-        Log.d("FireBase", getUserId());
-        db.collection(getUserId()).whereEqualTo("to", uID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot document: task.getResult()) {
-                        String mess = document.get("message").toString();
-                        String fr = document.get("from").toString();
-                        Log.d("FireBase", mess);
-                    }
-                }
 
-            }
-        });
-
-    }
 }

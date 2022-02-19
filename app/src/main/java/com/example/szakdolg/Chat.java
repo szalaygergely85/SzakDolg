@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class Chat {
     private String message;
-
     private String sender;
+
 
     public Chat(String message, String sender) {
         this.message = message;

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
     private ArrayList<Chat> chats = new ArrayList<>();
-
+    private FirebaseConnect firebaseConnect = new FirebaseConnect();
 
 
     public ChatAdapter() {
@@ -31,7 +31,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (chats.get(position).getSender()=="Gege"){
+        if (chats.get(position).getSender().equals(firebaseConnect.getUserId())){
             holder.txtTextFrMe.setText(chats.get(position).getMessage());
             holder.txtText.setVisibility(View.GONE);
         }else{

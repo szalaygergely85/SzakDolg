@@ -1,5 +1,7 @@
 package com.example.szakdolg;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,9 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
-
+    private FirebaseConnect firebaseConnect = new FirebaseConnect();
+    private SQLConnect sqlConnect = new SQLConnect();
     private ArrayList<MessageB> messageB = new ArrayList<>();
 
+    public MessageBoardRecAdapter(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    private Context mContext;
 
     @NonNull
     @Override
@@ -28,13 +37,23 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-        holder.txtName.setText(messageB.get(position).getName());
+        if (messageB.get(position).getFrom().toString().equals(firebaseConnect.getUserId())){
+            holder.txtName.setText(sqlConnect.getNameFrContact(messageB.get(position).getTo().toString()));
+        }else {
+            holder.txtName.setText(sqlConnect.getNameFrContact(messageB.get(position).getFrom().toString()));
+        }
         holder.txtMessage.setText(messageB.get(position).getMessage());
+
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            Log.d("Clicked", messageB.get(position).getName());
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                if (messageB.get(position).getFrom().toString().equals(firebaseConnect.getUserId())){
+                    intent.putExtra("uID", messageB.get(position).getTo());
+                }else {
+                    intent.putExtra("uID", messageB.get(position).getFrom());
+                }
+                mContext.startActivity(intent);
             }
         });
     }

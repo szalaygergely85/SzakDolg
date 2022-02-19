@@ -3,7 +3,9 @@ package com.example.szakdolg;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
-    //TODO more field
     private EditText editEmail;
     private EditText editPass;
     private EditText editPass2;
@@ -31,7 +32,6 @@ public class RegisterActivity extends AppCompatActivity {
         editPhone = findViewById(R.id.edtRegPhone);
         btnReg = findViewById(R.id.btnRegReg);
         firebaseConnect = new FirebaseConnect();
-
     }
 
     @Override
@@ -53,32 +53,55 @@ public class RegisterActivity extends AppCompatActivity {
                 String pass2 = editPass2.getText().toString();
                 String phone = editPhone.getText().toString();
                 String name = editName.getText().toString();
-                Log.d("test2", email);
-                Log.d("test", pass);
-
-
                 if (email!=null && pass.equals(pass2)) {
                     Toast.makeText(RegisterActivity.this, "yooooo", Toast.LENGTH_SHORT).show();
-
                     Map<String, String> user = new HashMap<>();
                     user.put("email", email);
                     user.put("pass", pass);
                     user.put("phone", phone);
                     user.put("name", name);
-                    firebaseConnect.registerNewUser(user);
-                    if(firebaseConnect.isUserSigned()) {
-                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
+                    RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask();
+                    registerAsyncTask.execute(user);
                 }else{
                     Toast.makeText(RegisterActivity.this, "nem yoo", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
     }
     //TODO Error kezeles ide is
 
+    public class RegisterAsyncTask extends AsyncTask<Map<String, String>, Void, Void> {
+        FirebaseConnect fb = new FirebaseConnect();
+
+        @Override
+        protected Void doInBackground(Map<String, String>... maps) {
+            boolean done = false;
+            int tried=0;
+            Log.d("async", maps[0].toString());
+            firebaseConnect.registerNewUser(maps[0]);
+
+            while (!done && tried<20) {
+                Log.d("async", "i am indaa loop " + tried);
+                SystemClock.sleep(100);
+                if (fb.isUserSigned()){
+                    done = fb.isUserCreated(fb.getUserId());
+                }
+                tried++;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            Log.d("async", "post execute");
+            if(firebaseConnect.isUserSigned()) {
+               Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                startActivity(intent);
+                Log.d("async", "User signed");
+            }
+        }
+    }
 
 }

@@ -12,16 +12,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        firebaseConnect.logoutUser();
-       //firebaseConnect.loginUser("szalaygergely@gmail.com", "mmnvjt");
+       // firebaseConnect.logoutUser();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         if (firebaseConnect.isUserSigned()){
-            // dataBaseConnector.downloadMessages();
-            //dataBaseConnector.downloadContacts();
             Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
             startActivity(intent);
             Toast.makeText(this, "User signed", Toast.LENGTH_SHORT).show();

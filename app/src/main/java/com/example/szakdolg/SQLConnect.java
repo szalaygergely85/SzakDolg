@@ -84,7 +84,9 @@ public class SQLConnect {
                 do {
                     String Text = resultSet.getString(0);
                     String To = resultSet.getString(1);
-                    messages.add(new MessageB(Text, To, "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?cs=srgb&dl=pexels-mohamed-abdelghaffar-771742.jpg"));
+                    String Fr = resultSet.getString(2);
+                    String Messageid = resultSet.getString(2);
+                    messages.add(new MessageB(Messageid, Fr , To, Text, "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?cs=srgb&dl=pexels-mohamed-abdelghaffar-771742.jpg"));
                 } while (resultSet.moveToNext());
             }
         } catch (SQLException e) {
@@ -108,7 +110,7 @@ public class SQLConnect {
                 String fr = result.getString(0);
                 String to = result.getString(1);
                 String mess = result.getString(2);
-                message.add(new Chat(fr, mess));
+                message.add(new Chat(mess, fr));
             } while (result.moveToNext());
         }
         return message;
@@ -118,13 +120,23 @@ public class SQLConnect {
      * Instert one message into sql table
      * @param message
      */
-    public void sendMessageSql(Map<String, Object> message){
+    public void addMessageSql(Map<String, Object> message){
         try {
             mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.get("time") + "', '" + message.get("from") + "', '" + message.get("to") + "' , '" + message.get("message") + "', 'false');");
         } catch (SQLException e) {
             Log.e("SQL", e.toString());
         }
 
+    }
+
+    public String getNameFrContact(String uID){
+        String fr = new String();
+        Cursor result = mydatabase.rawQuery("SELECT userName FROM Contacts WHERE userId='"+ uID + "'", null);
+
+        if (result.moveToFirst()) {
+                fr = result.getString(0);
+        }
+        return fr;
     }
 
 
