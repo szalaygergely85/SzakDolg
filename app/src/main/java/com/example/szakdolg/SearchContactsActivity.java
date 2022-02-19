@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.widget.EdgeEffect;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +21,7 @@ import java.util.ArrayList;
 public class SearchContactsActivity extends AppCompatActivity {
     private EditText search;
     private RecyclerView contsRecView;
-    private DataBaseConnector database;
+    private FirebaseConnect database;
     ArrayList<Contact> contacts;
     private FirebaseFirestore db;
 

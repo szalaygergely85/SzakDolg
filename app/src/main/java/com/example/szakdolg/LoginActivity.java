@@ -13,7 +13,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editPass;
     private Button btnReg;
     private Button btnLog;
-    private DataBaseConnector fb;
+    private FirebaseConnect fb;
 
 
     public void initView(){
@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        fb = new DataBaseConnector();
+        fb = new FirebaseConnect();
         initView();
     }
 

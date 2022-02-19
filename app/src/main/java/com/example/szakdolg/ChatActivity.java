@@ -10,15 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ChatActivity extends AppCompatActivity {
 
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;
-    private DataBaseConnector fireBase;
+    private FirebaseConnect fireBase = new FirebaseConnect();;
+    private SQLConnect sqlConnect = new SQLConnect();
     private String uID;
+    ArrayList<Chat> chat;
 
 
      private void initView(){
@@ -37,29 +38,9 @@ public class ChatActivity extends AppCompatActivity {
         uID = (String) this.getIntent().getSerializableExtra("uID");
 
 
-        fireBase = new DataBaseConnector();
-        //fireBase.getMessages(uID);
+        chat = new ArrayList<>();
 
-
-
-        ArrayList<Chat> chat = new ArrayList<>();
-        /*
-        chat.add(new Chat("Hello",new Date(),"Sasha"));
-        chat.add(new Chat("Hello",new Date(),"Sasha"));
-        chat.add(new Chat("Hello",new Date(), "Gege"));
-        chat.add(new Chat("Hello",new Date(), "Gege"));
-        chat.add(new Chat("How are you?", new Date(),"Sasha"));
-        chat.add(new Chat("I am fine",new Date(), "Gege"));
-        chat.add(new Chat("And you?",new Date(), "Gege"));
-        chat.add(new Chat("I am fine",new Date(), "Gege"));
-        chat.add(new Chat("And you?",new Date(), "Gege"));
-        chat.add(new Chat("Thanks, me too",new Date(), "Gege"));
-        chat.add(new Chat("How are you?", new Date(),"Sasha"));
-        chat.add(new Chat("How are you?", new Date(),"Sasha"));
-        chat.add(new Chat("How are you?", new Date(),"Sasha"));
-        chat.add(new Chat("How are you?", new Date(),"Sasha"));
-        chat.add(new Chat("How are you?", new Date(),"Sasha"));*/
-        chat= fireBase.getMessgesSQL(uID);
+        chat= sqlConnect.getMessgesSQL(uID);
         ChatAdapter adapter = new ChatAdapter();
         adapter.setChats(chat);
 
@@ -76,7 +57,7 @@ public class ChatActivity extends AppCompatActivity {
     btnSend.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            fireBase.sendMessage(uID, edtMess.getText().toString());
+            chat.add(fireBase.sendMessage(uID, edtMess.getText().toString()));
         }
     });
 

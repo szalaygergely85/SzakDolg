@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder>{
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
-    DataBaseConnector dataBaseConnector = new DataBaseConnector();
+    FirebaseConnect firebaseConnect = new FirebaseConnect();
 
     public ContactsAdapter(Context mContext) {
         this.mContext = mContext;

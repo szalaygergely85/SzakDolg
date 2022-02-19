@@ -1,15 +1,11 @@
 package com.example.szakdolg;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,7 +18,7 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
 
-    DataBaseConnector dataBaseConnector = new DataBaseConnector();
+    FirebaseConnect firebaseConnect = new FirebaseConnect();
 
     public SearchContactAdapter(Context mContext) {
         this.mContext = mContext;
@@ -43,7 +39,7 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dataBaseConnector.addContactFB(contact.get(position));
+                firebaseConnect.addContactFB(contact.get(position));
                 //TODO add Database this
             }
         });

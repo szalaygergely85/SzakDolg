@@ -27,32 +27,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DataBaseConnector {
+public class FirebaseConnect {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private SQLiteDatabase mydatabase;
-
-    public DataBaseConnector() {
+    SQLConnect sqlConnect = new SQLConnect();
+    public FirebaseConnect() {
 
         //FireBase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
-        //SQL
-
-        try {
-            mydatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.example.szakdolg/databases/szakD.db",null);
-            //mydatabase.execSQL("DROP TABLE Contacts");
-            //mydatabase.execSQL("DROP TABLE Messages");
-            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
-            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Fr VARCHAR, ToID VARCHAR, Text VARCHAR, Read BOOLEAN);");
-
-        }catch (Exception e){
-            Log.e("SQL", e.toString());
-        }
-
     }
-    //SQL-Firebase
 
     /**
      * Download all not Downloaded messages from Firebase to SQLite
@@ -68,16 +52,15 @@ public class DataBaseConnector {
                                     !document.get("from").toString().equals(null) &&
                                     !document.get("to").toString().equals(null) &&
                                     !document.get("time").toString().equals(null)) {
-                                String mess = document.get("message").toString();
-                                String from = document.get("from").toString();
-                                String to = document.get("to").toString();
-                                String time = document.get("time").toString();
-                                Log.d("jolesz", from);
-                                try {
-                                    mydatabase.execSQL("INSERT INTO Messages VALUES(" + time + "', '" + from + "', '" + to + "' , '" + mess + "', 'false');");
-                                } catch (SQLException e) {
-                                    Log.e("SQL", e.toString());
-                                }
+
+                                Map<String, Object> message = new HashMap<>();
+                                message.put("from", document.get("from").toString());
+                                message.put("to", document.get("to").toString());
+                                message.put("message",document.get("message").toString() );
+                                message.put("time", document.get("time").toString());
+                                message.put("isRead", false);
+                                Log.d("SQL", document.get("message").toString());
+                            sqlConnect.sendMessageSql(message);
 
                             }
                         }
@@ -100,70 +83,14 @@ public class DataBaseConnector {
                         String uName =document.get("uName").toString();
                         String uEmail =document.get("uEmail").toString();
                         String uPhone =document.get("uPhone").toString();
+                        sqlConnect.addContactSQLite(uID, uName, uEmail, uPhone);
 
-                        try {
-                            mydatabase.execSQL("INSERT INTO Contacts VALUES('" + uID + "', '" + uName + "', '" + uEmail + "' , '" + uPhone + "');");
-                        } catch (SQLException e) {
-                            Log.e("SQL", e.toString());
-                        }
                     }
                 }
             }
         });
     }
 
-    /**
-     * Get Contacts from SQLite
-     * @return ArrayList<Contact>
-     */
-    public ArrayList<Contact> getContacts() {
-        ArrayList<Contact> contacts = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("Select Contacts.userID, Contacts.userName, Contacts.userEmail, Contacts.userPhone from Contacts", null);
-
-        if (result.moveToFirst()) {
-            do {
-                String id = result.getString(0);
-                String name = result.getString(1);
-                String email = result.getString(2);
-                String phone = result.getString(3);
-                contacts.add(new Contact(id, name, email, phone));
-            } while (result.moveToNext());
-        }
-        return contacts;
-    }
-
-    /**
-     * Add a contact to SQLite
-     * @param cont
-     */
-    public void addContactSQLite(Map<String, Object> cont){
-
-        try {
-            mydatabase.execSQL("INSERT INTO Contacts VALUES('" + cont.get("uID").toString() + "', '" + cont.get("uName").toString() + "', '" + cont.get("uEmail").toString() + "' , '" + cont.get("uPhone").toString() + "');");
-
-        } catch (SQLException e) {
-            Log.e("SQL", e.toString());
-        }
-
-    }
-
-    public ArrayList<Chat> getMessgesSQL(String frUiD){
-        ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text FROM Messages WHERE Messages.Fr='" + frUiD + "' OR Messages.ToID='" + frUiD+ "'", null);
-
-        if (result.moveToFirst()) {
-            do {
-                String fr = result.getString(0);
-                String to = result.getString(1);
-                String mess = result.getString(2);
-                message.add(new Chat(fr, mess));
-            } while (result.moveToNext());
-        }
-        return message;
-
-    }
-
-    //FireBase
 
     /**
      * add new contacts to the contacts list on Firebase
@@ -180,11 +107,16 @@ public class DataBaseConnector {
         db.collection(getUserId()).document(contact.getID()).set(cont).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                addContactSQLite(cont);
+                sqlConnect.addContactSQLite(cont);
             }
         });
 
     }
+
+    /**
+     * Does any user signed in?
+     * @return
+     */
     public Boolean isUserSigned() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -193,6 +125,11 @@ public class DataBaseConnector {
             return false;
         }
     }
+
+    /**
+     * Get logged in users ID
+     * @return
+     */
     public String getUserId(){
         return mAuth.getCurrentUser().getUid();
     }
@@ -214,6 +151,12 @@ public class DataBaseConnector {
         });
         return uID;
     }
+
+    /**
+     * Login user to firebase
+     * @param email
+     * @param pass
+     */
     public void loginUser(String email, String pass) {
         Log.d("FireBase", "User logged in successful");
         mAuth.signInWithEmailAndPassword(email, pass).addOnFailureListener(new OnFailureListener() {
@@ -223,9 +166,18 @@ public class DataBaseConnector {
             }
         });
     }
+
+    /**
+     * Logout user
+     */
     public void logoutUser(){
         mAuth.signOut();
     }
+
+    /**
+     * Register new user on Firebase
+     * @param user
+     */
     public void registerNewUser(Map user){
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
           mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -240,6 +192,12 @@ public class DataBaseConnector {
                 }
             });
     }
+
+    /**
+     * After register firebase account, create the user in Users collection too
+     * @param user
+     */
+
     public void createUser(Map user){
             user.put("userID", getUserId());
             user.remove("pass");
@@ -251,7 +209,14 @@ public class DataBaseConnector {
             });
 
     }
-    public void sendMessage(String To, String Message){
+
+    /**
+     * Add a new message in Firebase(send) also calls SQL-s send message function
+     * @param To
+     * @param Message
+     * @return
+     */
+    public Chat sendMessage(String To, String Message){
         Date date = new Date();
         Long time = date.getTime();
 
@@ -268,6 +233,7 @@ public class DataBaseConnector {
             @Override
             public void onSuccess(Void unused) {
                 Log.d("FireStore", "Siker");
+                sqlConnect.sendMessageSql(message);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -275,6 +241,7 @@ public class DataBaseConnector {
                 Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
             }
         });
+        return (new Chat(Message, To));
     }
     public void getMessages(String uID){
         Log.d("FireBase", uID);
@@ -294,5 +261,4 @@ public class DataBaseConnector {
         });
 
     }
-
 }

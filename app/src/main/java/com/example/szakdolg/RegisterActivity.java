@@ -21,7 +21,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editName;
     private EditText editPhone;
     private Button btnReg;
-    private DataBaseConnector dataBaseConnector;
+    private FirebaseConnect firebaseConnect;
 
     public void initView(){
         editEmail = findViewById(R.id.edtRegEmail);
@@ -30,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
         editName = findViewById(R.id.edtRegName);
         editPhone = findViewById(R.id.edtRegPhone);
         btnReg = findViewById(R.id.btnRegReg);
-        dataBaseConnector = new DataBaseConnector();
+        firebaseConnect = new FirebaseConnect();
 
     }
 
@@ -65,8 +65,8 @@ public class RegisterActivity extends AppCompatActivity {
                     user.put("pass", pass);
                     user.put("phone", phone);
                     user.put("name", name);
-                    dataBaseConnector.registerNewUser(user);
-                    if(dataBaseConnector.isUserSigned()) {
+                    firebaseConnect.registerNewUser(user);
+                    if(firebaseConnect.isUserSigned()) {
                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                         startActivity(intent);
                     }

@@ -7,26 +7,21 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
+    private FirebaseConnect firebaseConnect = new FirebaseConnect();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseConnect.logoutUser();
+       //firebaseConnect.loginUser("szalaygergely@gmail.com", "mmnvjt");
+    }
 
-
-        DataBaseConnector dataBaseConnector = new DataBaseConnector();
-
-      //  dataBaseConnector.logoutUser();
-       // dataBaseConnector.loginUser("szalaygergely@gmail.com", "mmnvjt");
-
-
-
-        if (dataBaseConnector.isUserSigned()){
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (firebaseConnect.isUserSigned()){
             // dataBaseConnector.downloadMessages();
-             //dataBaseConnector.downloadContacts();
-
-
+            //dataBaseConnector.downloadContacts();
             Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
             startActivity(intent);
             Toast.makeText(this, "User signed", Toast.LENGTH_SHORT).show();
@@ -34,8 +29,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
         }
-
-
     }
 }
