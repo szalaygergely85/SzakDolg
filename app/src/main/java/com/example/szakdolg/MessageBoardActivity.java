@@ -20,7 +20,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     private RecyclerView messageBoardRecView;
     FirebaseConnect firebaseConnect = new FirebaseConnect();
     private SQLConnect sqlConnect = new SQLConnect();
-
+    MessageBoardRecAdapter adapter;
 
 
 
@@ -38,7 +38,7 @@ public class MessageBoardActivity extends AppCompatActivity {
         messageBoardRecView= findViewById(R.id.messageBoardRecView);
         ArrayList<MessageB> messageB = new ArrayList<>();
         messageB = sqlConnect.getLastMessageEachPersonSQL();
-        MessageBoardRecAdapter adapter =new MessageBoardRecAdapter(this);
+        adapter =new MessageBoardRecAdapter(this);
         adapter.setMessageB(messageB);
         messageBoardRecView.setAdapter(adapter);
         messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -65,6 +65,8 @@ public class MessageBoardActivity extends AppCompatActivity {
            for (int i =0; i<100; i++){
                 firebaseConnect.downloadMessages();
                 Log.d("test", "doInBackground: " );
+               //adapter.notifyDataSetChanged();
+
                 SystemClock.sleep(30000);
 
 

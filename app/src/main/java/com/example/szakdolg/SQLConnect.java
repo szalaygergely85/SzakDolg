@@ -138,6 +138,16 @@ public class SQLConnect {
         }
         return fr;
     }
+    public boolean isInContracts(String uID){
+        Cursor result = mydatabase.rawQuery("SELECT * FROM Contacts WHERE userId='"+ uID + "'", null);
+        if (result.moveToFirst()) {
+            return true;
+
+        }else{
+            return false;
+        }
+
+    }
 
 
 }

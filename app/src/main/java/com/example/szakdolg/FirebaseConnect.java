@@ -1,5 +1,6 @@
 package com.example.szakdolg;
 
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ public class FirebaseConnect {
     private FirebaseFirestore db;
     SQLConnect sqlConnect = new SQLConnect();
     boolean done = false;
+    Contact contact;
     public FirebaseConnect() {
 
         //FireBase
@@ -37,7 +39,7 @@ public class FirebaseConnect {
      */
     public void downloadMessages(){
         if(isUserSigned()){
-            db.collection(getUserId()).whereEqualTo("downloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
@@ -46,7 +48,10 @@ public class FirebaseConnect {
                                     !document.get("from").toString().equals(null) &&
                                     !document.get("to").toString().equals(null) &&
                                     !document.get("time").toString().equals(null)) {
-
+                                    Log.d("FireBase", document.get("from").toString());
+                                    if (!sqlConnect.isInContracts(document.get("from").toString())){
+                                         addAUser(document.get("from").toString());
+                                    }
                                 Map<String, Object> message = new HashMap<>();
                                 message.put("from", document.get("from").toString());
                                 message.put("to", document.get("to").toString());
@@ -54,14 +59,48 @@ public class FirebaseConnect {
                                 message.put("time", document.get("time").toString());
                                 message.put("isRead", false);
                                 Log.d("SQL", document.get("message").toString());
-                            sqlConnect.addMessageSql(message);
-
+                                sqlConnect.addMessageSql(message);
+                                db.collection(getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
                             }
                         }
                     }
                 }
             });
         }
+    }
+    public Contact addAUser(String uID){
+        Log.d("FireBase", "We are in GetAuser with : " + uID);
+        db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        contact = new Contact(document.get("userID").toString(),document.get("name").toString(),document.get("email").toString(),document.get("phone").toString());
+                        addContactFB(contact);
+                        Map<String, Object> cont = new HashMap<>();
+                        cont.put("docType", "contacts");
+                        cont.put("uID", contact.getID());
+                        cont.put("uName", contact.getName());
+                        cont.put("uEmail", contact.getEmail());
+                        cont.put("uPhone", contact.getPhone());
+                        sqlConnect.addContactSQLite(cont);
+                        Log.d("FireBase", document.get("name").toString());
+                    } else {
+                        Log.d("FireBase", "No such document");
+                    }
+                } else {
+                    Log.d("FireBase", "get failed with ", task.getException());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("FireBase", e.toString());
+            }
+        });
+
+        return contact;
     }
 
     /**
@@ -92,6 +131,7 @@ public class FirebaseConnect {
      * @param contact
      */
     public void addContactFB(Contact contact){
+        Log.d("FireBase", contact.toString());
         Map<String, Object> cont = new HashMap<>();
         cont.put("docType", "contacts");
         cont.put("uID", contact.getID());
@@ -101,7 +141,7 @@ public class FirebaseConnect {
         db.collection(getUserId()).document(contact.getID()).set(cont).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                sqlConnect.addContactSQLite(cont);
+                Log.d("FireBase", "Contact added");
             }
         });
 

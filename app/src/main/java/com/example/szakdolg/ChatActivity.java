@@ -80,6 +80,7 @@ public class ChatActivity extends AppCompatActivity {
             for (int i =0; i<100; i++){
                 fireBase.downloadMessages();
                 Log.d("test", "doInBackground: " );
+                chat.notifyAll();
                 SystemClock.sleep(30000);
 
 

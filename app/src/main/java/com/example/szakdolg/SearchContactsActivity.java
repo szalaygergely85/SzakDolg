@@ -55,7 +55,7 @@ public class SearchContactsActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 contacts.clear();
-                if(search.getText().toString().length()>3){
+                if(search.getText().toString().length()>2){
                     db.collection("Users").orderBy("email").startAt(search.getText().toString()).endAt(search.getText().toString()+"\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
