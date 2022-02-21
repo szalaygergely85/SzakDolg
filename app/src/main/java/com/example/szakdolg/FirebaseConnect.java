@@ -37,7 +37,7 @@ public class FirebaseConnect {
     /**
      * Download all not Downloaded messages from Firebase to SQLite
      */
-    public void downloadMessages(){
+    public boolean downloadMessages(){
         if(isUserSigned()){
             db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -61,12 +61,14 @@ public class FirebaseConnect {
                                 Log.d("SQL", document.get("message").toString());
                                 sqlConnect.addMessageSql(message);
                                 db.collection(getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
+                                done = true;
                             }
                         }
                     }
                 }
             });
         }
+        return done;
     }
     public Contact addAUser(String uID){
         Log.d("FireBase", "We are in GetAuser with : " + uID);
