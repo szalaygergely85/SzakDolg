@@ -66,7 +66,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                 firebaseConnect.downloadMessages();
                 Log.d("test", "doInBackground: " );
                //adapter.notifyDataSetChanged();
-
+                adapter.setMessageB(messageB);
                 SystemClock.sleep(30000);
 
 
