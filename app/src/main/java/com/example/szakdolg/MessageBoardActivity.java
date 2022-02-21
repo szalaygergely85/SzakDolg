@@ -64,6 +64,7 @@ public class MessageBoardActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
 
            for (int i =0; i<100; i++){
+
                 if(firebaseConnect.downloadMessages()){
 
                     messageB = sqlConnect.getLastMessageEachPersonSQL();
@@ -72,6 +73,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
 
                     Log.d("test", "doInBackground: From MessageBoard" );
+
 
 
 
