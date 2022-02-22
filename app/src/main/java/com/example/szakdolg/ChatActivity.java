@@ -38,7 +38,8 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         initView();
-        //DownloadAsynctask downloadAsynctask = new DownloadAsynctask();
+        ChatUpdateAsynctask chatUpdateAsynctask = new ChatUpdateAsynctask();
+        chatUpdateAsynctask.execute();
 
         uID = (String) this.getIntent().getSerializableExtra("uID");
         Log.d("test", uID);
@@ -64,26 +65,37 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 chat.add(fireBase.sendMessage(uID, edtMess.getText().toString()));
-                edtMess.getText().clear();
                 adapter.notifyDataSetChanged();
+                edtMess.getText().clear();
+
             }
         });
 
 
     }
-    public class DownloadAsynctask extends AsyncTask<Void, Void, Void> {
-
+    public class ChatUpdateAsynctask extends AsyncTask<Void, Void, Void> {
+        ArrayList<Chat> chatDownload;
 
         @Override
         protected Void doInBackground(Void... voids) {
 
             for (int i =0; i<100; i++){
                 fireBase.downloadMessages();
-                Log.d("test", "doInBackground: " );
-                chat.notifyAll();
+                Log.d("test", "doInBackground: Chat act" );
+
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatDownload= sqlConnect.getMessgesSQL(uID);
+                        chat = chatDownload;
+                        adapter.setChats(chat);
+                    }
+                });
+
+
+
                 SystemClock.sleep(30000);
-
-
             }
             return null;
         }

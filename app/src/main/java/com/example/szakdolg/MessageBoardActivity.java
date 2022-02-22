@@ -22,6 +22,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     private SQLConnect sqlConnect = new SQLConnect();
     MessageBoardRecAdapter adapter;
     ArrayList<MessageB> messageB;
+    DownloadAsynctask downloadAsynctask = new DownloadAsynctask();;
 
 
 
@@ -33,8 +34,8 @@ public class MessageBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_board_actvitiy);
         initView();
-        DownloadAsynctask downloadAsynctask = new DownloadAsynctask();
-        downloadAsynctask.execute();
+
+       // downloadAsynctask.execute();
         //handle recview
         messageBoardRecView= findViewById(R.id.messageBoardRecView);
         messageB = new ArrayList<>();
@@ -59,29 +60,37 @@ public class MessageBoardActivity extends AppCompatActivity {
     }
     public class DownloadAsynctask extends AsyncTask<Void, Void, Void>{
 
-
         @Override
         protected Void doInBackground(Void... voids) {
+            for (int i = 0; i < 100; i++) {
+                firebaseConnect.downloadMessages();
 
-           for (int i =0; i<100; i++){
-
-                if(firebaseConnect.downloadMessages()){
-
-                    messageB = sqlConnect.getLastMessageEachPersonSQL();
-                    adapter.setMessageB(messageB);
-                }
-
-
-                    Log.d("test", "doInBackground: From MessageBoard" );
-
-
-
-
-                SystemClock.sleep(30000);
-
-
+                Log.d("test", "doInBackground: From MessageBoard");
+                SystemClock.sleep(5000);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayList<MessageB> message = sqlConnect.getLastMessageEachPersonSQL();
+                        messageB = message;
+                        adapter.setMessageB(messageB);
+                    }
+                });
             }
             return null;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("test", "onPause");
+        downloadAsynctask.cancel(true);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("test", "onStop");
+        downloadAsynctask.cancel(true);
     }
 }

@@ -106,11 +106,13 @@ public class SQLConnect {
         Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text FROM Messages WHERE Messages.Fr='" + frUiD + "' OR Messages.ToID='" + frUiD + "'", null);
 
         if (result.moveToFirst()) {
+            int i = 0;
             do {
                 String fr = result.getString(0);
                 String to = result.getString(1);
                 String mess = result.getString(2);
                 message.add(new Chat(mess, fr));
+                Log.d("test",""+  i++);
             } while (result.moveToNext());
         }
         return message;
@@ -122,7 +124,8 @@ public class SQLConnect {
      */
     public void addMessageSql(Map<String, Object> message){
         try {
-            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.get("time") + "', '" + message.get("from") + "', '" + message.get("to") + "' , '" + message.get("message") + "', 'false');");
+            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.get("time").toString() + "', '" + message.get("from").toString() + "', '" + message.get("to").toString() + "' , '" + message.get("message").toString() + "', 'false');");
+            Log.e("SQL", message.get("message").toString());
         } catch (SQLException e) {
             Log.e("SQL", e.toString());
         }
