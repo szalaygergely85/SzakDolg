@@ -71,7 +71,7 @@ public class FirebaseConnect {
         return done;
     }
     public Contact addAUser(String uID){
-        Log.d("FireBase", "We are in GetAuser with : " + uID);
+        Log.d("FireBase", "We are in addAuser with : " + uID);
         db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

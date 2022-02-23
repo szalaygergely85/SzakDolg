@@ -12,7 +12,11 @@ public class SQLConnect {
     private SQLiteDatabase mydatabase;
 
     public SQLConnect() {
+
+
+
         try {
+
             // Create or connect to sql database
             mydatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.example.szakdolg/databases/szakD.db", null);
             //mydatabase.execSQL("DROP TABLE Contacts");
@@ -72,13 +76,14 @@ public class SQLConnect {
 
     }
     /**
-     * Get newes message from each person
+     * Get newest message from each person
      * @return messages
      */
-    public ArrayList<MessageB> getLastMessageEachPersonSQL() {
+    public ArrayList<MessageB> getLastMessageEachPersonSQL(String userID) {
+
         ArrayList<MessageB> messages = new ArrayList<>();
         try {
-            Cursor resultSet = mydatabase.rawQuery("SELECT Text, ToID, Fr, max(Messageid) FROM Messages WHERE Fr=(SELECT DISTINCT(userId) FROM Contacts) OR ToID=(SELECT DISTINCT(userId) FROM Contacts) GROUP BY Fr, ToID", null);
+            Cursor resultSet = mydatabase.rawQuery("SELECT Text, ToID, Fr, max(Messageid)  FROM Messages WHERE Fr IN ((SELECT DISTINCT(userId) FROM Contacts) AND ToID='"+ userID +"') OR (ToID IN (SELECT DISTINCT(userId) FROM Contacts) AND Fr='"+ userID +"') GROUP BY Fr, ToID", null);
             Log.d("SQL", "" + resultSet.getCount());
             if (resultSet.moveToFirst()) {
                 do {
@@ -103,7 +108,7 @@ public class SQLConnect {
      */
     public ArrayList<Chat> getMessgesSQL(String frUiD) {
         ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text FROM Messages WHERE Messages.Fr='" + frUiD + "' OR Messages.ToID='" + frUiD + "'", null);
+        Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text FROM Messages WHERE Messages.Fr='" + frUiD + "' OR Messages.ToID='" + frUiD + "' ORDER BY Messages.Messageid", null);
 
         if (result.moveToFirst()) {
             int i = 0;

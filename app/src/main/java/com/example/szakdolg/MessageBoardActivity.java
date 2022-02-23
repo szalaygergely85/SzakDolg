@@ -35,11 +35,11 @@ public class MessageBoardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message_board_actvitiy);
         initView();
 
-       // downloadAsynctask.execute();
+        downloadAsynctask.execute();
         //handle recview
         messageBoardRecView= findViewById(R.id.messageBoardRecView);
         messageB = new ArrayList<>();
-        messageB = sqlConnect.getLastMessageEachPersonSQL();
+        messageB = sqlConnect.getLastMessageEachPersonSQL(firebaseConnect.getUserId());
         adapter =new MessageBoardRecAdapter(this);
         adapter.setMessageB(messageB);
         messageBoardRecView.setAdapter(adapter);
@@ -66,11 +66,11 @@ public class MessageBoardActivity extends AppCompatActivity {
                 firebaseConnect.downloadMessages();
 
                 Log.d("test", "doInBackground: From MessageBoard");
-                SystemClock.sleep(5000);
+                SystemClock.sleep(30000);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ArrayList<MessageB> message = sqlConnect.getLastMessageEachPersonSQL();
+                        ArrayList<MessageB> message = sqlConnect.getLastMessageEachPersonSQL(firebaseConnect.getUserId());
                         messageB = message;
                         adapter.setMessageB(messageB);
                     }
