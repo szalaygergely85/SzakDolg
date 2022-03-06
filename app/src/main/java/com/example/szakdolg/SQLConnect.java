@@ -106,9 +106,9 @@ public class SQLConnect {
      * @param frUiD
      * @return message
      */
-    public ArrayList<Chat> getMessgesSQL(String frUiD) {
+    public ArrayList<Chat> getMessagesSQL(String frUiD) {
         ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text FROM Messages WHERE Messages.Fr='" + frUiD + "' OR Messages.ToID='" + frUiD + "' ORDER BY Messages.Messageid", null);
+        Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text, Messages.Messageid FROM Messages WHERE Messages.Fr='" + frUiD + "' OR Messages.ToID='" + frUiD + "' ORDER BY Messages.Messageid", null);
 
         if (result.moveToFirst()) {
             int i = 0;
@@ -116,7 +116,8 @@ public class SQLConnect {
                 String fr = result.getString(0);
                 String to = result.getString(1);
                 String mess = result.getString(2);
-                message.add(new Chat(mess, fr));
+                String id = result.getString(3);
+                message.add(new Chat(mess, fr, id));
                 Log.d("test",""+  i++);
             } while (result.moveToNext());
         }

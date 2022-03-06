@@ -1,23 +1,28 @@
 package com.example.szakdolg;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
     private ArrayList<Chat> chats = new ArrayList<>();
     private FirebaseConnect firebaseConnect = new FirebaseConnect();
-
-
+    private String userID;
+    long time;
     public ChatAdapter() {
-
+        userID = firebaseConnect.getUserId();
 
     }
 
@@ -31,12 +36,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (chats.get(position).getSender().equals(firebaseConnect.getUserId())){
+        try {
+            time = Long.parseLong(chats.get(position).getId());
+            Log.d("test", ""+time);
+        }catch (Exception e){
+            Log.d("Error", e.toString());
+        }
+
+        Date date = new Date(time);
+
+        Format format = new SimpleDateFormat("HH:mm");
+        String timeForm = format.format(date);
+        if (chats.get(position).getSender().equals(userID)){
             holder.txtTextFrMe.setText(chats.get(position).getMessage());
-            holder.txtText.setVisibility(View.GONE);
+            holder.txtTimeOut.setText(timeForm);
+            holder.relIn.setVisibility(View.GONE);
         }else{
             holder.txtText.setText(chats.get(position).getMessage());
-            holder.txtTextFrMe.setVisibility(View.GONE);
+            holder.txtTimeIn.setText(timeForm);
+            holder.relOut.setVisibility(View.GONE);
         }
 
     }
@@ -56,11 +74,19 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
         //declare here fields
         private TextView txtText;
+        private TextView txtTimeIn;
+        private TextView txtTimeOut;
         private TextView txtTextFrMe;
+        private RelativeLayout relIn;
+        private RelativeLayout relOut;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtText = itemView.findViewById(R.id.chatText);
             txtTextFrMe = itemView.findViewById(R.id.chatTextFrMe);
+            txtTimeIn =itemView.findViewById(R.id.chatTextTimeIn);
+            txtTimeOut=itemView.findViewById(R.id.chatTextTimeOut);
+            relIn = itemView.findViewById(R.id.chatRelIn);
+            relOut = itemView.findViewById(R.id.chatRelOut);
         }
     }
 

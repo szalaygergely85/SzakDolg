@@ -2,9 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chatParent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/chatParent"
+    android:background="@color/primaryLightColor"
     android:padding="5dp"
     tools:context=".ChatActivity">
 
@@ -12,9 +13,8 @@
         android:id="@+id/recViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="false"
         android:layout_above="@id/relLayChatSendBar"
-        />
+        android:layout_alignParentBottom="false" />
 
     <RelativeLayout
         android:id="@+id/relLayChatSendBar"
@@ -27,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:background="@color/primaryDarkColor"
             android:text="Send" />
 
         <EditText
@@ -34,6 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/btnChatSend"
-            android:hint="Message" />
+            android:hint="Message"
+            android:minHeight="48dp" />
     </RelativeLayout>
 </RelativeLayout>

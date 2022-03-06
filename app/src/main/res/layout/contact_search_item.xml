@@ -4,12 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp">
+
     <ImageView
+        android:id="@+id/imgContItem"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_blank_profile"
-        android:id="@+id/imgContItem"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginRight="10dp"
+        android:src="@drawable/ic_blank_profile" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,11 +30,11 @@
 
     <ImageButton
         android:id="@+id/btnContItemAdd"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
-        app:icon="@drawable/ic_add_message"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/ic_add_contact" />
 
 
 

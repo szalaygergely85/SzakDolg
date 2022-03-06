@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder>{
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
+
+    SQLConnect sqlConnect = new SQLConnect();
 
     FirebaseConnect firebaseConnect = new FirebaseConnect();
 
@@ -40,9 +43,13 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
             @Override
             public void onClick(View view) {
 
-                //firebaseConnect.addContactFB(contact.get(position));
-                firebaseConnect.addAUser(contact.get(position).getID());
+                if(!sqlConnect.isInContracts(contact.get(position).getID())) {
+                    firebaseConnect.addAUser(contact.get(position).getID());
+                    Toast.makeText(mContext, contact.get(position).getName() + " added to your contacts", Toast.LENGTH_SHORT).show();
+                }else {
 
+                    Toast.makeText(mContext, "You already have "+ contact.get(position).getName() + " in your contacts", Toast.LENGTH_SHORT).show();
+                }
 
                 //TODO add Database this
             }

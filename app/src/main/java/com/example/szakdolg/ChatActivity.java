@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -13,33 +14,37 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ChatActivity extends AppCompatActivity {
 
+    final Handler handler = new Handler();
+    FirebaseConnect fireBase = new FirebaseConnect();
+    ChatAdapter adapter;
+    ArrayList<Chat> chat;
+    Timer timer = new Timer();
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;
-     FirebaseConnect fireBase = new FirebaseConnect();;
     private SQLConnect sqlConnect = new SQLConnect();
     private String uID;
-    ChatAdapter adapter;
-    ArrayList<Chat> chat;
 
-
-     private void initView(){
+    private void initView() {
         chatRecView = findViewById(R.id.recViewChat);
         btnSend = findViewById(R.id.btnChatSend);
         edtMess = findViewById(R.id.edtChatMes);
-     }
-
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         initView();
-        ChatUpdateAsynctask chatUpdateAsynctask = new ChatUpdateAsynctask();
-        chatUpdateAsynctask.execute();
+        setRepeatingAsyncTask();
 
         uID = (String) this.getIntent().getSerializableExtra("uID");
         Log.d("test", uID);
@@ -47,12 +52,13 @@ public class ChatActivity extends AppCompatActivity {
 
         chat = new ArrayList<>();
 
-        chat= sqlConnect.getMessgesSQL(uID);
+        chat = sqlConnect.getMessagesSQL(uID);
         adapter = new ChatAdapter();
         adapter.setChats(chat);
 
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
+
     }
 
 
@@ -64,41 +70,77 @@ public class ChatActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                chat.add(fireBase.sendMessage(uID, edtMess.getText().toString()));
+                Date date = new Date();
+                Long time = date.getTime();
+
+                Map<String, Object> message = new HashMap<>();
+                message.put("from", fireBase.getUserId());
+                message.put("to", uID);
+                message.put("message", edtMess.getText().toString());
+                message.put("time", time.toString());
+                message.put("isRead", false);
+                message.put("isDownloaded", false);
+
+
+                sqlConnect.addMessageSql(message);
+                fireBase.sendMessage(message);
+
+                chat.add(new Chat(edtMess.getText().toString(), fireBase.getUserId(), time.toString()));
                 adapter.notifyDataSetChanged();
                 edtMess.getText().clear();
-
             }
         });
 
 
     }
+
+    private void setRepeatingAsyncTask() {
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            ChatUpdateAsynctask chatUpdateAsynctask = new ChatUpdateAsynctask();
+                            chatUpdateAsynctask.execute();
+                        } catch (Exception e) {
+                            // error, do something
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(task, 0, 30 * 1000);  // interval of one minute
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("test", "ONDESTROY");
+        timer.cancel();
+    }
+
     public class ChatUpdateAsynctask extends AsyncTask<Void, Void, Void> {
         ArrayList<Chat> chatDownload;
 
         @Override
         protected Void doInBackground(Void... voids) {
-
-            for (int i =0; i<100; i++){
-                fireBase.downloadMessages();
-                Log.d("test", "doInBackground: Chat act" );
-
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        chatDownload= sqlConnect.getMessgesSQL(uID);
+            Log.d("test", "doInBackground: Chat act");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (fireBase.isNewMessage(uID)) {
+                        fireBase.downloadMessages();
+                        chatDownload = sqlConnect.getMessagesSQL(uID);
                         chat = chatDownload;
                         adapter.setChats(chat);
+                        //chatRecView.scrollToPosition(adapter.getItemCount()-1);
+                    }else{
+                        Log.d("test", "No new message from " + uID);
                     }
-                });
-
-
-
-                SystemClock.sleep(30000);
-            }
+                }
+            });
             return null;
         }
     }
-
 }

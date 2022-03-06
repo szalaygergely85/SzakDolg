@@ -55,7 +55,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
                     intent.putExtra("uID", messageB.get(position).getFrom());
                 }
                 mContext.startActivity(intent);
-                ((Activity)mContext).finish();
+
             }
         });
     }

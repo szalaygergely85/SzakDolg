@@ -5,12 +5,20 @@ import java.util.Date;
 public class Chat {
     private String message;
     private String sender;
+    private String id;
 
+    public String getId() {
+        return id;
+    }
 
-    public Chat(String message, String sender) {
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Chat(String message, String sender, String id) {
         this.message = message;
-  //
         this.sender = sender;
+        this.id = id;
     }
 
     public String getMessage() {

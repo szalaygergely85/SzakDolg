@@ -37,7 +37,7 @@ public class FirebaseConnect {
     /**
      * Download all not Downloaded messages from Firebase to SQLite
      */
-    public boolean downloadMessages(){
+    public void downloadMessages(){
         if(isUserSigned()){
             db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -61,15 +61,60 @@ public class FirebaseConnect {
                                 Log.d("SQL", document.get("message").toString());
                                 sqlConnect.addMessageSql(message);
                                 db.collection(getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
-                                done = true;
+
                             }
                         }
                     }
                 }
             });
         }
+
+    }
+
+    public boolean isNewMessage(){
+
+        db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (document.exists()){
+                            done = true;
+                        }else {
+                            done = false;
+                        }
+                    }
+                }
+
+            }
+        });
+    return done;
+    }
+    public boolean isNewMessage(String From){
+
+        db.collection(getUserId()).whereEqualTo("isDownloaded", false).whereEqualTo("from", From).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (document.exists()){
+                            done = true;
+                        }else {
+                            done = false;
+                        }
+                    }
+                }
+
+            }
+        });
         return done;
     }
+
+    /**
+     * Add a User to the contact
+     * @param uID
+     * @return
+     */
     public Contact addAUser(String uID){
         Log.d("FireBase", "We are in addAuser with : " + uID);
         db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -128,7 +173,7 @@ public class FirebaseConnect {
 
 
     /**
-     * add new contacts to the contacts list on Firebase
+     * add new contact to the contacts list on Firebase
      * also call the function to add in SQLite.
      * @param contact
      */
@@ -272,30 +317,19 @@ public class FirebaseConnect {
 
     /**
      * Add a new message in Firebase(send) also calls SQL-s send message function
-     * @param To
-     * @param Message
-     * @return
+     * @param message
      */
-    public Chat sendMessage(String To, String Message){
+
+    public void sendMessage(Map<String, Object> message){
         Date date = new Date();
         Long time = date.getTime();
 
-        Map<String, Object> message = new HashMap<>();
-        message.put("from", getUserId());
-        message.put("to", To);
-        message.put("message", Message);
-        message.put("time", time.toString());
-        message.put("isRead", false);
-        message.put("isDownloaded", false);
 
 
-
-
-        db.collection(To).document(time.toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection(message.get("to").toString()).document(time.toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Log.d("FireStore", "Siker");
-                sqlConnect.addMessageSql(message);
+                Log.d("FireStore", "Sikerult elkuldeni az uzit");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -303,7 +337,6 @@ public class FirebaseConnect {
                 Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
             }
         });
-        return (new Chat(Message, To));
-    }
 
+    }
 }
