@@ -1,4 +1,5 @@
-package com.example.testing;
+package com.example.szakdolg;
+
 
 import android.util.Log;
 
@@ -33,7 +34,7 @@ public class Crypt {
      *         keyPair = Crypt.createKey();
      * @return HashMap
      */
-    public static HashMap createKey() {
+    public static HashMap createKeys() {
         HashMap<String, String> keyPair = new HashMap<String, String>();
         KeyPairGenerator generator = null;
         try {

@@ -6,13 +6,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SQLConnect {
     private SQLiteDatabase mydatabase;
 
     public SQLConnect() {
-
+    //TODO Eleg csak a cimzett, jelolni hogy in-out inkabb az uziken
+        //
 
 
         try {
@@ -24,16 +26,69 @@ public class SQLConnect {
 
             //create tables;
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
-            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Fr VARCHAR, ToID VARCHAR, Text VARCHAR, Read BOOLEAN);");
+            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Fr VARCHAR, ToID VARCHAR, Text VARCHAR, Read BOOLEAN Default '0', Uploaded BOOLEAN Default '0');");
+            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Keys(userId VARCHAR, Private VARCHAR, Public VARCHAR, PublicExt VARCHAR);");
 
         } catch (Exception e) {
             Log.e("SQL", e.toString());
         }
     }
+
+
+    public void setMessageToUploaded(String mID){
+        mydatabase.execSQL("UPDATE Messages SET Uploaded='1' WHERE Messageid = '"+mID +"';");
+
+    }
+    public void generateKeys(String uID){
+        HashMap<String, String> keys = Crypt.createKeys();  try {
+            mydatabase.execSQL("INSERT INTO Keys VALUES('" + uID + "', '" + keys.get("Private") + "', '" +keys.get("Public") + "');");
+        } catch (SQLException e) {
+            Log.e("SQL", e.toString());
+        }
+    }
+    public boolean isKey(String uID){
+        Cursor result = mydatabase.rawQuery("Select * from Keys Where userId='"+ uID +"''", null);
+
+        if (result.moveToFirst()) {
+            return true;
+        }else {
+            return false;
+
+        }
+    }
+    public String getPrivateKey(String uID){
+        String search = null;
+        Cursor result = mydatabase.rawQuery("Select Keys.Private from Keys Where userId='"+ uID +"''", null);
+
+        if (result.moveToFirst()) {
+            search = result.getString(0);
+        }
+        return search;
+    }
+    public String getPublicKey(String uID){
+        String search = null;
+        Cursor result = mydatabase.rawQuery("Select Keys.Public from Keys Where userId='"+ uID +"''", null);
+
+        if (result.moveToFirst()) {
+            search = result.getString(0);
+        }
+        return search;
+    }
+    public String getPublicExtKey(String uID){
+        String search = null;
+        Cursor result = mydatabase.rawQuery("Select Keys.PublicExt from Keys Where userId='"+ uID +"''", null);
+
+        if (result.moveToFirst()) {
+            search = result.getString(0);
+        }
+        return search;
+    }
+
     /**
      * Get Contacts from SQLite
      * @return ArrayList<Contact>
      */
+
     public ArrayList<Contact> getContacts() {
         ArrayList<Contact> contacts = new ArrayList<>();
         Cursor result = mydatabase.rawQuery("Select Contacts.userID, Contacts.userName, Contacts.userEmail, Contacts.userPhone from Contacts", null);

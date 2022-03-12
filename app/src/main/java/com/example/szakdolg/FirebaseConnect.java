@@ -26,7 +26,9 @@ public class FirebaseConnect {
     private FirebaseFirestore db;
     SQLConnect sqlConnect = new SQLConnect();
     boolean done = false;
+    boolean value = false;
     Contact contact;
+
     public FirebaseConnect() {
 
         //FireBase
@@ -37,8 +39,8 @@ public class FirebaseConnect {
     /**
      * Download all not Downloaded messages from Firebase to SQLite
      */
-    public void downloadMessages(){
-        if(isUserSigned()){
+    public void downloadMessages() {
+        if (isUserSigned()) {
             db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -48,14 +50,14 @@ public class FirebaseConnect {
                                     !document.get("from").toString().equals(null) &&
                                     !document.get("to").toString().equals(null) &&
                                     !document.get("time").toString().equals(null)) {
-                                    Log.d("FireBase", document.get("from").toString());
-                                    if (!sqlConnect.isInContracts(document.get("from").toString())){
-                                         addAUser(document.get("from").toString());
-                                    }
+                                Log.d("FireBase", document.get("from").toString());
+                                if (!sqlConnect.isInContracts(document.get("from").toString())) {
+                                    addAUser(document.get("from").toString());
+                                }
                                 Map<String, Object> message = new HashMap<>();
                                 message.put("from", document.get("from").toString());
                                 message.put("to", document.get("to").toString());
-                                message.put("message",document.get("message").toString() );
+                                message.put("message", document.get("message").toString());
                                 message.put("time", document.get("time").toString());
                                 message.put("isRead", false);
                                 Log.d("SQL", document.get("message").toString());
@@ -71,16 +73,16 @@ public class FirebaseConnect {
 
     }
 
-    public boolean isNewMessage(){
+    public boolean isNewMessage() {
 
         db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (document.exists()){
+                        if (document.exists()) {
                             done = true;
-                        }else {
+                        } else {
                             done = false;
                         }
                     }
@@ -88,18 +90,19 @@ public class FirebaseConnect {
 
             }
         });
-    return done;
+        return done;
     }
-    public boolean isNewMessage(String From){
+
+    public boolean isNewMessage(String From) {
 
         db.collection(getUserId()).whereEqualTo("isDownloaded", false).whereEqualTo("from", From).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (document.exists()){
+                        if (document.exists()) {
                             done = true;
-                        }else {
+                        } else {
                             done = false;
                         }
                     }
@@ -112,10 +115,11 @@ public class FirebaseConnect {
 
     /**
      * Add a User to the contact
+     *
      * @param uID
      * @return
      */
-    public Contact addAUser(String uID){
+    public Contact addAUser(String uID) {
         Log.d("FireBase", "We are in addAuser with : " + uID);
         db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -123,7 +127,7 @@ public class FirebaseConnect {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        contact = new Contact(document.get("userID").toString(),document.get("name").toString(),document.get("email").toString(),document.get("phone").toString());
+                        contact = new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString());
                         addContactFB(contact);
                         Map<String, Object> cont = new HashMap<>();
                         cont.put("docType", "contacts");
@@ -153,16 +157,16 @@ public class FirebaseConnect {
     /**
      * Download all Contacts form Firebase to SQLite
      */
-    public void downloadContacts(){
+    public void downloadContacts() {
         db.collection(getUserId()).whereEqualTo("docType", "contacts").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         String uID = document.get("uID").toString();
-                        String uName =document.get("uName").toString();
-                        String uEmail =document.get("uEmail").toString();
-                        String uPhone =document.get("uPhone").toString();
+                        String uName = document.get("uName").toString();
+                        String uEmail = document.get("uEmail").toString();
+                        String uPhone = document.get("uPhone").toString();
                         sqlConnect.addContactSQLite(uID, uName, uEmail, uPhone);
 
                     }
@@ -171,13 +175,45 @@ public class FirebaseConnect {
         });
     }
 
+    public void sendKeyRequest(String uID) {
+
+        if (!sqlConnect.isKey(uID)) {
+            sqlConnect.generateKeys(uID);
+        }
+        String pubKey = sqlConnect.getPublicKey(uID);
+        Map<String, Object> req = new HashMap<>();
+        req.put("uID", getUserId());
+        req.put("pubKey", pubKey);
+        req.put("docType", "reqPubKey");
+        db.collection(uID).document("reqPubKey:" + getUserId()).set(req);
+    }
+
+    public boolean isKeyRequest() {
+
+        db.collection(getUserId()).whereEqualTo("docType", "reqPubKey").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (!document.equals(null)) {
+                            value = true;
+                        }
+                    }
+                }
+            }
+        });
+
+        return value;
+    }
+
 
     /**
      * add new contact to the contacts list on Firebase
      * also call the function to add in SQLite.
+     *
      * @param contact
      */
-    public void addContactFB(Contact contact){
+    public void addContactFB(Contact contact) {
         Log.d("FireBase", contact.toString());
         Map<String, Object> cont = new HashMap<>();
         cont.put("docType", "contacts");
@@ -196,6 +232,7 @@ public class FirebaseConnect {
 
     /**
      * Does any user signed in?
+     *
      * @return
      */
     public Boolean isUserSigned() {
@@ -209,37 +246,42 @@ public class FirebaseConnect {
 
     /**
      * check if we really created the user on FireBase
+     *
      * @return
      */
-    public boolean isUserCreated(String userID){
+    public boolean isUserCreated(String userID) {
 
         db.collection("Users").document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-              done = true;
+                done = true;
 
             }
         });
         return done;
     }
+
     /**
      * Get logged in users ID
+     *
      * @return
      */
-    public String getUserId(){
+    public String getUserId() {
         return mAuth.getCurrentUser().getUid();
     }
-    public String getUserEmail(){
+
+    public String getUserEmail() {
         return mAuth.getCurrentUser().getEmail();
     }
-    public String getContactUID(String email){
+
+    public String getContactUID(String email) {
         String uID = null;
         db.collection(getUserId()).whereEqualTo("email", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()){
-                        String uID= document.get("userID").toString();
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String uID = document.get("userID").toString();
                     }
 
                 }
@@ -250,6 +292,7 @@ public class FirebaseConnect {
 
     /**
      * Login user to firebase
+     *
      * @param email
      * @param pass
      */
@@ -274,56 +317,58 @@ public class FirebaseConnect {
     /**
      * Logout user
      */
-    public void logoutUser(){
+    public void logoutUser() {
         mAuth.signOut();
     }
 
     /**
      * Register new user on Firebase
+     *
      * @param user
      */
-    public void registerNewUser(Map user){
+    public void registerNewUser(Map user) {
 
-          mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-              @Override
-              public void onComplete(@NonNull Task<AuthResult> task) {
-                  createUser(user);
-                  Log.e("FireBase", "Register was success");
-              }
-          }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e("FireBase", "Register Failed");
-                }
-            });
+        mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                createUser(user);
+                Log.e("FireBase", "Register was success");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("FireBase", "Register Failed");
+            }
+        });
     }
 
     /**
      * After register firebase account, create the user in Users collection too
+     *
      * @param user
      */
 
-    public void createUser(Map user){
-            user.put("userID", getUserId());
-            user.remove("pass");
-            db.collection("Users").document(getUserId()).set(user).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e("FireBase", "User creation failed");
-                }
-            });
+    public void createUser(Map user) {
+        user.put("userID", getUserId());
+        user.remove("pass");
+        db.collection("Users").document(getUserId()).set(user).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("FireBase", "User creation failed");
+            }
+        });
 
     }
 
     /**
      * Add a new message in Firebase(send) also calls SQL-s send message function
+     *
      * @param message
      */
 
-    public void sendMessage(Map<String, Object> message){
+    public void sendMessage(Map<String, Object> message) {
         Date date = new Date();
         Long time = date.getTime();
-
 
 
         db.collection(message.get("to").toString()).document(time.toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
