@@ -30,7 +30,6 @@ public class MessageBoardActivity extends AppCompatActivity {
 
 
 
-
     private void initView() {
         contactsButton = findViewById(R.id.btnMesBrdNew);
     }
@@ -73,7 +72,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("test", "onStop");
+        // Log.d("test", "onStop");
         timer.cancel();
     }
 
@@ -84,17 +83,25 @@ public class MessageBoardActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
 
 
-            Log.d("test", "doInBackground: From MessageBoard");
+             Log.d("test", "doInBackground: From MessageBoard");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if(sqlConnect.isNotUploadedMessage()){
+                        Log.d("test", "There are not uploaded messages");
+
+                    }else{
+                        Log.d("test", "There arent any message to upload");
+                    }
+
+                    firebaseConnect.handleKeysReq();
                     if (firebaseConnect.isNewMessage()) {
                         firebaseConnect.downloadMessages();
                         ArrayList<MessageB> message = sqlConnect.getLastMessageEachPersonSQL(firebaseConnect.getUserId());
                         messageB = message;
                         adapter.setMessageB(messageB);
                     }else{
-                        Log.d("test", "No new message");
+                        // Log.d("test", "No new message");
                     }
                 }
             });

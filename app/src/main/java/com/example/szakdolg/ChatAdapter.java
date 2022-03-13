@@ -38,9 +38,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
             time = Long.parseLong(chats.get(position).getId());
-            Log.d("test", ""+time);
+            // Log.d("test", ""+time);
         }catch (Exception e){
-            Log.d("Error", e.toString());
+            // Log.d("Error", e.toString());
         }
 
         Date date = new Date(time);

@@ -78,11 +78,11 @@ public class RegisterActivity extends AppCompatActivity {
         protected Void doInBackground(Map<String, String>... maps) {
             boolean done = false;
             int tried=0;
-            Log.d("async", maps[0].toString());
+            // Log.d("async", maps[0].toString());
             firebaseConnect.registerNewUser(maps[0]);
 
             while (!done && tried<20) {
-                Log.d("async", "i am indaa loop " + tried);
+                // Log.d("async", "i am indaa loop " + tried);
                 SystemClock.sleep(100);
                 if (fb.isUserSigned()){
                     done = fb.isUserCreated(fb.getUserId());
@@ -95,11 +95,11 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
-            Log.d("async", "post execute");
+            // Log.d("async", "post execute");
             if(firebaseConnect.isUserSigned()) {
                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                 startActivity(intent);
-                Log.d("async", "User signed");
+                // Log.d("async", "User signed");
             }
         }
     }

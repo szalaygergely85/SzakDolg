@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
             String pass = maps[0].get("pass").toString();
             fb.loginUser(email,pass);
             while (!done && tried<10) {
-                Log.d("async", "i am indaa loop " + tried);
+                // Log.d("async", "i am indaa loop " + tried);
                 SystemClock.sleep(100);
                 done = fb.isUserSigned();
                 tried++;
@@ -89,9 +89,9 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
-            Log.d("async", "post execute");
+            // Log.d("async", "post execute");
             if (fb.isUserSigned()) {
-                Log.d("async", "signed?");
+                // Log.d("async", "signed?");
                 Intent intent = new Intent(LoginActivity.this, MessageBoardActivity.class);
                 startActivity(intent);
             }

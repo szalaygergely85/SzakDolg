@@ -3,9 +3,11 @@ package com.example.szakdolg;
 import java.util.Date;
 
 public class Chat {
+
+    private String id;
     private String message;
     private String sender;
-    private String id;
+
 
     public String getId() {
         return id;

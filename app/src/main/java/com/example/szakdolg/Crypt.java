@@ -89,7 +89,7 @@ public class Crypt {
             byte[] encryptedMessageBytes = encryptCipher.doFinal(secretMessageBytes);
             encodedMessage = Base64.getEncoder().encodeToString(encryptedMessageBytes);
             ;
-            Log.d("fasza", encodedMessage);
+            // Log.d("fasza", encodedMessage);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {

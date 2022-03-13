@@ -47,7 +47,7 @@ public class ChatActivity extends AppCompatActivity {
         setRepeatingAsyncTask();
 
         uID = (String) this.getIntent().getSerializableExtra("uID");
-        Log.d("test", uID);
+        // Log.d("test", uID);
 
 
         chat = new ArrayList<>();
@@ -116,7 +116,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("test", "ONDESTROY");
+        // Log.d("test", "ONDESTROY");
         timer.cancel();
     }
 
@@ -125,10 +125,11 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Log.d("test", "doInBackground: Chat act");
+            // Log.d("test", "doInBackground: Chat act");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    fireBase.handleKeysReq();
                     if (fireBase.isNewMessage(uID)) {
                         fireBase.downloadMessages();
                         chatDownload = sqlConnect.getMessagesSQL(uID);
@@ -136,7 +137,7 @@ public class ChatActivity extends AppCompatActivity {
                         adapter.setChats(chat);
                         //chatRecView.scrollToPosition(adapter.getItemCount()-1);
                     }else{
-                        Log.d("test", "No new message from " + uID);
+                        // Log.d("test", "No new message from " + uID);
                     }
                 }
             });
