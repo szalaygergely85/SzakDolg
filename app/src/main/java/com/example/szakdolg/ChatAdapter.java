@@ -47,7 +47,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
         Format format = new SimpleDateFormat("HH:mm");
         String timeForm = format.format(date);
-        if (chats.get(position).getSender().equals(userID)){
+        if (!chats.get(position).isFromMe()){
             holder.txtTextFrMe.setText(chats.get(position).getMessage());
             holder.txtTimeOut.setText(timeForm);
             holder.relIn.setVisibility(View.GONE);

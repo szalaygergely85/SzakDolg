@@ -1,51 +1,61 @@
 package com.example.szakdolg;
 
 public class MessageB {
-    private String from;
-    private String to;
-    private String messageID;
-    private String message;
+
+    private String messageId;
+    private String contactId;
+    private String contactUserName;
+    private String text;
+    private boolean read;
     private String imageUrl;
 
-    public MessageB(String messageID, String from, String to, String message, String imageUrl) {
-        this.from = from;
-        this.to = to;
-        this.messageID = messageID;
-        this.message = message;
+    public MessageB(String messageId, String contactId, String contactUserName, String text, boolean read, String imageUrl) {
+        this.messageId = messageId;
+        this.contactId = contactId;
+        this.contactUserName = contactUserName;
+        this.text = text;
+        this.read = read;
         this.imageUrl = imageUrl;
-
     }
 
-    public String getFrom() {
-        return from;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
-    public String getTo() {
-        return to;
+    public String getContactId() {
+        return contactId;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setContactId(String contactId) {
+        this.contactId = contactId;
     }
 
-    public String getMessageID() {
-        return messageID;
+    public String getContactUserName() {
+        return contactUserName;
     }
 
-    public void setMessageID(String messageID) {
-        this.messageID = messageID;
+    public void setContactUserName(String contactUserName) {
+        this.contactUserName = contactUserName;
     }
 
-    public String getMessage() {
-        return message;
+    public String getText() {
+        return text;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 
     public String getImageUrl() {
@@ -54,5 +64,17 @@ public class MessageB {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "MessageB{" +
+                "messageId='" + messageId + '\'' +
+                ", contactId='" + contactId + '\'' +
+                ", contactUserName='" + contactUserName + '\'' +
+                ", text='" + text + '\'' +
+                ", read=" + read +
+                ", imageUrl='" + imageUrl + '\'' +
+                '}';
     }
 }

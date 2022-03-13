@@ -22,7 +22,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
     FirebaseConnect firebaseConnect = new FirebaseConnect();
-    private SQLConnect sqlConnect = new SQLConnect();
+    private SQLConnect sqlConnect = new SQLConnect(firebaseConnect.getUserId());
     MessageBoardRecAdapter adapter;
     ArrayList<MessageB> messageB;
 
@@ -88,7 +88,8 @@ public class MessageBoardActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     if(sqlConnect.isNotUploadedMessage()){
-                        Log.d("test", "There are not uploaded messages");
+                        firebaseConnect.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
+                        Log.d("test", "There are some not uploaded messages");
 
                     }else{
                         Log.d("test", "There arent any message to upload");

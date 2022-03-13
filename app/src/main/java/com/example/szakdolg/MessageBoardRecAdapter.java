@@ -1,8 +1,10 @@
 package com.example.szakdolg;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +21,7 @@ import java.util.ArrayList;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
     private FirebaseConnect firebaseConnect = new FirebaseConnect();
-    private SQLConnect sqlConnect = new SQLConnect();
+    private SQLConnect sqlConnect = new SQLConnect(firebaseConnect.getUserId());
     private ArrayList<MessageB> messageB = new ArrayList<>();
 
     public MessageBoardRecAdapter(Context mContext) {
@@ -37,23 +39,21 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (messageB.get(position).getFrom().toString().equals(firebaseConnect.getUserId())){
-            holder.txtName.setText(sqlConnect.getNameFrContact(messageB.get(position).getTo().toString()));
-        }else {
-            holder.txtName.setText(sqlConnect.getNameFrContact(messageB.get(position).getFrom().toString()));
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+
+
+        if(!messageB.get(position).isRead()){
+            holder.txtMessage.setTypeface(null, Typeface.BOLD);
+            holder.txtName.setTypeface(null, Typeface.BOLD);
         }
-        holder.txtMessage.setText(messageB.get(position).getMessage());
+        holder.txtName.setText(messageB.get(position).getContactUserName());
+        holder.txtMessage.setText(messageB.get(position).getText());
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                if (messageB.get(position).getFrom().toString().equals(firebaseConnect.getUserId())){
-                    intent.putExtra("uID", messageB.get(position).getTo());
-                }else {
-                    intent.putExtra("uID", messageB.get(position).getFrom());
-                }
+                intent.putExtra("uID", messageB.get(position).getContactId());
                 mContext.startActivity(intent);
 
             }

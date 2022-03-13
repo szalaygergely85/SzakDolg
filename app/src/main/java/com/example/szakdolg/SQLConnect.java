@@ -12,22 +12,20 @@ import java.util.Map;
 public class SQLConnect {
     private SQLiteDatabase mydatabase;
     private boolean privBoolean = false;
-    public SQLConnect() {
+    public SQLConnect(String uID) {
     //TODO Eleg csak a cimzett, jelolni hogy in-out inkabb az uziken
         //
-
-
         try {
 
             // Create or connect to sql database
-            mydatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.example.szakdolg/databases/szakD.db", null);
+            mydatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.example.szakdolg/databases/data"+ uID +".db", null);
             //mydatabase.execSQL("DROP TABLE Keys");
            // mydatabase.execSQL("DROP TABLE Contacts");
             //mydatabase.execSQL("DROP TABLE Messages");
 
             //create tables;
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
-            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Fr VARCHAR, ToID VARCHAR, Text VARCHAR, Read BOOLEAN, Uploaded BOOLEAN);");
+            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Contact VARCHAR, Text VARCHAR, IsFrMe BOOLEAN, Read BOOLEAN, Uploaded BOOLEAN);");
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Keys(userId VARCHAR, Private VARCHAR, Public VARCHAR, PublicExt VARCHAR);");
 
         } catch (Exception e) {
@@ -167,15 +165,23 @@ public class SQLConnect {
 
         ArrayList<MessageB> messages = new ArrayList<>();
         try {
-            Cursor resultSet = mydatabase.rawQuery("SELECT Text, ToID, Fr, max(Messageid)  FROM Messages WHERE Fr IN ((SELECT DISTINCT(userId) FROM Contacts) AND ToID='"+ userID +"') OR (ToID IN (SELECT DISTINCT(userId) FROM Contacts) AND Fr='"+ userID +"') GROUP BY Fr, ToID", null);
+            Cursor resultSet = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Text, Messages.Contact, Messages.Read, Contacts.userName FROM Contacts LEFT JOIN Messages ON Messages.Contact=Contacts.userId GROUP BY Contacts.userName", null);
             // Log.d("SQL", "" + resultSet.getCount());
             if (resultSet.moveToFirst()) {
                 do {
-                    String Text = resultSet.getString(0);
-                    String To = resultSet.getString(1);
-                    String Fr = resultSet.getString(2);
-                    String Messageid = resultSet.getString(2);
-                    messages.add(new MessageB(Messageid, Fr , To, Text, "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?cs=srgb&dl=pexels-mohamed-abdelghaffar-771742.jpg"));
+                    String messageId = resultSet.getString(0);
+                    String text = resultSet.getString(1);
+                    String contact = resultSet.getString(2);
+                    boolean read;
+                    if( 1== resultSet.getInt(3)){
+                        read = true;
+                    }else {
+                        read = false;
+                    }
+
+                    String username = resultSet.getString(4);
+
+                    messages.add(new MessageB(messageId, contact ,username, text, read, "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?cs=srgb&dl=pexels-mohamed-abdelghaffar-771742.jpg"));
                 } while (resultSet.moveToNext());
             }
         } catch (SQLException e) {
@@ -185,39 +191,50 @@ public class SQLConnect {
     }
 
     /**
-     * Gett all message from UID
+     * Get all message from UID
      *
      * @param frUiD
-     * @return message
+     * @return ArrayList<Chat>
      */
     public ArrayList<Chat> getMessagesSQL(String frUiD) {
         ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text, Messages.Messageid FROM Messages WHERE Messages.Fr='" + frUiD + "' OR Messages.ToID='" + frUiD + "' ORDER BY Messages.Messageid", null);
-
+        Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages WHERE Messages.Contact='" + frUiD + "' ORDER BY Messages.Messageid", null);
+        boolean isFrMe;
         if (result.moveToFirst()) {
             int i = 0;
             do {
-                String fr = result.getString(0);
-                String to = result.getString(1);
+                String id = result.getString(0);
+                String contact = result.getString(1);
                 String mess = result.getString(2);
-                String id = result.getString(3);
-                message.add(new Chat(mess, fr, id));
+
+                if(1==result.getInt(3)){
+                    isFrMe = true;
+                }else {
+                    isFrMe = false;
+                }
+                message.add(new Chat(id, contact, mess, isFrMe, false, false));
             } while (result.moveToNext());
         }
         return message;
     }
     public ArrayList<Chat> getMessagesNOTUploaded() {
+        boolean isFrMe;
         ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Fr, Messages.ToID, Messages.Text, Messages.Messageid FROM Messages Where Uploaded='false'", null);
+        Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages Where Uploaded='false'", null);
 
         if (result.moveToFirst()) {
             int i = 0;
             do {
-                String fr = result.getString(0);
-                String to = result.getString(1);
+                String id = result.getString(0);
+                String contact = result.getString(1);
                 String mess = result.getString(2);
-                String id = result.getString(3);
-                message.add(new Chat(mess, fr, id));
+
+                if(1==result.getInt(3)){
+                    isFrMe = true;
+                }else {
+                    isFrMe = false;
+                }
+                message.add(new Chat(id, contact, mess, isFrMe, false, false));
             } while (result.moveToNext());
         }
         return message;
@@ -226,10 +243,12 @@ public class SQLConnect {
      * Instert one message into sql table
      * @param message
      */
-    public void addMessageSql(Map<String, Object> message){
+    public void addMessageSql(Chat message){
+
         try {
-            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.get("time").toString() + "', '" + message.get("from").toString() + "', '" + message.get("to").toString() + "' , '" + message.get("message").toString() + "', 'false', 'false');");
-            Log.e("SQL", message.get("message").toString());
+
+            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.getId() + "', '" + message.getContact() + "', '" + message.getMessage() + "' , '" + message.isFromMe()+ "', 'false', 'false');");
+            Log.e("SQL", message.getMessage());
         } catch (SQLException e) {
             Log.e("SQL", e.toString());
         }

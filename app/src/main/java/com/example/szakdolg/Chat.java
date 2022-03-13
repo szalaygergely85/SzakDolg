@@ -1,25 +1,55 @@
 package com.example.szakdolg;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Chat {
-
     private String id;
+    private String contact;
     private String message;
-    private String sender;
+    private boolean isFromMe;
+    private boolean isRead;
+    private boolean isUploaded;
 
+    public Chat(String id, String contact, String message, boolean isFromMe, boolean isRead, boolean isUploaded) {
+        this.id = id;
+        this.message = message;
+        this.contact = contact;
+        this.isFromMe = isFromMe;
+        this.isRead = isRead;
+        this.isUploaded = isUploaded;
+    }
+
+    public Map getHashMap(){
+        Map<String, Object> message = new HashMap<>();
+        message.put("time", id);
+        message.put("contact", contact);
+        message.put("message", message);
+        message.put("isFromMe", isFromMe);
+        message.put("isRead", isRead);
+        message.put("isUploaded", isUploaded);
+
+        return message;
+    }
+
+    @Override
+    public String toString() {
+        return "Chat{" +
+                "id='" + id + '\'' +
+                ", message='" + message + '\'' +
+                ", contact='" + contact + '\'' +
+                ", isFromMe=" + isFromMe +
+                ", isRead=" + isRead +
+                ", isUploaded=" + isUploaded +
+                '}';
+    }
 
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        this.id = id;
-    }
-
-    public Chat(String message, String sender, String id) {
-        this.message = message;
-        this.sender = sender;
         this.id = id;
     }
 
@@ -31,26 +61,35 @@ public class Chat {
         this.message = message;
     }
 
-
-
-    public void setDate(Date date) {
-      //  this.date = date;
+    public String getContact() {
+        return contact;
     }
 
-    public String getSender() {
-        return sender;
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public boolean isFromMe() {
+        return isFromMe;
     }
 
-    @Override
-    public String toString() {
-        return "Chat{" +
-                "message='" + message + '\'' +
-        //        ", date=" + date +
-                ", sender='" + sender + '\'' +
-                '}';
+    public void setFromMe(boolean fromMe) {
+        isFromMe = fromMe;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
+
+    public boolean isUploaded() {
+        return isUploaded;
+    }
+
+    public void setUploaded(boolean uploaded) {
+        isUploaded = uploaded;
     }
 }

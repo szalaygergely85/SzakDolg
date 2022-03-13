@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 public class ContactsActivity extends AppCompatActivity {
     private RecyclerView contsRecView;
-    private FirebaseConnect database;
-    private SQLConnect sqlConnect = new SQLConnect();
+    private FirebaseConnect firebaseConnect;
+    private SQLConnect sqlConnect;
     ArrayList<Contact> contacts;
     private FloatingActionButton btnNewContact;
 
@@ -29,7 +29,8 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
         initView();
-        database = new FirebaseConnect();
+        firebaseConnect = new FirebaseConnect();
+        sqlConnect = new SQLConnect(firebaseConnect.getUserId());
 
         contacts = new ArrayList<>();
         contacts = sqlConnect.getContacts();

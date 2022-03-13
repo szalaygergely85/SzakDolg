@@ -7,8 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,12 +23,12 @@ public class ChatActivity extends AppCompatActivity {
     final Handler handler = new Handler();
     FirebaseConnect fireBase = new FirebaseConnect();
     ChatAdapter adapter;
-    ArrayList<Chat> chat;
+    ArrayList<Chat> messageList;
     Timer timer = new Timer();
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;
-    private SQLConnect sqlConnect = new SQLConnect();
+    private SQLConnect sqlConnect = new SQLConnect(fireBase.getUserId());
     private String uID;
 
     private void initView() {
@@ -50,11 +48,11 @@ public class ChatActivity extends AppCompatActivity {
         // Log.d("test", uID);
 
 
-        chat = new ArrayList<>();
+        messageList = new ArrayList<>();
 
-        chat = sqlConnect.getMessagesSQL(uID);
+        messageList = sqlConnect.getMessagesSQL(uID);
         adapter = new ChatAdapter();
-        adapter.setChats(chat);
+        adapter.setChats(messageList);
 
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -72,20 +70,12 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Date date = new Date();
                 Long time = date.getTime();
+                Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(), true, false, false);
 
-                Map<String, Object> message = new HashMap<>();
-                message.put("from", fireBase.getUserId());
-                message.put("to", uID);
-                message.put("message", edtMess.getText().toString());
-                message.put("time", time.toString());
-                message.put("isRead", false);
-                message.put("isDownloaded", false);
+                sqlConnect.addMessageSql(chat);
+                fireBase.sendMessage(chat);
 
-
-                sqlConnect.addMessageSql(message);
-                fireBase.sendMessage(message);
-
-                chat.add(new Chat(edtMess.getText().toString(), fireBase.getUserId(), time.toString()));
+                messageList.add(chat);
                 adapter.notifyDataSetChanged();
                 edtMess.getText().clear();
             }
@@ -133,8 +123,8 @@ public class ChatActivity extends AppCompatActivity {
                     if (fireBase.isNewMessage(uID)) {
                         fireBase.downloadMessages();
                         chatDownload = sqlConnect.getMessagesSQL(uID);
-                        chat = chatDownload;
-                        adapter.setChats(chat);
+                        messageList = chatDownload;
+                        adapter.setChats(messageList);
                         //chatRecView.scrollToPosition(adapter.getItemCount()-1);
                     }else{
                         // Log.d("test", "No new message from " + uID);

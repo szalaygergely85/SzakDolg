@@ -18,10 +18,10 @@ import java.util.ArrayList;
 public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder>{
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
-
-    SQLConnect sqlConnect = new SQLConnect();
-
     FirebaseConnect firebaseConnect = new FirebaseConnect();
+    SQLConnect sqlConnect = new SQLConnect(firebaseConnect.getUserId());
+
+
 
     public SearchContactAdapter(Context mContext) {
         this.mContext = mContext;

@@ -24,7 +24,7 @@ import java.util.Map;
 public class FirebaseConnect {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    SQLConnect sqlConnect = new SQLConnect();
+    SQLConnect sqlConnect ;
     boolean done = false;
     boolean value = false;
     Contact contact;
@@ -35,6 +35,7 @@ public class FirebaseConnect {
         //FireBase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        sqlConnect = new SQLConnect(getUserId());
     }
 
     /**
@@ -52,7 +53,6 @@ public class FirebaseConnect {
                                     !document.get("to").toString().equals(null) &&
                                     !document.get("time").toString().equals(null)) {
                                 if (sqlConnect.isKey(document.get("from").toString())){
-
                                     // Log.d("FireBase", document.get("from").toString());
 
                                     // if i dont have the sender in Contacts, adding it.
@@ -62,18 +62,15 @@ public class FirebaseConnect {
                                     // Get priv key from SQL
                                     privKey = sqlConnect.getPrivateKey(document.get("from").toString());
                                     // Decrypt message here
-                                     Log.d("Crypt", privKey);
+                                    Log.d("Crypt", privKey);
+
                                     String decMessage = Crypt.deCrypt(document.get("message").toString(), privKey);
                                     Log.d("Crypt", decMessage);
-                                    // Create Map for the message
-                                    Map<String, Object> message = new HashMap<>();
-                                    message.put("from", document.get("from").toString());
-                                    message.put("to", document.get("to").toString());
-                                    message.put("message", decMessage);
-                                    message.put("time", document.get("time").toString());
-                                    message.put("isRead", false);
-                                    // Log.d("SQL", document.get("message").toString());
-                                    sqlConnect.addMessageSql(message);
+
+                                    // Create a CHat class for the message
+                                    Chat chat = new Chat(document.get("time").toString(), document.get("from").toString(), decMessage, false, false, false);
+
+                                    sqlConnect.addMessageSql(chat);
                                     db.collection(getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
                                 }else{
                                     Log.e("Crypt", "Dont have key form the sender");
@@ -464,18 +461,27 @@ public class FirebaseConnect {
      * @param message
      */
 
-    public void sendMessage(Map<String, Object> message) {
+    public void sendMessage(Chat message) {
 
 
-        Log.d("Crypt", message.get("to").toString());
-        if (sqlConnect.isPubExtKey(message.get("to").toString())){
+        Log.d("Crypt", message.getContact());
+
+        if (sqlConnect.isPubExtKey(message.getId())){
             Log.d("Crypt", "found the Key, sending message");
-            pubKey = sqlConnect.getPublicExtKey(message.get("to").toString());
-            Log.d("Crypt", "found the Key" + sqlConnect.getPublicExtKey(message.get("to").toString()));
-            String encMessage = Crypt.enCrypt(message.get("message").toString(), pubKey);
-            message.put("message", encMessage);
+            pubKey = sqlConnect.getPublicExtKey(message.getContact());
+            Log.d("Crypt", "found the Key" + sqlConnect.getPublicExtKey(message.getContact()));
+            String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
+            message.setMessage(encMessage);
+            Map<String, Object> cont = message.getHashMap();
+            cont.remove("isFromMe");
+            cont.remove("isRead");
+            cont.remove("isUploaded");
 
-            db.collection(message.get("to").toString()).document(message.get("time").toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+            cont.put("isDownloaded", false);
+            cont.put("isRead", false);
+            Log.d("Crypt", cont.toString());
+            db.collection(message.getContact()).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
                     // Log.d("FireStore", "Sikerult elkuldeni az uzit");
@@ -491,7 +497,7 @@ public class FirebaseConnect {
             if(isKeySentToME()){
                 handleKeysReq();
             }else{
-                sendKeyRequest(message.get("to").toString());
+                sendKeyRequest(message.getContact());
                 Log.d("Crypt", "Didnt find the key, sending key request");
             }
 
@@ -499,45 +505,52 @@ public class FirebaseConnect {
 
     }
     public void sendArrayOfMessages(ArrayList<Chat> messages) {
+        Map<String, Object> cont;
         for (int counter = 0; counter < messages.size(); counter++) {
-            Chat chat = messages.get(counter);
-            Map<String, Object> message = new HashMap<>();
-            message.put("from", fireBase.getUserId());
-            message.put("to", uID);
-            message.put("message", edtMess.getText().toString());
-            message.put("time", time.toString());
-            message.put("isRead", false);
-            message.put("isDownloaded", false);
-        }
+            Chat message = messages.get(counter);
+            Log.d("Crypt", "Trying to send not uploaded messages to : " +message.toString());
 
-        Log.d("Crypt", message.get("to").toString());
-        if (sqlConnect.isPubExtKey(message.get("to").toString())){
-            Log.d("Crypt", "found the Key, sending message");
-            pubKey = sqlConnect.getPublicExtKey(message.get("to").toString());
-            Log.d("Crypt", "found the Key" + sqlConnect.getPublicExtKey(message.get("to").toString()));
-            String encMessage = Crypt.enCrypt(message.get("message").toString(), pubKey);
-            message.put("message", encMessage);
+            if (sqlConnect.isPubExtKey(message.getContact())){
+                Log.d("Crypt", "found the Key, sending message");
+                pubKey = sqlConnect.getPublicExtKey(message.getContact());
+                Log.d("Crypt", "found the Key" + sqlConnect.getPublicExtKey(message.getContact()));
+                String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
+                Log.d("Crypt", "message is" + encMessage);
 
-            db.collection(message.get("to").toString()).document(message.get("time").toString()).set(message).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                     Log.d("FireStore", "Sikerult elkuldeni az uzit");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                     Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
-                }
-            });
-        }else{
+                cont= message.getHashMap();
+                cont.put("message", encMessage);
+                cont.remove("isFromMe");
+                cont.remove("isRead");
+                cont.remove("isUploaded");
+                cont.put("contact", getUserId());
+                cont.put("isDownloaded", false);
+                cont.put("isRead", false);
 
-            if(isKeySentToME()){
-                handleKeysReq();
+                Log.d("Crypt", "message is" + cont.toString());
+
+                db.collection(message.getContact()).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                         Log.d("FireStore", "Sikerult elkuldeni az uzit");
+                         sqlConnect.setMessageToUploaded(message.getId());
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                         Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
+                    }
+                });
             }else{
-                sendKeyRequest(message.get("to").toString());
-                Log.d("Crypt", "Didnt find the key, sending key request");
-            }
 
+                if(isKeySentToME()){
+                    handleKeysReq();
+                }else{
+                    sendKeyRequest(message.getContact());
+                    Log.d("Crypt", "Didnt find the key, sending key request");
+                }
+
+            }
         }
 
     }
