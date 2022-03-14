@@ -22,7 +22,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
     FirebaseConnect firebaseConnect = new FirebaseConnect();
-    private SQLConnect sqlConnect = new SQLConnect(firebaseConnect.getUserId());
+    private SQLConnect sqlConnect = new SQLConnect();
     MessageBoardRecAdapter adapter;
     ArrayList<MessageB> messageB;
 

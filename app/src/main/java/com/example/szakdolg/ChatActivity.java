@@ -1,5 +1,7 @@
 package com.example.szakdolg;
 
+import static java.lang.Boolean.TRUE;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +31,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;
-    private SQLConnect sqlConnect = new SQLConnect(fireBase.getUserId());
+    private SQLConnect sqlConnect;
     private String uID;
 
     private void initView() {
@@ -45,11 +48,11 @@ public class ChatActivity extends AppCompatActivity {
         setRepeatingAsyncTask();
 
         uID = (String) this.getIntent().getSerializableExtra("uID");
-        // Log.d("test", uID);
+        Log.d("test", uID);
 
 
         messageList = new ArrayList<>();
-
+        sqlConnect = new SQLConnect();
         messageList = sqlConnect.getMessagesSQL(uID);
         adapter = new ChatAdapter();
         adapter.setChats(messageList);
@@ -70,8 +73,8 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Date date = new Date();
                 Long time = date.getTime();
-                Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(), true, false, false);
-
+                Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(),1, false, false);
+                Log.d("Crypt", chat.toString());
                 sqlConnect.addMessageSql(chat);
                 fireBase.sendMessage(chat);
 

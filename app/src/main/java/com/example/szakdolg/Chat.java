@@ -8,11 +8,11 @@ public class Chat {
     private String id;
     private String contact;
     private String message;
-    private boolean isFromMe;
+    private int isFromMe;
     private boolean isRead;
     private boolean isUploaded;
 
-    public Chat(String id, String contact, String message, boolean isFromMe, boolean isRead, boolean isUploaded) {
+    public Chat(String id, String contact, String message, int isFromMe, boolean isRead, boolean isUploaded) {
         this.id = id;
         this.message = message;
         this.contact = contact;
@@ -69,11 +69,11 @@ public class Chat {
         this.contact = contact;
     }
 
-    public boolean isFromMe() {
+    public int isFromMe() {
         return isFromMe;
     }
 
-    public void setFromMe(boolean fromMe) {
+    public void setFromMe(int fromMe) {
         isFromMe = fromMe;
     }
 

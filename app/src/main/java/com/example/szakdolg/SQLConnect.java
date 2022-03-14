@@ -1,10 +1,14 @@
 package com.example.szakdolg;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,20 +16,26 @@ import java.util.Map;
 public class SQLConnect {
     private SQLiteDatabase mydatabase;
     private boolean privBoolean = false;
-    public SQLConnect(String uID) {
+    public SQLConnect() {
     //TODO Eleg csak a cimzett, jelolni hogy in-out inkabb az uziken
         //
         try {
 
+            File dbpath = (new File("/data/data/com.example.szakdolg/databases/data.db"));
+            if (!(new File(dbpath.getParent()).exists())) {
+                new File(dbpath.getParent()).mkdirs();
+            }
+            mydatabase =  SQLiteDatabase.openOrCreateDatabase(dbpath,null);
+
             // Create or connect to sql database
-            mydatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.example.szakdolg/databases/data"+ uID +".db", null);
+
             //mydatabase.execSQL("DROP TABLE Keys");
            // mydatabase.execSQL("DROP TABLE Contacts");
             //mydatabase.execSQL("DROP TABLE Messages");
 
             //create tables;
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
-            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Contact VARCHAR, Text VARCHAR, IsFrMe BOOLEAN, Read BOOLEAN, Uploaded BOOLEAN);");
+            mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Contact VARCHAR, Text VARCHAR, IsFrMe INT, Read BOOLEAN, Uploaded BOOLEAN);");
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Keys(userId VARCHAR, Private VARCHAR, Public VARCHAR, PublicExt VARCHAR);");
 
         } catch (Exception e) {
@@ -165,7 +175,7 @@ public class SQLConnect {
 
         ArrayList<MessageB> messages = new ArrayList<>();
         try {
-            Cursor resultSet = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Text, Messages.Contact, Messages.Read, Contacts.userName FROM Contacts LEFT JOIN Messages ON Messages.Contact=Contacts.userId GROUP BY Contacts.userName", null);
+            Cursor resultSet = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Text, Contacts.userId, Messages.Read, Contacts.userName FROM Contacts LEFT JOIN Messages ON Messages.Contact=Contacts.userId GROUP BY Contacts.userName", null);
             // Log.d("SQL", "" + resultSet.getCount());
             if (resultSet.moveToFirst()) {
                 do {
@@ -199,28 +209,26 @@ public class SQLConnect {
     public ArrayList<Chat> getMessagesSQL(String frUiD) {
         ArrayList<Chat> message = new ArrayList<>();
         Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages WHERE Messages.Contact='" + frUiD + "' ORDER BY Messages.Messageid", null);
-        boolean isFrMe;
+        Log.d("Chat", " " + result.getCount());
         if (result.moveToFirst()) {
             int i = 0;
             do {
                 String id = result.getString(0);
                 String contact = result.getString(1);
                 String mess = result.getString(2);
+                Log.d("Chat", " " + result.getInt(3));
+                int isFrMe = result.getInt(3);
 
-                if(1==result.getInt(3)){
-                    isFrMe = true;
-                }else {
-                    isFrMe = false;
-                }
                 message.add(new Chat(id, contact, mess, isFrMe, false, false));
+                Log.d("Chat", message.get(i).toString());
+                i++;
             } while (result.moveToNext());
         }
         return message;
     }
     public ArrayList<Chat> getMessagesNOTUploaded() {
-        boolean isFrMe;
         ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages Where Uploaded='false'", null);
+        Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages Where Uploaded='FALSE'", null);
 
         if (result.moveToFirst()) {
             int i = 0;
@@ -229,11 +237,8 @@ public class SQLConnect {
                 String contact = result.getString(1);
                 String mess = result.getString(2);
 
-                if(1==result.getInt(3)){
-                    isFrMe = true;
-                }else {
-                    isFrMe = false;
-                }
+                int isFrMe = result.getInt(3);
+
                 message.add(new Chat(id, contact, mess, isFrMe, false, false));
             } while (result.moveToNext());
         }

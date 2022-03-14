@@ -24,7 +24,7 @@ import java.util.Map;
 public class FirebaseConnect {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    SQLConnect sqlConnect ;
+    SQLConnect sqlConnect =  new SQLConnect();
     boolean done = false;
     boolean value = false;
     Contact contact;
@@ -35,7 +35,7 @@ public class FirebaseConnect {
         //FireBase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        sqlConnect = new SQLConnect(getUserId());
+
     }
 
     /**
@@ -48,19 +48,18 @@ public class FirebaseConnect {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (!document.get("message").toString().equals(null) &&
-                                    !document.get("from").toString().equals(null) &&
-                                    !document.get("to").toString().equals(null) &&
+                            if (!document.get("contact").toString().equals(null) &&
+                                    !document.get("message").toString().equals(null) &&
                                     !document.get("time").toString().equals(null)) {
-                                if (sqlConnect.isKey(document.get("from").toString())){
+                                if (sqlConnect.isKey(document.get("contact").toString())){
                                     // Log.d("FireBase", document.get("from").toString());
 
                                     // if i dont have the sender in Contacts, adding it.
-                                    if (!sqlConnect.isInContracts(document.get("from").toString())) {
-                                        addAUser(document.get("from").toString());
+                                    if (!sqlConnect.isInContracts(document.get("contact").toString())) {
+                                        addAUser(document.get("contact").toString());
                                     }
                                     // Get priv key from SQL
-                                    privKey = sqlConnect.getPrivateKey(document.get("from").toString());
+                                    privKey = sqlConnect.getPrivateKey(document.get("contact").toString());
                                     // Decrypt message here
                                     Log.d("Crypt", privKey);
 
@@ -68,7 +67,7 @@ public class FirebaseConnect {
                                     Log.d("Crypt", decMessage);
 
                                     // Create a CHat class for the message
-                                    Chat chat = new Chat(document.get("time").toString(), document.get("from").toString(), decMessage, false, false, false);
+                                    Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, false, false);
 
                                     sqlConnect.addMessageSql(chat);
                                     db.collection(getUserId()).document(document.get("time").toString()).update("isDownloaded", true);

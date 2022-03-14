@@ -19,7 +19,7 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
     FirebaseConnect firebaseConnect = new FirebaseConnect();
-    SQLConnect sqlConnect = new SQLConnect(firebaseConnect.getUserId());
+    SQLConnect sqlConnect = new SQLConnect();
 
 
 

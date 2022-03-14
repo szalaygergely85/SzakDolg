@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
     private FirebaseConnect firebaseConnect = new FirebaseConnect();
-    private SQLConnect sqlConnect = new SQLConnect(firebaseConnect.getUserId());
+    private SQLConnect sqlConnect = new SQLConnect();
     private ArrayList<MessageB> messageB = new ArrayList<>();
 
     public MessageBoardRecAdapter(Context mContext) {
@@ -52,6 +52,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("test", messageB.get(position).getContactId());
                 Intent intent = new Intent(mContext, ChatActivity.class);
                 intent.putExtra("uID", messageB.get(position).getContactId());
                 mContext.startActivity(intent);
