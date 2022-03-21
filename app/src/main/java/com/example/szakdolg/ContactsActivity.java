@@ -29,7 +29,7 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
         initView();
-        firebaseConnect = new FirebaseConnect();
+        firebaseConnect = new FirebaseConnect(this);
         sqlConnect = new SQLConnect();
 
         contacts = new ArrayList<>();

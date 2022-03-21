@@ -1,5 +1,6 @@
 package com.example.szakdolg;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +17,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
-
+    private Context mContext;
     private ArrayList<Chat> chats = new ArrayList<>();
-    private FirebaseConnect firebaseConnect = new FirebaseConnect();
+    private FirebaseConnect firebaseConnect;
     private String userID;
     long time;
-    public ChatAdapter() {
+    public ChatAdapter(Context mContext) {
+        this.mContext = mContext;
         userID = firebaseConnect.getUserId();
+        firebaseConnect = new FirebaseConnect(mContext);
 
     }
 

@@ -19,7 +19,7 @@ public class LoginActivity extends AppCompatActivity {
      EditText editPass;
     private Button btnReg;
     private Button btnLog;
-    FirebaseConnect fb = new FirebaseConnect();
+    FirebaseConnect fb = new FirebaseConnect(this);
 
 
     public void initView(){
@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public class LoginAsyncTask extends AsyncTask<Map<String, String>, Void, Void> {
-        FirebaseConnect fb = new FirebaseConnect();
+        FirebaseConnect fb = new FirebaseConnect(this);
 
         @Override
         protected Void doInBackground(Map<String, String>... maps) {

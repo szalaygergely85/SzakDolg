@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
-    private FirebaseConnect firebaseConnect = new FirebaseConnect();
+    private FirebaseConnect firebaseConnect = new FirebaseConnect(this);
     private SQLConnect sqlConnect = new SQLConnect();
     private ArrayList<MessageB> messageB = new ArrayList<>();
 

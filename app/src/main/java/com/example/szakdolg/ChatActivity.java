@@ -24,7 +24,7 @@ import java.util.TimerTask;
 public class ChatActivity extends AppCompatActivity {
 
     final Handler handler = new Handler();
-    FirebaseConnect fireBase = new FirebaseConnect();
+    FirebaseConnect fireBase = new FirebaseConnect(this);
     ChatAdapter adapter;
     ArrayList<Chat> messageList;
     Timer timer = new Timer();
@@ -54,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
         messageList = new ArrayList<>();
         sqlConnect = new SQLConnect();
         messageList = sqlConnect.getMessagesSQL(uID);
-        adapter = new ChatAdapter();
+        adapter = new ChatAdapter(this);
         adapter.setChats(messageList);
 
         chatRecView.setAdapter(adapter);

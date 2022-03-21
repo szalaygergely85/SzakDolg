@@ -17,10 +17,11 @@ import java.util.ArrayList;
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder>{
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
-    FirebaseConnect firebaseConnect = new FirebaseConnect();
+    FirebaseConnect firebaseConnect;
 
     public ContactsAdapter(Context mContext) {
         this.mContext = mContext;
+        firebaseConnect = new FirebaseConnect(mContext);
     }
 
     @NonNull

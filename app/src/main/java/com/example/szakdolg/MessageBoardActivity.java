@@ -19,9 +19,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MessageBoardActivity extends AppCompatActivity {
+    private static final String TAG = "MessageB";
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
-    FirebaseConnect firebaseConnect = new FirebaseConnect();
+    FirebaseConnect firebaseConnect = new FirebaseConnect(this);
     private SQLConnect sqlConnect = new SQLConnect();
     MessageBoardRecAdapter adapter;
     ArrayList<MessageB> messageB;
@@ -72,7 +73,6 @@ public class MessageBoardActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        // Log.d("test", "onStop");
         timer.cancel();
     }
 
@@ -83,26 +83,28 @@ public class MessageBoardActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
 
 
-             Log.d("test", "doInBackground: From MessageBoard");
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if(sqlConnect.isNotUploadedMessage()){
+                        Log.d(TAG, "doInBackground: "+ sqlConnect.getMessagesNOTUploaded().toString());
                         firebaseConnect.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
-                        Log.d("test", "There are some not uploaded messages");
+                        Log.d(TAG, "doInBackground: There are some not uploaded messages");
 
                     }else{
-                        Log.d("test", "There arent any message to upload");
+                        Log.d(TAG, "doInBackground: There arent any message to upload");
                     }
 
                     firebaseConnect.handleKeysReq();
                     if (firebaseConnect.isNewMessage()) {
+                        Log.i(TAG, "doInBackground: There is a new message");
                         firebaseConnect.downloadMessages();
                         ArrayList<MessageB> message = sqlConnect.getLastMessageEachPersonSQL(firebaseConnect.getUserId());
                         messageB = message;
                         adapter.setMessageB(messageB);
                     }else{
-                        // Log.d("test", "No new message");
+                        Log.i(TAG, "doInBackground: No new message");
                     }
                 }
             });

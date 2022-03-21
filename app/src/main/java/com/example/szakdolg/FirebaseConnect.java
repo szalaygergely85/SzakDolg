@@ -1,5 +1,7 @@
 package com.example.szakdolg;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseConnect {
+    private static final String TAG = "FirebaseConnect";
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     SQLConnect sqlConnect =  new SQLConnect();
@@ -30,12 +33,13 @@ public class FirebaseConnect {
     Contact contact;
     private String pubKey = null;
     private String privKey = null;
-    public FirebaseConnect() {
-
+    private Context context;
+    public FirebaseConnect(Context context) {
+        this.context=context;
         //FireBase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
+        Log.i(TAG, "FirebaseConnect(): Settings" + db.getFirestoreSettings().toString());
     }
 
     /**
@@ -43,14 +47,18 @@ public class FirebaseConnect {
      */
     public void downloadMessages() {
         if (isUserSigned()) {
+            Log.i(TAG, "downloadMessages(): found new message for:" + getUserId());
+            Log.i(TAG, "downloadMessages(): found new message for:" + db.getFirestoreSettings());
             db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
+
                             if (!document.get("contact").toString().equals(null) &&
                                     !document.get("message").toString().equals(null) &&
                                     !document.get("time").toString().equals(null)) {
+                                Log.i(TAG, "downloadMessages(): found not empty messages " + document.toString());
                                 if (sqlConnect.isKey(document.get("contact").toString())){
                                     // Log.d("FireBase", document.get("from").toString());
 
@@ -370,17 +378,19 @@ public class FirebaseConnect {
 
     public String getContactUID(String email) {
         String uID = null;
-        db.collection(getUserId()).whereEqualTo("email", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String uID = document.get("userID").toString();
-                    }
 
+            db.collection("Users").whereEqualTo("email", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String uID = document.get("userID").toString();
+                        }
+
+                    }
                 }
-            }
-        });
+            });
+
         return uID;
     }
 
@@ -431,6 +441,7 @@ public class FirebaseConnect {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+
                 Log.e("FireBase", "Register Failed");
             }
         });
@@ -465,30 +476,29 @@ public class FirebaseConnect {
 
         Log.d("Crypt", message.getContact());
 
-        if (sqlConnect.isPubExtKey(message.getId())){
+        if (sqlConnect.isPubExtKey(message.getContact())){
             Log.d("Crypt", "found the Key, sending message");
             pubKey = sqlConnect.getPublicExtKey(message.getContact());
             Log.d("Crypt", "found the Key" + sqlConnect.getPublicExtKey(message.getContact()));
             String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
-            message.setMessage(encMessage);
+
             Map<String, Object> cont = message.getHashMap();
             cont.remove("isFromMe");
             cont.remove("isRead");
             cont.remove("isUploaded");
-
-
+            cont.put("message", encMessage);
             cont.put("isDownloaded", false);
             cont.put("isRead", false);
             Log.d("Crypt", cont.toString());
             db.collection(message.getContact()).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
-                    // Log.d("FireStore", "Sikerult elkuldeni az uzit");
+                    //Log.d("FireStore", "Sikerult elkuldeni az uzit");
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    // Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
+                    //Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
                 }
             });
         }else{

@@ -29,9 +29,9 @@ public class SQLConnect {
 
             // Create or connect to sql database
 
-            //mydatabase.execSQL("DROP TABLE Keys");
-           // mydatabase.execSQL("DROP TABLE Contacts");
-            //mydatabase.execSQL("DROP TABLE Messages");
+          // mydatabase.execSQL("DROP TABLE Keys");
+         // mydatabase.execSQL("DROP TABLE Contacts");
+           // mydatabase.execSQL("DROP TABLE Messages");
 
             //create tables;
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
@@ -228,9 +228,10 @@ public class SQLConnect {
     }
     public ArrayList<Chat> getMessagesNOTUploaded() {
         ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages Where Uploaded='FALSE'", null);
+        Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages Where Uploaded='false'", null);
 
         if (result.moveToFirst()) {
+
             int i = 0;
             do {
                 String id = result.getString(0);
