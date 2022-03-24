@@ -3,6 +3,7 @@ package com.example.szakdolg;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -12,6 +13,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,8 +28,8 @@ import java.util.Map;
 
 public class FirebaseConnect {
     private static final String TAG = "FirebaseConnect";
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    public FirebaseAuth mAuth;
+    public FirebaseFirestore db;
     SQLConnect sqlConnect =  new SQLConnect();
     boolean done = false;
     boolean value = false;
@@ -376,7 +379,7 @@ public class FirebaseConnect {
         return mAuth.getCurrentUser().getEmail();
     }
 
-    public String getContactUID(String email) {
+    public String isEmailNotRegistered(String email) {
         String uID = null;
 
             db.collection("Users").whereEqualTo("email", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -425,6 +428,31 @@ public class FirebaseConnect {
         mAuth.signOut();
     }
 
+
+
+    public void sendForgotPassword(String email){
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email sent.");
+                        } else {
+
+                            try {
+                                throw task.getException();
+
+                            }catch (FirebaseAuthInvalidUserException e){
+                                Log.d(TAG, "onComplete: we dont have that email registered");
+                            } catch (Exception e) {
+                                Log.d(TAG, "onComplete: " + e);
+                            }
+                        }
+                    }
+                });
+
+    }
+
     /**
      * Register new user on Firebase
      *
@@ -435,14 +463,21 @@ public class FirebaseConnect {
         mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                createUser(user);
-                Log.e("FireBase", "Register was success");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
 
-                Log.e("FireBase", "Register Failed");
+                if (!task.isSuccessful()) {
+                    try {
+                        throw task.getException();
+                    } catch (FirebaseAuthUserCollisionException e) {
+                        Toast.makeText(context,"Email already exists",
+                                Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }else {
+                    createUser(user);
+                    Log.e("FireBase", "Register was success");
+                }
             }
         });
     }

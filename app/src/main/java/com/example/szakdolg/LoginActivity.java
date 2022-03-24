@@ -1,7 +1,9 @@
 package com.example.szakdolg;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,23 +12,32 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.internal.IdTokenListener;
+import com.google.firebase.internal.InternalTokenResult;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
-     EditText editMail;
-     EditText editPass;
+    private EditText editMail;
+    private EditText editPass;
+    private TextView txtForgot;
     private Button btnReg;
     private Button btnLog;
-    FirebaseConnect fb = new FirebaseConnect(this);
+    private FirebaseConnect firebaseConnect = new FirebaseConnect(this);
+    private static final String TAG = "LoginActivity";
 
 
-    public void initView(){
+    public void initView() {
         editMail = findViewById(R.id.edtLgnEmail);
         editPass = findViewById(R.id.edtLgnPass);
         btnReg = findViewById(R.id.btnLgnReg);
         btnLog = findViewById(R.id.btnLgnLogin);
+        txtForgot = findViewById(R.id.txtLgnForgot);
     }
 
     @Override
@@ -34,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initView();
-        fb.logoutUser();
+        firebaseConnect.logoutUser();
     }
 
     @Override
@@ -49,56 +60,36 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        txtForgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, ForgotPassword.class);
+                startActivity(intent);
+            }
+        });
         btnLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Map<String, String> user = new HashMap<>();
                 user.put("email", editMail.getText().toString());
                 user.put("pass", editPass.getText().toString());
-                //b.loginUser(editMail.getText().toString(), editPass.getText().toString());
-                /*if(fb.isUserSigned()) {
-                    Intent intent = new Intent(LoginActivity.this, MessageBoardActivity.class);
-                    startActivity(intent);
-                }*/
+                firebaseConnect.loginUser(editMail.getText().toString(), editPass.getText().toString());
+                firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        FirebaseUser user = firebaseConnect.mAuth.getCurrentUser();
+                        if(user!=null){
+                            Log.d(TAG, "onAuthStateChanged: " + firebaseConnect.getUserId());
+                            Intent intent = new Intent(LoginActivity.this, MessageBoardActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
 
-                LoginAsyncTask loginAsyncTask = new LoginAsyncTask();
-                loginAsyncTask.execute(user);
+
+
+
             }
         });
     }
-
-    public class LoginAsyncTask extends AsyncTask<Map<String, String>, Void, Void> {
-        FirebaseConnect fb = new FirebaseConnect(this);
-
-        @Override
-        protected Void doInBackground(Map<String, String>... maps) {
-            boolean done = false;
-            int tried=0;
-            String email = maps[0].get("email").toString();
-            String pass = maps[0].get("pass").toString();
-            fb.loginUser(email,pass);
-            while (!done && tried<10) {
-                // Log.d("async", "i am indaa loop " + tried);
-                SystemClock.sleep(100);
-                done = fb.isUserSigned();
-                tried++;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void unused) {
-            super.onPostExecute(unused);
-            // Log.d("async", "post execute");
-            if (fb.isUserSigned()) {
-                // Log.d("async", "signed?");
-                Intent intent = new Intent(LoginActivity.this, MessageBoardActivity.class);
-                startActivity(intent);
-            }
-        }
-    }
-
-
-
-
 }

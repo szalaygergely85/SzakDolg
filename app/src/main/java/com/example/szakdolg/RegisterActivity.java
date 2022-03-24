@@ -2,6 +2,7 @@ package com.example.szakdolg;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editPhone;
     private Button btnReg;
     private FirebaseConnect firebaseConnect;
+    private static final String TAG = "RegisterActivity";
 
     /**
      * method is used for checking valid email id format.
@@ -39,9 +41,9 @@ public class RegisterActivity extends AppCompatActivity {
         return matcher.matches();
     }
 
-    public void initView(){
+    public void initView() {
         editEmail = findViewById(R.id.edtRegEmail);
-        editPass= findViewById(R.id.edtRegPass1);
+        editPass = findViewById(R.id.edtRegPass1);
         editPass2 = findViewById(R.id.edtRegPass2);
         editName = findViewById(R.id.edtRegName);
         editPhone = findViewById(R.id.edtRegPhone);
@@ -56,10 +58,8 @@ public class RegisterActivity extends AppCompatActivity {
         initView();
     }
 
-
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
-
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,32 +68,31 @@ public class RegisterActivity extends AppCompatActivity {
                 String pass2 = editPass2.getText().toString();
                 String phone = editPhone.getText().toString();
                 String name = editName.getText().toString();
-              
-
-                    if (!email.isEmpty() && !pass2.isEmpty() && !pass.isEmpty() && !name.isEmpty() && !phone.isEmpty()) {
-                        if (pass.equals(pass2)) {
-                            if (pass.length() > 5) {
-                                if (isEmailValid(email)) {
-                                        Toast.makeText(RegisterActivity.this, "yooooo", Toast.LENGTH_SHORT).show();
-                                        Map<String, String> user = new HashMap<>();
-                                        user.put("email", email);
-                                        user.put("pass", pass);
-                                        user.put("phone", phone);
-                                        user.put("name", name);
-                                        RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask();
-                                        registerAsyncTask.execute(user);
-                                } else {
-                                    Toast.makeText(RegisterActivity.this, "Email Address is not Valid", Toast.LENGTH_LONG).show();
-                                }
+                if (!email.isEmpty() && !pass2.isEmpty() && !pass.isEmpty() && !name.isEmpty() && !phone.isEmpty()) {
+                    if (pass.equals(pass2)) {
+                        if (pass.length() > 5) {
+                            if (isEmailValid(email)) {
+                                Log.d(TAG, "onClick: " + email + "registration process is started");
+                                Map<String, String> user = new HashMap<>();
+                                user.put("email", email);
+                                user.put("pass", pass);
+                                user.put("phone", phone);
+                                user.put("name", name);
+                                RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask(RegisterActivity.this);
+                                registerAsyncTask.execute(user);
                             } else {
-                                Toast.makeText(RegisterActivity.this, "Password must be minimum 6 character long", Toast.LENGTH_LONG).show();
+                                Error.GetErrorMessageInToast("e2", RegisterActivity.this);
                             }
                         } else {
-                            Toast.makeText(RegisterActivity.this, "Password and repeat password must be the same", Toast.LENGTH_LONG).show();
+                            Error.GetErrorMessageInToast("e3", RegisterActivity.this);
                         }
                     } else {
-                        Toast.makeText(RegisterActivity.this, "These fields are mandatory to fill", Toast.LENGTH_LONG).show();
+                        Error.GetErrorMessageInToast("e4", RegisterActivity.this);
                     }
+                } else {
+                    Error.GetErrorMessageInToast("e5", RegisterActivity.this);
+                }
+
 
             }
         });
@@ -102,20 +101,25 @@ public class RegisterActivity extends AppCompatActivity {
     //TODO Error kezeles ide is
 
     public class RegisterAsyncTask extends AsyncTask<Map<String, String>, Void, Void> {
-        FirebaseConnect fb = new FirebaseConnect(this);
+        private Activity a;
+
+        public RegisterAsyncTask(Activity a) {
+            this.a = a;
+            FirebaseConnect fb = new FirebaseConnect(a);
+        }
+
 
         @Override
         protected Void doInBackground(Map<String, String>... maps) {
             boolean done = false;
-            int tried=0;
-            // Log.d("async", maps[0].toString());
+            int tried = 0;
+
             firebaseConnect.registerNewUser(maps[0]);
 
-            while (!done && tried<20) {
-                // Log.d("async", "i am indaa loop " + tried);
+            while (!done && tried < 20) {
                 SystemClock.sleep(500);
-                if (fb.isUserSigned()){
-                    done = fb.isUserCreated(fb.getUserId());
+                if (firebaseConnect.isUserSigned()) {
+                    done = firebaseConnect.isUserCreated(firebaseConnect.getUserId());
                 }
                 tried++;
             }
@@ -125,11 +129,9 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
-            // Log.d("async", "post execute");
-            if(firebaseConnect.isUserSigned()) {
-               Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+            if (firebaseConnect.isUserSigned()) {
+                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                 startActivity(intent);
-                // Log.d("async", "User signed");
             }
         }
     }

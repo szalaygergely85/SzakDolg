@@ -61,7 +61,6 @@ public class SQLConnect {
         if (!isKey(uID)) {
             Log.d("Crypt", "Didnt find keys, generating one ");
             generateKeys(uID);
-
         }
         mydatabase.execSQL("UPDATE Keys SET PublicExt='"+pubExtKey+"' Where userId='"+ uID +"';");
     }

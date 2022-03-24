@@ -3,15 +3,17 @@ package com.example.szakdolg;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private FirebaseConnect firebaseConnect = new FirebaseConnect(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: "+ Error.getErrorMessage("e1", this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         firebaseConnect.logoutUser();
