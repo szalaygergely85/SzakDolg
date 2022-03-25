@@ -5,12 +5,9 @@ import android.content.Context;
 import android.widget.Toast;
 
 public class Error {
-    public static String getErrorMessage(String errorCode, Context context){
-
+    public static String getErrorMessage(String errorCode, Context context) {
         int errorID = context.getResources().getIdentifier(errorCode, "string", context.getPackageName());
-        String text = context.getString(errorID);
-
-        return text;
+        return context.getString(errorID);
     }
 
     public static void GetErrorMessageInToast(String errorCode, Context context) {

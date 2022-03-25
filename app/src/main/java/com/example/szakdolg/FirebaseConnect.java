@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,7 +43,7 @@ public class FirebaseConnect {
         //FireBase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        Log.i(TAG, "FirebaseConnect(): Settings" + db.getFirestoreSettings().toString());
+
     }
 
     /**
@@ -403,22 +404,29 @@ public class FirebaseConnect {
      * @param email
      * @param pass
      */
-    public boolean loginUser(String email, String pass) {
+    public void loginUser(String email, String pass) {
 
-        // Log.d("FireBase", "User logged in successful");
-        mAuth.signInWithEmailAndPassword(email, pass).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("FireBase", "User log in was a failure");
-            }
-        }).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                // Log.d("async", "login completed");
-                done = true;
+                if (!task.isSuccessful()) {
+                    try {
+                        throw task.getException();
+                    }catch (FirebaseAuthInvalidUserException e){
+                        Error.GetErrorMessageInToast("e7", context);
+                    }catch(FirebaseAuthInvalidCredentialsException e){
+                        Error.GetErrorMessageInToast("e8", context);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else {
+
+                }
             }
         });
-        return done;
+
     }
 
     /**
@@ -475,8 +483,10 @@ public class FirebaseConnect {
                     }
 
                 }else {
+                    Log.d(TAG, "Register was success for "+ user.get("email").toString());
+                    loginUser(user.get("email").toString(), user.get("pass").toString());
                     createUser(user);
-                    Log.e("FireBase", "Register was success");
+
                 }
             }
         });
@@ -495,6 +505,11 @@ public class FirebaseConnect {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.e("FireBase", "User creation failed");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d(TAG, "Creation was success for "+ user.get("email").toString());
             }
         });
 

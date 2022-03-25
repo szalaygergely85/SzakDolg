@@ -52,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        //TODO Hiba kezeles
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,24 +70,26 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Map<String, String> user = new HashMap<>();
-                user.put("email", editMail.getText().toString());
-                user.put("pass", editPass.getText().toString());
-                firebaseConnect.loginUser(editMail.getText().toString(), editPass.getText().toString());
-                firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-                    @Override
-                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                        FirebaseUser user = firebaseConnect.mAuth.getCurrentUser();
-                        if(user!=null){
-                            Log.d(TAG, "onAuthStateChanged: " + firebaseConnect.getUserId());
-                            Intent intent = new Intent(LoginActivity.this, MessageBoardActivity.class);
-                            startActivity(intent);
+                String email = editMail.getText().toString();
+                String pass = editPass.getText().toString();
+                user.put("email", email);
+                user.put("pass", pass);
+                if (!email.isEmpty() && !pass.isEmpty()) {
+                    firebaseConnect.loginUser(editMail.getText().toString(), editPass.getText().toString());
+                    firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                        @Override
+                        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                            FirebaseUser user = firebaseConnect.mAuth.getCurrentUser();
+                            if (user != null) {
+                                Log.d(TAG, "onAuthStateChanged: " + firebaseConnect.getUserId());
+                                Intent intent = new Intent(LoginActivity.this, MessageBoardActivity.class);
+                                startActivity(intent);
+                            }
                         }
-                    }
-                });
-
-
-
-
+                    });
+                } else {
+                    Error.GetErrorMessageInToast("e6", LoginActivity.this);
+                }
             }
         });
     }

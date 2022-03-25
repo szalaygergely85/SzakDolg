@@ -1,5 +1,6 @@
 package com.example.szakdolg;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,13 +75,13 @@ public class RegisterActivity extends AppCompatActivity {
                     if (pass.equals(pass2)) {
                         if (pass.length() > 5) {
                             if (isEmailValid(email)) {
-                                Log.d(TAG, "onClick: " + email + "registration process is started");
+                                Log.d(TAG, "onClick: " + email + " registration process is started");
                                 Map<String, String> user = new HashMap<>();
                                 user.put("email", email);
                                 user.put("pass", pass);
                                 user.put("phone", phone);
                                 user.put("name", name);
-                                RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask(RegisterActivity.this);
+                                RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask();
                                 registerAsyncTask.execute(user);
                             } else {
                                 Error.GetErrorMessageInToast("e2", RegisterActivity.this);
@@ -101,39 +104,27 @@ public class RegisterActivity extends AppCompatActivity {
     //TODO Error kezeles ide is
 
     public class RegisterAsyncTask extends AsyncTask<Map<String, String>, Void, Void> {
-        private Activity a;
-
-        public RegisterAsyncTask(Activity a) {
-            this.a = a;
-            FirebaseConnect fb = new FirebaseConnect(a);
-        }
 
 
         @Override
         protected Void doInBackground(Map<String, String>... maps) {
-            boolean done = false;
-            int tried = 0;
 
             firebaseConnect.registerNewUser(maps[0]);
+            firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener(){
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    if (firebaseConnect.isUserSigned()) {
+                        Log.d(TAG, "onAuthStateChanged: " + firebaseConnect.getUserId() + " user is signed");
 
-            while (!done && tried < 20) {
-                SystemClock.sleep(500);
-                if (firebaseConnect.isUserSigned()) {
-                    done = firebaseConnect.isUserCreated(firebaseConnect.getUserId());
+                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                            startActivity(intent);
+
+                    }
                 }
-                tried++;
-            }
+            });
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void unused) {
-            super.onPostExecute(unused);
-            if (firebaseConnect.isUserSigned()) {
-                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        }
     }
 
 }
