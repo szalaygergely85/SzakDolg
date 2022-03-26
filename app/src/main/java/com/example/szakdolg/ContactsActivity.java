@@ -28,17 +28,19 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
+        this.setTitle("Contacts");
         initView();
-        firebaseConnect = new FirebaseConnect(this);
-        sqlConnect = new SQLConnect();
+        firebaseConnect = FirebaseConnect.getInstance("firebase");
+        sqlConnect = SQLConnect.getInstance("sql");
 
-        contacts = new ArrayList<>();
-        contacts = sqlConnect.getContacts();
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        contacts = new ArrayList<>();
+        contacts = sqlConnect.getContacts();
         ContactsAdapter contactsAdapter = new ContactsAdapter(this);
         contactsAdapter.setContact(contacts);
         contsRecView.setAdapter(contactsAdapter);

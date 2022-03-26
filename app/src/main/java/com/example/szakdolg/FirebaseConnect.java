@@ -31,19 +31,27 @@ public class FirebaseConnect {
     private static final String TAG = "FirebaseConnect";
     public FirebaseAuth mAuth;
     public FirebaseFirestore db;
-    SQLConnect sqlConnect =  new SQLConnect();
+    SQLConnect sqlConnect = SQLConnect.getInstance("sql");
     boolean done = false;
     boolean value = false;
     Contact contact;
     private String pubKey = null;
     private String privKey = null;
-    private Context context;
-    public FirebaseConnect(Context context) {
-        this.context=context;
-        //FireBase
+    private String name;
+    public static FirebaseConnect instance;
+
+    public static synchronized FirebaseConnect getInstance(String name){
+        if (instance==null){
+            instance = new FirebaseConnect(name);
+            return instance;
+        }else {
+            return instance;
+        }
+    }
+    public FirebaseConnect(String name) {
+        this.name = name;
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
     }
 
     /**
@@ -404,7 +412,7 @@ public class FirebaseConnect {
      * @param email
      * @param pass
      */
-    public void loginUser(String email, String pass) {
+    public void loginUser(String email, String pass, Context context) {
 
 
         mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -466,7 +474,7 @@ public class FirebaseConnect {
      *
      * @param user
      */
-    public void registerNewUser(Map user) {
+    public void registerNewUser(Map user, Context context) {
 
         mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -484,7 +492,7 @@ public class FirebaseConnect {
 
                 }else {
                     Log.d(TAG, "Register was success for "+ user.get("email").toString());
-                    loginUser(user.get("email").toString(), user.get("pass").toString());
+                    loginUser(user.get("email").toString(), user.get("pass").toString(), context);
                     createUser(user);
 
                 }

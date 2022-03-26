@@ -21,12 +21,12 @@ import java.util.ArrayList;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
     private FirebaseConnect firebaseConnect;
-    private SQLConnect sqlConnect = new SQLConnect();
+    private SQLConnect sqlConnect = SQLConnect.getInstance("sql");
     private ArrayList<MessageB> messageB = new ArrayList<>();
 
     public MessageBoardRecAdapter(Context mContext) {
         this.mContext = mContext;
-        firebaseConnect = new FirebaseConnect(mContext);
+        firebaseConnect = FirebaseConnect.getInstance("firebase");
     }
 
     private Context mContext;

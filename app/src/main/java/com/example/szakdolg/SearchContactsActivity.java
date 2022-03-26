@@ -57,6 +57,7 @@ public class SearchContactsActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 contacts.clear();
+                Log.d(TAG, "onTextChanged: at start" + contacts.size());
                 if(search.getText().toString().length()>2){
                     db.collection("Users").orderBy("email").startAt(search.getText().toString()).endAt(search.getText().toString() + "\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -65,7 +66,7 @@ public class SearchContactsActivity extends AppCompatActivity {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     contacts.add(new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString()));
                                 }
-
+                                Log.d(TAG, "onComplete:orderBy(\"email\")" + contacts.size());
                             }
                         }
 
@@ -77,7 +78,7 @@ public class SearchContactsActivity extends AppCompatActivity {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     contacts.add(new Contact(document.get("userID").toString(),document.get("name").toString(),document.get("email").toString(),document.get("phone").toString()));
                                 }
-
+                                Log.d(TAG, "onComplete:orderBy(\"name\")" + contacts.size());
                             }
                         }
 

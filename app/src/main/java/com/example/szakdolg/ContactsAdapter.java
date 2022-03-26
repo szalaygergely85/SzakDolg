@@ -21,7 +21,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     public ContactsAdapter(Context mContext) {
         this.mContext = mContext;
-        firebaseConnect = new FirebaseConnect(mContext);
+        firebaseConnect = FirebaseConnect.getInstance("firebase");
     }
 
     @NonNull

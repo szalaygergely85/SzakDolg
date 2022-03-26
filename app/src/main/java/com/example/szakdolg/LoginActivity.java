@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView txtForgot;
     private Button btnReg;
     private Button btnLog;
-    private FirebaseConnect firebaseConnect = new FirebaseConnect(this);
+    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final String TAG = "LoginActivity";
 
 
@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                 user.put("email", email);
                 user.put("pass", pass);
                 if (!email.isEmpty() && !pass.isEmpty()) {
-                    firebaseConnect.loginUser(editMail.getText().toString(), editPass.getText().toString());
+                    firebaseConnect.loginUser(editMail.getText().toString(), editPass.getText().toString(), LoginActivity.this);
                     firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
                         @Override
                         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {

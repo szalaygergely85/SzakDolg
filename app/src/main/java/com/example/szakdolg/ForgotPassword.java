@@ -10,7 +10,7 @@ import android.widget.EditText;
 public class ForgotPassword extends AppCompatActivity {
     private EditText email;
     private Button send;
-    FirebaseConnect firebaseConnect = new FirebaseConnect(this);
+    FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
 
     public void initView() {
         email = findViewById(R.id.edtFrgtEmail);

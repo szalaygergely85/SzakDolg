@@ -22,8 +22,8 @@ public class MessageBoardActivity extends AppCompatActivity {
     private static final String TAG = "MessageB";
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
-    FirebaseConnect firebaseConnect = new FirebaseConnect(this);
-    private SQLConnect sqlConnect = new SQLConnect();
+    FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private SQLConnect sqlConnect = SQLConnect.getInstance("sql");
     MessageBoardRecAdapter adapter;
     ArrayList<MessageB> messageB;
 

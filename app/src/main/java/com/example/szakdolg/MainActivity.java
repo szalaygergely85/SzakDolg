@@ -9,14 +9,13 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private FirebaseConnect firebaseConnect = new FirebaseConnect(this);
+    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: "+ Error.getErrorMessage("e1", this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        firebaseConnect.logoutUser();
+       // firebaseConnect.logoutUser();
     }
 
     @Override

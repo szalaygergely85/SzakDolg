@@ -19,13 +19,13 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
     private Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
     FirebaseConnect firebaseConnect;
-    SQLConnect sqlConnect = new SQLConnect();
+    SQLConnect sqlConnect = SQLConnect.getInstance("sql");
 
 
 
     public SearchContactAdapter(Context mContext) {
         this.mContext = mContext;
-        firebaseConnect = new FirebaseConnect(mContext);
+        firebaseConnect = FirebaseConnect.getInstance("firebase");
     }
 
     @NonNull

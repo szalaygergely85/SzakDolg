@@ -28,7 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editName;
     private EditText editPhone;
     private Button btnReg;
-    private FirebaseConnect firebaseConnect;
+    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final String TAG = "RegisterActivity";
 
     /**
@@ -51,7 +51,6 @@ public class RegisterActivity extends AppCompatActivity {
         editName = findViewById(R.id.edtRegName);
         editPhone = findViewById(R.id.edtRegPhone);
         btnReg = findViewById(R.id.btnRegReg);
-        firebaseConnect = new FirebaseConnect(this);
     }
 
     @Override
@@ -109,7 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Map<String, String>... maps) {
 
-            firebaseConnect.registerNewUser(maps[0]);
+            firebaseConnect.registerNewUser(maps[0], RegisterActivity.this);
             firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener(){
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {

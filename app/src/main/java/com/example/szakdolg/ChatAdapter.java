@@ -25,7 +25,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     public ChatAdapter(Context mContext) {
         this.mContext = mContext;
 
-        firebaseConnect = new FirebaseConnect(mContext);
+        firebaseConnect = FirebaseConnect.getInstance("firebase");
         userID = firebaseConnect.getUserId();
 
     }
