@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/ic_menu_profile"
+        android:title="Profile"
+        android:id="@+id/menuProfile"/>
+    <item
+        android:id="@+id/menuContacts"
+        android:title="Contacts"
+        android:icon="@drawable/ic_menu_contact"/>
+    <item
+        android:id="@+id/menuNotif"
+        android:icon="@drawable/ic_menu_notifications"
+        android:title="Notification"
+        app:showAsAction="withText"
+        android:actionLayout="@layout/switch_layout"/>
+
+    <item
+        android:id="@+id/menuAbout"
+        android:icon="@drawable/ic_menu_about"
+        android:title="About" />
+    <item
+        android:id="@+id/menuSingOut"
+        android:icon="@drawable/ic_menu_logout"
+        android:title="Sign Out" />
+</menu>

@@ -1,5 +1,6 @@
 package com.example.szakdolg;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,9 +9,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -22,14 +25,11 @@ public class MessageBoardActivity extends AppCompatActivity {
     private static final String TAG = "MessageB";
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
-    FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private SQLConnect sqlConnect = SQLConnect.getInstance("sql");
-    MessageBoardRecAdapter adapter;
-    ArrayList<MessageB> messageB;
-
-    Timer timer;
-
-
+    private MessageBoardRecAdapter adapter;
+    private ArrayList<MessageB> messageB;
+    private Timer timer;
 
     private void initView() {
         contactsButton = findViewById(R.id.btnMesBrdNew);
@@ -76,6 +76,36 @@ public class MessageBoardActivity extends AppCompatActivity {
         timer.cancel();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.nav_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()){
+            case R.id.menuProfile:
+                Toast.makeText(MessageBoardActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menuAbout:
+                intent = new Intent(MessageBoardActivity.this, AboutActivity.class);
+                startActivity(intent);
+                 break;
+            case R.id.menuContacts:
+                intent = new Intent(MessageBoardActivity.this, ContactsActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.menuSingOut:
+                firebaseConnect.logoutUser();
+                break;
+            default:
+                break;
+        }
+        return false;
+
+    }
 
     public class DownloadAsynctask extends AsyncTask<Void, Void, Void> {
 

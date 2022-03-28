@@ -5,4 +5,6 @@
     <string name="txt_or">or</string>
     <string name="btn_reg">Register</string>
     <string name="btn_log">Login</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
 </resources>
