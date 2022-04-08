@@ -1,7 +1,9 @@
 package com.example.szakdolg;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -44,9 +46,21 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         initView();
-        firebaseConnect.logoutUser();
+
+
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.loginToolbar);
+        setSupportActionBar(mToolbar);
+
+
+
+        ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setTitle("Messenger");
     }
+
+
 
     @Override
     protected void onStart() {

@@ -5,8 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/loginToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:titleMarginStart="32dp"
+        app:title="Title"
+        android:elevation="4dp"
+        />
 
     <ScrollView
+        android:layout_below="@id/loginToolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

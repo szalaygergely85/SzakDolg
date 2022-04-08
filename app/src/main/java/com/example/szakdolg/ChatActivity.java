@@ -24,10 +24,10 @@ import java.util.TimerTask;
 public class ChatActivity extends AppCompatActivity {
 
     final Handler handler = new Handler();
-    FirebaseConnect fireBase = FirebaseConnect.getInstance("firebase");
-    ChatAdapter adapter;
-    ArrayList<Chat> messageList;
-    Timer timer = new Timer();
+    private FirebaseConnect fireBase = FirebaseConnect.getInstance("firebase");
+    private ChatAdapter adapter;
+    private ArrayList<Chat> messageList;
+    private Timer timer = new Timer();
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;

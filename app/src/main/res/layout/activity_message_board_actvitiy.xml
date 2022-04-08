@@ -4,25 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MessageBoardActivity"
     >
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/messageBoardRecView"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/messageBoardToolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/primaryLightColor"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_add_message"
-        android:id="@+id/btnMesBrdNew"/>
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:titleMarginStart="32dp"
+
+
+        android:elevation="4dp"
+   />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_below="@id/messageBoardToolbar"
+            android:id="@+id/messageBoardRecView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/primaryLightColor"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="1dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/ic_add_message"
+            android:id="@+id/btnMesBrdNew"/>
+
 
 </RelativeLayout >

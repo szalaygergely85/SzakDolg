@@ -2,6 +2,7 @@ package com.example.szakdolg;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,8 +16,8 @@ import java.util.ArrayList;
 
 public class ContactsActivity extends AppCompatActivity {
     private RecyclerView contsRecView;
-    private FirebaseConnect firebaseConnect;
-    private SQLConnect sqlConnect;
+    private FirebaseConnect firebaseConnect= FirebaseConnect.getInstance("firebase");
+    private SQLConnect sqlConnect = SQLConnect.getInstance("sql");
     ArrayList<Contact> contacts;
     private FloatingActionButton btnNewContact;
 
@@ -30,15 +31,20 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
+        // Toolbar settings
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         this.setTitle("Contacts");
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+
+
         initView();
 
-        firebaseConnect = FirebaseConnect.getInstance("firebase");
-        sqlConnect = SQLConnect.getInstance("sql");
+
 
 
     }

@@ -2,9 +2,14 @@ package com.example.szakdolg;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -13,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private static final int READ_PERMISSION_CODE = 202;
+    private static final int WRITE_PERMISSION_CODE = 203;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -24,22 +31,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_PERMISSION_CODE);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_CODE);
+        }
+
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menuProfile:
-                Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.menuSingOut:
-                firebaseConnect.logoutUser();
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
+
 
     @Override
     protected void onStart() {

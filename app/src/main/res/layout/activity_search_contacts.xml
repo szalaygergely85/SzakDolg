@@ -5,18 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SearchContactsActivity"
-    android:padding="10dp">
+    >
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/contactsearchBoardToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:titleMarginStart="32dp"
+        android:layout_marginBottom="10dp"
+
+        android:elevation="4dp"
+        />
 
     <EditText
+        android:layout_marginStart="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:hint="Search for users"
         android:id="@+id/edtContSearch"
         android:layout_toLeftOf="@id/imgContSearch"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginRight="10dp"
+        android:layout_below="@id/contactsearchBoardToolbar"/>
 
     <ImageView
+        android:layout_marginEnd="10dp"
+        android:layout_below="@id/contactsearchBoardToolbar"
         android:id="@+id/imgContSearch"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -24,6 +39,7 @@
         android:src="@drawable/ic_contact_search" />?
 
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/recvContactSearch"

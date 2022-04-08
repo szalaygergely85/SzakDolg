@@ -1,11 +1,18 @@
 package com.example.szakdolg;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,8 +22,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,19 +50,28 @@ public class MessageBoardActivity extends AppCompatActivity {
     private MessageBoardRecAdapter adapter;
     private ArrayList<MessageB> messageB;
     private Timer timer;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
+    MaterialToolbar mToolbar;
 
     private void initView() {
         contactsButton = findViewById(R.id.btnMesBrdNew);
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_board_actvitiy);
+
         initView();
 
 
 
+        mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
+        setSupportActionBar(mToolbar);
+        mToolbar.setTitle("Messages");
 
         messageBoardRecView = findViewById(R.id.messageBoardRecView);
         messageB = new ArrayList<>();
@@ -87,7 +116,8 @@ public class MessageBoardActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()){
             case R.id.menuProfile:
-                Toast.makeText(MessageBoardActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                intent = new Intent(MessageBoardActivity.this, ProfileActivity.class);
+                startActivity(intent);
                 break;
             case R.id.menuAbout:
                 intent = new Intent(MessageBoardActivity.this, AboutActivity.class);
@@ -99,6 +129,8 @@ public class MessageBoardActivity extends AppCompatActivity {
                 break;
             case R.id.menuSingOut:
                 firebaseConnect.logoutUser();
+                intent = new Intent(MessageBoardActivity.this, MainActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChangePassActivity">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/changeToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:titleMarginStart="32dp"
+        app:title="Title"
+        android:elevation="4dp"
+        />
+
+    <EditText
+        android:id="@+id/edtChnPassOld"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="Old Password"
+        android:layout_above="@id/edtChnPass1"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:inputType="textPassword"/>
+    <EditText
+        android:id="@+id/edtChnPass1"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="New Password"
+        android:layout_above="@id/edtChnPass2"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:inputType="textPassword"/>
+    <EditText
+        android:id="@+id/edtChnPass2"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="New Password Again"
+        android:layout_above="@id/btnChnPass"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:inputType="textPassword"/>
+
+
+    <Button
+        android:id="@+id/btnChnPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Password"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+</RelativeLayout>

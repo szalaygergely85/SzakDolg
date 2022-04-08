@@ -2,16 +2,22 @@ package com.example.szakdolg;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -21,7 +27,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,14 +42,21 @@ public class FirebaseConnect {
     private static final String TAG = "FirebaseConnect";
     public FirebaseAuth mAuth;
     public FirebaseFirestore db;
-    SQLConnect sqlConnect = SQLConnect.getInstance("sql");
+    private SQLConnect sqlConnect = SQLConnect.getInstance("sql");
     boolean done = false;
     boolean value = false;
-    Contact contact;
+    private Contact contact;
     private String pubKey = null;
     private String privKey = null;
     private String name;
     public static FirebaseConnect instance;
+    private Uri picUri;
+
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
+
+
+
 
     public static synchronized FirebaseConnect getInstance(String name){
         if (instance==null){
@@ -54,13 +72,84 @@ public class FirebaseConnect {
         db = FirebaseFirestore.getInstance();
     }
 
+
+    public void changePassword(String pass, String oldPass){
+
+        FirebaseUser user= mAuth.getCurrentUser();
+
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(user.getEmail(), oldPass);
+
+
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d(TAG, "User re-authenticated.");
+                        user.updatePassword(pass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Log.d(TAG, "onComplete: Password change is success");
+                                }else{
+                                    try {
+                                        throw task.getException();
+                                    } catch (Exception e){
+                                        Log.d(TAG, " Change password Failed: " +e);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+
+    }
+    public void deleteAccount(String uid, Context context){
+        db.collection("Users").document(uid).delete();
+        if(uid.equals(getUserId())) {
+            Log.d(TAG, "deleteAccount: Deleteing from auth too");
+            mAuth.getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Intent intent = new Intent(context, MainActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+        }else{
+            Intent intent = new Intent(context, MessageBoardActivity.class);
+            context.startActivity(intent);
+
+        }
+
+    }
+
+
+
+    public void uploadPic(Uri uri){
+        StorageReference imageRef = storageRef.child( getUserId()+".jpg");
+        UploadTask uploadTask = imageRef.putFile(uri);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+            }
+        });
+
+    }
+
     /**
      * Download all not Downloaded messages from Firebase to SQLite
      */
     public void downloadMessages() {
         if (isUserSigned()) {
             Log.i(TAG, "downloadMessages(): found new message for:" + getUserId());
-            Log.i(TAG, "downloadMessages(): found new message for:" + db.getFirestoreSettings());
             db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -72,7 +161,7 @@ public class FirebaseConnect {
                                     !document.get("time").toString().equals(null)) {
                                 Log.i(TAG, "downloadMessages(): found not empty messages " + document.toString());
                                 if (sqlConnect.isKey(document.get("contact").toString())){
-                                    // Log.d("FireBase", document.get("from").toString());
+                                     Log.d(TAG, document.get("from").toString());
 
                                     // if i dont have the sender in Contacts, adding it.
                                     if (!sqlConnect.isInContracts(document.get("contact").toString())) {
@@ -143,46 +232,7 @@ public class FirebaseConnect {
         return done;
     }
 
-    /**
-     * Add a User to the contact
-     *
-     * @param uID
-     * @return
-     */
-    public Contact addAUser(String uID) {
-        // Log.d("FireBase", "We are in addAuser with : " + uID);
-        db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        contact = new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString());
-                        addContactFB(contact);
-                        Map<String, Object> cont = new HashMap<>();
-                        cont.put("docType", "contacts");
-                        cont.put("uID", contact.getID());
-                        cont.put("uName", contact.getName());
-                        cont.put("uEmail", contact.getEmail());
-                        cont.put("uPhone", contact.getPhone());
-                        sqlConnect.addContactSQLite(cont);
-                        // Log.d("FireBase", document.get("name").toString());
-                    } else {
-                        // Log.d("FireBase", "No such document");
-                    }
-                } else {
-                    // Log.d("FireBase", "get failed with ", task.getException());
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Log.d("FireBase", e.toString());
-            }
-        });
 
-        return contact;
-    }
 
     /**
      * Download all Contacts form Firebase to SQLite
@@ -437,98 +487,20 @@ public class FirebaseConnect {
 
     }
 
-    /**
-     * Logout user
-     */
-    public void logoutUser() {
-        mAuth.signOut();
-    }
+
+    public void getPicture(){
 
 
-
-    public void sendForgotPassword(String email){
-        mAuth.sendPasswordResetEmail(email)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "Email sent.");
-                        } else {
-
-                            try {
-                                throw task.getException();
-
-                            }catch (FirebaseAuthInvalidUserException e){
-                                Log.d(TAG, "onComplete: we dont have that email registered");
-                            } catch (Exception e) {
-                                Log.d(TAG, "onComplete: " + e);
-                            }
-                        }
-                    }
-                });
 
     }
 
-    /**
-     * Register new user on Firebase
-     *
-     * @param user
-     */
-    public void registerNewUser(Map user, Context context) {
-
-        mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                if (!task.isSuccessful()) {
-                    try {
-                        throw task.getException();
-                    } catch (FirebaseAuthUserCollisionException e) {
-                        Toast.makeText(context,"Email already exists",
-                                Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }else {
-                    Log.d(TAG, "Register was success for "+ user.get("email").toString());
-                    loginUser(user.get("email").toString(), user.get("pass").toString(), context);
-                    createUser(user);
-
-                }
-            }
-        });
-    }
-
-    /**
-     * After register firebase account, create the user in Users collection too
-     *
-     * @param user
-     */
-
-    public void createUser(Map user) {
-        user.put("userID", getUserId());
-        user.remove("pass");
-        db.collection("Users").document(getUserId()).set(user).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("FireBase", "User creation failed");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.d(TAG, "Creation was success for "+ user.get("email").toString());
-            }
-        });
-
-    }
+    // MESSAGE HANDLING
 
     /**
      * Add a new message in Firebase(send)
      *
      * @param message
      */
-
     public void sendMessage(Chat message) {
 
 
@@ -598,14 +570,14 @@ public class FirebaseConnect {
                 db.collection(message.getContact()).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                         Log.d("FireStore", "Sikerult elkuldeni az uzit");
-                         sqlConnect.setMessageToUploaded(message.getId());
+                        Log.d("FireStore", "Sikerult elkuldeni az uzit");
+                        sqlConnect.setMessageToUploaded(message.getId());
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                         Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
+                        Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
                     }
                 });
             }else{
@@ -621,4 +593,155 @@ public class FirebaseConnect {
         }
 
     }
+
+
+    // USER HANDLING
+
+    public Contact getContactFrUID(String uID){
+        db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        contact = new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString());
+                        Log.d(TAG, document.get("name").toString());
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("FireBase", e.toString());
+            }
+        });
+        return contact;
+    }
+    /**
+     * Add a User to the contact
+     *
+     * @param uID
+     * @return
+     */
+    public Contact addAUser(String uID) {
+        // Log.d("FireBase", "We are in addAuser with : " + uID);
+        db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        contact = new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString());
+                        addContactFB(contact);
+                        Map<String, Object> cont = new HashMap<>();
+                        cont.put("docType", "contacts");
+                        cont.put("uID", contact.getID());
+                        cont.put("uName", contact.getName());
+                        cont.put("uEmail", contact.getEmail());
+                        cont.put("uPhone", contact.getPhone());
+                        sqlConnect.addContactSQLite(cont);
+                        Log.d(TAG, document.get("name").toString());
+                    } else {
+                         Log.d(TAG, "No such document");
+                    }
+                } else {
+                     Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                 Log.d("FireBase", e.toString());
+            }
+        });
+
+        return contact;
+    }
+    /**
+     * Logout user
+     */
+    public void logoutUser() {
+        mAuth.signOut();
+    }
+    public void sendForgotPassword(String email){
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email sent.");
+                        } else {
+
+                            try {
+                                throw task.getException();
+
+                            }catch (FirebaseAuthInvalidUserException e){
+                                Log.d(TAG, "onComplete: we dont have that email registered");
+                            } catch (Exception e) {
+                                Log.d(TAG, "onComplete: " + e);
+                            }
+                        }
+                    }
+                });
+
+    }
+    /**
+     * Register new user on Firebase
+     *
+     * @param user
+     */
+    public void registerNewUser(Map user, Context context) {
+
+        mAuth.createUserWithEmailAndPassword(user.get("email").toString(), user.get("pass").toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if (!task.isSuccessful()) {
+                    try {
+                        throw task.getException();
+                    } catch (FirebaseAuthUserCollisionException e) {
+                        Toast.makeText(context,"Email already exists",
+                                Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }else {
+                    Log.d(TAG, "Register was success for "+ user.get("email").toString());
+                    loginUser(user.get("email").toString(), user.get("pass").toString(), context);
+                    createUser(user);
+
+                }
+            }
+        });
+    }
+
+    /**
+     * After register firebase account, create the user in Users collection too
+     *
+     * @param user
+     */
+    public void createUser(Map user) {
+        user.put("userID", getUserId());
+        user.remove("pass");
+        db.collection("Users").document(getUserId()).set(user).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("FireBase", "User creation failed");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d(TAG, "Creation was success for "+ user.get("email").toString());
+            }
+        });
+
+    }
+
+
 }
