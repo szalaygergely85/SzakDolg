@@ -54,6 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Button singOut;
     private Button deleteAccount;
     private Button deleteContact;
+    private Button sendMessage;
     private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
@@ -127,6 +128,7 @@ public class ProfileActivity extends AppCompatActivity {
         singOut = findViewById(R.id.profBtnSignOut);
         deleteAccount = findViewById(R.id.profBtnDelete);
         deleteContact = findViewById(R.id.profBtnDeleteContact);
+        sendMessage = findViewById(R.id.profBtnSendMsg);
     }
 
     @Override
@@ -152,15 +154,13 @@ public class ProfileActivity extends AppCompatActivity {
             changePW.setVisibility(View.GONE);
             singOut.setVisibility(View.GONE);
             deleteAccount.setVisibility(View.GONE);
-
-
         } else {
             uID = firebaseConnect.getUserId();
             deleteContact.setVisibility(View.GONE);
+            sendMessage.setVisibility(View.GONE);
         }
 
         setImageView(uID, this);
-
 
         firebaseConnect.db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -273,6 +273,14 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, ChangePassActivity.class);
+                startActivity(intent);
+            }
+        });
+        sendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+                intent.putExtra("uID", uID);
                 startActivity(intent);
             }
         });

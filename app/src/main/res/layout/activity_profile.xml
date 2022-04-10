@@ -65,12 +65,21 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
         android:textSize="10pt"/>
     <Button
         android:layout_marginTop="15dp"
+        android:id="@+id/profBtnSendMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Send Message"
+        android:layout_below="@id/profDivider"
+        android:textSize="10pt"/>
+    <Button
+        android:layout_marginTop="20dp"
         android:id="@+id/profBtnDeleteContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="Delete Contact"
-        android:layout_below="@id/profDivider"
+        android:layout_below="@id/profBtnSendMsg"
         android:textSize="10pt"/>
 
     <Button
@@ -84,14 +93,15 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
         android:textSize="10pt"/>
 
     <Button
-        android:layout_marginTop="20dp"
         android:id="@+id/profBtnDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete Account"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/profBtnSignOut"
-        android:textSize="10pt"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Delete Account"
+        android:textSize="10pt"
+        android:visibility="visible" />
 
 
 </RelativeLayout>

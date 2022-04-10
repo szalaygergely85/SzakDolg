@@ -20,21 +20,21 @@ public class SQLConnect {
     private static SQLConnect instance;
 
     //Singleton
-    public static synchronized SQLConnect getInstance(String name){
+    public static synchronized SQLConnect getInstance(String name, String uID){
         if(instance==null){
-            instance = new SQLConnect(name);
+            instance = new SQLConnect(name, uID);
             return instance;
         }else{
             return instance;
         }
     }
 
-    private SQLConnect(String name) {
+    private SQLConnect(String name, String uID) {
         this.name = name;
 
         try {
 
-            File dbpath = (new File("/data/data/com.example.szakdolg/databases/data.db"));
+            File dbpath = (new File("/data/data/com.example.szakdolg/databases/"+ uID +".db"));
             if (!(new File(dbpath.getParent()).exists())) {
                 new File(dbpath.getParent()).mkdirs();
             }

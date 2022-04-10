@@ -38,7 +38,7 @@ import java.util.ArrayList;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
     private FirebaseConnect firebaseConnect;
-    private SQLConnect sqlConnect = SQLConnect.getInstance("sql");
+    private SQLConnect sqlConnect;
     private ArrayList<MessageB> messageB = new ArrayList<>();
     private Context mContext;
     private static final String TAG = "MessageBoardRecAdapter";
@@ -49,6 +49,8 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
     public MessageBoardRecAdapter(Context mContext) {
         this.mContext = mContext;
         firebaseConnect = FirebaseConnect.getInstance("firebase");
+
+        sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
     }
 
 
@@ -61,20 +63,6 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
              picUri = FileHandling.getUri(uID, context);
         }catch (Exception e){
         }
-        StorageReference islandRef = storageRef.child(uID + ".jpg");
-
-        try {
-            Log.d(TAG, "setImageView: " + storageRef.child(uID + ".jpg").getMetadata().getException());
-        }catch (Exception e){
-
-        }
-
-      /*
-            if (storageRef.child(uID + ".jpg").getMetadata().isSuccessful()){
-                Log.d(TAG, "onFailure: OHHHHH NOOOOOO");
-        }*/
-
-        /*
         if (picUri == null) {
             Log.d(TAG, "setImageView: couldnt find the pic");
 
@@ -128,7 +116,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         } else {
             Log.d(TAG, "setImageView: " + picUri);
             image.setImageURI(FileHandling.getUri(uID, context));
-        }*/
+        }
 
 
     }

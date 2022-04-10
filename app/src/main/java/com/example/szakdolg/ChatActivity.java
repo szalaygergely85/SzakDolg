@@ -23,6 +23,7 @@ import java.util.TimerTask;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private static final String TAG = "ChatActivity";
     final Handler handler = new Handler();
     private FirebaseConnect fireBase = FirebaseConnect.getInstance("firebase");
     private ChatAdapter adapter;
@@ -48,11 +49,11 @@ public class ChatActivity extends AppCompatActivity {
         setRepeatingAsyncTask();
 
         uID = (String) this.getIntent().getSerializableExtra("uID");
-        Log.d("test", uID);
+        Log.d(TAG, "onCreate: " +uID);
 
 
         messageList = new ArrayList<>();
-        sqlConnect = SQLConnect.getInstance("sql");;
+        sqlConnect = SQLConnect.getInstance("sql", fireBase.getUserId());;
         messageList = sqlConnect.getMessagesSQL(uID);
         adapter = new ChatAdapter(this);
         adapter.setChats(messageList);
@@ -109,7 +110,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Log.d("test", "ONDESTROY");
+        Log.d(TAG, "onDestroy: canceling timer");
         timer.cancel();
     }
 
@@ -122,7 +123,7 @@ public class ChatActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    fireBase.handleKeysReq();
+                    fireBase.handleKeysReq(null);
                     if (fireBase.isNewMessage(uID)) {
                         fireBase.downloadMessages();
                         chatDownload = sqlConnect.getMessagesSQL(uID);

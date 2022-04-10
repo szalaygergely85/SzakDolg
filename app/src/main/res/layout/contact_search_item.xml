@@ -5,12 +5,13 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgContItem"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginRight="10dp"
-        android:src="@drawable/ic_blank_profile" />
+        android:src="@drawable/ic_blank_profile"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"/>/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

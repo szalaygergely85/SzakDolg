@@ -43,8 +43,6 @@ public class ChangePassActivity extends AppCompatActivity {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.changeToolbar);
         setSupportActionBar(mToolbar);
 
-
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Change Password");

@@ -46,7 +46,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
     private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
-    private SQLConnect sqlConnect = SQLConnect.getInstance("sql");
+    private SQLConnect sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
     private MessageBoardRecAdapter adapter;
     private ArrayList<MessageB> messageB;
     private Timer timer;
@@ -70,6 +70,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
 
         mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
+
         setSupportActionBar(mToolbar);
         mToolbar.setTitle("Messages");
 
@@ -158,7 +159,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                         Log.d(TAG, "doInBackground: There arent any message to upload");
                     }
 
-                    firebaseConnect.handleKeysReq();
+                    firebaseConnect.handleKeysReq(null);
                     if (firebaseConnect.isNewMessage()) {
                         Log.i(TAG, "doInBackground: There is a new message");
                         firebaseConnect.downloadMessages();
