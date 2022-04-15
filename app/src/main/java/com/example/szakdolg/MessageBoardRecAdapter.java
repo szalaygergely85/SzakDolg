@@ -49,7 +49,6 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
     public MessageBoardRecAdapter(Context mContext) {
         this.mContext = mContext;
         firebaseConnect = FirebaseConnect.getInstance("firebase");
-
         sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
     }
 

@@ -111,8 +111,9 @@ public class FirebaseConnect {
     }
 
     public void deleteAccount(String uid, Context context) {
+        String myID = getUserId();
         db.collection("Users").document(uid).delete();
-        if (uid.equals(getUserId())) {
+        if (uid.equals(myID)) {
             Log.d(TAG, "deleteAccount: Deleteing from auth too");
             mAuth.getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
@@ -154,7 +155,7 @@ public class FirebaseConnect {
     public void downloadMessages() {
         if (isUserSigned()) {
             sqlConnect = SQLConnect.getInstance("sql", getUserId());
-            Log.i(TAG, "downloadMessages(): found new message for:" + getUserId());
+            Log.d(TAG, "downloadMessages(): found new message for:" + getUserId());
             db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -166,7 +167,7 @@ public class FirebaseConnect {
                                     !document.get("time").toString().equals(null)) {
                                 Log.i(TAG, "downloadMessages(): found not empty messages " + document.toString());
                                 if (sqlConnect.isKey(document.get("contact").toString())) {
-                                    Log.d(TAG, document.get("from").toString());
+                                    Log.d(TAG, document.get("contact").toString());
 
                                     // if i dont have the sender in Contacts, adding it.
                                     if (!sqlConnect.isInContracts(document.get("contact").toString())) {
@@ -175,15 +176,15 @@ public class FirebaseConnect {
                                     // Get priv key from SQL
                                     privKey = sqlConnect.getPrivateKey(document.get("contact").toString());
                                     // Decrypt message here
-                                    Log.d("Crypt", privKey);
+                                    Log.d(TAG, privKey);
 
                                     String decMessage = Crypt.deCrypt(document.get("message").toString(), privKey);
-                                    Log.d("Crypt", decMessage);
+                                    Log.d(TAG, decMessage);
 
                                     // Create a CHat class for the message
                                     Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, false, false);
 
-                                    sqlConnect.addMessageSql(chat);
+                                    sqlConnect.addMessageSql(chat, document.get("contact").toString());
                                     db.collection(getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
                                 } else {
                                     Log.e("Crypt", "Dont have key form the sender");
@@ -276,7 +277,7 @@ public class FirebaseConnect {
         db.collection(uID).document("reqPubKey:" + getUserId()).set(req).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Log.d("Crypt", "Key send with success" + sqlConnect.getPublicKey(uID));
+                Log.d(TAG, "Key send with success" + sqlConnect.getPublicKey(uID));
             }
         });
     }
@@ -338,21 +339,34 @@ public class FirebaseConnect {
     }
 
     public void handleKeysReq(String uID) {
-        sqlConnect = SQLConnect.getInstance("sql", getUserId());
-        db.collection(getUserId()).whereEqualTo("docType", "reqPubKey").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        String myID = getUserId();
+        Log.d(TAG, "handleKeysReq: my id " + myID );
+        Log.d(TAG, "handleKeysReq: sending to "+ uID);
+        Log.d(TAG, "handleKeysReq: starting it");
+        sqlConnect = SQLConnect.getInstance("sql", myID);
+        db.collection(myID).whereEqualTo("docType", "reqPubKey").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
+                Log.d(TAG, "onComplete: found +" + task.getResult().size());
+                if (task.getResult().size()>0) {
+
+                    Log.d(TAG, "A req Key Found, Downloading it");
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d("Crypt", "A req Key Found, Downloading it");
-                        sqlConnect.updatePublicExtKey(document.get("uID").toString(), document.get("pubKey").toString());
-                        sendKeyReturn(document.get("uID").toString());
+
+                            if (document.exists()){
+                                sqlConnect.updatePublicExtKey(document.get("uID").toString(), document.get("pubKey").toString());
+                                sendKeyReturn(document.get("uID").toString());
+                            }else{
+                                Log.d(TAG, "Maybe this one? ");
+                            }
+
                     }
                 }else{
+                    Log.d(TAG, "Didnt find req key, checking if anybody sent");
                     db.collection(getUserId()).whereEqualTo("docType", "sentPubKey").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
+                            if (task.getResult().size()>0) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d(TAG, "onComplete: A sentKey Found, Downloading it");
 
@@ -512,29 +526,31 @@ public class FirebaseConnect {
      *
      * @param message
      */
-    public void sendMessage(Chat message) {
+    public void sendMessage(Chat message, String uID) {
         sqlConnect = SQLConnect.getInstance("sql", getUserId());
 
 
-        Log.d("Crypt", message.getContact());
+        Log.d(TAG, uID +" and my ID " + message.getContact());
 
-        if (sqlConnect.isPubExtKey(message.getContact())) {
-            Log.d(TAG, "sendMessage: found the Key, sending message" + sqlConnect.getPublicExtKey(message.getContact()));
+        if (sqlConnect.isPubExtKey(uID)) {
+            Log.d(TAG, "sendMessage: found the Key, sending message" + sqlConnect.getPublicExtKey(uID));
 
             pubKey = sqlConnect.getPublicExtKey(message.getContact());
             String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
-            Log.d(TAG, "sendMessage: found the Key, sending message" + sqlConnect.getPublicExtKey(message.getContact()));
+            Log.d(TAG, "sendMessage: found the Key, sending message" + sqlConnect.getPublicExtKey(uID));
             Map<String, Object> cont = message.getHashMap();
             cont.remove("isFromMe");
             cont.remove("isRead");
             cont.remove("isUploaded");
+            cont.put("contact", getUserId());
             cont.put("message", encMessage);
             cont.put("isDownloaded", false);
             cont.put("isRead", false);
             Log.d(TAG, "sendMessage: " + cont);
-            db.collection(message.getContact()).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
+            db.collection(uID).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
+                    sqlConnect.setMessageToUploaded(message.getId());
                     //Log.d("FireStore", "Sikerult elkuldeni az uzit");
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -544,17 +560,8 @@ public class FirebaseConnect {
                 }
             });
         } else {
-            handleKeysReq(message.getContact());
-
-
-            /*
-            if (isKeySentToME() ) {
-                handleKeysReq();
-            } else {
-                sendKeyRequest(message.getContact());
-                Log.d(TAG, "sendMessage: Didnt find the key, sending key request");
-            }*/
-
+            Log.d(TAG, "sendMessage: Didnt find the key, starting handleKeys()");
+            handleKeysReq(uID);
         }
 
     }
@@ -567,6 +574,7 @@ public class FirebaseConnect {
             Log.d("Crypt", "Trying to send not uploaded messages to : " + message.toString());
 
             if (sqlConnect.isPubExtKey(message.getContact())) {
+                String senderID = message.getContact();
                 Log.d("Crypt", "found the Key, sending message");
                 pubKey = sqlConnect.getPublicExtKey(message.getContact());
                 Log.d("Crypt", "found the Key" + sqlConnect.getPublicExtKey(message.getContact()));
@@ -584,7 +592,7 @@ public class FirebaseConnect {
 
                 Log.d("Crypt", "message is" + cont.toString());
 
-                db.collection(message.getContact()).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
+                db.collection(senderID).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         Log.d("FireStore", "Sikerult elkuldeni az uzit");
@@ -600,18 +608,11 @@ public class FirebaseConnect {
             } else {
 
 
+                Log.d(TAG, "sendMessage: Didnt find the key, starting handleKeys()");
                 handleKeysReq(message.getContact());
 
 
 
-                /*
-                if (isKeySentToME()) {
-                    handleKeysReq();
-                } else {
-                    sendKeyRequest(message.getContact());
-                    Log.d("Crypt", "Didnt find the key, sending key request");
-                }
-                */
             }
         }
 

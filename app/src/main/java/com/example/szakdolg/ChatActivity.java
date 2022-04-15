@@ -2,6 +2,7 @@ package com.example.szakdolg;
 
 import static java.lang.Boolean.TRUE;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +39,9 @@ public class ChatActivity extends AppCompatActivity {
     private Button btnSend;
     private EditText edtMess;
     private SQLConnect sqlConnect;
-    private String uID;
+    private String uID ;
+    private String myID = fireBase.getUserId();
+
 
     private void initView() {
         chatRecView = findViewById(R.id.recViewChat);
@@ -76,8 +84,8 @@ public class ChatActivity extends AppCompatActivity {
                 Long time = date.getTime();
                 Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(),1, false, false);
                 Log.d("Crypt", chat.toString());
-                sqlConnect.addMessageSql(chat);
-                fireBase.sendMessage(chat);
+                sqlConnect.addMessageSql(chat, uID);
+                fireBase.sendMessage(chat, uID);
 
                 messageList.add(chat);
                 adapter.notifyDataSetChanged();
@@ -119,11 +127,34 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            // Log.d("test", "doInBackground: Chat act");
+            
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     fireBase.handleKeysReq(null);
+                    Log.d(TAG, "run: from " + uID + "my id: " + myID);
+
+                    fireBase.db.collection(myID).whereEqualTo("isDownloaded", false).whereEqualTo("contact", uID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "onComplete: " +task.getResult().size());
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    if (document.exists()) {
+                                        Log.d(TAG, "onComplete: Starting to download new messages");
+                                        downloadMessages(document);
+                                        chatDownload = sqlConnect.getMessagesSQL(uID);
+                                        messageList = chatDownload;
+                                        adapter.setChats(messageList);
+                                    } else {
+                                        Log.d(TAG, "No new message from " + uID);
+                                    }
+                                }
+                            }
+
+                        }
+                    });
+                    /*
                     if (fireBase.isNewMessage(uID)) {
                         fireBase.downloadMessages();
                         chatDownload = sqlConnect.getMessagesSQL(uID);
@@ -133,9 +164,46 @@ public class ChatActivity extends AppCompatActivity {
                     }else{
                         // Log.d("test", "No new message from " + uID);
                     }
+
+                     */
                 }
             });
             return null;
         }
+
     }
+    private void downloadMessages(QueryDocumentSnapshot document){
+        String privKey = null;
+
+        if (!document.get("contact").toString().equals(null) &&
+                !document.get("message").toString().equals(null) &&
+                !document.get("time").toString().equals(null)) {
+            Log.i(TAG, "downloadMessages(): found not empty messages " + document.toString());
+            if (sqlConnect.isKey(document.get("contact").toString())) {
+                Log.d(TAG, document.get("contact").toString());
+
+                // if i dont have the sender in Contacts, adding it.
+                if (!sqlConnect.isInContracts(document.get("contact").toString())) {
+                    fireBase.addAUser(document.get("contact").toString());
+                }
+                // Get priv key from SQL
+                privKey = sqlConnect.getPrivateKey(document.get("contact").toString());
+                // Decrypt message here
+                Log.d(TAG, privKey);
+
+                String decMessage = Crypt.deCrypt(document.get("message").toString(), privKey);
+                Log.d(TAG, decMessage);
+
+                // Create a Chat class for the message
+                Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, false, false);
+
+                sqlConnect.addMessageSql(chat, document.get("contact").toString());
+                fireBase.db.collection(fireBase.getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
+            } else {
+                Log.d(TAG, "download Messges: dont have a key from the sender");
+            }
+        }
+    }
+
+
 }

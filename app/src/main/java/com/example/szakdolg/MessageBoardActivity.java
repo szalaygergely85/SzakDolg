@@ -32,6 +32,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -46,13 +48,14 @@ public class MessageBoardActivity extends AppCompatActivity {
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
     private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
-    private SQLConnect sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
+    private SQLConnect sqlConnect;
     private MessageBoardRecAdapter adapter;
     private ArrayList<MessageB> messageB;
     private Timer timer;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     MaterialToolbar mToolbar;
+    private String myID = firebaseConnect.getUserId();
 
     private void initView() {
         contactsButton = findViewById(R.id.btnMesBrdNew);
@@ -67,7 +70,9 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         initView();
 
+        sqlConnect = SQLConnect.getInstance("sql", myID);
 
+        Log.d(TAG, "onCreate: "+ firebaseConnect.getUserId());
 
         mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
 
@@ -152,6 +157,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                 public void run() {
                     if(sqlConnect.isNotUploadedMessage()){
                         Log.d(TAG, "doInBackground: "+ sqlConnect.getMessagesNOTUploaded().toString());
+
                         firebaseConnect.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
                         Log.d(TAG, "doInBackground: There are some not uploaded messages");
 
@@ -160,6 +166,28 @@ public class MessageBoardActivity extends AppCompatActivity {
                     }
 
                     firebaseConnect.handleKeysReq(null);
+
+                    firebaseConnect.db.collection(myID).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "onComplete: " +task.getResult().size());
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    if (document.exists()) {
+                                        Log.d(TAG, "onComplete: Starting to download new messages");
+                                        downloadMessages(document);
+                                        ArrayList<MessageB> message  = sqlConnect.getLastMessageEachPersonSQL(myID);
+                                        messageB = message;
+                                        adapter.setMessageB(messageB);
+                                    } else {
+                                        Log.d(TAG, "No new message");
+                                    }
+                                }
+                            }
+
+                        }
+                    });
+                                        /*
                     if (firebaseConnect.isNewMessage()) {
                         Log.i(TAG, "doInBackground: There is a new message");
                         firebaseConnect.downloadMessages();
@@ -168,7 +196,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                         adapter.setMessageB(messageB);
                     }else{
                         Log.i(TAG, "doInBackground: No new message");
-                    }
+                    }*/
                 }
             });
             return null;
@@ -203,5 +231,37 @@ public class MessageBoardActivity extends AppCompatActivity {
         timer.schedule(task, 0, 30 * 1000);
 
 
+    }
+    private void downloadMessages(QueryDocumentSnapshot document){
+        String privKey = null;
+
+        if (!document.get("contact").toString().equals(null) &&
+                !document.get("message").toString().equals(null) &&
+                !document.get("time").toString().equals(null)) {
+            Log.i(TAG, "downloadMessages(): found not empty messages " + document.toString());
+            if (sqlConnect.isKey(document.get("contact").toString())) {
+                Log.d(TAG, document.get("contact").toString());
+
+                // if i dont have the sender in Contacts, adding it.
+                if (!sqlConnect.isInContracts(document.get("contact").toString())) {
+                    firebaseConnect.addAUser(document.get("contact").toString());
+                }
+                // Get priv key from SQL
+                privKey = sqlConnect.getPrivateKey(document.get("contact").toString());
+                // Decrypt message here
+                Log.d(TAG, privKey);
+
+                String decMessage = Crypt.deCrypt(document.get("message").toString(), privKey);
+                Log.d(TAG, decMessage);
+
+                // Create a Chat class for the message
+                Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, false, false);
+
+                sqlConnect.addMessageSql(chat, document.get("contact").toString());
+                firebaseConnect.db.collection(firebaseConnect.getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
+            } else {
+                Log.d(TAG, "download Messges: dont have a key from the sender");
+            }
+        }
     }
 }

@@ -59,10 +59,13 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     private String uID;
+    private String myID = firebaseConnect.getUserId();
 
     public void setImageView(String uID, Context context) {
 
         Log.d(TAG, "getPicURl: " + uID);
+
+
         Uri picUri = FileHandling.getUri(uID, context);
         if (picUri == null) {
             try {
@@ -247,25 +250,32 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, PHOTO_PICKER_REQUEST_CODE);
-            }
-        });
+        if (myID.equals(uID)) {
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, PHOTO_PICKER_REQUEST_CODE);
+                }
+            });
+        }
         deleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                firebaseConnect.deleteAccount(firebaseConnect.getUserId(), ProfileActivity.this);
+                Log.d(TAG, "onClick: clicked on delete account");
+                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                firebaseConnect.deleteAccount(myID, ProfileActivity.this);
+                startActivity(intent);
                 finish();
             }
         });
         deleteContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 firebaseConnect.deleteAccount(uID, ProfileActivity.this);
+
                 finish();
             }
         });

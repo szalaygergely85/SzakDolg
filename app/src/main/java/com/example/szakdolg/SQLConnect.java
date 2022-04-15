@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SQLConnect {
+    private static final String TAG = "SQLConnect";
     private SQLiteDatabase mydatabase;
     private boolean privBoolean = false;
     private String name;
@@ -21,10 +22,13 @@ public class SQLConnect {
 
     //Singleton
     public static synchronized SQLConnect getInstance(String name, String uID){
+
         if(instance==null){
             instance = new SQLConnect(name, uID);
+            Log.d(TAG, "SQLConnect: " + instance.mydatabase.getPath());
             return instance;
         }else{
+            Log.d(TAG, "SQLConnect: " + instance.mydatabase.getPath());
             return instance;
         }
     }
@@ -39,6 +43,7 @@ public class SQLConnect {
                 new File(dbpath.getParent()).mkdirs();
             }
             mydatabase = SQLiteDatabase.openOrCreateDatabase(dbpath, null);
+            Log.d(TAG, "SQLConnect: " +mydatabase.getPath());
             // Create or connect to sql database
             // mydatabase.execSQL("DROP TABLE Keys");
             // mydatabase.execSQL("DROP TABLE Contacts");
@@ -276,11 +281,11 @@ public class SQLConnect {
      *
      * @param message
      */
-    public void addMessageSql(Chat message) {
+    public void addMessageSql(Chat message, String uID) {
 
         try {
 
-            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.getId() + "', '" + message.getContact() + "', '" + message.getMessage() + "' , '" + message.isFromMe() + "', 'false', 'false');");
+            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.getId() + "', '" + uID + "', '" + message.getMessage() + "' , '" + message.isFromMe() + "', 'false', 'false');");
             Log.e("SQL", message.getMessage());
         } catch (SQLException e) {
             Log.e("SQL", e.toString());

@@ -28,6 +28,8 @@ import javax.crypto.NoSuchPaddingException;
 
 public class Crypt {
 
+    private static final String TAG = "Crypt";
+
     /**
      * I ll need to store the keys in hashmap
      *   HashMap<String, String> keyPair = new HashMap<String, String>();
@@ -54,6 +56,7 @@ public class Crypt {
         return keyPair;
     }
     public static PublicKey getPublicKey(String publicK) {
+        Log.d(TAG, "getPublicKey: " + publicK);
         PublicKey pubKey = null;
         try {
             byte[] publicBytes = Base64.getDecoder().decode(publicK);
