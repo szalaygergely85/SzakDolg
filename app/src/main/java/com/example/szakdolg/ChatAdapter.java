@@ -16,12 +16,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
+public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
+    private static final String TAG = "ChatAdapter";
     private Context mContext;
     private ArrayList<Chat> chats = new ArrayList<>();
     private FirebaseConnect firebaseConnect;
     private String userID;
     long time;
+
     public ChatAdapter(Context mContext) {
         this.mContext = mContext;
 
@@ -33,7 +35,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
@@ -43,23 +45,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         try {
             time = Long.parseLong(chats.get(position).getId());
             // Log.d("test", ""+time);
-        }catch (Exception e){
+        } catch (Exception e) {
             // Log.d("Error", e.toString());
         }
 
         Date date = new Date(time);
-
-        Format format = new SimpleDateFormat("HH:mm");
-        String timeForm = format.format(date);
-        Log.d("Chat", chats.toString());
-        if (chats.get(position).isFromMe()>0){
-            holder.txtTextFrMe.setText(chats.get(position).getMessage());
-            holder.txtTimeOut.setText(timeForm);
-            holder.relIn.setVisibility(View.GONE);
-        }else{
-            holder.txtText.setText(chats.get(position).getMessage());
-            holder.txtTimeIn.setText(timeForm);
-            holder.relOut.setVisibility(View.GONE);
+        if (!chats.get(position).getMessage().isEmpty()) {
+            Format format = new SimpleDateFormat("HH:mm");
+            String timeForm = format.format(date);
+            Log.d(TAG, "" + chats.get(position).isFromMe());
+            if (chats.get(position).isFromMe() > 0) {
+                holder.txtTextFrMe.setText(chats.get(position).getMessage());
+                holder.txtTimeOut.setText(timeForm);
+                holder.relIn.setVisibility(View.GONE);
+            } else {
+                holder.txtText.setText(chats.get(position).getMessage());
+                holder.txtTimeIn.setText(timeForm);
+                holder.relOut.setVisibility(View.GONE);
+            }
+        } else {
+            Log.d(TAG, "onBindViewHolder: Message Empty");
         }
 
     }
@@ -74,7 +79,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
 
         //declare here fields
@@ -84,12 +89,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         private TextView txtTextFrMe;
         private RelativeLayout relIn;
         private RelativeLayout relOut;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtText = itemView.findViewById(R.id.chatText);
             txtTextFrMe = itemView.findViewById(R.id.chatTextFrMe);
-            txtTimeIn =itemView.findViewById(R.id.chatTextTimeIn);
-            txtTimeOut=itemView.findViewById(R.id.chatTextTimeOut);
+            txtTimeIn = itemView.findViewById(R.id.chatTextTimeIn);
+            txtTimeOut = itemView.findViewById(R.id.chatTextTimeOut);
             relIn = itemView.findViewById(R.id.chatRelIn);
             relOut = itemView.findViewById(R.id.chatRelOut);
         }

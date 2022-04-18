@@ -48,7 +48,6 @@ public class ChatActivity extends AppCompatActivity {
         btnSend = findViewById(R.id.btnChatSend);
         edtMess = findViewById(R.id.edtChatMes);
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +56,16 @@ public class ChatActivity extends AppCompatActivity {
         setRepeatingAsyncTask();
 
         uID = (String) this.getIntent().getSerializableExtra("uID");
+
         Log.d(TAG, "onCreate: " +uID);
 
 
         messageList = new ArrayList<>();
         sqlConnect = SQLConnect.getInstance("sql", fireBase.getUserId());;
         messageList = sqlConnect.getMessagesSQL(uID);
+
+        sqlConnect.setMessageRead(uID);
+
         adapter = new ChatAdapter(this);
         adapter.setChats(messageList);
 
@@ -71,6 +74,11 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onStart() {
@@ -82,14 +90,21 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Date date = new Date();
                 Long time = date.getTime();
-                Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(),1, false, false);
-                Log.d("Crypt", chat.toString());
-                sqlConnect.addMessageSql(chat, uID);
-                fireBase.sendMessage(chat, uID);
+                if (!edtMess.getText().toString().isEmpty()){
+                if(uID!=null){
+                    Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(),1, 0, 0);
+                    Log.d(TAG, chat.toString());
+                    sqlConnect.addMessageSql(chat, uID);
+                    fireBase.sendMessage(chat, uID);
+                    messageList.add(chat);
+                    adapter.notifyDataSetChanged();
+                    edtMess.getText().clear();
+                    //chatRecView.scrollToPosition(messageList.size()-1);
+                }
+                }else {
+                    Log.d(TAG, "onClick: Message field is empty");
 
-                messageList.add(chat);
-                adapter.notifyDataSetChanged();
-                edtMess.getText().clear();
+                }
             }
         });
 
@@ -131,6 +146,17 @@ public class ChatActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    if(sqlConnect.isNotUploadedMessage()){
+                        Log.d(TAG, "doInBackground: "+ sqlConnect.getMessagesNOTUploaded().toString());
+
+                        fireBase.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
+                        Log.d(TAG, "doInBackground: There are some not uploaded messages");
+
+                    }else{
+                        Log.d(TAG, "doInBackground: There arent any message to upload");
+                    }
+
                     fireBase.handleKeysReq(null);
                     Log.d(TAG, "run: from " + uID + "my id: " + myID);
 
@@ -143,9 +169,6 @@ public class ChatActivity extends AppCompatActivity {
                                     if (document.exists()) {
                                         Log.d(TAG, "onComplete: Starting to download new messages");
                                         downloadMessages(document);
-                                        chatDownload = sqlConnect.getMessagesSQL(uID);
-                                        messageList = chatDownload;
-                                        adapter.setChats(messageList);
                                     } else {
                                         Log.d(TAG, "No new message from " + uID);
                                     }
@@ -154,18 +177,13 @@ public class ChatActivity extends AppCompatActivity {
 
                         }
                     });
-                    /*
-                    if (fireBase.isNewMessage(uID)) {
-                        fireBase.downloadMessages();
-                        chatDownload = sqlConnect.getMessagesSQL(uID);
-                        messageList = chatDownload;
+                    chatDownload = sqlConnect.getMessagesSQL(uID);
+                    if(!messageList.equals(chatDownload)){
+                        Log.d(TAG, "run: The size not the same, running adapter.notifyDataSetChanged() ");
                         adapter.setChats(messageList);
-                        //chatRecView.scrollToPosition(adapter.getItemCount()-1);
-                    }else{
-                        // Log.d("test", "No new message from " + uID);
-                    }
 
-                     */
+
+                    }
                 }
             });
             return null;
@@ -195,7 +213,7 @@ public class ChatActivity extends AppCompatActivity {
                 Log.d(TAG, decMessage);
 
                 // Create a Chat class for the message
-                Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, false, false);
+                Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, 0, 0);
 
                 sqlConnect.addMessageSql(chat, document.get("contact").toString());
                 fireBase.db.collection(fireBase.getUserId()).document(document.get("time").toString()).update("isDownloaded", true);

@@ -6,10 +6,10 @@ public class MessageB {
     private String contactId;
     private String contactUserName;
     private String text;
-    private boolean read;
+    private int read;
     private String imageUrl;
 
-    public MessageB(String messageId, String contactId, String contactUserName, String text, boolean read, String imageUrl) {
+    public MessageB(String messageId, String contactId, String contactUserName, String text, int read, String imageUrl) {
         this.messageId = messageId;
         this.contactId = contactId;
         this.contactUserName = contactUserName;
@@ -50,11 +50,11 @@ public class MessageB {
         this.text = text;
     }
 
-    public boolean isRead() {
+    public int isRead() {
         return read;
     }
 
-    public void setRead(boolean read) {
+    public void setRead(int read) {
         this.read = read;
     }
 

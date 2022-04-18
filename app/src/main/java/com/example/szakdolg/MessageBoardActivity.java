@@ -176,9 +176,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                                     if (document.exists()) {
                                         Log.d(TAG, "onComplete: Starting to download new messages");
                                         downloadMessages(document);
-                                        ArrayList<MessageB> message  = sqlConnect.getLastMessageEachPersonSQL(myID);
-                                        messageB = message;
-                                        adapter.setMessageB(messageB);
+
                                     } else {
                                         Log.d(TAG, "No new message");
                                     }
@@ -187,20 +185,28 @@ public class MessageBoardActivity extends AppCompatActivity {
 
                         }
                     });
-                                        /*
-                    if (firebaseConnect.isNewMessage()) {
-                        Log.i(TAG, "doInBackground: There is a new message");
-                        firebaseConnect.downloadMessages();
-                        ArrayList<MessageB> message = sqlConnect.getLastMessageEachPersonSQL(firebaseConnect.getUserId());
-                        messageB = message;
-                        adapter.setMessageB(messageB);
-                    }else{
-                        Log.i(TAG, "doInBackground: No new message");
-                    }*/
+
+                    ArrayList<MessageB> message  = sqlConnect.getLastMessageEachPersonSQL(myID);
+                    if(!messageB.equals(message)){
+                        Log.d(TAG, "run: The size not the same, running adapter.notifyDataSetChanged() ");
+                        Log.d(TAG, "run: "+ messageB.size());
+                        adapter.setMessageB(message);
+
+
+                        adapter.notifyDataSetChanged();
+
+                    }
+
                 }
+
+
             });
+
+
+
             return null;
         }
+
     }
 
 
@@ -220,6 +226,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                         try {
                             DownloadAsynctask downloadAsynctask = new DownloadAsynctask();
                             downloadAsynctask.execute();
+
                         } catch (Exception e) {
                             // error, do something
                         }
@@ -255,7 +262,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                 Log.d(TAG, decMessage);
 
                 // Create a Chat class for the message
-                Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, false, false);
+                Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, 0, 0);
 
                 sqlConnect.addMessageSql(chat, document.get("contact").toString());
                 firebaseConnect.db.collection(firebaseConnect.getUserId()).document(document.get("time").toString()).update("isDownloaded", true);

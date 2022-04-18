@@ -56,8 +56,6 @@ public class FirebaseConnect {
     StorageReference storageRef = storage.getReference();
 
 
-
-
     public static synchronized FirebaseConnect getInstance(String name) {
         if (instance == null) {
             instance = new FirebaseConnect(name);
@@ -71,7 +69,7 @@ public class FirebaseConnect {
         this.name = name;
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        if(isUserSigned()){
+        if (isUserSigned()) {
 
         }
     }
@@ -182,7 +180,7 @@ public class FirebaseConnect {
                                     Log.d(TAG, decMessage);
 
                                     // Create a CHat class for the message
-                                    Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, false, false);
+                                    Chat chat = new Chat(document.get("time").toString(), document.get("contact").toString(), decMessage, 0, 0, 0);
 
                                     sqlConnect.addMessageSql(chat, document.get("contact").toString());
                                     db.collection(getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
@@ -340,33 +338,33 @@ public class FirebaseConnect {
 
     public void handleKeysReq(String uID) {
         String myID = getUserId();
-        Log.d(TAG, "handleKeysReq: my id " + myID );
-        Log.d(TAG, "handleKeysReq: sending to "+ uID);
+        Log.d(TAG, "handleKeysReq: my id " + myID);
+        Log.d(TAG, "handleKeysReq: sending to " + uID);
         Log.d(TAG, "handleKeysReq: starting it");
         sqlConnect = SQLConnect.getInstance("sql", myID);
         db.collection(myID).whereEqualTo("docType", "reqPubKey").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 Log.d(TAG, "onComplete: found +" + task.getResult().size());
-                if (task.getResult().size()>0) {
+                if (task.getResult().size() > 0) {
 
                     Log.d(TAG, "A req Key Found, Downloading it");
                     for (QueryDocumentSnapshot document : task.getResult()) {
 
-                            if (document.exists()){
-                                sqlConnect.updatePublicExtKey(document.get("uID").toString(), document.get("pubKey").toString());
-                                sendKeyReturn(document.get("uID").toString());
-                            }else{
-                                Log.d(TAG, "Maybe this one? ");
-                            }
+                        if (document.exists()) {
+                            sqlConnect.updatePublicExtKey(document.get("uID").toString(), document.get("pubKey").toString());
+                            sendKeyReturn(document.get("uID").toString());
+                        } else {
+                            Log.d(TAG, "Maybe this one? ");
+                        }
 
                     }
-                }else{
+                } else {
                     Log.d(TAG, "Didnt find req key, checking if anybody sent");
                     db.collection(getUserId()).whereEqualTo("docType", "sentPubKey").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.getResult().size()>0) {
+                            if (task.getResult().size() > 0) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d(TAG, "onComplete: A sentKey Found, Downloading it");
 
@@ -381,7 +379,7 @@ public class FirebaseConnect {
                                 }
                             } else {
                                 Log.d(TAG, "onComplete: Didnt find Sent or Req key");
-                                if (uID!=null) {
+                                if (uID != null) {
                                     sendKeyRequest(uID);
                                     Log.d(TAG, "sendMessage: Didnt find the key, sending key request");
                                 }
@@ -391,9 +389,6 @@ public class FirebaseConnect {
                 }
             }
         });
-
-
-
 
 
     }
@@ -527,38 +522,47 @@ public class FirebaseConnect {
      * @param message
      */
     public void sendMessage(Chat message, String uID) {
-        sqlConnect = SQLConnect.getInstance("sql", getUserId());
+        String myID = getUserId();
+        sqlConnect = SQLConnect.getInstance("sql", myID);
 
 
-        Log.d(TAG, uID +" and my ID " + message.getContact());
+        Log.d(TAG, uID + " and my ID " + myID);
 
         if (sqlConnect.isPubExtKey(uID)) {
-            Log.d(TAG, "sendMessage: found the Key, sending message" + sqlConnect.getPublicExtKey(uID));
+            Log.d(TAG, "sendMessage: found the Key and it is :" + sqlConnect.getPublicExtKey(uID));
 
-            pubKey = sqlConnect.getPublicExtKey(message.getContact());
-            String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
-            Log.d(TAG, "sendMessage: found the Key, sending message" + sqlConnect.getPublicExtKey(uID));
-            Map<String, Object> cont = message.getHashMap();
-            cont.remove("isFromMe");
-            cont.remove("isRead");
-            cont.remove("isUploaded");
-            cont.put("contact", getUserId());
-            cont.put("message", encMessage);
-            cont.put("isDownloaded", false);
-            cont.put("isRead", false);
-            Log.d(TAG, "sendMessage: " + cont);
-            db.collection(uID).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    sqlConnect.setMessageToUploaded(message.getId());
-                    //Log.d("FireStore", "Sikerult elkuldeni az uzit");
+            pubKey = sqlConnect.getPublicExtKey(uID);
+            if (pubKey != null) {
+                String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
+                if (!encMessage.isEmpty()) {
+                    Log.d(TAG, "sendMessage: i could encrypt the message " + encMessage);
+                    Map<String, Object> cont = message.getHashMap();
+                    cont.remove("isFromMe");
+                    cont.remove("isRead");
+                    cont.remove("isUploaded");
+                    cont.put("contact", myID);
+                    cont.put("message", encMessage);
+                    cont.put("isDownloaded", false);
+                    cont.put("isRead", false);
+                    Log.d(TAG, "sendMessage: " + cont);
+                    db.collection(uID).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            sqlConnect.setMessageToUploaded(message.getId());
+                            Log.d(TAG, "Sikerult elkuldeni az uzit");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Ajajajaj nem jo az uzenetkuldes");
+                        }
+                    });
+                } else {
+                    Log.d(TAG, "sendMessage: Ohhh noo, encMessage is empty");
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    //Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
-                }
-            });
+            } else {
+                Log.d(TAG, "sendMessage: ooopppsss, pubkey is empty");
+            }
         } else {
             Log.d(TAG, "sendMessage: Didnt find the key, starting handleKeys()");
             handleKeysReq(uID);
@@ -567,52 +571,50 @@ public class FirebaseConnect {
     }
 
     public void sendArrayOfMessages(ArrayList<Chat> messages) {
-        sqlConnect = SQLConnect.getInstance("sql", getUserId());
+
+        String myID = getUserId();
+
+        sqlConnect = SQLConnect.getInstance("sql", myID);
         Map<String, Object> cont;
         for (int counter = 0; counter < messages.size(); counter++) {
             Chat message = messages.get(counter);
-            Log.d("Crypt", "Trying to send not uploaded messages to : " + message.toString());
+            String uID = message.getContact();
+            Log.d(TAG, "Trying to send not uploaded messages to : " + message);
+            if (sqlConnect.isPubExtKey(uID)) {
+                pubKey = sqlConnect.getPublicExtKey(uID);
+                if (pubKey != null) {
+                    Log.d(TAG, "found the Key" + sqlConnect.getPublicExtKey(uID));
+                    String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
 
-            if (sqlConnect.isPubExtKey(message.getContact())) {
-                String senderID = message.getContact();
-                Log.d("Crypt", "found the Key, sending message");
-                pubKey = sqlConnect.getPublicExtKey(message.getContact());
-                Log.d("Crypt", "found the Key" + sqlConnect.getPublicExtKey(message.getContact()));
-                String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
-                Log.d("Crypt", "message is" + encMessage);
+                    cont = message.getHashMap();
+                    cont.put("message", encMessage);
+                    cont.remove("isFromMe");
+                    cont.remove("isRead");
+                    cont.remove("isUploaded");
+                    cont.put("contact", myID);
+                    cont.put("isDownloaded", false);
+                    cont.put("isRead", false);
 
-                cont = message.getHashMap();
-                cont.put("message", encMessage);
-                cont.remove("isFromMe");
-                cont.remove("isRead");
-                cont.remove("isUploaded");
-                cont.put("contact", getUserId());
-                cont.put("isDownloaded", false);
-                cont.put("isRead", false);
+                    Log.d(TAG, "message is" + cont);
 
-                Log.d("Crypt", "message is" + cont.toString());
-
-                db.collection(senderID).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("FireStore", "Sikerult elkuldeni az uzit");
-                        sqlConnect.setMessageToUploaded(message.getId());
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
-                    }
-                });
+                    db.collection(uID).document(message.getId()).set(cont).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.d("FireStore", "Sikerult elkuldeni az uzit");
+                            sqlConnect.setMessageToUploaded(message.getId());
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("FireStore", "Ajajajaj nem jo az uzenetkuldes");
+                        }
+                    });
+                } else {
+                    Log.d(TAG, "sendArrayOfMessages: couldnt find pub key");
+                }
             } else {
-
-
                 Log.d(TAG, "sendMessage: Didnt find the key, starting handleKeys()");
                 handleKeysReq(message.getContact());
-
-
-
             }
         }
 

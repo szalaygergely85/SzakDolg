@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,9 +15,24 @@ import java.io.IOException;
 
 public class FileHandling {
 
-    public static void saveImageFile(String uID, Bitmap bitmap, Context c) throws IOException {
+    public static void saveImageFile(String uID, Bitmap pic, Context c) throws IOException {
+
+        double height = pic.getHeight();
+        double width = pic.getWidth();
+        int newWidth= (int) Math.round(width/height*200);
+        int newHeight= (int) Math.round(height/width*200);
+
+        Bitmap resized;
+        if (height>width){
+            resized = Bitmap.createScaledBitmap(pic,newWidth , 200, true);
+        }else{
+            resized = Bitmap.createScaledBitmap(pic, 200, newHeight, true);
+        }
+
+
+
         ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 60, bytearrayoutputstream);
+        resized.compress(Bitmap.CompressFormat.JPEG, 60, bytearrayoutputstream);
         File path = new File( c.getFilesDir() + "/Pictures/");
         if(!path.exists()){
             path.mkdir();

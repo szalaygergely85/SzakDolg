@@ -133,7 +133,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
 
-        if(!messageB.get(position).isRead()){
+        if(messageB.get(position).isRead()==0){
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
         }

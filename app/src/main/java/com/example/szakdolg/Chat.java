@@ -9,10 +9,10 @@ public class Chat {
     private String contact;
     private String message;
     private int isFromMe;
-    private boolean isRead;
-    private boolean isUploaded;
+    private int isRead;
+    private int isUploaded;
 
-    public Chat(String id, String contact, String message, int isFromMe, boolean isRead, boolean isUploaded) {
+    public Chat(String id, String contact, String message, int isFromMe, int isRead, int isUploaded) {
         this.id = id;
         this.message = message;
         this.contact = contact;
@@ -77,19 +77,19 @@ public class Chat {
         isFromMe = fromMe;
     }
 
-    public boolean isRead() {
+    public int isRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
+    public void setRead(int read) {
         isRead = read;
     }
 
-    public boolean isUploaded() {
+    public int isUploaded() {
         return isUploaded;
     }
 
-    public void setUploaded(boolean uploaded) {
+    public void setUploaded(int uploaded) {
         isUploaded = uploaded;
     }
 }
