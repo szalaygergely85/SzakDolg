@@ -8,6 +8,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -61,8 +63,6 @@ public class MessageBoardActivity extends AppCompatActivity {
         contactsButton = findViewById(R.id.btnMesBrdNew);
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,10 +87,10 @@ public class MessageBoardActivity extends AppCompatActivity {
         messageBoardRecView.setAdapter(adapter);
         messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
     }
-
     @Override
     protected void onStart() {
         super.onStart();
+
         timer = new Timer();
         setRepeatingAsyncTask();
 
@@ -103,20 +103,17 @@ public class MessageBoardActivity extends AppCompatActivity {
             }
         });
     }
-
-
     @Override
     protected void onStop() {
         super.onStop();
         timer.cancel();
-    }
 
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.nav_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent intent;
@@ -144,7 +141,6 @@ public class MessageBoardActivity extends AppCompatActivity {
         return false;
 
     }
-
     public class DownloadAsynctask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -208,11 +204,6 @@ public class MessageBoardActivity extends AppCompatActivity {
         }
 
     }
-
-
-
-
-
     private void setRepeatingAsyncTask() {
 
         final Handler handler = new Handler();
@@ -271,4 +262,9 @@ public class MessageBoardActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
+
+
 }
