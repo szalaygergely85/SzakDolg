@@ -1,5 +1,7 @@
 package com.example.szakdolg;
 
+import static com.example.szakdolg.MyJobService.BUNDLE_MY_ID;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -10,14 +12,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,12 +62,36 @@ public class MessageBoardActivity extends AppCompatActivity {
     private ArrayList<MessageB> messageB;
     private Timer timer;
     FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference();
     MaterialToolbar mToolbar;
     private String myID = firebaseConnect.getUserId();
+    private static final int JOB_ID = 201;
+    JobScheduler scheduler;
 
     private void initView() {
         contactsButton = findViewById(R.id.btnMesBrdNew);
+    }
+
+    private void initJobScheduler() {
+        Log.d(TAG, "initJobScheduler: ");
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP){
+            ComponentName componentName = new ComponentName(this, MyJobService.class);
+            PersistableBundle bundle = new PersistableBundle();
+            bundle.putString(BUNDLE_MY_ID, myID);
+            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName)
+                    //.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setExtras(bundle)
+                    .setPersisted(true);
+            if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.N){
+                builder.setPeriodic(1*60*1000, 30*60*1000);
+                Log.d(TAG, "initJobScheduler: ");
+            }else{
+                builder.setPeriodic(15*60*1000);
+            }
+            scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+            scheduler.schedule(builder.build());
+
+
+        }
     }
 
     @Override
@@ -69,6 +100,7 @@ public class MessageBoardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message_board_actvitiy);
 
         initView();
+
 
         sqlConnect = SQLConnect.getInstance("sql", myID);
 
@@ -92,6 +124,9 @@ public class MessageBoardActivity extends AppCompatActivity {
         super.onStart();
 
         timer = new Timer();
+        scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        scheduler.cancelAll();
+
         setRepeatingAsyncTask();
 
 
@@ -103,10 +138,19 @@ public class MessageBoardActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        initJobScheduler();
+
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
-        timer.cancel();
+
 
     }
     @Override

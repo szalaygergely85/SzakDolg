@@ -7,19 +7,27 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+
 public class MainActivity extends AppCompatActivity {
 
+
     private static final String TAG = "MainActivity";
+
     private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final int READ_PERMISSION_CODE = 202;
     private static final int WRITE_PERMISSION_CODE = 203;
@@ -42,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_CODE);
         }
 
+
     }
+
 
 
 
