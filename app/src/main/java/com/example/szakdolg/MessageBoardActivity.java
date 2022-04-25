@@ -61,7 +61,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     private MessageBoardRecAdapter adapter;
     private ArrayList<MessageB> messageB;
     private Timer timer;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+
     MaterialToolbar mToolbar;
     private String myID = firebaseConnect.getUserId();
     private static final int JOB_ID = 201;

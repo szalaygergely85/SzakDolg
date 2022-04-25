@@ -21,8 +21,8 @@
             android:background="@drawable/shape_bg_incoming_bubble"
             android:paddingVertical="10dp"
             android:paddingLeft="30dp"
+            android:text="This is a message to me"
             android:paddingRight="10dp"
-            android:text="ez egy uzenet Kotenoktol"
             android:textSize="17sp" />
 
         <TextView
@@ -54,7 +54,7 @@
             android:background="@drawable/shape_bg_outgoing_bubble"
             android:textSize="17sp"
             android:layout_alignParentEnd="true"
-            android:text="ez egy uzenet tolem"
+            android:text="Message from me"
             />
 
         <TextView

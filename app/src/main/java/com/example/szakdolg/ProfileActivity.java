@@ -273,8 +273,8 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
-                firebaseConnect.deleteAccount(uID, ProfileActivity.this);
+                //TODO create delete contact
+               // firebaseConnect.deleteAccount(uID, ProfileActivity.this);
 
                 finish();
             }

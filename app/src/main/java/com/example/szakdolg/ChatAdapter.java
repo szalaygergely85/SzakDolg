@@ -58,10 +58,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 holder.txtTextFrMe.setText(chats.get(position).getMessage());
                 holder.txtTimeOut.setText(timeForm);
                 holder.relIn.setVisibility(View.GONE);
+                holder.relOut.setVisibility(View.VISIBLE);
             } else {
                 holder.txtText.setText(chats.get(position).getMessage());
                 holder.txtTimeIn.setText(timeForm);
                 holder.relOut.setVisibility(View.GONE);
+                holder.relIn.setVisibility(View.VISIBLE);
             }
         } else {
             Log.d(TAG, "onBindViewHolder: Message Empty");

@@ -119,7 +119,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
     }
-    //TODO Error kezeles ide is
 
     public class RegisterAsyncTask extends AsyncTask<Map<String, String>, Void, Void> {
 

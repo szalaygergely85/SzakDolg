@@ -91,13 +91,14 @@ public class Crypt {
             encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
             byte[] encryptedMessageBytes = encryptCipher.doFinal(secretMessageBytes);
             encodedMessage = Base64.getEncoder().encodeToString(encryptedMessageBytes);
-            ;
-            // Log.d("fasza", encodedMessage);
+
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (Exception e){
             e.printStackTrace();
         }
         return encodedMessage;

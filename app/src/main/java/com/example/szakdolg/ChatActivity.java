@@ -1,5 +1,6 @@
 package com.example.szakdolg;
 
+import static com.example.szakdolg.MyJobService.BUNDLE_MY_ID;
 import static java.lang.Boolean.TRUE;
 
 import androidx.annotation.NonNull;
@@ -7,9 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,6 +47,8 @@ public class ChatActivity extends AppCompatActivity {
     private SQLConnect sqlConnect;
     private String uID ;
     private String myID = fireBase.getUserId();
+    private static final int JOB_ID = 201;
+    private JobScheduler scheduler;
 
 
     private void initView() {
@@ -48,12 +56,34 @@ public class ChatActivity extends AppCompatActivity {
         btnSend = findViewById(R.id.btnChatSend);
         edtMess = findViewById(R.id.edtChatMes);
     }
+        private void initJobScheduler() {
+            Log.d(TAG, "initJobScheduler: ");
+            if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP){
+                ComponentName componentName = new ComponentName(this, MyJobService.class);
+                PersistableBundle bundle = new PersistableBundle();
+                bundle.putString(BUNDLE_MY_ID, myID);
+                JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName)
+                        //.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                        .setExtras(bundle)
+                        .setPersisted(true);
+                if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.N){
+                    builder.setPeriodic(1*60*1000, 30*60*1000);
+                    Log.d(TAG, "initJobScheduler: ");
+                }else{
+                    builder.setPeriodic(15*60*1000);
+                }
+                scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+                scheduler.schedule(builder.build());
+
+
+            }
+        }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         initView();
-        setRepeatingAsyncTask();
 
         uID = (String) this.getIntent().getSerializableExtra("uID");
 
@@ -83,6 +113,11 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        timer = new Timer();
+        scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        scheduler.cancelAll();
+
+        setRepeatingAsyncTask();
 
 
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -90,16 +125,19 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Date date = new Date();
                 Long time = date.getTime();
+
+
                 if (!edtMess.getText().toString().isEmpty()){
                 if(uID!=null){
                     Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(),1, 0, 0);
                     Log.d(TAG, chat.toString());
                     sqlConnect.addMessageSql(chat, uID);
                     fireBase.sendMessage(chat, uID);
-                    messageList.add(chat);
-                    adapter.notifyDataSetChanged();
+                    ListHandleAsyncTask refreshNewSend = new ListHandleAsyncTask();
+                    refreshNewSend.execute();
+
                     edtMess.getText().clear();
-                    //chatRecView.scrollToPosition(messageList.size()-1);
+
                 }
                 }else {
                     Log.d(TAG, "onClick: Message field is empty");
@@ -130,11 +168,12 @@ public class ChatActivity extends AppCompatActivity {
         timer.schedule(task, 0, 30 * 1000);  // interval of one minute
     }
 
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy: canceling timer");
+    protected void onPause() {
+        super.onPause();
         timer.cancel();
+        initJobScheduler();
     }
 
     public class ChatUpdateAsynctask extends AsyncTask<Void, Void, Void> {
@@ -180,9 +219,9 @@ public class ChatActivity extends AppCompatActivity {
                     chatDownload = sqlConnect.getMessagesSQL(uID);
                     if(!messageList.equals(chatDownload)){
                         Log.d(TAG, "run: The size not the same, running adapter.notifyDataSetChanged() ");
-                        adapter.setChats(messageList);
 
-
+                        ListHandleAsyncTask downloadRefresh = new ListHandleAsyncTask();
+                        downloadRefresh.execute();
                     }
                 }
             });
@@ -222,6 +261,25 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
     }
+    public class ListHandleAsyncTask extends AsyncTask<Void, Void, Void>{
+        ArrayList<Chat> chatDownload;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            chatDownload = sqlConnect.getMessagesSQL(uID);
+            Log.d(TAG, "doInBackground: the size of array:" + chatDownload.size() );
 
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            Log.d(TAG, "onPostExecute: running refresh");
+            adapter.setChats(chatDownload);
+            if(messageList.size()!=chatDownload.size()) {
+                chatRecView.scrollToPosition(chatDownload.size() - 1);
+            }
+            super.onPostExecute(unused);
+        }
+    }
 
 }
