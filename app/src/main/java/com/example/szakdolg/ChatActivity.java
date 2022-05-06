@@ -4,7 +4,9 @@ import static com.example.szakdolg.MyJobService.BUNDLE_MY_ID;
 import static java.lang.Boolean.TRUE;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -72,6 +74,7 @@ public class ChatActivity extends AppCompatActivity {
                 }else{
                     builder.setPeriodic(15*60*1000);
                 }
+
                 scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
                 scheduler.schedule(builder.build());
 
@@ -83,15 +86,27 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        sqlConnect = SQLConnect.getInstance("sql", fireBase.getUserId());
         initView();
-
         uID = (String) this.getIntent().getSerializableExtra("uID");
+
 
         Log.d(TAG, "onCreate: " +uID);
 
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
+        setSupportActionBar(mToolbar);
+        //toolbar settings
+
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (sqlConnect.getNameFrContact(uID)!=null) {
+            actionBar.setTitle(sqlConnect.getNameFrContact(uID));
+        }
+
 
         messageList = new ArrayList<>();
-        sqlConnect = SQLConnect.getInstance("sql", fireBase.getUserId());;
+
         messageList = sqlConnect.getMessagesSQL(uID);
 
         sqlConnect.setMessageRead(uID);
@@ -102,6 +117,12 @@ public class ChatActivity extends AppCompatActivity {
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     @Override

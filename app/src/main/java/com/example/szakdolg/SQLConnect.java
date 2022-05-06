@@ -298,10 +298,12 @@ public class SQLConnect {
 
     public String getNameFrContact(String uID) {
         String fr = new String();
+        Log.d(TAG, "getNameFrContact: " + uID);
         Cursor result = mydatabase.rawQuery("SELECT userName FROM Contacts WHERE userId='" + uID + "'", null);
 
         if (result.moveToFirst()) {
             fr = result.getString(0);
+            Log.d(TAG, "getNameFrContact: " + fr);
         }
         return fr;
     }
