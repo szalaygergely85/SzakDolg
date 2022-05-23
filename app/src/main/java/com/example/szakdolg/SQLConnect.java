@@ -21,13 +21,13 @@ public class SQLConnect {
     private static SQLConnect instance;
 
     //Singleton
-    public static synchronized SQLConnect getInstance(String name, String uID){
+    public static synchronized SQLConnect getInstance(String name, String uID) {
 
-        if(instance==null){
+        if (instance == null) {
             instance = new SQLConnect(name, uID);
             Log.d(TAG, "SQLConnect: " + instance.mydatabase.getPath());
             return instance;
-        }else{
+        } else {
             Log.d(TAG, "SQLConnect: " + instance.mydatabase.getPath());
             return instance;
         }
@@ -38,17 +38,14 @@ public class SQLConnect {
 
         try {
 
-            File dbpath = (new File("/data/data/com.example.szakdolg/databases/"+ uID +".db"));
+            File dbpath = (new File("/data/data/com.example.szakdolg/databases/" + uID + ".db"));
             if (!(new File(dbpath.getParent()).exists())) {
                 new File(dbpath.getParent()).mkdirs();
             }
             mydatabase = SQLiteDatabase.openOrCreateDatabase(dbpath, null);
-            Log.d(TAG, "SQLConnect: " +mydatabase.getPath());
+            Log.d(TAG, "SQLConnect: " + mydatabase.getPath());
             // Create or connect to sql database
-            // mydatabase.execSQL("DROP TABLE Keys");
-            // mydatabase.execSQL("DROP TABLE Contacts");
-            // mydatabase.execSQL("DROP TABLE Messages");
-            //create tables;
+
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Contacts(userId VARCHAR, userName VARCHAR, userEmail VARCHAR, userPhone VARCHAR);");
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Messages(Messageid INT, Contact VARCHAR, Text VARCHAR, IsFrMe INT, Read INT, Uploaded INT);");
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Keys(userId VARCHAR, Private VARCHAR, Public VARCHAR, PublicExt VARCHAR);");
@@ -73,6 +70,7 @@ public class SQLConnect {
         mydatabase.execSQL("UPDATE Messages SET Uploaded=1 WHERE Messageid = '" + mID + "';");
 
     }
+
     public void setMessageRead(String uID) {
         mydatabase.execSQL("UPDATE Messages SET Read=1 WHERE Contact = '" + uID + "';");
 
@@ -208,8 +206,7 @@ public class SQLConnect {
 
         ArrayList<MessageB> messages = new ArrayList<>();
         try {
-            Cursor resultSet = mydatabase.rawQuery("SELECT MAX(Messages.Messageid), Messages.Text, Contacts.userId, Messages.Read, Contacts.userName FROM Contacts LEFT JOIN Messages ON Messages.Contact=Contacts.userId GROUP BY Contacts.userName", null);
-            // Log.d("SQL", "" + resultSet.getCount());
+            Cursor resultSet = mydatabase.rawQuery("SELECT MAX(Messages.Messageid), Messages.Text, Contacts.userId, Messages.Read, Contacts.userName FROM Contacts INNER JOIN Messages ON Messages.Contact=Contacts.userId GROUP BY Contacts.userName", null);
             if (resultSet.moveToFirst()) {
                 do {
                     String messageId = resultSet.getString(0);
@@ -236,41 +233,50 @@ public class SQLConnect {
      */
     public ArrayList<Chat> getMessagesSQL(String frUiD) {
         ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages WHERE Messages.Contact='" + frUiD + "' ORDER BY Messages.Messageid", null);
-        Log.d("Chat", " " + result.getCount());
-        if (result.moveToFirst()) {
-            int i = 0;
-            do {
-                String id = result.getString(0);
-                String contact = result.getString(1);
-                String mess = result.getString(2);
-                Log.d("Chat", " " + result.getInt(3));
-                int isFrMe = result.getInt(3);
+        try {
+            Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages WHERE Messages.Contact='" + frUiD + "' ORDER BY Messages.Messageid", null);
+            Log.d("Chat", " " + result.getCount());
+            if (result.moveToFirst()) {
+                int i = 0;
+                do {
+                    String id = result.getString(0);
+                    String contact = result.getString(1);
+                    String mess = result.getString(2);
+                    Log.d("Chat", " " + result.getInt(3));
+                    int isFrMe = result.getInt(3);
 
-                message.add(new Chat(id, contact, mess, isFrMe, 0, 0));
-                Log.d("Chat", message.get(i).toString());
-                i++;
-            } while (result.moveToNext());
+                    message.add(new Chat(id, contact, mess, isFrMe, 0, 0));
+                    Log.d("Chat", message.get(i).toString());
+                    i++;
+                } while (result.moveToNext());
+            }
+        } catch (SQLException e) {
+            Log.e(TAG, e.toString());
         }
         return message;
     }
 
     public ArrayList<Chat> getMessagesNOTUploaded() {
         ArrayList<Chat> message = new ArrayList<>();
-        Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages Where Uploaded='0'", null);
+        try {
+            Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages Where Uploaded='0'", null);
 
-        if (result.moveToFirst()) {
+            if (result.moveToFirst()) {
 
-            int i = 0;
-            do {
-                String id = result.getString(0);
-                String contact = result.getString(1);
-                String mess = result.getString(2);
+                int i = 0;
+                do {
+                    String id = result.getString(0);
+                    String contact = result.getString(1);
+                    String mess = result.getString(2);
 
-                int isFrMe = result.getInt(3);
+                    int isFrMe = result.getInt(3);
 
-                message.add(new Chat(id, contact, mess, isFrMe, 0, 0));
-            } while (result.moveToNext());
+                    message.add(new Chat(id, contact, mess, isFrMe, 0, 0));
+                } while (result.moveToNext());
+            }
+
+        } catch (SQLException e) {
+            Log.e(TAG, e.toString());
         }
         return message;
     }
@@ -282,13 +288,13 @@ public class SQLConnect {
      */
     public void addMessageSql(Chat message, String uID) {
         int isUploaded = 0;
-        if (message.isFromMe()==0){
-            isUploaded=1;
+        if (message.isFromMe() == 0) {
+            isUploaded = 1;
         }
 
         try {
 
-            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.getId() + "', '" + uID + "', '" + message.getMessage() + "' , '" + message.isFromMe() + "', 0, '"+isUploaded +"');");
+            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.getId() + "', '" + uID + "', '" + message.getMessage() + "' , '" + message.isFromMe() + "', 1, '" + isUploaded + "');");
             Log.d(TAG, "addMessageSql: " + message.getMessage());
         } catch (SQLException e) {
             Log.e(TAG, e.toString());

@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -78,7 +79,8 @@ public class MessageBoardActivity extends AppCompatActivity {
             PersistableBundle bundle = new PersistableBundle();
             bundle.putString(BUNDLE_MY_ID, myID);
             JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName)
-                    //.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresBatteryNotLow(true)
+                    .setRequiresStorageNotLow(true)
                     .setExtras(bundle)
                     .setPersisted(true);
             if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.N){
@@ -166,18 +168,21 @@ public class MessageBoardActivity extends AppCompatActivity {
                 intent = new Intent(MessageBoardActivity.this, ProfileActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.menuAbout:
-                intent = new Intent(MessageBoardActivity.this, AboutActivity.class);
-                startActivity(intent);
-                 break;
             case R.id.menuContacts:
                 intent = new Intent(MessageBoardActivity.this, ContactsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.menuSingOut:
                 firebaseConnect.logoutUser();
-                intent = new Intent(MessageBoardActivity.this, MainActivity.class);
-                startActivity(intent);
+                firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        Intent intent = new Intent(MessageBoardActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+
                 break;
             default:
                 break;

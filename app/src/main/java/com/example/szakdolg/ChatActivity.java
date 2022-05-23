@@ -65,7 +65,6 @@ public class ChatActivity extends AppCompatActivity {
                 PersistableBundle bundle = new PersistableBundle();
                 bundle.putString(BUNDLE_MY_ID, myID);
                 JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName)
-                        //.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                         .setExtras(bundle)
                         .setPersisted(true);
                 if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.N){

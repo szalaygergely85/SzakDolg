@@ -43,8 +43,7 @@ public class FirebaseConnect {
     public FirebaseAuth mAuth;
     public FirebaseFirestore db;
     private SQLConnect sqlConnect;
-    boolean done = false;
-    boolean value = false;
+
     private Contact contact;
     private String pubKey = null;
     private String privKey = null;
@@ -196,45 +195,7 @@ public class FirebaseConnect {
 
     }
 
-    public boolean isNewMessage() {
 
-        db.collection(getUserId()).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (document.exists()) {
-                            done = true;
-                        } else {
-                            done = false;
-                        }
-                    }
-                }
-
-            }
-        });
-        return done;
-    }
-
-    public boolean isNewMessage(String From) {
-
-        db.collection(getUserId()).whereEqualTo("isDownloaded", false).whereEqualTo("from", From).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (document.exists()) {
-                            done = true;
-                        } else {
-                            done = false;
-                        }
-                    }
-                }
-
-            }
-        });
-        return done;
-    }
 
 
     /**
@@ -264,12 +225,12 @@ public class FirebaseConnect {
 
         if (!sqlConnect.isKey(uID)) {
             sqlConnect.generateKeys(uID);
-            // Log.d("Crypt", "Generatig keys");
+
         }
 
         Map<String, Object> req = new HashMap<>();
         req.put("uID", getUserId());
-        // Log.d("Crypt", sqlConnect.getPublicKey(uID));
+
         req.put("pubKey", sqlConnect.getPublicKey(uID));
         req.put("docType", "reqPubKey");
         db.collection(uID).document("reqPubKey:" + getUserId()).set(req).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -283,7 +244,6 @@ public class FirebaseConnect {
     public void sendKeyReturn(String uID) {
         Map<String, Object> req = new HashMap<>();
         req.put("uID", getUserId());
-        // Log.d("Crypt", sqlConnect.getPublicKey(uID));
         req.put("pubKey", sqlConnect.getPublicKey(uID));
         req.put("docType", "sentPubKey");
         db.collection(uID).document("sentPubKey:" + getUserId()).set(req).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -298,42 +258,6 @@ public class FirebaseConnect {
             }
         });
 
-    }
-
-    public boolean isKeyRequest() {
-
-        db.collection(getUserId()).whereEqualTo("docType", "reqPubKey").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (!document.equals(null)) {
-                            value = true;
-                        }
-                    }
-                }
-            }
-        });
-
-        return value;
-    }
-
-    public boolean isKeySentToME() {
-
-        db.collection(getUserId()).whereEqualTo("docType", "sentPubKey").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (!document.equals(null)) {
-                            value = true;
-                        }
-                    }
-                }
-            }
-        });
-
-        return value;
     }
 
     public void handleKeysReq(String uID) {
@@ -400,7 +324,7 @@ public class FirebaseConnect {
      * @param contact
      */
     public void addContactFB(Contact contact) {
-        // Log.d("FireBase", contact.toString());
+
         Map<String, Object> cont = new HashMap<>();
         cont.put("docType", "contacts");
         cont.put("uID", contact.getID());
@@ -410,7 +334,7 @@ public class FirebaseConnect {
         db.collection(getUserId()).document(contact.getID()).set(cont).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                // Log.d("FireBase", "Contact added");
+                 Log.d(TAG, "Contact added");
             }
         });
 
@@ -430,22 +354,6 @@ public class FirebaseConnect {
         }
     }
 
-    /**
-     * check if we really created the user on FireBase
-     *
-     * @return
-     */
-    public boolean isUserCreated(String userID) {
-
-        db.collection("Users").document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                done = true;
-
-            }
-        });
-        return done;
-    }
 
     /**
      * Get logged in users ID
@@ -456,9 +364,7 @@ public class FirebaseConnect {
         return mAuth.getCurrentUser().getUid();
     }
 
-    public String getUserEmail() {
-        return mAuth.getCurrentUser().getEmail();
-    }
+
 
     public String isEmailNotRegistered(String email) {
         String uID = null;
@@ -509,10 +415,6 @@ public class FirebaseConnect {
     }
 
 
-    public void getPicture() {
-
-
-    }
 
     // MESSAGE HANDLING
 
@@ -746,7 +648,6 @@ public class FirebaseConnect {
                     Log.d(TAG, "Register was success for " + user.get("email").toString());
                     loginUser(user.get("email").toString(), user.get("pass").toString(), context);
                     createUser(user);
-
                 }
             }
         });

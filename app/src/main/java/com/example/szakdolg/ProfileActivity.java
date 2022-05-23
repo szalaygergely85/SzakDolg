@@ -174,6 +174,9 @@ public class ProfileActivity extends AppCompatActivity {
                         Log.d(TAG, document.get("name").toString());
                         name.setText(document.get("name").toString());
                         email.setText(document.get("email").toString());
+                        if(myID!=uID){
+                            actionBar.setTitle(document.get("name").toString());
+                        }
 
                     } else {
                         Log.d(TAG, "No such document");

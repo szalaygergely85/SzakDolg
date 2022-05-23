@@ -101,6 +101,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
+                                    image.setImageResource(R.drawable.ic_blank_profile);
                                     // Handle any errors
                                 }
                             });
@@ -136,6 +137,9 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         if(messageB.get(position).isRead()==0){
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
+        }else {
+            holder.txtMessage.setTypeface(null, Typeface.NORMAL);
+            holder.txtName.setTypeface(null, Typeface.NORMAL);
         }
         holder.txtName.setText(messageB.get(position).getContactUserName());
         holder.txtMessage.setText(messageB.get(position).getText());

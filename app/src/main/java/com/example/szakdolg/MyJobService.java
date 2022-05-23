@@ -2,32 +2,22 @@ package com.example.szakdolg;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.PersistableBundle;
-import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.legacy.content.WakefulBroadcastReceiver;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-
 @RequiresApi (api = Build.VERSION_CODES.LOLLIPOP)
 public class MyJobService extends JobService {
     private SQLConnect sqlConnect;
@@ -91,38 +81,39 @@ public class MyJobService extends JobService {
     }
 
     private void syncTask(String myID){
-        if(sqlConnect.isNotUploadedMessage()){
-            Log.d(TAG, "doInBackground: "+ sqlConnect.getMessagesNOTUploaded().toString());
+        if (firebaseConnect.isUserSigned()) {
+            if (sqlConnect.isNotUploadedMessage()) {
+                Log.d(TAG, "doInBackground: " + sqlConnect.getMessagesNOTUploaded().toString());
 
-            firebaseConnect.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
-            Log.d(TAG, "doInBackground: There are some not uploaded messages");
+                firebaseConnect.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
+                Log.d(TAG, "doInBackground: There are some not uploaded messages");
 
-        }else{
-            Log.d(TAG, "doInBackground: There arent any message to upload");
-        }
+            } else {
+                Log.d(TAG, "doInBackground: There arent any message to upload");
+            }
 
-        firebaseConnect.handleKeysReq(null);
+            firebaseConnect.handleKeysReq(null);
 
-        firebaseConnect.db.collection(myID).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "onComplete: " +task.getResult().size());
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (document.exists()) {
-                            Log.d(TAG, "onComplete: Starting to download new messages");
-                            display(1, CHANNEL_ID, "Helloka", "ohh", MyJobService.this);
-                            downloadMessages(document);
+            firebaseConnect.db.collection(myID).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "onComplete: " + task.getResult().size());
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.exists()) {
+                                Log.d(TAG, "onComplete: Starting to download new messages");
+                                display(1, CHANNEL_ID, "You have a new message!", "New Message", MyJobService.this);
+                                downloadMessages(document);
 
-                        } else {
-                            Log.d(TAG, "No new message");
+                            } else {
+                                Log.d(TAG, "No new message");
+                            }
                         }
                     }
+
                 }
-
-            }
-        });
-
+            });
+        }
     }
     private void downloadMessages(QueryDocumentSnapshot document){
         String privKey = null;

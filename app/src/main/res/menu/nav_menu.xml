@@ -19,17 +19,6 @@
                 android:title="Contacts"
                 android:icon="@drawable/ic_menu_contact"/>
             <item
-                android:id="@+id/menuNotif"
-                android:icon="@drawable/ic_menu_notifications"
-                android:title="Notification"
-                app:actionViewClass="androidx.appcompat.widget.SwitchCompat"
-                app:showAsAction="always"/>
-
-            <item
-                android:id="@+id/menuAbout"
-                android:icon="@drawable/ic_menu_about"
-                android:title="About" />
-            <item
                 android:id="@+id/menuSingOut"
                 android:icon="@drawable/ic_menu_logout"
                 android:title="Sign Out" />

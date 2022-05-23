@@ -21,6 +21,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class SearchContactsActivity extends AppCompatActivity {
     private EditText search;
@@ -86,6 +88,8 @@ public class SearchContactsActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     contacts.add(new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString()));
+                                    contacts = removeDuplicates(contacts);
+
                                 }
                                 Log.d(TAG, "onComplete:orderBy(\"email\")" + contacts.size());
                             }
@@ -98,6 +102,8 @@ public class SearchContactsActivity extends AppCompatActivity {
                             if(task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     contacts.add(new Contact(document.get("userID").toString(),document.get("name").toString(),document.get("email").toString(),document.get("phone").toString()));
+                                    contacts = removeDuplicates(contacts);
+
                                 }
                                 Log.d(TAG, "onComplete:orderBy(\"name\")" + contacts.size());
                             }
@@ -126,15 +132,29 @@ public class SearchContactsActivity extends AppCompatActivity {
     }
     public static  ArrayList<Contact> removeDuplicates(ArrayList<Contact> list)
     {
+        boolean isFound;
+        Log.d(TAG, "before removeDuplicates: " + list.size());
+        Log.d(TAG, "before removeDuplicates: " + list);
+
         ArrayList<Contact> newList = new ArrayList<>();
 
         for (Contact element : list) {
-            if (!newList.contains(element)) {
-
+            isFound=false;
+            Log.d(TAG, "element: " + element);
+            for (Contact e : newList) {
+              if(e.getID().equals(element.getID())){
+                  isFound=true;
+              }
+            }
+            if(!isFound){
                 newList.add(element);
             }
         }
-        Log.d(TAG, "removeDuplicates: " + newList.size());
+
+
+        Log.d(TAG, "after removeDuplicates: " + newList.size());
+        Log.d(TAG, "after removeDuplicates: " + newList);
         return newList;
     }
+
 }

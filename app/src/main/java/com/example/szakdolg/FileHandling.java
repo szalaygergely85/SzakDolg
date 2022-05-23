@@ -66,12 +66,5 @@ public class FileHandling {
     }
 
 
-    public static File getFile(String uID, Context c){
-        File file  = new File(c.getFilesDir() + "/Pictures/" + uID+".jpg");
-        if(file.exists()){
-            return file;
-        }else {
-            return null;
-        }
-    }
+
 }
