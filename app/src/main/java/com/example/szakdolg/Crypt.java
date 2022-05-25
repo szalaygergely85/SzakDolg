@@ -12,9 +12,6 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.ECPrivateKey;
-import java.security.spec.EncodedKeySpec;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -32,8 +29,9 @@ public class Crypt {
 
     /**
      * I ll need to store the keys in hashmap
-     *   HashMap<String, String> keyPair = new HashMap<String, String>();
-     *         keyPair = Crypt.createKey();
+     * HashMap<String, String> keyPair = new HashMap<String, String>();
+     * keyPair = Crypt.createKey();
+     *
      * @return HashMap
      */
     public static HashMap createKeys() {
@@ -44,17 +42,19 @@ public class Crypt {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        generator.initialize(2048);
-        KeyPair pair = generator.generateKeyPair();
-        PrivateKey privateKey = pair.getPrivate();
-        PublicKey publicKey = pair.getPublic();
-        String publicKeyString = Base64.getEncoder().encodeToString(publicKey.getEncoded());
-        String privateKeyString = Base64.getEncoder().encodeToString(privateKey.getEncoded());
-        keyPair.put("Private", privateKeyString);
-        keyPair.put("Public", publicKeyString);
-
+        if (generator != null) {
+            generator.initialize(2048);
+            KeyPair pair = generator.generateKeyPair();
+            PrivateKey privateKey = pair.getPrivate();
+            PublicKey publicKey = pair.getPublic();
+            String publicKeyString = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+            String privateKeyString = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+            keyPair.put("Private", privateKeyString);
+            keyPair.put("Public", publicKeyString);
+        }
         return keyPair;
     }
+
     public static PublicKey getPublicKey(String publicK) {
         Log.d(TAG, "getPublicKey: " + publicK);
         PublicKey pubKey = null;
@@ -68,6 +68,7 @@ public class Crypt {
         }
         return pubKey;
     }
+
     public static PrivateKey getPrivateKey(String privateK) {
         PrivateKey prvKey = null;
         try {
@@ -80,6 +81,7 @@ public class Crypt {
         }
         return prvKey;
     }
+
     public static String enCrypt(String message, String publicKeyString) {
         PublicKey publicKey = null;
         Cipher encryptCipher = null;
@@ -98,15 +100,17 @@ public class Crypt {
             e.printStackTrace();
         } catch (BadPaddingException e) {
             e.printStackTrace();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return encodedMessage;
     }
+
     public static byte[] stringTOByte(String text) {
         byte[] message = Base64.getDecoder().decode(text.getBytes());
         return message;
     }
+
     public static String deCrypt(String message, String privateKeyString) {
         Cipher decryptCipher = null;
         PrivateKey privateKey = null;

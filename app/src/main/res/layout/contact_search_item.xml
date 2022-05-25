@@ -11,23 +11,24 @@
         android:layout_height="40dp"
         android:layout_marginRight="10dp"
         android:src="@drawable/ic_blank_profile"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"/>/>
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />/>
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/txtContItemName"
-        android:layout_toLeftOf="@id/btnContItemAdd"
-        android:layout_below="@id/txtContItemName"
-        android:layout_toRightOf="@id/imgContItem"
-        />
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtContItemEmail"
-        android:layout_toLeftOf="@id/btnContItemAdd"
         android:layout_below="@id/txtContItemName"
-        android:layout_toRightOf="@id/imgContItem"
-        android:layout_marginTop="5dp"/>
+        android:layout_toLeftOf="@id/btnContItemAdd"
+        android:layout_toRightOf="@id/imgContItem" />
+
+    <TextView
+        android:id="@+id/txtContItemEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtContItemName"
+        android:layout_marginTop="5dp"
+        android:layout_toLeftOf="@id/btnContItemAdd"
+        android:layout_toRightOf="@id/imgContItem" />
 
     <ImageButton
         android:id="@+id/btnContItemAdd"
@@ -36,8 +37,6 @@
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="10dp"
         android:src="@drawable/ic_add_contact" />
-
-
 
 
 </RelativeLayout>

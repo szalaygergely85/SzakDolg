@@ -18,7 +18,7 @@ public class ChangePassActivity extends AppCompatActivity {
     private EditText edtPass2;
     private EditText edtOldPass;
     private Button btnSend;
-    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
 
     private void initView() {
         edtPass1 = findViewById(R.id.edtChnPass1);
@@ -44,8 +44,10 @@ public class ChangePassActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Change Password");
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle("Change Password");
+        }
     }
 
     @Override

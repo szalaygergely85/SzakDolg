@@ -1,11 +1,8 @@
 package com.example.szakdolg;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -17,12 +14,11 @@ public class SQLConnect {
     private static final String TAG = "SQLConnect";
     private SQLiteDatabase mydatabase;
     private boolean privBoolean = false;
-    private String name;
+    private final String name;
     private static SQLConnect instance;
 
     //Singleton
     public static synchronized SQLConnect getInstance(String name, String uID) {
-
         if (instance == null) {
             instance = new SQLConnect(name, uID);
             Log.d(TAG, "SQLConnect: " + instance.mydatabase.getPath());
@@ -35,9 +31,7 @@ public class SQLConnect {
 
     private SQLConnect(String name, String uID) {
         this.name = name;
-
         try {
-
             File dbpath = (new File("/data/data/com.example.szakdolg/databases/" + uID + ".db"));
             if (!(new File(dbpath.getParent()).exists())) {
                 new File(dbpath.getParent()).mkdirs();
@@ -51,34 +45,26 @@ public class SQLConnect {
             mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Keys(userId VARCHAR, Private VARCHAR, Public VARCHAR, PublicExt VARCHAR);");
 
         } catch (Exception e) {
-            Log.e("SQL", e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 
-
     public boolean isNotUploadedMessage() {
         Cursor result = mydatabase.rawQuery("Select * from Messages Where Uploaded=0", null);
-
-        if (result.moveToFirst()) {
-            return true;
-        } else {
-            return false;
-        }
+        return result.moveToFirst();
     }
 
     public void setMessageToUploaded(String mID) {
         mydatabase.execSQL("UPDATE Messages SET Uploaded=1 WHERE Messageid = '" + mID + "';");
-
     }
 
     public void setMessageRead(String uID) {
         mydatabase.execSQL("UPDATE Messages SET Read=1 WHERE Contact = '" + uID + "';");
-
     }
 
     public void updatePublicExtKey(String uID, String pubExtKey) {
         if (!isKey(uID)) {
-            Log.d("Crypt", "Didnt find keys, generating one ");
+            Log.d(TAG, "Didnt find keys, generating one ");
             generateKeys(uID);
         }
         mydatabase.execSQL("UPDATE Keys SET PublicExt='" + pubExtKey + "' Where userId='" + uID + "';");
@@ -88,30 +74,23 @@ public class SQLConnect {
         HashMap<String, String> keys = Crypt.createKeys();
         try {
             mydatabase.execSQL("INSERT INTO Keys VALUES('" + uID + "', '" + keys.get("Private") + "', '" + keys.get("Public") + "', NULL);");
-            Log.d("Crypt", "generated: " + keys.get("Public"));
+            Log.d(TAG, "generated: " + keys.get("Public"));
         } catch (SQLException e) {
-            Log.e("SQL", e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 
     public boolean isKey(String uID) {
         Cursor result = mydatabase.rawQuery("Select * from Keys Where userId='" + uID + "'", null);
-
-        if (result.moveToFirst()) {
-            return true;
-        } else {
-            return false;
-
-        }
+        return result.moveToFirst();
     }
 
     public boolean isPubExtKey(String uID) {
         Cursor result = mydatabase.rawQuery("Select PublicExt from Keys Where userId='" + uID + "'", null);
         if (result.moveToFirst()) {
             privBoolean = true;
-            Log.d("Crypt", "true");
         } else {
-            Log.d("Crypt", "Didnt find the key");
+            Log.d(TAG, "Didnt find the key");
         }
         return privBoolean;
     }
@@ -119,7 +98,6 @@ public class SQLConnect {
     public String getPrivateKey(String uID) {
         String search = null;
         Cursor result = mydatabase.rawQuery("Select Keys.Private from Keys Where userId='" + uID + "'", null);
-
         if (result.moveToFirst()) {
             search = result.getString(0);
         }
@@ -176,7 +154,7 @@ public class SQLConnect {
         try {
             mydatabase.execSQL("INSERT INTO Contacts VALUES('" + cont.get("uID").toString() + "', '" + cont.get("uName").toString() + "', '" + cont.get("uEmail").toString() + "' , '" + cont.get("uPhone").toString() + "');");
         } catch (SQLException e) {
-            Log.e("SQL", e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -192,9 +170,8 @@ public class SQLConnect {
         try {
             mydatabase.execSQL("INSERT INTO Contacts VALUES('" + uID + "', '" + uName + "', '" + uEmail + "' , '" + uPhone + "');");
         } catch (SQLException e) {
-            Log.e("SQL", e.toString());
+            Log.e(TAG, e.toString());
         }
-
     }
 
     /**
@@ -203,7 +180,6 @@ public class SQLConnect {
      * @return messages
      */
     public ArrayList<MessageB> getLastMessageEachPersonSQL(String userID) {
-
         ArrayList<MessageB> messages = new ArrayList<>();
         try {
             Cursor resultSet = mydatabase.rawQuery("SELECT MAX(Messages.Messageid), Messages.Text, Contacts.userId, Messages.Read, Contacts.userName FROM Contacts INNER JOIN Messages ON Messages.Contact=Contacts.userId GROUP BY Contacts.userName", null);
@@ -220,7 +196,7 @@ public class SQLConnect {
                 } while (resultSet.moveToNext());
             }
         } catch (SQLException e) {
-            Log.e("SQL", e.toString());
+            Log.e(TAG, e.toString());
         }
         return messages;
     }
@@ -235,18 +211,17 @@ public class SQLConnect {
         ArrayList<Chat> message = new ArrayList<>();
         try {
             Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages WHERE Messages.Contact='" + frUiD + "' ORDER BY Messages.Messageid", null);
-            Log.d("Chat", " " + result.getCount());
+            Log.d(TAG, " " + result.getCount());
             if (result.moveToFirst()) {
                 int i = 0;
                 do {
                     String id = result.getString(0);
                     String contact = result.getString(1);
                     String mess = result.getString(2);
-                    Log.d("Chat", " " + result.getInt(3));
+                    Log.d(TAG, " " + result.getInt(3));
                     int isFrMe = result.getInt(3);
-
                     message.add(new Chat(id, contact, mess, isFrMe, 0, 0));
-                    Log.d("Chat", message.get(i).toString());
+                    Log.d(TAG, message.get(i).toString());
                     i++;
                 } while (result.moveToNext());
             }
@@ -260,21 +235,16 @@ public class SQLConnect {
         ArrayList<Chat> message = new ArrayList<>();
         try {
             Cursor result = mydatabase.rawQuery("SELECT Messages.Messageid, Messages.Contact, Messages.Text, Messages.IsFrMe FROM Messages Where Uploaded='0'", null);
-
             if (result.moveToFirst()) {
-
                 int i = 0;
                 do {
                     String id = result.getString(0);
                     String contact = result.getString(1);
                     String mess = result.getString(2);
-
                     int isFrMe = result.getInt(3);
-
                     message.add(new Chat(id, contact, mess, isFrMe, 0, 0));
                 } while (result.moveToNext());
             }
-
         } catch (SQLException e) {
             Log.e(TAG, e.toString());
         }
@@ -291,22 +261,18 @@ public class SQLConnect {
         if (message.isFromMe() == 0) {
             isUploaded = 1;
         }
-
         try {
-
             mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.getId() + "', '" + uID + "', '" + message.getMessage() + "' , '" + message.isFromMe() + "', 1, '" + isUploaded + "');");
             Log.d(TAG, "addMessageSql: " + message.getMessage());
         } catch (SQLException e) {
             Log.e(TAG, e.toString());
         }
-
     }
 
     public String getNameFrContact(String uID) {
-        String fr = new String();
+        String fr = "";
         Log.d(TAG, "getNameFrContact: " + uID);
         Cursor result = mydatabase.rawQuery("SELECT userName FROM Contacts WHERE userId='" + uID + "'", null);
-
         if (result.moveToFirst()) {
             fr = result.getString(0);
             Log.d(TAG, "getNameFrContact: " + fr);
@@ -316,14 +282,6 @@ public class SQLConnect {
 
     public boolean isInContracts(String uID) {
         Cursor result = mydatabase.rawQuery("SELECT * FROM Contacts WHERE userId='" + uID + "'", null);
-        if (result.moveToFirst()) {
-            return true;
-
-        } else {
-            return false;
-        }
-
+        return result.moveToFirst();
     }
-
-
 }

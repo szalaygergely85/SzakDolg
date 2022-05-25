@@ -16,14 +16,14 @@ import java.util.ArrayList;
 
 public class ContactsActivity extends AppCompatActivity {
     private RecyclerView contsRecView;
-    private FirebaseConnect firebaseConnect= FirebaseConnect.getInstance("firebase");
-    private SQLConnect sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
+    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private final SQLConnect sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
     ArrayList<Contact> contacts;
     private FloatingActionButton btnNewContact;
 
-    private void initView(){
+    private void initView() {
         btnNewContact = findViewById(R.id.btnConNew);
-        contsRecView =findViewById(R.id.recViewContacts);
+        contsRecView = findViewById(R.id.recViewContacts);
     }
 
     @Override
@@ -38,15 +38,11 @@ public class ContactsActivity extends AppCompatActivity {
         this.setTitle("Contacts");
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         initView();
-
-
-
-
     }
 
     @Override
@@ -72,5 +68,4 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
     }
-
 }

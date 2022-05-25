@@ -6,16 +6,12 @@ public class Contact {
     private String email;
     private String phone;
 
-
     public Contact(String ID, String name, String email, String phone) {
         this.ID = ID;
         this.name = name;
         this.email = email;
         this.phone = phone;
-
     }
-
-
 
     public String getID() {
         return ID;

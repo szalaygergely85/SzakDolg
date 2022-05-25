@@ -1,20 +1,17 @@
 package com.example.szakdolg;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -30,13 +27,13 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editName;
     private EditText editPhone;
     private Button btnReg;
-    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final String TAG = "RegisterActivity";
 
     /**
      * method is used for checking valid email id format.
      *
-     * @param email
+     * @param email email address
      * @return boolean true for valid false for invalid
      */
     public static boolean isEmailValid(String email) {
@@ -64,8 +61,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.registerToolbar);
         setSupportActionBar(mToolbar);
-
-
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

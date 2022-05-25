@@ -1,41 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relLayContact"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp"
-    android:id="@+id/relLayContact"
-    >
+    android:padding="5dp">
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/txtContName"
-        android:text="Gege"
-        android:textSize="20dp"/>
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Gege"
+        android:textSize="20dp" />
+
+    <TextView
         android:id="@+id/txtContEmail"
-        android:text="szalaygergely@gmail.com"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/txtContName"
         android:layout_marginTop="5dp"
-        android:textSize="16dp"/>
+        android:text="szalaygergely@gmail.com"
+        android:textSize="16dp" />
+
     <TextView
+        android:id="@+id/txtContPhone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtContPhone"
-        android:text="06501061606"
         android:layout_marginTop="5dp"
         android:layout_toLeftOf="@id/imgCont"
-        android:textSize="16dp"/>
+        android:text="06501061606"
+        android:textSize="16dp" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgCont"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginRight="10dp"
         android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
         android:src="@drawable/ic_blank_profile"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"/>/>
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />/>
 
 </RelativeLayout>

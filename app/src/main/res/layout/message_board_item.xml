@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:id="@+id/parent">
+    android:padding="10dp">
 
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -12,15 +12,15 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/ic_blank_profile"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"/>
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
     <TextView
+        android:id="@+id/mesBrdName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Contact Name"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/mesBrdImage"
-        android:id="@+id/mesBrdName"/>
+        android:text="Contact Name" />
 
     <TextView
         android:id="@+id/mesBrdMessage"
@@ -34,7 +34,6 @@
         android:layout_toRightOf="@id/mesBrdImage"
         android:maxLines="2"
         android:text="Message" />
-
 
 
 </RelativeLayout>

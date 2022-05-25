@@ -7,4 +7,27 @@
     <string name="btn_log">Login</string>
     <string name="drawer_open">drawer_open</string>
     <string name="drawer_close">drawer_close</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="new_password_again">New Password Again</string>
+    <string name="change_password">Change Password</string>
+    <string name="message">Message</string>
+    <string name="send">Send</string>
+    <string name="please_add_your_email">Please add your email address. We will send an email to change password</string>
+    <string name="forgot_my_password">Forgot my password</string>
+    <string name="register">Register</string>
+    <string name="messages">Messages</string>
+    <string name="username">Username</string>
+    <string name="change_password">Change Password</string>
+    <string name="send_message">Send Message</string>
+    <string name="delete_contact">Delete Contact</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="display_name">Display Name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="search_for_users">Search for users</string>
+    <string name="profile">Profile</string>
+    <string name="contacts">Contacts</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="action_notification">action_notification</string>
 </resources>

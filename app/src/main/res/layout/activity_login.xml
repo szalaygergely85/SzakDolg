@@ -6,21 +6,21 @@
     android:layout_height="match_parent"
     android:background="@color/primaryLightColor"
     tools:context=".LoginActivity">
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/loginToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        app:titleMarginStart="32dp"
-        app:title="Title"
         android:elevation="4dp"
-        />
+        android:minHeight="?attr/actionBarSize"
+        app:title="Title"
+        app:titleMarginStart="32dp" />
 
     <ScrollView
-        android:layout_below="@id/loginToolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/loginToolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,14 +60,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="25dp"
-                android:text="Forgot my password"
-                />
+                android:text="@string/forgot_my_password" />
 
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="25dp">
 
@@ -104,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Register" />
+                android:text="@string/register" />
 
         </LinearLayout>
     </ScrollView>

@@ -1,33 +1,19 @@
 package com.example.szakdolg;
 
-import androidx.annotation.NonNull;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.PersistableBundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-
 public class MainActivity extends AppCompatActivity {
 
-
     private static final String TAG = "MainActivity";
-
     private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final int READ_PERMISSION_CODE = 202;
     private static final int WRITE_PERMISSION_CODE = 203;
@@ -42,40 +28,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate: ");
-        //TODO Handle what happened if choose not to
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_PERMISSION_CODE);
         }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_CODE);
         }
-
-
     }
-
-
-
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: ");
         if (firebaseConnect.isUserSigned()) {
             Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
             startActivity(intent);
-            Toast.makeText(this, "User signed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "A user signed in", Toast.LENGTH_SHORT).show();
             finish();
         } else {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
-
         }
-
     }
-
-
-
-
 }

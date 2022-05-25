@@ -1,5 +1,11 @@
 package com.example.szakdolg;
 
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.widget.EditText;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,22 +13,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.widget.EditText;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 public class SearchContactsActivity extends AppCompatActivity {
     private EditText search;
@@ -31,10 +28,11 @@ public class SearchContactsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private static final String TAG = "SearchContactsActivity";
 
-    private void initViews(){
+    private void initViews() {
         search = findViewById(R.id.edtContSearch);
-        contsRecView =findViewById(R.id.recvContactSearch);
+        contsRecView = findViewById(R.id.recvContactSearch);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,17 +42,13 @@ public class SearchContactsActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         //toolbar settings
 
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("People Search");
 
-
         initViews();
 
-
         db = FirebaseFirestore.getInstance();
-
     }
 
     @Override
@@ -81,8 +75,21 @@ public class SearchContactsActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 contacts.clear();
                 Log.d(TAG, "onTextChanged: at start" + contacts.size());
-                if(search.getText().toString().length()>2){
+                if (search.getText().toString().length() > 2) {
                     db.collection("Users").orderBy("email").startAt(search.getText().toString()).endAt(search.getText().toString() + "\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    contacts.add(new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString()));
+                                    contacts = removeDuplicates(contacts);
+                                }
+                                Log.d(TAG, "onComplete:orderBy(\"email\")" + contacts.size());
+                            }
+                        }
+
+                    });
+                    db.collection("Users").orderBy("name").startAt(search.getText().toString()).endAt(search.getText().toString() + "\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
@@ -91,24 +98,9 @@ public class SearchContactsActivity extends AppCompatActivity {
                                     contacts = removeDuplicates(contacts);
 
                                 }
-                                Log.d(TAG, "onComplete:orderBy(\"email\")" + contacts.size());
-                            }
-                        }
-
-                    });
-                    db.collection("Users").orderBy("name").startAt(search.getText().toString()).endAt(search.getText().toString()+"\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    contacts.add(new Contact(document.get("userID").toString(),document.get("name").toString(),document.get("email").toString(),document.get("phone").toString()));
-                                    contacts = removeDuplicates(contacts);
-
-                                }
                                 Log.d(TAG, "onComplete:orderBy(\"name\")" + contacts.size());
                             }
                         }
-
                     });
                     db.addSnapshotsInSyncListener(new Runnable() {
                         @Override
@@ -118,9 +110,6 @@ public class SearchContactsActivity extends AppCompatActivity {
                             contactsAdapter.setContact(contacts);
                         }
                     });
-                    
-
-
                 }
             }
 
@@ -130,30 +119,23 @@ public class SearchContactsActivity extends AppCompatActivity {
             }
         });
     }
-    public static  ArrayList<Contact> removeDuplicates(ArrayList<Contact> list)
-    {
-        boolean isFound;
-        Log.d(TAG, "before removeDuplicates: " + list.size());
-        Log.d(TAG, "before removeDuplicates: " + list);
 
+    public static ArrayList<Contact> removeDuplicates(ArrayList<Contact> list) {
+        boolean isFound;
         ArrayList<Contact> newList = new ArrayList<>();
 
         for (Contact element : list) {
-            isFound=false;
+            isFound = false;
             Log.d(TAG, "element: " + element);
             for (Contact e : newList) {
-              if(e.getID().equals(element.getID())){
-                  isFound=true;
-              }
+                if (e.getID().equals(element.getID())) {
+                    isFound = true;
+                }
             }
-            if(!isFound){
+            if (!isFound) {
                 newList.add(element);
             }
         }
-
-
-        Log.d(TAG, "after removeDuplicates: " + newList.size());
-        Log.d(TAG, "after removeDuplicates: " + newList);
         return newList;
     }
 

@@ -1,7 +1,6 @@
 package com.example.szakdolg;
 
 import static com.example.szakdolg.MyJobService.BUNDLE_MY_ID;
-import static java.lang.Boolean.TRUE;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -30,8 +29,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,7 +36,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "ChatActivity";
     final Handler handler = new Handler();
-    private FirebaseConnect fireBase = FirebaseConnect.getInstance("firebase");
+    private final FirebaseConnect fireBase = FirebaseConnect.getInstance("firebase");
     private ChatAdapter adapter;
     private ArrayList<Chat> messageList;
     private Timer timer = new Timer();
@@ -47,39 +44,35 @@ public class ChatActivity extends AppCompatActivity {
     private Button btnSend;
     private EditText edtMess;
     private SQLConnect sqlConnect;
-    private String uID ;
-    private String myID = fireBase.getUserId();
+    private String uID;
+    private final String myID = fireBase.getUserId();
     private static final int JOB_ID = 201;
     private JobScheduler scheduler;
-
 
     private void initView() {
         chatRecView = findViewById(R.id.recViewChat);
         btnSend = findViewById(R.id.btnChatSend);
         edtMess = findViewById(R.id.edtChatMes);
     }
-        private void initJobScheduler() {
-            Log.d(TAG, "initJobScheduler: ");
-            if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP){
-                ComponentName componentName = new ComponentName(this, MyJobService.class);
-                PersistableBundle bundle = new PersistableBundle();
-                bundle.putString(BUNDLE_MY_ID, myID);
-                JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName)
-                        .setExtras(bundle)
-                        .setPersisted(true);
-                if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.N){
-                    builder.setPeriodic(1*60*1000, 30*60*1000);
-                    Log.d(TAG, "initJobScheduler: ");
-                }else{
-                    builder.setPeriodic(15*60*1000);
-                }
 
-                scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-                scheduler.schedule(builder.build());
-
-
+    private void initJobScheduler() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ComponentName componentName = new ComponentName(this, MyJobService.class);
+            PersistableBundle bundle = new PersistableBundle();
+            bundle.putString(BUNDLE_MY_ID, myID);
+            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName)
+                    .setExtras(bundle)
+                    .setPersisted(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                builder.setPeriodic(1 * 60 * 1000, 30 * 60 * 1000);
+                Log.d(TAG, "initJobScheduler: ");
+            } else {
+                builder.setPeriodic(15 * 60 * 1000);
             }
+            scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+            scheduler.schedule(builder.build());
         }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,23 +82,21 @@ public class ChatActivity extends AppCompatActivity {
         initView();
         uID = (String) this.getIntent().getSerializableExtra("uID");
 
-
-        Log.d(TAG, "onCreate: " +uID);
+        Log.d(TAG, "onCreate: " + uID);
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
         setSupportActionBar(mToolbar);
         //toolbar settings
 
-
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        if (sqlConnect.getNameFrContact(uID)!=null) {
-            actionBar.setTitle(sqlConnect.getNameFrContact(uID));
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            if (sqlConnect.getNameFrContact(uID) != null) {
+                actionBar.setTitle(sqlConnect.getNameFrContact(uID));
+            }
         }
 
-
         messageList = new ArrayList<>();
-
         messageList = sqlConnect.getMessagesSQL(uID);
 
         sqlConnect.setMessageRead(uID);
@@ -115,7 +106,6 @@ public class ChatActivity extends AppCompatActivity {
 
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
-
     }
 
     @Override
@@ -139,34 +129,26 @@ public class ChatActivity extends AppCompatActivity {
 
         setRepeatingAsyncTask();
 
-
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Date date = new Date();
                 Long time = date.getTime();
-
-
-                if (!edtMess.getText().toString().isEmpty()){
-                if(uID!=null){
-                    Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(),1, 0, 0);
-                    Log.d(TAG, chat.toString());
-                    sqlConnect.addMessageSql(chat, uID);
-                    fireBase.sendMessage(chat, uID);
-                    ListHandleAsyncTask refreshNewSend = new ListHandleAsyncTask();
-                    refreshNewSend.execute();
-
-                    edtMess.getText().clear();
-
-                }
-                }else {
+                if (!edtMess.getText().toString().isEmpty()) {
+                    if (uID != null) {
+                        Chat chat = new Chat(time.toString(), uID, edtMess.getText().toString(), 1, 0, 0);
+                        Log.d(TAG, chat.toString());
+                        sqlConnect.addMessageSql(chat, uID);
+                        fireBase.sendMessage(chat, uID);
+                        ListHandleAsyncTask refreshNewSend = new ListHandleAsyncTask();
+                        refreshNewSend.execute();
+                        edtMess.getText().clear();
+                    }
+                } else {
                     Log.d(TAG, "onClick: Message field is empty");
-
                 }
             }
         });
-
-
     }
 
     private void setRepeatingAsyncTask() {
@@ -188,7 +170,6 @@ public class ChatActivity extends AppCompatActivity {
         timer.schedule(task, 0, 30 * 1000);  // interval of one minute
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -201,29 +182,23 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
-                    if(sqlConnect.isNotUploadedMessage()){
-                        Log.d(TAG, "doInBackground: "+ sqlConnect.getMessagesNOTUploaded().toString());
-
+                    if (sqlConnect.isNotUploadedMessage()) {
+                        Log.d(TAG, "doInBackground: " + sqlConnect.getMessagesNOTUploaded().toString());
                         fireBase.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
                         Log.d(TAG, "doInBackground: There are some not uploaded messages");
-
-                    }else{
+                    } else {
                         Log.d(TAG, "doInBackground: There arent any message to upload");
                     }
-
                     fireBase.handleKeysReq(null);
                     Log.d(TAG, "run: from " + uID + "my id: " + myID);
-
                     fireBase.db.collection(myID).whereEqualTo("isDownloaded", false).whereEqualTo("contact", uID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                Log.d(TAG, "onComplete: " +task.getResult().size());
+                                Log.d(TAG, "onComplete: " + task.getResult().size());
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     if (document.exists()) {
                                         Log.d(TAG, "onComplete: Starting to download new messages");
@@ -237,9 +212,8 @@ public class ChatActivity extends AppCompatActivity {
                         }
                     });
                     chatDownload = sqlConnect.getMessagesSQL(uID);
-                    if(!messageList.equals(chatDownload)){
+                    if (!messageList.equals(chatDownload)) {
                         Log.d(TAG, "run: The size not the same, running adapter.notifyDataSetChanged() ");
-
                         ListHandleAsyncTask downloadRefresh = new ListHandleAsyncTask();
                         downloadRefresh.execute();
                     }
@@ -249,13 +223,14 @@ public class ChatActivity extends AppCompatActivity {
         }
 
     }
-    private void downloadMessages(QueryDocumentSnapshot document){
+
+    private void downloadMessages(QueryDocumentSnapshot document) {
         String privKey = null;
 
         if (!document.get("contact").toString().equals(null) &&
                 !document.get("message").toString().equals(null) &&
                 !document.get("time").toString().equals(null)) {
-            Log.i(TAG, "downloadMessages(): found not empty messages " + document.toString());
+            Log.i(TAG, "downloadMessages(): found not empty messages " + document);
             if (sqlConnect.isKey(document.get("contact").toString())) {
                 Log.d(TAG, document.get("contact").toString());
 
@@ -281,13 +256,14 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
     }
-    public class ListHandleAsyncTask extends AsyncTask<Void, Void, Void>{
+
+    public class ListHandleAsyncTask extends AsyncTask<Void, Void, Void> {
         ArrayList<Chat> chatDownload;
+
         @Override
         protected Void doInBackground(Void... voids) {
             chatDownload = sqlConnect.getMessagesSQL(uID);
-            Log.d(TAG, "doInBackground: the size of array:" + chatDownload.size() );
-
+            Log.d(TAG, "doInBackground: the size of array:" + chatDownload.size());
             return null;
         }
 
@@ -295,11 +271,10 @@ public class ChatActivity extends AppCompatActivity {
         protected void onPostExecute(Void unused) {
             Log.d(TAG, "onPostExecute: running refresh");
             adapter.setChats(chatDownload);
-            if(messageList.size()!=chatDownload.size()) {
+            if (messageList.size() != chatDownload.size()) {
                 chatRecView.scrollToPosition(chatDownload.size() - 1);
             }
             super.onPostExecute(unused);
         }
     }
-
 }

@@ -34,13 +34,12 @@ import java.util.ArrayList;
 
 public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder> {
     private static final String TAG = "SearchContactAdapter";
-    private Context mContext;
+    private final Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
-    private FirebaseConnect firebaseConnect;
-    private SQLConnect sqlConnect;
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageReference storageRef = storage.getReference();
-
+    private final FirebaseConnect firebaseConnect;
+    private final SQLConnect sqlConnect;
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private final StorageReference storageRef = storage.getReference();
 
     public void setImageView(String uID, Context context, ImageView image) {
         try {
@@ -78,7 +77,7 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
-                                // Handle any errors
+                                Log.d(TAG, "onFailure: " + exception);
                             }
                         });
                     }
@@ -89,7 +88,6 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
             Log.d(TAG, "setImageView: " + e);
         }
     }
-
 
     public SearchContactAdapter(Context mContext) {
         this.mContext = mContext;
@@ -136,10 +134,10 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private TextView txtName;
-        private TextView txtEmail;
-        private ImageButton btnAdd;
+        private final ImageView imageView;
+        private final TextView txtName;
+        private final TextView txtEmail;
+        private final ImageButton btnAdd;
         private FirebaseFirestore db;
 
         public ViewHolder(@NonNull View itemView) {

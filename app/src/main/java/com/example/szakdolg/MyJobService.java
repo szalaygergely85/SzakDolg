@@ -14,46 +14,45 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-@RequiresApi (api = Build.VERSION_CODES.LOLLIPOP)
+
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class MyJobService extends JobService {
     private SQLConnect sqlConnect;
     private static final String TAG = "MyJobService";
     public static final String BUNDLE_MY_ID = "myID";
     private SyncAsyncTask asyncTask;
     private JobParameters parameters;
-    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final String CHANNEL_ID = "MessageChannel";
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        parameters= jobParameters;
+        parameters = jobParameters;
         PersistableBundle bundle = jobParameters.getExtras();
         String myID = bundle.getString(BUNDLE_MY_ID, null);
         asyncTask = new SyncAsyncTask();
-        if(myID != null) {
+        if (myID != null) {
             asyncTask.execute(myID);
         }
-
-
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        if (null!=asyncTask){
-            if (!asyncTask.isCancelled()){
+        if (null != asyncTask) {
+            if (!asyncTask.isCancelled()) {
                 asyncTask.cancel(true);
             }
-
         }
         return false;
     }
 
-    private class SyncAsyncTask extends AsyncTask<String, Integer, String>{
+    private class SyncAsyncTask extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... strings) {
@@ -62,38 +61,31 @@ public class MyJobService extends JobService {
             return "Job Finished";
         }
 
-
-
         @Override
         protected void onProgressUpdate(Integer... values) {
-
             super.onProgressUpdate(values);
-            Log.d(TAG, "onProgressUpdate:number "+ values[0]);
+            Log.d(TAG, "onProgressUpdate:number " + values[0]);
 
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.d(TAG, "onPostExecute: "+s);
+            Log.d(TAG, "onPostExecute: " + s);
             jobFinished(parameters, true);
         }
     }
 
-    private void syncTask(String myID){
+    private void syncTask(String myID) {
         if (firebaseConnect.isUserSigned()) {
             if (sqlConnect.isNotUploadedMessage()) {
                 Log.d(TAG, "doInBackground: " + sqlConnect.getMessagesNOTUploaded().toString());
-
                 firebaseConnect.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
                 Log.d(TAG, "doInBackground: There are some not uploaded messages");
-
             } else {
                 Log.d(TAG, "doInBackground: There arent any message to upload");
             }
-
             firebaseConnect.handleKeysReq(null);
-
             firebaseConnect.db.collection(myID).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -104,24 +96,22 @@ public class MyJobService extends JobService {
                                 Log.d(TAG, "onComplete: Starting to download new messages");
                                 display(1, CHANNEL_ID, "You have a new message!", "New Message", MyJobService.this);
                                 downloadMessages(document);
-
                             } else {
                                 Log.d(TAG, "No new message");
                             }
                         }
                     }
-
                 }
             });
         }
     }
-    private void downloadMessages(QueryDocumentSnapshot document){
-        String privKey = null;
 
+    private void downloadMessages(QueryDocumentSnapshot document) {
+        String privKey = null;
         if (!document.get("contact").toString().equals(null) &&
                 !document.get("message").toString().equals(null) &&
                 !document.get("time").toString().equals(null)) {
-            Log.i(TAG, "downloadMessages(): found not empty messages " + document.toString());
+            Log.i(TAG, "downloadMessages(): found not empty messages " + document);
             if (sqlConnect.isKey(document.get("contact").toString())) {
                 Log.d(TAG, document.get("contact").toString());
 
@@ -149,24 +139,19 @@ public class MyJobService extends JobService {
     }
 
     private void createChannel(String id, CharSequence name, int imp) {
-        NotificationChannel channel = new NotificationChannel(id, name ,  imp );
+        NotificationChannel channel = new NotificationChannel(id, name, imp);
         NotificationManager nm = getSystemService(NotificationManager.class);
         nm.createNotificationChannel(channel);
     }
 
-    private void display(int id , CharSequence channel_id, String content, String title , Context ctx){
-
-        createChannel((String)channel_id , channel_id , NotificationManager.IMPORTANCE_HIGH);
-
+    private void display(int id, CharSequence channel_id, String content, String title, Context ctx) {
+        createChannel((String) channel_id, channel_id, NotificationManager.IMPORTANCE_HIGH);
         NotificationCompat.Builder nb = new NotificationCompat.Builder(ctx, (String) channel_id)
                 .setSmallIcon(R.drawable.ic_menu_notifications)
                 .setContentText(content)
                 .setContentTitle(title)
                 .setPriority(NotificationCompat.PRIORITY_MAX);
-
-
         NotificationManagerCompat nmc = NotificationManagerCompat.from(ctx);
-        nmc.notify(id , nb.build() );
+        nmc.notify(id, nb.build());
     }
-
 }

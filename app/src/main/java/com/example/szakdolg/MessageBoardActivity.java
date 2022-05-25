@@ -2,24 +2,10 @@ package com.example.szakdolg;
 
 import static com.example.szakdolg.MyJobService.BUNDLE_MY_ID;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,26 +15,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -57,16 +37,15 @@ public class MessageBoardActivity extends AppCompatActivity {
     private static final String TAG = "MessageB";
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
-    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private SQLConnect sqlConnect;
     private MessageBoardRecAdapter adapter;
     private ArrayList<MessageB> messageB;
     private Timer timer;
-
-    MaterialToolbar mToolbar;
-    private String myID = firebaseConnect.getUserId();
+    private MaterialToolbar mToolbar;
+    private final String myID = firebaseConnect.getUserId();
     private static final int JOB_ID = 201;
-    JobScheduler scheduler;
+    private JobScheduler scheduler;
 
     private void initView() {
         contactsButton = findViewById(R.id.btnMesBrdNew);
@@ -74,7 +53,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
     private void initJobScheduler() {
         Log.d(TAG, "initJobScheduler: ");
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ComponentName componentName = new ComponentName(this, MyJobService.class);
             PersistableBundle bundle = new PersistableBundle();
             bundle.putString(BUNDLE_MY_ID, myID);
@@ -83,16 +62,14 @@ public class MessageBoardActivity extends AppCompatActivity {
                     .setRequiresStorageNotLow(true)
                     .setExtras(bundle)
                     .setPersisted(true);
-            if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.N){
-                builder.setPeriodic(1*60*1000, 30*60*1000);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                builder.setPeriodic(1 * 60 * 1000, 30 * 60 * 1000);
                 Log.d(TAG, "initJobScheduler: ");
-            }else{
-                builder.setPeriodic(15*60*1000);
+            } else {
+                builder.setPeriodic(15 * 60 * 1000);
             }
             scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
             scheduler.schedule(builder.build());
-
-
         }
     }
 
@@ -103,15 +80,11 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         initView();
 
-
         sqlConnect = SQLConnect.getInstance("sql", myID);
-
-        Log.d(TAG, "onCreate: "+ firebaseConnect.getUserId());
+        Log.d(TAG, "onCreate: " + firebaseConnect.getUserId());
 
         mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
-
         setSupportActionBar(mToolbar);
-        mToolbar.setTitle("Messages");
 
         messageBoardRecView = findViewById(R.id.messageBoardRecView);
         messageB = new ArrayList<>();
@@ -121,6 +94,7 @@ public class MessageBoardActivity extends AppCompatActivity {
         messageBoardRecView.setAdapter(adapter);
         messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -130,7 +104,6 @@ public class MessageBoardActivity extends AppCompatActivity {
         scheduler.cancelAll();
 
         setRepeatingAsyncTask();
-
 
         contactsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,24 +119,18 @@ public class MessageBoardActivity extends AppCompatActivity {
         super.onPause();
         timer.cancel();
         initJobScheduler();
-
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.nav_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent intent;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menuProfile:
                 intent = new Intent(MessageBoardActivity.this, ProfileActivity.class);
                 startActivity(intent);
@@ -182,82 +149,60 @@ public class MessageBoardActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-
                 break;
             default:
                 break;
         }
         return false;
-
     }
+
     public class DownloadAsynctask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-
-
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(sqlConnect.isNotUploadedMessage()){
-                        Log.d(TAG, "doInBackground: "+ sqlConnect.getMessagesNOTUploaded().toString());
-
+                    if (sqlConnect.isNotUploadedMessage()) {
+                        Log.d(TAG, "doInBackground: " + sqlConnect.getMessagesNOTUploaded().toString());
                         firebaseConnect.sendArrayOfMessages(sqlConnect.getMessagesNOTUploaded());
-                        Log.d(TAG, "doInBackground: There are some not uploaded messages");
-
-                    }else{
-                        Log.d(TAG, "doInBackground: There arent any message to upload");
+                        Log.d(TAG, "doInBackground: There are some messages to upload");
+                    } else {
+                        Log.d(TAG, "doInBackground: There is message to upload");
                     }
-
                     firebaseConnect.handleKeysReq(null);
-
                     firebaseConnect.db.collection(myID).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                Log.d(TAG, "onComplete: " +task.getResult().size());
+                                Log.d(TAG, "onComplete: " + task.getResult().size());
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     if (document.exists()) {
                                         Log.d(TAG, "onComplete: Starting to download new messages");
                                         downloadMessages(document);
-
                                     } else {
                                         Log.d(TAG, "No new message");
                                     }
                                 }
                             }
-
                         }
                     });
 
-                    ArrayList<MessageB> message  = sqlConnect.getLastMessageEachPersonSQL(myID);
-                    if(!messageB.equals(message)){
+                    ArrayList<MessageB> message = sqlConnect.getLastMessageEachPersonSQL(myID);
+                    if (!messageB.equals(message)) {
                         Log.d(TAG, "run: The size not the same, running adapter.notifyDataSetChanged() ");
-                        Log.d(TAG, "run: "+ messageB.size());
+                        Log.d(TAG, "run: " + messageB.size());
                         adapter.setMessageB(message);
-
-
                         adapter.notifyDataSetChanged();
-
                     }
-
                 }
-
-
             });
-
-
-
             return null;
         }
-
     }
+
     private void setRepeatingAsyncTask() {
-
         final Handler handler = new Handler();
-
-
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -266,29 +211,24 @@ public class MessageBoardActivity extends AppCompatActivity {
                         try {
                             DownloadAsynctask downloadAsynctask = new DownloadAsynctask();
                             downloadAsynctask.execute();
-
                         } catch (Exception e) {
-                            // error, do something
+                            Log.d(TAG, "run: " + e);
                         }
                     }
                 });
             }
         };
-
         timer.schedule(task, 0, 30 * 1000);
-
-
     }
-    private void downloadMessages(QueryDocumentSnapshot document){
-        String privKey = null;
 
+    private void downloadMessages(QueryDocumentSnapshot document) {
+        String privKey = null;
         if (!document.get("contact").toString().equals(null) &&
                 !document.get("message").toString().equals(null) &&
                 !document.get("time").toString().equals(null)) {
-            Log.i(TAG, "downloadMessages(): found not empty messages " + document.toString());
+            Log.i(TAG, "downloadMessages(): found not empty messages " + document);
             if (sqlConnect.isKey(document.get("contact").toString())) {
                 Log.d(TAG, document.get("contact").toString());
-
                 // if i dont have the sender in Contacts, adding it.
                 if (!sqlConnect.isInContracts(document.get("contact").toString())) {
                     firebaseConnect.addAUser(document.get("contact").toString());
@@ -307,13 +247,8 @@ public class MessageBoardActivity extends AppCompatActivity {
                 sqlConnect.addMessageSql(chat, document.get("contact").toString());
                 firebaseConnect.db.collection(firebaseConnect.getUserId()).document(document.get("time").toString()).update("isDownloaded", true);
             } else {
-                Log.d(TAG, "download Messges: dont have a key from the sender");
+                Log.d(TAG, "download Messages: dont have the key from the sender");
             }
         }
     }
-
-
-
-
-
 }

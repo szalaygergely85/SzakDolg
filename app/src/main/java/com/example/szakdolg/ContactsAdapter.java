@@ -32,13 +32,13 @@ import com.google.firebase.storage.StorageReference;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder>{
+public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
     private static final String TAG = "ContactsAdapter";
-    private Context mContext;
+    private final Context mContext;
     private ArrayList<Contact> contact = new ArrayList<>();
-    private FirebaseConnect firebaseConnect;
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageReference storageRef = storage.getReference();
+    private final FirebaseConnect firebaseConnect;
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private final StorageReference storageRef = storage.getReference();
 
     public ContactsAdapter(Context mContext) {
         this.mContext = mContext;
@@ -50,11 +50,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         Log.d(TAG, "getPicURl: " + uID);
         try {
             picUri = FileHandling.getUri(uID, context);
-        }catch (Exception e){
+        } catch (Exception e) {
+            Log.d(TAG, "setImageView: " + e);
         }
         if (picUri == null) {
-            Log.d(TAG, "setImageView: couldnt find the pic");
-
+            Log.d(TAG, "setImageView: couldn't find the pic");
             try {
                 storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
                     @Override
@@ -70,19 +70,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                                             .into(new CustomTarget<Bitmap>() {
                                                 @Override
                                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
                                                     try {
                                                         FileHandling.saveImageFile(uID, resource, context);
                                                     } catch (IOException e) {
                                                         e.printStackTrace();
                                                     }
                                                 }
-
                                                 @Override
                                                 public void onLoadCleared(@Nullable Drawable placeholder) {
                                                 }
                                             });
-
                                     Glide.with(context)
                                             .asBitmap()
                                             .load(uri)
@@ -99,16 +96,15 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                 });
 
             } catch (Exception e) {
-                //Log.d(TAG, "setImageView: " + e);
+                Log.d(TAG, "setImageView: " + e);
             }
 
         } else {
             Log.d(TAG, "setImageView: " + picUri);
             image.setImageURI(FileHandling.getUri(uID, context));
         }
-
-
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -144,12 +140,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        private ImageView imageView;
-        private TextView txtName;
-        private TextView txtEmail;
-        private TextView txtPhone;
-        private RelativeLayout relativeLayout;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView imageView;
+        private final TextView txtName;
+        private final TextView txtEmail;
+        private final TextView txtPhone;
+        private final RelativeLayout relativeLayout;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtName = itemView.findViewById(R.id.txtContName);

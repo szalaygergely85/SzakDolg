@@ -5,44 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primaryLightColor"
-    tools:context=".SearchContactsActivity"
-    >
+    tools:context=".SearchContactsActivity">
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/contactsearchBoardToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        app:titleMarginStart="32dp"
         android:layout_marginBottom="10dp"
-
+        android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        />
+        android:minHeight="?attr/actionBarSize"
+        app:titleMarginStart="32dp" />
 
     <EditText
-        android:layout_marginStart="10dp"
+        android:id="@+id/edtContSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:hint="Search for users"
-        android:id="@+id/edtContSearch"
-        android:layout_toLeftOf="@id/imgContSearch"
+        android:layout_below="@id/contactsearchBoardToolbar"
+        android:layout_marginStart="10dp"
         android:layout_marginRight="10dp"
-        android:layout_below="@id/contactsearchBoardToolbar"/>
+        android:layout_toLeftOf="@id/imgContSearch"
+        android:hint="@string/search_for_users"
+        android:maxLines="1" />
 
     <ImageView
-        android:layout_marginEnd="10dp"
-        android:layout_below="@id/contactsearchBoardToolbar"
         android:id="@+id/imgContSearch"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_below="@id/contactsearchBoardToolbar"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_contact_search" />?
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_contact_search" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recvContactSearch"
-            android:layout_below="@id/edtContSearch"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recvContactSearch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/edtContSearch"
+        android:layout_margin="10dp" />
 </RelativeLayout>

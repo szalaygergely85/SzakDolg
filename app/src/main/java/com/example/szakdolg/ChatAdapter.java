@@ -18,18 +18,16 @@ import java.util.Date;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private static final String TAG = "ChatAdapter";
-    private Context mContext;
+    private final Context mContext;
     private ArrayList<Chat> chats = new ArrayList<>();
-    private FirebaseConnect firebaseConnect;
-    private String userID;
+    private final FirebaseConnect firebaseConnect;
+    private final String userID;
     long time;
 
     public ChatAdapter(Context mContext) {
         this.mContext = mContext;
-
         firebaseConnect = FirebaseConnect.getInstance("firebase");
         userID = firebaseConnect.getUserId();
-
     }
 
     @NonNull
@@ -44,11 +42,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
             time = Long.parseLong(chats.get(position).getId());
-            // Log.d("test", ""+time);
         } catch (Exception e) {
-            // Log.d("Error", e.toString());
+            Log.d(TAG, e.toString());
         }
-
         Date date = new Date(time);
         if (!chats.get(position).getMessage().isEmpty()) {
             Format format = new SimpleDateFormat("HH:mm");
@@ -66,7 +62,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 holder.relIn.setVisibility(View.VISIBLE);
             }
         } else {
-            Log.d(TAG, "onBindViewHolder: Message Empty");
+            Log.d(TAG, "onBindViewHolder: Message is Empty");
         }
 
     }
@@ -83,14 +79,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-
         //declare here fields
-        private TextView txtText;
-        private TextView txtTimeIn;
-        private TextView txtTimeOut;
-        private TextView txtTextFrMe;
-        private RelativeLayout relIn;
-        private RelativeLayout relOut;
+        private final TextView txtText;
+        private final TextView txtTimeIn;
+        private final TextView txtTimeOut;
+        private final TextView txtTextFrMe;
+        private final RelativeLayout relIn;
+        private final RelativeLayout relOut;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -102,6 +97,4 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             relOut = itemView.findViewById(R.id.chatRelOut);
         }
     }
-
-
 }

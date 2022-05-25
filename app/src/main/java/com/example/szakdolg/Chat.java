@@ -1,6 +1,5 @@
 package com.example.szakdolg;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,9 +7,9 @@ public class Chat {
     private String id;
     private String contact;
     private String message;
-    private int isFromMe;
-    private int isRead;
-    private int isUploaded;
+    private final int isFromMe;
+    private final int isRead;
+    private final int isUploaded;
 
     public Chat(String id, String contact, String message, int isFromMe, int isRead, int isUploaded) {
         this.id = id;
@@ -21,16 +20,16 @@ public class Chat {
         this.isUploaded = isUploaded;
     }
 
-    public Map getHashMap(){
-        Map<String, Object> message = new HashMap<>();
-        message.put("time", id);
-        message.put("contact", contact);
-        message.put("message", message);
-        message.put("isFromMe", isFromMe);
-        message.put("isRead", isRead);
-        message.put("isUploaded", isUploaded);
+    public Map getHashMap() {
+        Map<String, Object> messageMap = new HashMap<>();
+        messageMap.put("time", id);
+        messageMap.put("contact", contact);
+        messageMap.put("message", message);
+        messageMap.put("isFromMe", isFromMe);
+        messageMap.put("isRead", isRead);
+        messageMap.put("isUploaded", isUploaded);
 
-        return message;
+        return messageMap;
     }
 
     @Override
@@ -73,23 +72,4 @@ public class Chat {
         return isFromMe;
     }
 
-    public void setFromMe(int fromMe) {
-        isFromMe = fromMe;
-    }
-
-    public int isRead() {
-        return isRead;
-    }
-
-    public void setRead(int read) {
-        isRead = read;
-    }
-
-    public int isUploaded() {
-        return isUploaded;
-    }
-
-    public void setUploaded(int uploaded) {
-        isUploaded = uploaded;
-    }
 }

@@ -1,7 +1,6 @@
 package com.example.szakdolg;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +27,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
@@ -37,14 +34,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
-    private FirebaseConnect firebaseConnect;
-    private SQLConnect sqlConnect;
+    private final FirebaseConnect firebaseConnect;
+    private final SQLConnect sqlConnect;
     private ArrayList<MessageB> messageB = new ArrayList<>();
-    private Context mContext;
+    private final Context mContext;
     private static final String TAG = "MessageBoardRecAdapter";
-
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = storage.getReference();
 
     public MessageBoardRecAdapter(Context mContext) {
         this.mContext = mContext;
@@ -52,19 +48,16 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
     }
 
-
-
-
     public void setImageView(String uID, Context context, ImageView image) {
         Uri picUri = null;
         Log.d(TAG, "getPicURl: " + uID);
         try {
-             picUri = FileHandling.getUri(uID, context);
-        }catch (Exception e){
+            picUri = FileHandling.getUri(uID, context);
+        } catch (Exception e) {
+            Log.d(TAG, "setImageView: " + e);
         }
         if (picUri == null) {
-            Log.d(TAG, "setImageView: couldnt find the pic");
-
+            Log.d(TAG, "setImageView: couldn't find the pic");
             try {
                 storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
                     @Override
@@ -80,7 +73,6 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
                                             .into(new CustomTarget<Bitmap>() {
                                                 @Override
                                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
                                                     try {
                                                         FileHandling.saveImageFile(uID, resource, context);
                                                     } catch (IOException e) {
@@ -102,7 +94,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
                                     image.setImageResource(R.drawable.ic_blank_profile);
-                                    // Handle any errors
+                                    Log.d(TAG, "onFailure: " + exception);
                                 }
                             });
                         }
@@ -110,17 +102,14 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
                 });
 
             } catch (Exception e) {
-               //Log.d(TAG, "setImageView: " + e);
+                Log.d(TAG, "setImageView: " + e);
             }
 
         } else {
             Log.d(TAG, "setImageView: " + picUri);
             image.setImageURI(FileHandling.getUri(uID, context));
         }
-
-
     }
-
 
     @NonNull
     @Override
@@ -132,12 +121,10 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-
-
-        if(messageB.get(position).isRead()==0){
+        if (messageB.get(position).isRead() == 0) {
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
-        }else {
+        } else {
             holder.txtMessage.setTypeface(null, Typeface.NORMAL);
             holder.txtName.setTypeface(null, Typeface.NORMAL);
         }
@@ -147,7 +134,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("test", messageB.get(position).getContactId());
+                Log.d(TAG, messageB.get(position).getContactId());
                 Intent intent = new Intent(mContext, ChatActivity.class);
                 intent.putExtra("uID", messageB.get(position).getContactId());
                 mContext.startActivity(intent);
@@ -166,12 +153,13 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        //ide jonnek majd az elemek az xmlbol
-        private TextView txtName;
-        private TextView txtMessage;
-        private RelativeLayout parent;
-        private ImageView image;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        private final TextView txtName;
+        private final TextView txtMessage;
+        private final RelativeLayout parent;
+        private final ImageView image;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.mesBrdImage);

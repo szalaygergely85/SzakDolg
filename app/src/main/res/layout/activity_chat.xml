@@ -8,24 +8,25 @@
     android:background="@color/primaryLightColor"
 
     tools:context=".ChatActivity">
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/chatToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        app:titleMarginStart="32dp"
-        app:title="Title"
         android:elevation="4dp"
-        />
+        android:minHeight="?attr/actionBarSize"
+        app:title="Title"
+        app:titleMarginStart="32dp" />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@id/chatToolbar"
         android:id="@+id/recViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/relLayChatSendBar"
-        android:padding="5dp"
-        android:layout_alignParentBottom="false" />
+        android:layout_below="@id/chatToolbar"
+        android:layout_alignParentBottom="false"
+        android:padding="5dp" />
 
     <RelativeLayout
         android:id="@+id/relLayChatSendBar"
@@ -38,19 +39,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:background="@color/primaryDarkColor"
-            android:textColor="@color/primaryTextColor"
-            android:text="Send"
             android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginBottom="5dp"
+            android:background="@color/primaryDarkColor"
+            android:text="@string/send"
+            android:textColor="@color/primaryTextColor" />
 
         <EditText
-            android:layout_marginLeft="5dp"
             android:id="@+id/edtChatMes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_toStartOf="@id/btnChatSend"
-            android:hint="Message"
+            android:hint="@string/message"
             android:maxLength="150"
             android:minHeight="48dp"
             android:textColor="@color/primaryTextColor" />

@@ -55,16 +55,15 @@ public class ProfileActivity extends AppCompatActivity {
     private Button deleteAccount;
     private Button deleteContact;
     private Button sendMessage;
-    private FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference();
+    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = storage.getReference();
     private String uID;
-    private String myID = firebaseConnect.getUserId();
+    private final String myID = firebaseConnect.getUserId();
 
     public void setImageView(String uID, Context context) {
 
         Log.d(TAG, "getPicURl: " + uID);
-
 
         Uri picUri = FileHandling.getUri(uID, context);
         if (picUri == null) {
@@ -83,7 +82,6 @@ public class ProfileActivity extends AppCompatActivity {
                                             .into(new CustomTarget<Bitmap>() {
                                                 @Override
                                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
                                                     try {
                                                         FileHandling.saveImageFile(uID, resource, ProfileActivity.this);
                                                     } catch (IOException e) {
@@ -95,7 +93,6 @@ public class ProfileActivity extends AppCompatActivity {
                                                 public void onLoadCleared(@Nullable Drawable placeholder) {
                                                 }
                                             });
-
                                     Glide.with(context)
                                             .asBitmap()
                                             .load(uri)
@@ -104,7 +101,7 @@ public class ProfileActivity extends AppCompatActivity {
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
-                                    // Handle any errors
+                                    Log.d(TAG, "onFailure: " + exception);
                                 }
                             });
                         }
@@ -119,8 +116,6 @@ public class ProfileActivity extends AppCompatActivity {
             Log.d(TAG, "setImageView: " + picUri);
             imageView.setImageURI(FileHandling.getUri(uID, context));
         }
-
-
     }
 
     private void initView() {
@@ -147,11 +142,9 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         //toolbar settings
 
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("My Profile");
-
 
         if (uID != null) {
             changePW.setVisibility(View.GONE);
@@ -162,7 +155,6 @@ public class ProfileActivity extends AppCompatActivity {
             deleteContact.setVisibility(View.GONE);
             sendMessage.setVisibility(View.GONE);
         }
-
         setImageView(uID, this);
 
         firebaseConnect.db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -174,7 +166,7 @@ public class ProfileActivity extends AppCompatActivity {
                         Log.d(TAG, document.get("name").toString());
                         name.setText(document.get("name").toString());
                         email.setText(document.get("email").toString());
-                        if(myID!=uID){
+                        if (myID != uID) {
                             actionBar.setTitle(document.get("name").toString());
                         }
 
@@ -191,8 +183,6 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.d("FireBase", e.toString());
             }
         });
-
-
     }
 
     @Override
@@ -204,17 +194,13 @@ public class ProfileActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     Uri selectedImage = data.getData();
                     Log.d(TAG, "onActivityResult: " + selectedImage);
-
                     firebaseConnect.uploadPic(selectedImage);
-
-
                     Glide.with(this)
                             .asBitmap()
                             .load(selectedImage)
                             .into(new CustomTarget<Bitmap>() {
                                 @Override
                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
                                     try {
                                         FileHandling.saveImageFile(uID, resource, ProfileActivity.this);
                                     } catch (IOException e) {
@@ -226,7 +212,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 public void onLoadCleared(@Nullable Drawable placeholder) {
                                 }
                             });
-
                     Glide.with(this)
                             .asBitmap()
                             .load(selectedImage)
@@ -235,15 +220,12 @@ public class ProfileActivity extends AppCompatActivity {
                 break;
             default:
                 break;
-
         }
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         singOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -277,7 +259,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //TODO create delete contact
-               // firebaseConnect.deleteAccount(uID, ProfileActivity.this);
+                //firebaseConnect.deleteAccount(uID, ProfileActivity.this);
 
                 finish();
             }
@@ -297,7 +279,6 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
