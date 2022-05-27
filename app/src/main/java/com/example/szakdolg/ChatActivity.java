@@ -167,7 +167,7 @@ public class ChatActivity extends AppCompatActivity {
                 });
             }
         };
-        timer.schedule(task, 0, 30 * 1000);  // interval of one minute
+        timer.schedule(task, 0, 5 * 1000);
     }
 
     @Override

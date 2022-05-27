@@ -218,7 +218,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                 });
             }
         };
-        timer.schedule(task, 0, 30 * 1000);
+        timer.schedule(task, 0, 5 * 1000);
     }
 
     private void downloadMessages(QueryDocumentSnapshot document) {

@@ -262,7 +262,7 @@ public class SQLConnect {
             isUploaded = 1;
         }
         try {
-            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.getId() + "', '" + uID + "', '" + message.getMessage() + "' , '" + message.isFromMe() + "', 1, '" + isUploaded + "');");
+            mydatabase.execSQL("INSERT INTO Messages VALUES('" + message.getId() + "', '" + uID + "', '" + message.getMessage() + "' , '" + message.isFromMe() + "', 0, '" + isUploaded + "');");
             Log.d(TAG, "addMessageSql: " + message.getMessage());
         } catch (SQLException e) {
             Log.e(TAG, e.toString());
