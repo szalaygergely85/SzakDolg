@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.szakdolg.activity.LoginActivity;
+
 public class ForgotPassword extends AppCompatActivity {
     private EditText email;
     private Button send;

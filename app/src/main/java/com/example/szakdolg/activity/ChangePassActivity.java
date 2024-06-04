@@ -1,4 +1,4 @@
-package com.example.szakdolg;
+package com.example.szakdolg.activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.szakdolg.Error;
+import com.example.szakdolg.FirebaseConnect;
+import com.example.szakdolg.R;
 
 public class ChangePassActivity extends AppCompatActivity {
     private static final String TAG = "ChangePassActivity";

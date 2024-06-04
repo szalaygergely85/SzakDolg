@@ -1,4 +1,4 @@
-package com.example.szakdolg;
+package com.example.szakdolg.recviewadapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,23 +11,35 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.szakdolg.Chat;
+import com.example.szakdolg.R;
+import com.example.szakdolg.message.MessageEntry;
+import com.example.szakdolg.user.User;
+
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private static final String TAG = "ChatAdapter";
     private final Context mContext;
     private ArrayList<Chat> chats = new ArrayList<>();
-    private final FirebaseConnect firebaseConnect;
-    private final String userID;
+    private List<MessageEntry> messageEntries = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
+
+    private final User userLoggedIn;
+
+  //  private final FirebaseConnect firebaseConnect;
+   // private final String userID;
     long time;
 
-    public ChatAdapter(Context mContext) {
+    public ChatAdapter(Context mContext, User user) {
         this.mContext = mContext;
-        firebaseConnect = FirebaseConnect.getInstance("firebase");
-        userID = firebaseConnect.getUserId();
+        this.userLoggedIn = user;
+       // firebaseConnect = FirebaseConnect.getInstance("firebase");
+       // userID = firebaseConnect.getUserId();
     }
 
     @NonNull
@@ -41,39 +53,47 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
-            time = Long.parseLong(chats.get(position).getId());
+            time = (messageEntries.get(position).getTimestamp());
         } catch (Exception e) {
             Log.d(TAG, e.toString());
         }
         Date date = new Date(time);
-        if (!chats.get(position).getMessage().isEmpty()) {
+
             Format format = new SimpleDateFormat("HH:mm");
             String timeForm = format.format(date);
-            Log.d(TAG, "" + chats.get(position).isFromMe());
-            if (chats.get(position).isFromMe() > 0) {
-                holder.txtTextFrMe.setText(chats.get(position).getMessage());
-                holder.txtTimeOut.setText(timeForm);
+
+            holder.txtTextFrMe.setText(messageEntries.get(position).getContent());
+            holder.txtTimeOut.setText(timeForm);
+
+            if (messageEntries.get(position).getSenderId() == userLoggedIn.getUserId()) {
                 holder.relIn.setVisibility(View.GONE);
                 holder.relOut.setVisibility(View.VISIBLE);
             } else {
-                holder.txtText.setText(chats.get(position).getMessage());
-                holder.txtTimeIn.setText(timeForm);
                 holder.relOut.setVisibility(View.GONE);
                 holder.relIn.setVisibility(View.VISIBLE);
             }
-        } else {
-            Log.d(TAG, "onBindViewHolder: Message is Empty");
-        }
+
 
     }
 
     @Override
     public int getItemCount() {
-        return chats.size();
+        return messageEntries.size();
     }
 
     public void setChats(ArrayList<Chat> chats) {
         this.chats = chats;
+        notifyDataSetChanged();
+
+    }
+
+    public void setMessageEntries(List<MessageEntry> messageEntries) {
+        this.messageEntries = messageEntries;
+        notifyDataSetChanged();
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
         notifyDataSetChanged();
     }
 

@@ -192,7 +192,7 @@ public class SQLConnect {
 
                     String username = resultSet.getString(4);
 
-                    messages.add(new MessageB(messageId, contact, username, text, read, "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?cs=srgb&dl=pexels-mohamed-abdelghaffar-771742.jpg"));
+                   // messages.add(new MessageB(messageId, contact, username, text, read, "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?cs=srgb&dl=pexels-mohamed-abdelghaffar-771742.jpg"));
                 } while (resultSet.moveToNext());
             }
         } catch (SQLException e) {

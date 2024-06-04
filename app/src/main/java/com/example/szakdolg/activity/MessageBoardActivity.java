@@ -1,16 +1,8 @@
-package com.example.szakdolg;
+package com.example.szakdolg.activity;
 
-import static com.example.szakdolg.MyJobService.BUNDLE_MY_ID;
-
-import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,29 +13,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.szakdolg.MessageB;
+import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
+import com.example.szakdolg.R;
+import com.example.szakdolg.SQLConnect;
+import com.example.szakdolg.message.MessageApiService;
+import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Timer;
-import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessageBoardActivity extends AppCompatActivity {
     private static final String TAG = "MessageB";
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
-    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+    //private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private SQLConnect sqlConnect;
     private MessageBoardRecAdapter adapter;
     private ArrayList<MessageB> messageB;
     private Timer timer;
     private MaterialToolbar mToolbar;
-    private final String myID = firebaseConnect.getUserId();
+   // private final String myID = firebaseConnect.getUserId();
     private static final int JOB_ID = 201;
     private JobScheduler scheduler;
 
@@ -52,6 +49,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     }
 
     private void initJobScheduler() {
+        /*
         Log.d(TAG, "initJobScheduler: ");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ComponentName componentName = new ComponentName(this, MyJobService.class);
@@ -70,7 +68,8 @@ public class MessageBoardActivity extends AppCompatActivity {
             }
             scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
             scheduler.schedule(builder.build());
-        }
+
+        }*/
     }
 
     @Override
@@ -80,30 +79,52 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         initView();
 
-        sqlConnect = SQLConnect.getInstance("sql", myID);
-        Log.d(TAG, "onCreate: " + firebaseConnect.getUserId());
+        //sqlConnect = SQLConnect.getInstance("sql", myID);
+        //Log.d(TAG, "onCreate: " + firebaseConnect.getUserId());
 
         mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
         setSupportActionBar(mToolbar);
 
         messageBoardRecView = findViewById(R.id.messageBoardRecView);
         messageB = new ArrayList<>();
-        messageB = sqlConnect.getLastMessageEachPersonSQL(firebaseConnect.getUserId());
         adapter = new MessageBoardRecAdapter(this);
         adapter.setMessageB(messageB);
         messageBoardRecView.setAdapter(adapter);
         messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
+
+        Call<ArrayList<MessageB>> messagesCall= messageApiService.getLatestMessages(SharedPreferencesUtil.getStringPreference(this, "auth_token"));
+
+        messagesCall.enqueue(new Callback<ArrayList<MessageB>>(){
+            @Override
+            public void onResponse(Call<ArrayList<MessageB>> call, Response<ArrayList<MessageB>> response) {
+                if (response.isSuccessful()) {
+                    Log.e(TAG, ""+response.code());
+                    ArrayList<MessageB> messageBoard = response.body();
+                    adapter.setMessageB(messageB);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<MessageB>> call, Throwable t) {
+                Log.e(TAG, ""+t.getMessage());
+            }
+        });
+
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        timer = new Timer();
-        scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        scheduler.cancelAll();
+        // timer = new Timer();
+       // scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+       // scheduler.cancelAll();
 
-        setRepeatingAsyncTask();
+        //setRepeatingAsyncTask();
 
         contactsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,8 +138,8 @@ public class MessageBoardActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        timer.cancel();
-        initJobScheduler();
+      //  timer.cancel();
+     //   initJobScheduler();
     }
 
     @Override
@@ -140,7 +161,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.menuSingOut:
-                firebaseConnect.logoutUser();
+              /*  firebaseConnect.logoutUser();
                 firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
                     @Override
                     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -149,13 +170,13 @@ public class MessageBoardActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-                break;
+                break;*/
             default:
                 break;
         }
         return false;
     }
-
+/*
     public class DownloadAsynctask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -171,7 +192,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                         Log.d(TAG, "doInBackground: There is message to upload");
                     }
                     firebaseConnect.handleKeysReq(null);
-                    firebaseConnect.db.collection(myID).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                   firebaseConnect.db.collection(myID).whereEqualTo("isDownloaded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
@@ -187,7 +208,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                             }
                         }
                     });
-
+*
                     ArrayList<MessageB> message = sqlConnect.getLastMessageEachPersonSQL(myID);
                     if (!messageB.equals(message)) {
                         Log.d(TAG, "run: The size not the same, running adapter.notifyDataSetChanged() ");
@@ -200,7 +221,8 @@ public class MessageBoardActivity extends AppCompatActivity {
             return null;
         }
     }
-
+*/
+    /*
     private void setRepeatingAsyncTask() {
         final Handler handler = new Handler();
         TimerTask task = new TimerTask() {
@@ -209,8 +231,8 @@ public class MessageBoardActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     public void run() {
                         try {
-                            DownloadAsynctask downloadAsynctask = new DownloadAsynctask();
-                            downloadAsynctask.execute();
+                            //DownloadAsynctask downloadAsynctask = new DownloadAsynctask();
+                            //downloadAsynctask.execute();
                         } catch (Exception e) {
                             Log.d(TAG, "run: " + e);
                         }
@@ -220,8 +242,10 @@ public class MessageBoardActivity extends AppCompatActivity {
         };
         timer.schedule(task, 0, 5 * 1000);
     }
-
+    */
+ /*
     private void downloadMessages(QueryDocumentSnapshot document) {
+
         String privKey = null;
         if (!document.get("contact").toString().equals(null) &&
                 !document.get("message").toString().equals(null) &&
@@ -250,5 +274,9 @@ public class MessageBoardActivity extends AppCompatActivity {
                 Log.d(TAG, "download Messages: dont have the key from the sender");
             }
         }
+
+
     }
+*/
+
 }

@@ -1,4 +1,4 @@
-package com.example.szakdolg;
+package com.example.szakdolg.recviewadapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -20,6 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.szakdolg.Contact;
+import com.example.szakdolg.FileHandling;
+import com.example.szakdolg.FirebaseConnect;
+import com.example.szakdolg.R;
+import com.example.szakdolg.SQLConnect;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

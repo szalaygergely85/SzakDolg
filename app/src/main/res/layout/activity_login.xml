@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primaryLightColor"
-    tools:context=".LoginActivity">
+    tools:context=".activity.LoginActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/loginToolbar"

@@ -1,4 +1,4 @@
-package com.example.szakdolg;
+package com.example.szakdolg.activity;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,6 +13,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.szakdolg.Contact;
+import com.example.szakdolg.R;
+import com.example.szakdolg.recviewadapter.SearchContactAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;

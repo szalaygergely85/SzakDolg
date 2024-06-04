@@ -2,79 +2,72 @@ package com.example.szakdolg;
 
 public class MessageB {
 
-    private String messageId;
-    private String contactId;
-    private String contactUserName;
-    private String text;
-    private int read;
-    private String imageUrl;
+    private Long messageId;
 
-    public MessageB(String messageId, String contactId, String contactUserName, String text, int read, String imageUrl) {
-        this.messageId = messageId;
-        this.contactId = contactId;
-        this.contactUserName = contactUserName;
-        this.text = text;
-        this.read = read;
-        this.imageUrl = imageUrl;
-    }
+    private Long senderId;
 
-    public String getMessageId() {
+    private String senderName;
+
+    private Long receiverId;
+
+    private String receiverName;
+
+    private String content;
+
+    public Long getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(String messageId) {
+    public void setMessageId(Long messageId) {
         this.messageId = messageId;
     }
 
-    public String getContactId() {
-        return contactId;
+    public Long getSenderId() {
+        return senderId;
     }
 
-    public void setContactId(String contactId) {
-        this.contactId = contactId;
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
     }
 
-    public String getContactUserName() {
-        return contactUserName;
+    public String getSenderName() {
+        return senderName;
     }
 
-    public void setContactUserName(String contactUserName) {
-        this.contactUserName = contactUserName;
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 
-    public String getText() {
-        return text;
+    public Long getReceiverId() {
+        return receiverId;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setReceiverId(Long receiverId) {
+        this.receiverId = receiverId;
     }
 
-    public int isRead() {
-        return read;
+    public String getReceiverName() {
+        return receiverName;
     }
 
-    public void setRead(int read) {
-        this.read = read;
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getContent() {
+        return content;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    @Override
-    public String toString() {
-        return "MessageB{" +
-                "messageId='" + messageId + '\'' +
-                ", contactId='" + contactId + '\'' +
-                ", contactUserName='" + contactUserName + '\'' +
-                ", text='" + text + '\'' +
-                ", read=" + read +
-                ", imageUrl='" + imageUrl + '\'' +
-                '}';
+    public MessageB(Long messageId, Long senderId, String senderName, Long receiverId, String receiverName, String content) {
+        this.messageId = messageId;
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.receiverId = receiverId;
+        this.receiverName = receiverName;
+        this.content = content;
     }
 }

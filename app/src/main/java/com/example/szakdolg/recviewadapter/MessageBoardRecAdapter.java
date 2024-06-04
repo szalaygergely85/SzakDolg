@@ -1,11 +1,9 @@
-package com.example.szakdolg;
+package com.example.szakdolg.recviewadapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,36 +14,28 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
+import com.example.szakdolg.FileHandling;
+import com.example.szakdolg.MessageB;
+import com.example.szakdolg.R;
+import com.example.szakdolg.activity.ChatActivity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
-    private final FirebaseConnect firebaseConnect;
-    private final SQLConnect sqlConnect;
+  //  private final FirebaseConnect firebaseConnect;
+//    private final SQLConnect sqlConnect;
     private ArrayList<MessageB> messageB = new ArrayList<>();
     private final Context mContext;
     private static final String TAG = "MessageBoardRecAdapter";
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageReference storageRef = storage.getReference();
+  //  private FirebaseStorage storage = FirebaseStorage.getInstance();
+ //   private StorageReference storageRef = storage.getReference();
 
     public MessageBoardRecAdapter(Context mContext) {
         this.mContext = mContext;
-        firebaseConnect = FirebaseConnect.getInstance("firebase");
-        sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
+      //  firebaseConnect = FirebaseConnect.getInstance("firebase");
+      //  sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
     }
 
     public void setImageView(String uID, Context context, ImageView image) {
@@ -58,11 +48,12 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         }
         if (picUri == null) {
             Log.d(TAG, "setImageView: couldn't find the pic");
-            try {
+            try {/*
                 storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
                     @Override
                     public void onComplete(@NonNull Task<StorageMetadata> task) {
                         if (task.isSuccessful()) {
+
                             storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
@@ -100,7 +91,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
                         }
                     }
                 });
-
+*/
             } catch (Exception e) {
                 Log.d(TAG, "setImageView: " + e);
             }
@@ -121,22 +112,22 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        if (messageB.get(position).isRead() == 0) {
+        //if (messageB.get(position).isRead() == 0) {
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
-        } else {
-            holder.txtMessage.setTypeface(null, Typeface.NORMAL);
-            holder.txtName.setTypeface(null, Typeface.NORMAL);
-        }
-        holder.txtName.setText(messageB.get(position).getContactUserName());
-        holder.txtMessage.setText(messageB.get(position).getText());
-        setImageView(messageB.get(position).getContactId(), mContext, holder.image);
+       // } else {
+        //    holder.txtMessage.setTypeface(null, Typeface.NORMAL);
+        //    holder.txtName.setTypeface(null, Typeface.NORMAL);
+       // }
+        holder.txtName.setText(messageB.get(position).getSenderName());
+        holder.txtMessage.setText(messageB.get(position).getContent());
+        // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, messageB.get(position).getContactId());
+                //Log.d(TAG, messageB.get(position).getContactId());
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra("uID", messageB.get(position).getContactId());
+                intent.putExtra("uID", messageB.get(position).getSenderId());
                 mContext.startActivity(intent);
 
             }

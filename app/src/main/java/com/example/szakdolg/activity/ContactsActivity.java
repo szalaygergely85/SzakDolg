@@ -1,4 +1,4 @@
-package com.example.szakdolg;
+package com.example.szakdolg.activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +10,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.szakdolg.Contact;
+import com.example.szakdolg.recviewadapter.ContactsAdapter;
+import com.example.szakdolg.FirebaseConnect;
+import com.example.szakdolg.R;
+import com.example.szakdolg.SQLConnect;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
