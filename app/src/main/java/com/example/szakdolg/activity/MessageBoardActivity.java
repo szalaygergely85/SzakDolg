@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.szakdolg.DTO.MessageBoard;
-import com.example.szakdolg.MessageB;
+
 import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.SQLConnect;
@@ -36,10 +36,8 @@ public class MessageBoardActivity extends AppCompatActivity {
     private static final String TAG = "MessageB";
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
-    //private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
-    private SQLConnect sqlConnect;
+
     private MessageBoardRecAdapter adapter;
-    private ArrayList<MessageB> messageB;
     private Timer timer;
     private MaterialToolbar mToolbar;
    // private final String myID = firebaseConnect.getUserId();
@@ -160,10 +158,12 @@ public class MessageBoardActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menuProfile:
                 intent = new Intent(MessageBoardActivity.this, ProfileActivity.class);
+                intent.putExtra("user", user);
                 startActivity(intent);
                 break;
             case R.id.menuContacts:
                 intent = new Intent(MessageBoardActivity.this, ContactsActivity.class);
+                intent.putExtra("user", user);
                 startActivity(intent);
                 break;
             case R.id.menuSingOut:

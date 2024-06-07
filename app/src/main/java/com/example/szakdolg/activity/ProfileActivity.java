@@ -25,6 +25,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.szakdolg.FileHandling;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
+import com.example.szakdolg.user.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,12 +49,10 @@ public class ProfileActivity extends AppCompatActivity {
     private Button deleteAccount;
     private Button deleteContact;
     private Button sendMessage;
-    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageReference storageRef = storage.getReference();
-    private String uID;
-    private final String myID = firebaseConnect.getUserId();
+    private User user;
 
+
+/*
     public void setImageView(String uID, Context context) {
 
         Log.d(TAG, "getPicURl: " + uID);
@@ -110,6 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
             imageView.setImageURI(FileHandling.getUri(uID, context));
         }
     }
+*/
 
     private void initView() {
         imageView = findViewById(R.id.profPic);
@@ -127,7 +127,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        uID = (String) this.getIntent().getSerializableExtra("uID");
+        user = (User) this.getIntent().getSerializableExtra("user");
 
         initView();
 
@@ -139,82 +139,22 @@ public class ProfileActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("My Profile");
 
-        if (uID != null) {
+        if (user != null) {
             changePW.setVisibility(View.GONE);
             singOut.setVisibility(View.GONE);
             deleteAccount.setVisibility(View.GONE);
         } else {
-            uID = firebaseConnect.getUserId();
+
             deleteContact.setVisibility(View.GONE);
             sendMessage.setVisibility(View.GONE);
         }
-        setImageView(uID, this);
+        // setImageView(uID, this);
 
-        firebaseConnect.db.collection("Users").document(uID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, document.get("name").toString());
-                        name.setText(document.get("name").toString());
-                        email.setText(document.get("email").toString());
-                        if (myID != uID) {
-                            actionBar.setTitle(document.get("name").toString());
-                        }
+        name.setText(user.getFirstName() + " " + user.getSurName());
+        email.setText(user.getEmail());
 
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("FireBase", e.toString());
-            }
-        });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: choosed smthing");
-        switch (requestCode) {
-            case PHOTO_PICKER_REQUEST_CODE:
-                if (resultCode == RESULT_OK && data != null) {
-                    Uri selectedImage = data.getData();
-                    Log.d(TAG, "onActivityResult: " + selectedImage);
-                    firebaseConnect.uploadPic(selectedImage);
-                    Glide.with(this)
-                            .asBitmap()
-                            .load(selectedImage)
-                            .into(new CustomTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                    try {
-                                        FileHandling.saveImageFile(uID, resource, ProfileActivity.this);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onLoadCleared(@Nullable Drawable placeholder) {
-                                }
-                            });
-                    Glide.with(this)
-                            .asBitmap()
-                            .load(selectedImage)
-                            .into(imageView);
-                }
-                break;
-            default:
-                break;
-        }
-    }
 
     @Override
     protected void onStart() {
@@ -222,27 +162,27 @@ public class ProfileActivity extends AppCompatActivity {
         singOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                firebaseConnect.logoutUser();
+
                 Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
         });
-        if (myID.equals(uID)) {
+
             imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, PHOTO_PICKER_REQUEST_CODE);
-                }
-            });
-        }
+                                             @Override
+                                             public void onClick(View view) {
+                                                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                                 startActivityForResult(intent, PHOTO_PICKER_REQUEST_CODE);
+                                             }
+
+                                         });
         deleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: clicked on delete account");
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                firebaseConnect.deleteAccount(myID, ProfileActivity.this);
+
                 startActivity(intent);
                 finish();
             }
@@ -268,7 +208,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
-                intent.putExtra("uID", uID);
+                intent.putExtra("user", user);
                 startActivity(intent);
             }
         });

@@ -4,8 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.szakdolg.DTO.MessageBoard;
-import com.example.szakdolg.FileHandling;
-import com.example.szakdolg.MessageB;
+
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ChatActivity;
 import com.example.szakdolg.message.MessageEntry;

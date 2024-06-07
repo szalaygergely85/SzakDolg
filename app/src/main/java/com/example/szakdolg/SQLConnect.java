@@ -174,32 +174,6 @@ public class SQLConnect {
         }
     }
 
-    /**
-     * Get newest message from each person
-     *
-     * @return messages
-     */
-    public ArrayList<MessageB> getLastMessageEachPersonSQL(String userID) {
-        ArrayList<MessageB> messages = new ArrayList<>();
-        try {
-            Cursor resultSet = mydatabase.rawQuery("SELECT MAX(Messages.Messageid), Messages.Text, Contacts.userId, Messages.Read, Contacts.userName FROM Contacts INNER JOIN Messages ON Messages.Contact=Contacts.userId GROUP BY Contacts.userName", null);
-            if (resultSet.moveToFirst()) {
-                do {
-                    String messageId = resultSet.getString(0);
-                    String text = resultSet.getString(1);
-                    String contact = resultSet.getString(2);
-                    int read = resultSet.getInt(3);
-
-                    String username = resultSet.getString(4);
-
-                   // messages.add(new MessageB(messageId, contact, username, text, read, "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?cs=srgb&dl=pexels-mohamed-abdelghaffar-771742.jpg"));
-                } while (resultSet.moveToNext());
-            }
-        } catch (SQLException e) {
-            Log.e(TAG, e.toString());
-        }
-        return messages;
-    }
 
     /**
      * Get all message from UID

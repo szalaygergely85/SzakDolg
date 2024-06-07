@@ -1,7 +1,7 @@
 package com.example.szakdolg.message;
 
 import com.example.szakdolg.DTO.MessageBoard;
-import com.example.szakdolg.MessageB;
+
 
 import java.util.ArrayList;
 import java.util.List;
