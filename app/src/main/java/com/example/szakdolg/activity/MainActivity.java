@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if(user !=null){
 
-                            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                            Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
 
                             intent.putExtra("user", user);
 

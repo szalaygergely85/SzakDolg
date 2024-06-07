@@ -16,28 +16,32 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.FileHandling;
 import com.example.szakdolg.MessageB;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ChatActivity;
+import com.example.szakdolg.message.MessageEntry;
+import com.example.szakdolg.user.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
-  //  private final FirebaseConnect firebaseConnect;
-//    private final SQLConnect sqlConnect;
-    private ArrayList<MessageB> messageB = new ArrayList<>();
+
+    private ArrayList<MessageBoard> messageB = new ArrayList<>();
     private final Context mContext;
+
+    private User user;
     private static final String TAG = "MessageBoardRecAdapter";
-  //  private FirebaseStorage storage = FirebaseStorage.getInstance();
- //   private StorageReference storageRef = storage.getReference();
+
 
     public MessageBoardRecAdapter(Context mContext) {
         this.mContext = mContext;
-      //  firebaseConnect = FirebaseConnect.getInstance("firebase");
-      //  sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
+        ;
     }
 
+    /*
     public void setImageView(String uID, Context context, ImageView image) {
         Uri picUri = null;
         Log.d(TAG, "getPicURl: " + uID);
@@ -48,7 +52,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         }
         if (picUri == null) {
             Log.d(TAG, "setImageView: couldn't find the pic");
-            try {/*
+            try {
                 storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
                     @Override
                     public void onComplete(@NonNull Task<StorageMetadata> task) {
@@ -91,7 +95,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
                         }
                     }
                 });
-*/
+
             } catch (Exception e) {
                 Log.d(TAG, "setImageView: " + e);
             }
@@ -100,7 +104,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
             Log.d(TAG, "setImageView: " + picUri);
             image.setImageURI(FileHandling.getUri(uID, context));
         }
-    }
+    }*/
 
     @NonNull
     @Override
@@ -110,8 +114,24 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         return holder;
     }
 
+    public static User findUserById(List<User> users, Long id) {
+        for (User user : users) {
+            if (user.getUserId() == id) {
+                return user;
+            }
+        }
+        return null; // or throw an exception, or return an Optional<User>
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+
+        MessageBoard messageBoard = messageB.get(position);
+        MessageEntry messageEntry = messageBoard.getMessage();
+
+        User sender = findUserById(messageBoard.getParticipants(), messageEntry.getSenderId());
+
+
         //if (messageB.get(position).isRead() == 0) {
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
@@ -119,15 +139,18 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         //    holder.txtMessage.setTypeface(null, Typeface.NORMAL);
         //    holder.txtName.setTypeface(null, Typeface.NORMAL);
        // }
-        holder.txtName.setText(messageB.get(position).getSenderName());
-        holder.txtMessage.setText(messageB.get(position).getContent());
+
+
+        holder.txtName.setText(sender.getFirstName());
+        holder.txtMessage.setText(messageEntry.getContent());
         // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG, messageB.get(position).getContactId());
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra("uID", messageB.get(position).getSenderId());
+                intent.putExtra("conversationId", messageBoard.getConversationId());
+                intent.putExtra("user", user);
                 mContext.startActivity(intent);
 
             }
@@ -139,9 +162,13 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         return messageB.size();
     }
 
-    public void setMessageB(ArrayList<MessageB> messageB) {
+    public void setMessageB(ArrayList<MessageBoard> messageB) {
         this.messageB = messageB;
         notifyDataSetChanged();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

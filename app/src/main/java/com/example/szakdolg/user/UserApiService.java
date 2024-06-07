@@ -19,6 +19,6 @@ public interface UserApiService {
             @Path("token") String token);
 
     @POST("user/login")
-    Call<User> logInUser(
+    Call<UserToken> logInUser(
             @Body LoginRequest loginRequest);
 }

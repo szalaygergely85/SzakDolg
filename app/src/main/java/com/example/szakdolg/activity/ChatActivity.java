@@ -38,6 +38,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChatAdapter adapter;
     private ArrayList<Chat> messageList;
 
+    private Long conversationId;
     private ArrayList<MessageEntry> messageEntryList;
     private Timer timer = new Timer();
     private RecyclerView chatRecView;
@@ -64,6 +65,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         user = (User) this.getIntent().getSerializableExtra("user");
+        conversationId = this.getIntent().getLongExtra("conversationId", 0);
 
         Log.d(TAG, "onCreate: " + user.toString());
 
@@ -84,7 +86,7 @@ public class ChatActivity extends AppCompatActivity {
 
         MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
 
-        Call<ArrayList<MessageEntry>> call = messageApiService.getConversationMessages(1);
+        Call<ArrayList<MessageEntry>> call = messageApiService.getConversationMessages(conversationId);
 
         call.enqueue(new Callback<ArrayList<MessageEntry>>(){
             @Override
@@ -137,7 +139,7 @@ public class ChatActivity extends AppCompatActivity {
 
                         LocalDateTime localDateTime = LocalDateTime.now();
 
-                        MessageEntry messageEntry = new MessageEntry(1, user.getUserId(), System.currentTimeMillis(), content);
+                        MessageEntry messageEntry = new MessageEntry(conversationId, user.getUserId(), System.currentTimeMillis(), content);
 
                         MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
 

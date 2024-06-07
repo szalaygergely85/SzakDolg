@@ -1,5 +1,6 @@
 package com.example.szakdolg.message;
 
+import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.MessageB;
 
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ import retrofit2.http.Path;
 
 public interface MessageApiService {
 
-    @GET("message/{token}/messageboardentry")
-    Call<ArrayList<MessageB>> getLatestMessages(
+    @GET("message/{token}/messageboardentries")
+    Call<ArrayList<MessageBoard>> getLatestMessages(
             @Path("token") String token);
 
     @POST("message")

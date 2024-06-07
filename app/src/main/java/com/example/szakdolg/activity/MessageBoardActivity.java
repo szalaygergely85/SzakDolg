@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.MessageB;
 import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
 import com.example.szakdolg.R;
@@ -85,36 +86,35 @@ public class MessageBoardActivity extends AppCompatActivity {
         user = (User) this.getIntent().getSerializableExtra("user");
 
         Log.d(TAG, "onCreate: " + user.toString());
-        //sqlConnect = SQLConnect.getInstance("sql", myID);
-        //Log.d(TAG, "onCreate: " + firebaseConnect.getUserId());
 
         mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
         setSupportActionBar(mToolbar);
 
         messageBoardRecView = findViewById(R.id.messageBoardRecView);
-        messageB = new ArrayList<>();
+        ArrayList<MessageBoard> messageBoard = new ArrayList<>();
         adapter = new MessageBoardRecAdapter(this);
-        adapter.setMessageB(messageB);
+        adapter.setMessageB(messageBoard);
+        adapter.setUser(user);
         messageBoardRecView.setAdapter(adapter);
         messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
 
 
         MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
 
-        Call<ArrayList<MessageB>> messagesCall= messageApiService.getLatestMessages(SharedPreferencesUtil.getStringPreference(this, "auth_token"));
+        Call<ArrayList<MessageBoard>> messagesCall= messageApiService.getLatestMessages(SharedPreferencesUtil.getStringPreference(this, "auth_token"));
 
-        messagesCall.enqueue(new Callback<ArrayList<MessageB>>(){
+        messagesCall.enqueue(new Callback<ArrayList<MessageBoard>>(){
             @Override
-            public void onResponse(Call<ArrayList<MessageB>> call, Response<ArrayList<MessageB>> response) {
+            public void onResponse(Call<ArrayList<MessageBoard>> call, Response<ArrayList<MessageBoard>> response) {
                 if (response.isSuccessful()) {
                     Log.e(TAG, ""+response.code());
-                    ArrayList<MessageB> messageBoard = response.body();
-                    adapter.setMessageB(messageB);
+                    ArrayList<MessageBoard> messageBoard = response.body();
+                    adapter.setMessageB(messageBoard);
                 }
             }
 
             @Override
-            public void onFailure(Call<ArrayList<MessageB>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<MessageBoard>> call, Throwable t) {
                 Log.e(TAG, ""+t.getMessage());
             }
         });

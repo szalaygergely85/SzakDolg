@@ -89,22 +89,18 @@ public class LoginActivity extends AppCompatActivity {
 
                     UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
 
-                    Call<User> call = userApiService.logInUser(new LoginRequest(email, password));
+                    Call<UserToken> call = userApiService.logInUser(new LoginRequest(email, password));
 
-                    call.enqueue(new Callback<User>(){
+                    call.enqueue(new Callback<UserToken>(){
                         @Override
-                        public void onResponse(Call<User> call, Response<User> response) {
+                        public void onResponse(Call<UserToken> call, Response<UserToken> response) {
                             Log.e(TAG, ""+response.code());
 
                             if (response.isSuccessful()) {
-                                User user = response.body();
+                                UserToken userToken = response.body();
 
+                                if(userToken !=null){
 
-                                if(user !=null){
-
-                                    Log.e(TAG, ""+user.toString());
-
-                                    UserToken userToken = user.getUserToken();
 
                                     SharedPreferencesUtil.setStringPreference(LoginActivity.this, "auth_token", userToken.getToken());
 
@@ -123,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(Call<User> call, Throwable t) {
+                        public void onFailure(Call<UserToken> call, Throwable t) {
                             Log.e(TAG, ""+t.getMessage());
                         }
                     });
