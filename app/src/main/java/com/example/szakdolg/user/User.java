@@ -10,8 +10,18 @@ public class User implements Serializable {
 
     private String password;
 
-    private UserToken userToken;
+    private Long userTokenId;
     private Long phoneNumber;
+
+    public User(Long userId, String surName, String firstName, String email, String password, Long userTokenId, Long phoneNumber) {
+        this.userId = userId;
+        this.surName = surName;
+        this.firstName = firstName;
+        this.email = email;
+        this.password = password;
+        this.userTokenId = userTokenId;
+        this.phoneNumber = phoneNumber;
+    }
 
     public Long getUserId() {
         return userId;
@@ -53,12 +63,12 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public UserToken getUserToken() {
-        return userToken;
+    public Long getUserTokenId() {
+        return userTokenId;
     }
 
-    public void setUserToken(UserToken userToken) {
-        this.userToken = userToken;
+    public void setUserTokenId(Long userTokenId) {
+        this.userTokenId = userTokenId;
     }
 
     public Long getPhoneNumber() {
@@ -66,15 +76,6 @@ public class User implements Serializable {
     }
 
     public void setPhoneNumber(Long phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public User(Long userId, String surName, String firstName, String email, UserToken userToken, Long phoneNumber) {
-        this.userId = userId;
-        this.surName = surName;
-        this.firstName = firstName;
-        this.email = email;
-        this.userToken = userToken;
         this.phoneNumber = phoneNumber;
     }
 }

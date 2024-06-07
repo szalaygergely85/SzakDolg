@@ -110,10 +110,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        messageList = new ArrayList<>();
 
         adapter = new ChatAdapter(this, user);
-        adapter.setChats(messageList);
 
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -152,8 +150,8 @@ public class ChatActivity extends AppCompatActivity {
 
                                 if (response.isSuccessful()) {
                                     MessageEntry entry = response.body();
-
-
+                                    messageEntryList.add(entry);
+                                    adapter.setMessageEntries(messageEntryList);
                                 } else {
                                     Log.e(TAG, ""+response.code());
                                     //TODO Handle the error

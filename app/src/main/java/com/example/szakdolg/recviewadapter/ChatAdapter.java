@@ -31,15 +31,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     private final User userLoggedIn;
 
-  //  private final FirebaseConnect firebaseConnect;
-   // private final String userID;
     long time;
 
     public ChatAdapter(Context mContext, User user) {
         this.mContext = mContext;
         this.userLoggedIn = user;
-       // firebaseConnect = FirebaseConnect.getInstance("firebase");
-       // userID = firebaseConnect.getUserId();
     }
 
     @NonNull

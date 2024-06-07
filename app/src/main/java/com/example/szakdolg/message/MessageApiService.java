@@ -13,7 +13,7 @@ import retrofit2.http.Path;
 
 public interface MessageApiService {
 
-    @GET("messageboard/latest/{token}")
+    @GET("message/{token}/messageboardentry")
     Call<ArrayList<MessageB>> getLatestMessages(
             @Path("token") String token);
 

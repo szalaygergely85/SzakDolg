@@ -19,6 +19,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.SQLConnect;
 import com.example.szakdolg.message.MessageApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,6 +44,8 @@ public class MessageBoardActivity extends AppCompatActivity {
    // private final String myID = firebaseConnect.getUserId();
     private static final int JOB_ID = 201;
     private JobScheduler scheduler;
+
+    private User user;
 
     private void initView() {
         contactsButton = findViewById(R.id.btnMesBrdNew);
@@ -79,6 +82,9 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         initView();
 
+        user = (User) this.getIntent().getSerializableExtra("user");
+
+        Log.d(TAG, "onCreate: " + user.toString());
         //sqlConnect = SQLConnect.getInstance("sql", myID);
         //Log.d(TAG, "onCreate: " + firebaseConnect.getUserId());
 
