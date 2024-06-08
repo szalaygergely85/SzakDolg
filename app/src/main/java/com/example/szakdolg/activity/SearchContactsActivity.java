@@ -6,29 +6,33 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.szakdolg.Contact;
 import com.example.szakdolg.R;
+import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.recviewadapter.SearchContactAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.user.User;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SearchContactsActivity extends AppCompatActivity {
     private EditText search;
     private RecyclerView contsRecView;
-    private ArrayList<Contact> contacts;
-    private FirebaseFirestore db;
+    private List<User> contactList;
+    private SearchContactAdapter contactsAdapter;
+
+    private User user;
     private static final String TAG = "SearchContactsActivity";
 
     private void initViews() {
@@ -45,13 +49,15 @@ public class SearchContactsActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         //toolbar settings
 
+        user = (User) this.getIntent().getSerializableExtra("logged_user");
+        contactsAdapter = new SearchContactAdapter(this, user);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("People Search");
 
         initViews();
 
-        db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -63,83 +69,51 @@ public class SearchContactsActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        contacts = new ArrayList<>();
-        SearchContactAdapter contactsAdapter = new SearchContactAdapter(this);
-        contactsAdapter.setContact(contacts);
+        contactList = new ArrayList<>();
+        contactsAdapter.setContactList(contactList);
         contsRecView.setAdapter(contactsAdapter);
         contsRecView.setLayoutManager(new LinearLayoutManager(this));
         search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            private CharSequence previousText = "";
 
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+                previousText = charSequence;
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                contacts.clear();
-                Log.d(TAG, "onTextChanged: at start" + contacts.size());
-                if (search.getText().toString().length() > 2) {
-                    db.collection("Users").orderBy("email").startAt(search.getText().toString()).endAt(search.getText().toString() + "\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    contacts.add(new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString()));
-                                    contacts = removeDuplicates(contacts);
-                                }
-                                Log.d(TAG, "onComplete:orderBy(\"email\")" + contacts.size());
-                            }
-                        }
-
-                    });
-                    db.collection("Users").orderBy("name").startAt(search.getText().toString()).endAt(search.getText().toString() + "\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    contacts.add(new Contact(document.get("userID").toString(), document.get("name").toString(), document.get("email").toString(), document.get("phone").toString()));
-                                    contacts = removeDuplicates(contacts);
-
-                                }
-                                Log.d(TAG, "onComplete:orderBy(\"name\")" + contacts.size());
-                            }
-                        }
-                    });
-                    db.addSnapshotsInSyncListener(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d(TAG, "run: Snapshot sync is running");
-                            contacts = removeDuplicates(contacts);
-                            contactsAdapter.setContact(contacts);
-                        }
-                    });
-                }
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+                if (editable.length() >= 3) {
 
-            }
-        });
-    }
+                    ContactsApiService contactsApiService = RetrofitClient.getRetrofitInstance().create(ContactsApiService.class);
 
-    public static ArrayList<Contact> removeDuplicates(ArrayList<Contact> list) {
-        boolean isFound;
-        ArrayList<Contact> newList = new ArrayList<>();
+                    Call<List<User>> contactsCall= contactsApiService.searchContacts(editable.toString());
 
-        for (Contact element : list) {
-            isFound = false;
-            Log.d(TAG, "element: " + element);
-            for (Contact e : newList) {
-                if (e.getID().equals(element.getID())) {
-                    isFound = true;
+                    contactsCall.enqueue(new Callback<List<User>>(){
+                        @Override
+                        public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                            if (response.isSuccessful()) {
+                                Log.e(TAG, ""+response.code());
+
+                                List<User> contactList = response.body();
+                                contactsAdapter.setContactList(contactList);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<User>> call, Throwable t) {
+                            Log.e(TAG, ""+t.getMessage());
+                        }
+                    });
                 }
             }
-            if (!isFound) {
-                newList.add(element);
-            }
-        }
-        return newList;
+        });
+
     }
+
 
 }

@@ -114,7 +114,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
 
     public static User findUserById(List<User> users, Long id) {
         for (User user : users) {
-            if (user.getUserId() == id) {
+            if (user.getUserId() != id) {
                 return user;
             }
         }
@@ -127,7 +127,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         MessageBoard messageBoard = messageB.get(position);
         MessageEntry messageEntry = messageBoard.getMessage();
 
-        User sender = findUserById(messageBoard.getParticipants(), messageEntry.getSenderId());
+        User participant = findUserById(messageBoard.getParticipants(), user.getUserId());
 
 
         //if (messageB.get(position).isRead() == 0) {
@@ -139,7 +139,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
        // }
 
 
-        holder.txtName.setText(sender.getFirstName());
+        holder.txtName.setText(participant.getFirstName());
         holder.txtMessage.setText(messageEntry.getContent());
         // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
         holder.parent.setOnClickListener(new View.OnClickListener() {
@@ -148,7 +148,8 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
                 //Log.d(TAG, messageB.get(position).getContactId());
                 Intent intent = new Intent(mContext, ChatActivity.class);
                 intent.putExtra("conversationId", messageBoard.getConversationId());
-                intent.putExtra("user", user);
+                intent.putExtra("participant_user", participant);
+                intent.putExtra("logged_user", user);
                 mContext.startActivity(intent);
 
             }

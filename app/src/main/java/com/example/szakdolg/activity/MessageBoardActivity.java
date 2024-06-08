@@ -81,7 +81,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         initView();
 
-        user = (User) this.getIntent().getSerializableExtra("user");
+        user = (User) this.getIntent().getSerializableExtra("logged_user");
 
         Log.d(TAG, "onCreate: " + user.toString());
 
@@ -134,6 +134,7 @@ public class MessageBoardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MessageBoardActivity.this, ContactsActivity.class);
+                intent.putExtra("logged_user", user);
                 startActivity(intent);
             }
         });
@@ -158,12 +159,12 @@ public class MessageBoardActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menuProfile:
                 intent = new Intent(MessageBoardActivity.this, ProfileActivity.class);
-                intent.putExtra("user", user);
+                intent.putExtra("logged_user", user);
                 startActivity(intent);
                 break;
             case R.id.menuContacts:
                 intent = new Intent(MessageBoardActivity.this, ContactsActivity.class);
-                intent.putExtra("user", user);
+                intent.putExtra("logged_user", user);
                 startActivity(intent);
                 break;
             case R.id.menuSingOut:

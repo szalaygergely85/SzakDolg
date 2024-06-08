@@ -1,5 +1,6 @@
 package com.example.szakdolg.activity;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.szakdolg.Chat;
+import com.example.szakdolg.conversation.ConversationApiService;
 import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.SQLConnect;
@@ -24,6 +26,7 @@ import com.example.szakdolg.user.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 import retrofit2.Call;
@@ -49,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     private static final int JOB_ID = 201;
 
     private User user;
+    private User participant;
     private JobScheduler scheduler;
 
     private void initView() {
@@ -64,53 +68,61 @@ public class ChatActivity extends AppCompatActivity {
         initView();
 
 
-        user = (User) this.getIntent().getSerializableExtra("user");
+        user = (User) this.getIntent().getSerializableExtra("logged_user");
+        participant = (User) this.getIntent().getSerializableExtra("participant_user");
         conversationId = this.getIntent().getLongExtra("conversationId", 0);
 
-        Log.d(TAG, "onCreate: " + user.toString());
+        if(conversationId==0){
+            if (participant!=null) {
+                ConversationApiService conversationApiService = RetrofitClient.getRetrofitInstance().create(ConversationApiService.class);
+
+                List<User> participants = new ArrayList<>();
+                participants.add(user);
+                participants.add(participant);
+                Call<Long> call = conversationApiService.addConversation(participants);
+
+                call.enqueue(new Callback<Long>(){
+                    @Override
+                    public void onResponse(Call<Long> call, Response<Long> response) {
+                        Log.e(TAG, ""+response.code());
+
+                        if (response.isSuccessful()) {
+                            conversationId = response.body();
+                            reloadMessages();
+
+                        } else {
+                            Log.e(TAG, ""+response.code());
+                            //TODO Handle the error
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Long> call, Throwable t) {
+                        Log.e(TAG, ""+t.getMessage());
+                    }
+                });
+
+            }
+        }
+
+
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
         setSupportActionBar(mToolbar);
 
 
         //toolbar settings
-/*
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            if (sqlConnect.getNameFrContact(uID) != null) {
-                actionBar.setTitle(sqlConnect.getNameFrContact(uID));
-            }
-        }*/
+
+            actionBar.setTitle(participant.getFirstName());
+
+        }
 
 
-        MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
 
-        Call<ArrayList<MessageEntry>> call = messageApiService.getConversationMessages(conversationId);
-
-        call.enqueue(new Callback<ArrayList<MessageEntry>>(){
-            @Override
-            public void onResponse(Call<ArrayList<MessageEntry>> call, Response<ArrayList<MessageEntry>> response) {
-                Log.e(TAG, ""+response.code());
-
-                if (response.isSuccessful()) {
-                    ArrayList<MessageEntry> messageEntryList = response.body();
-                    if (messageEntryList!=null){
-
-                        adapter.setMessageEntries(messageEntryList);
-                    }
-
-                } else {
-                    Log.e(TAG, ""+response.code());
-                    //TODO Handle the error
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<MessageEntry>> call, Throwable t) {
-                Log.e(TAG, ""+t.getMessage());
-            }
-        });
 
 
         adapter = new ChatAdapter(this, user);
@@ -151,6 +163,7 @@ public class ChatActivity extends AppCompatActivity {
                                 Log.e(TAG, ""+response.code());
 
                                 if (response.isSuccessful()) {
+                                    Log.e(TAG, ""+response.body());
                                     MessageEntry entry = response.body();
                                     messageEntryList.add(entry);
                                     adapter.setMessageEntries(messageEntryList);
@@ -171,5 +184,37 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void reloadMessages(){
+
+        MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
+
+        Call<ArrayList<MessageEntry>> call = messageApiService.getConversationMessages(conversationId);
+
+        call.enqueue(new Callback<ArrayList<MessageEntry>>(){
+            @Override
+            public void onResponse(Call<ArrayList<MessageEntry>> call, Response<ArrayList<MessageEntry>> response) {
+                Log.e(TAG, ""+response.code());
+
+                if (response.isSuccessful()) {
+                    messageEntryList = response.body();
+                    if (messageEntryList!=null){
+
+                        adapter.setMessageEntries(messageEntryList);
+                    }
+
+                } else {
+                    Log.e(TAG, ""+response.code());
+                    //TODO Handle the error
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<MessageEntry>> call, Throwable t) {
+                Log.e(TAG, ""+t.getMessage());
+            }
+        });
+
     }
 }

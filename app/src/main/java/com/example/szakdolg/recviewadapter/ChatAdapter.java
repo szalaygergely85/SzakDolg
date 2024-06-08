@@ -48,25 +48,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        try {
-            time = (messageEntries.get(position).getTimestamp());
-        } catch (Exception e) {
-            Log.d(TAG, e.toString());
-        }
+        MessageEntry messageEntry = messageEntries.get(holder.getAdapterPosition());
+
+            time = (messageEntry.getTimestamp());
+
         Date date = new Date(time);
 
             Format format = new SimpleDateFormat("HH:mm");
             String timeForm = format.format(date);
 
-            holder.txtTextFrMe.setText(messageEntries.get(position).getContent());
+            holder.txtTextFrMe.setText(messageEntry.getContent());
             holder.txtTimeOut.setText(timeForm);
 
-            if (messageEntries.get(position).getSenderId() == userLoggedIn.getUserId()) {
+            if (messageEntry.getSenderId() == userLoggedIn.getUserId()) {
                 holder.relIn.setVisibility(View.GONE);
                 holder.relOut.setVisibility(View.VISIBLE);
             } else {
                 holder.relOut.setVisibility(View.GONE);
                 holder.relIn.setVisibility(View.VISIBLE);
+                holder.txtText.setText(messageEntry.getContent());
             }
 
 

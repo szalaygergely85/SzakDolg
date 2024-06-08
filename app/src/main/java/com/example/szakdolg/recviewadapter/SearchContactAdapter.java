@@ -1,9 +1,6 @@
 package com.example.szakdolg.recviewadapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,38 +11,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.example.szakdolg.Contact;
-import com.example.szakdolg.FileHandling;
-import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
-import com.example.szakdolg.SQLConnect;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.example.szakdolg.contacts.ContactsApiService;
+import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.user.User;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder> {
     private static final String TAG = "SearchContactAdapter";
     private final Context mContext;
-    private ArrayList<Contact> contact = new ArrayList<>();
-    private final FirebaseConnect firebaseConnect;
-    private final SQLConnect sqlConnect;
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
-    private final StorageReference storageRef = storage.getReference();
 
+    private User user;
+    private List<User> contactList = new ArrayList<>();
+
+    /*
     public void setImageView(String uID, Context context, ImageView image) {
         try {
             storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
@@ -93,11 +82,10 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
             Log.d(TAG, "setImageView: " + e);
         }
     }
-
-    public SearchContactAdapter(Context mContext) {
+*/
+    public SearchContactAdapter(Context mContext, User user) {
+        this.user = user;
         this.mContext = mContext;
-        firebaseConnect = FirebaseConnect.getInstance("firebase");
-        sqlConnect = SQLConnect.getInstance("sql", firebaseConnect.getUserId());
     }
 
     @NonNull
@@ -110,31 +98,43 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.txtName.setText(contact.get(position).getName());
-        holder.txtEmail.setText(contact.get(position).getEmail());
-        setImageView(contact.get(position).getID(), mContext, holder.imageView);
+        User userSearchResult = contactList.get(holder.getAdapterPosition());
+
+        holder.txtName.setText(userSearchResult.getFirstName());
+        holder.txtEmail.setText(userSearchResult.getEmail());
+       // setImageView(contactList.get(position).getID(), mContext, holder.imageView);
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ContactsApiService contactsApiService = RetrofitClient.getRetrofitInstance().create(ContactsApiService.class);
 
-                if (!sqlConnect.isInContracts(contact.get(position).getID())) {
-                    firebaseConnect.addAUser(contact.get(position).getID());
-                    Toast.makeText(mContext, contact.get(position).getName() + " added to your contacts", Toast.LENGTH_SHORT).show();
-                } else {
+                Call<Boolean> contactsCall= contactsApiService.addContact(user.getUserId(), userSearchResult.getUserId());
 
-                    Toast.makeText(mContext, "You already have " + contact.get(position).getName() + " in your contacts", Toast.LENGTH_SHORT).show();
-                }
+                contactsCall.enqueue(new Callback<Boolean>(){
+
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if (response.isSuccessful()) {
+                            Log.e(TAG, ""+response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable t) {
+                        Log.e(TAG, ""+t.getMessage());
+                    }
+                });
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return contact.size();
+        return contactList.size();
     }
 
-    public void setContact(ArrayList<Contact> contact) {
-        this.contact = contact;
+    public void setContactList(List<User> contactList) {
+        this.contactList = contactList;
         notifyDataSetChanged();
     }
 

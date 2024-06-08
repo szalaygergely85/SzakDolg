@@ -21,4 +21,8 @@ public interface UserApiService {
     @POST("user/login")
     Call<UserToken> logInUser(
             @Body LoginRequest loginRequest);
+
+    @POST("user")
+    Call<UserToken> createUser(
+            @Body User user);
 }

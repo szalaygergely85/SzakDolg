@@ -26,6 +26,7 @@ import com.example.szakdolg.FileHandling;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
+import com.example.szakdolg.user.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,20 +37,21 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
     private static final String TAG = "ContactsAdapter";
-    private final Context mContext;
-    private ArrayList<Contact> contact = new ArrayList<>();
-    private final FirebaseConnect firebaseConnect;
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
-    private final StorageReference storageRef = storage.getReference();
 
-    public ContactsAdapter(Context mContext) {
+    private User user;
+    private final Context mContext;
+    private List<User> contact = new ArrayList<>();
+
+    public ContactsAdapter(Context mContext, User user) {
         this.mContext = mContext;
-        firebaseConnect = FirebaseConnect.getInstance("firebase");
+        this.user = user;
     }
 
+    /*
     public void setImageView(String uID, Context context, ImageView image) {
         Uri picUri = null;
         Log.d(TAG, "getPicURl: " + uID);
@@ -109,6 +111,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             image.setImageURI(FileHandling.getUri(uID, context));
         }
     }
+*/
 
     @NonNull
     @Override
@@ -120,27 +123,32 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.txtName.setText(contact.get(position).getName());
-        holder.txtEmail.setText(contact.get(position).getEmail());
-        setImageView(contact.get(position).getID(), mContext, holder.imageView);
-        holder.txtPhone.setText(contact.get(position).getPhone());
+        User contactUser = contact.get(holder.getAdapterPosition());
+
+        holder.txtName.setText(contactUser.getFirstName());
+        holder.txtEmail.setText(contactUser.getEmail());
+        //setImageView(contact.get(position).getID(), mContext, holder.imageView);
+        holder.txtPhone.setText(contactUser.getPhoneNumber().toString());
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ProfileActivity.class);
-                intent.putExtra("uID", contact.get(position).getID());
+                intent.putExtra("user", contactUser);
+                intent.putExtra("logged_user", user);
                 mContext.startActivity(intent);
-                Toast.makeText(view.getContext(), contact.get(position).getEmail(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), contactUser.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 
     @Override
     public int getItemCount() {
         return contact.size();
     }
 
-    public void setContact(ArrayList<Contact> contact) {
+    public void setContact(List<User> contact) {
         this.contact = contact;
         notifyDataSetChanged();
     }

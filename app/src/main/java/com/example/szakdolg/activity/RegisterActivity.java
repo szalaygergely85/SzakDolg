@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -14,14 +15,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.szakdolg.Error;
-import com.example.szakdolg.FirebaseConnect;
+
 import com.example.szakdolg.R;
+import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.UserApiService;
+import com.example.szakdolg.user.UserToken;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editEmail;
@@ -30,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editName;
     private EditText editPhone;
     private Button btnReg;
-    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
+
     private static final String TAG = "RegisterActivity";
 
     /**
@@ -91,14 +101,49 @@ public class RegisterActivity extends AppCompatActivity {
                     if (pass.equals(pass2)) {
                         if (pass.length() > 5) {
                             if (isEmailValid(email)) {
-                                Log.d(TAG, "onClick: " + email + " registration process is started");
-                                Map<String, String> user = new HashMap<>();
-                                user.put("email", email);
-                                user.put("pass", pass);
-                                user.put("phone", phone);
-                                user.put("name", name);
-                                RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask();
-                                registerAsyncTask.execute(user);
+                                User user = new User(name, name, email, pass, Long.parseLong(phone));
+
+                                UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
+
+                                Call<UserToken> call = userApiService.createUser(user);
+                                call.enqueue(new Callback<UserToken>() {
+                                    @Override
+                                    public void onResponse(Call<UserToken> call, Response<UserToken> response) {
+
+                                        Log.e(TAG, "" + response.code());
+
+                                        if (response.isSuccessful()) {
+                                            UserToken userToken = response.body();
+
+                                            if (userToken != null) {
+
+                                                SharedPreferencesUtil.setStringPreference(RegisterActivity.this, "auth_token", userToken.getToken());
+
+                                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+
+                                                startActivity(intent);
+
+                                                Toast.makeText(RegisterActivity.this, "A user signed in", Toast.LENGTH_SHORT).show();
+
+                                                finish();
+                                            }
+
+
+                                        } else {
+                                            Log.e(TAG, "" + response.code());
+                                            //TODO Handle the error
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<UserToken> call, Throwable t) {
+
+                                    }
+                                });
+
+
+
+
                             } else {
                                 Error.GetErrorMessageInToast("e2", RegisterActivity.this);
                             }
@@ -115,30 +160,6 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
-
-    }
-
-    public class RegisterAsyncTask extends AsyncTask<Map<String, String>, Void, Void> {
-
-
-        @Override
-        protected Void doInBackground(Map<String, String>... maps) {
-
-            firebaseConnect.registerNewUser(maps[0], RegisterActivity.this);
-            firebaseConnect.mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener(){
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    if (firebaseConnect.isUserSigned()) {
-                        Log.d(TAG, "onAuthStateChanged: " + firebaseConnect.getUserId() + " user is signed");
-
-                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(intent);
-
-                    }
-                }
-            });
-            return null;
-        }
 
     }
 

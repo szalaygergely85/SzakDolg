@@ -50,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Button deleteContact;
     private Button sendMessage;
     private User user;
+    private User userLoggedIn;
 
 
 /*
@@ -127,6 +128,8 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        userLoggedIn = (User) this.getIntent().getSerializableExtra("logged_user");
+
         user = (User) this.getIntent().getSerializableExtra("user");
 
         initView();
@@ -143,15 +146,20 @@ public class ProfileActivity extends AppCompatActivity {
             changePW.setVisibility(View.GONE);
             singOut.setVisibility(View.GONE);
             deleteAccount.setVisibility(View.GONE);
+
+            name.setText(user.getFirstName() + " " + user.getSurName());
+            email.setText(user.getEmail());
         } else {
 
             deleteContact.setVisibility(View.GONE);
             sendMessage.setVisibility(View.GONE);
+
+            name.setText(userLoggedIn.getFirstName() + " " + userLoggedIn.getSurName());
+            email.setText(userLoggedIn.getEmail());
         }
         // setImageView(uID, this);
 
-        name.setText(user.getFirstName() + " " + user.getSurName());
-        email.setText(user.getEmail());
+
 
     }
 
@@ -208,7 +216,8 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
-                intent.putExtra("user", user);
+                intent.putExtra("logged_user", userLoggedIn);
+                intent.putExtra("participant_user", user);
                 startActivity(intent);
             }
         });

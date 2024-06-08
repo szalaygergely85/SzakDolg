@@ -26,7 +26,6 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final int READ_PERMISSION_CODE = 202;
     private static final int WRITE_PERMISSION_CODE = 203;
 
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
 
-                            intent.putExtra("user", user);
+                            intent.putExtra("logged_user", user);
 
                             startActivity(intent);
 
