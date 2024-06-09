@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 
 import com.example.szakdolg.activity.MainActivity;
 import com.example.szakdolg.activity.MessageBoardActivity;
+import com.example.szakdolg.util.CryptUtil;
+import com.example.szakdolg.util.ErrorUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -162,7 +164,7 @@ public class FirebaseConnect {
                                     // Decrypt message here
                                     Log.d(TAG, privKey);
 
-                                    String decMessage = Crypt.deCrypt(document.get("message").toString(), privKey);
+                                    String decMessage = CryptUtil.deCrypt(document.get("message").toString(), privKey);
                                     Log.d(TAG, decMessage);
 
                                     // Create a CHat class for the message
@@ -361,9 +363,9 @@ public class FirebaseConnect {
                     try {
                         throw task.getException();
                     } catch (FirebaseAuthInvalidUserException e) {
-                        Error.GetErrorMessageInToast("e7", context);
+                        ErrorUtil.GetErrorMessageInToast("e7", context);
                     } catch (FirebaseAuthInvalidCredentialsException e) {
-                        Error.GetErrorMessageInToast("e8", context);
+                        ErrorUtil.GetErrorMessageInToast("e8", context);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -388,7 +390,7 @@ public class FirebaseConnect {
             Log.d(TAG, "sendMessage: found the Key and it is :" + sqlConnect.getPublicExtKey(uID));
             pubKey = sqlConnect.getPublicExtKey(uID);
             if (pubKey != null) {
-                String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
+                String encMessage = CryptUtil.enCrypt(message.getMessage(), pubKey);
                 if (!encMessage.isEmpty()) {
                     Log.d(TAG, "sendMessage: i could encrypt the message " + encMessage);
                     Map<String, Object> cont = message.getHashMap();
@@ -437,7 +439,7 @@ public class FirebaseConnect {
                 pubKey = sqlConnect.getPublicExtKey(uID);
                 if (pubKey != null) {
                     Log.d(TAG, "found the Key" + sqlConnect.getPublicExtKey(uID));
-                    String encMessage = Crypt.enCrypt(message.getMessage(), pubKey);
+                    String encMessage = CryptUtil.enCrypt(message.getMessage(), pubKey);
                     cont = message.getHashMap();
                     cont.put("message", encMessage);
                     cont.remove("isFromMe");

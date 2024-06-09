@@ -270,7 +270,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                 // Decrypt message here
                 Log.d(TAG, privKey);
 
-                String decMessage = Crypt.deCrypt(document.get("message").toString(), privKey);
+                String decMessage = CryptUtil.deCrypt(document.get("message").toString(), privKey);
                 Log.d(TAG, decMessage);
 
                 // Create a Chat class for the message

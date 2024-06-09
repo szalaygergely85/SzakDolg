@@ -1,4 +1,4 @@
-package com.example.szakdolg;
+package com.example.szakdolg.util;
 
 
 import android.util.Log;
@@ -23,14 +23,14 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-public class Crypt {
+public class CryptUtil {
 
-    private static final String TAG = "Crypt";
+    private static final String TAG = "CryptUtil";
 
     /**
      * I ll need to store the keys in hashmap
      * HashMap<String, String> keyPair = new HashMap<String, String>();
-     * keyPair = Crypt.createKey();
+     * keyPair = CryptUtil.createKey();
      *
      * @return HashMap
      */

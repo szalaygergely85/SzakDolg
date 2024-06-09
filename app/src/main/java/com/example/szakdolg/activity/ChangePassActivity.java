@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.szakdolg.Error;
+import com.example.szakdolg.util.ErrorUtil;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
 
@@ -71,10 +71,10 @@ public class ChangePassActivity extends AppCompatActivity {
                         Intent intent = new Intent(ChangePassActivity.this, ProfileActivity.class);
                         startActivity(intent);
                     } else {
-                        Error.GetErrorMessageInToast("e4", ChangePassActivity.this);
+                        ErrorUtil.GetErrorMessageInToast("e4", ChangePassActivity.this);
                     }
                 } else {
-                    Error.GetErrorMessageInToast("e5", ChangePassActivity.this);
+                    ErrorUtil.GetErrorMessageInToast("e5", ChangePassActivity.this);
                 }
             }
         });

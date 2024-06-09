@@ -5,6 +5,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.szakdolg.util.CryptUtil;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +73,7 @@ public class SQLConnect {
     }
 
     public void generateKeys(String uID) {
-        HashMap<String, String> keys = Crypt.createKeys();
+        HashMap<String, String> keys = CryptUtil.createKeys();
         try {
             mydatabase.execSQL("INSERT INTO Keys VALUES('" + uID + "', '" + keys.get("Private") + "', '" + keys.get("Public") + "', NULL);");
             Log.d(TAG, "generated: " + keys.get("Public"));

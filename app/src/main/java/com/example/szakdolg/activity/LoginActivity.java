@@ -14,13 +14,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.szakdolg.DTO.LoginRequest;
-import com.example.szakdolg.Error;
+import com.example.szakdolg.util.ErrorUtil;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.ForgotPassword;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiService;
 import com.example.szakdolg.user.UserToken;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -125,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Error.GetErrorMessageInToast("e6", LoginActivity.this);
+                    ErrorUtil.GetErrorMessageInToast("e6", LoginActivity.this);
                 }
             }
         });

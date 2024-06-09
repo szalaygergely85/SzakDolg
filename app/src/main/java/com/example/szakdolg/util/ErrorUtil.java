@@ -1,10 +1,10 @@
-package com.example.szakdolg;
+package com.example.szakdolg.util;
 
 
 import android.content.Context;
 import android.widget.Toast;
 
-public class Error {
+public class ErrorUtil {
     public static String getErrorMessage(String errorCode, Context context) {
         int errorID = context.getResources().getIdentifier(errorCode, "string", context.getPackageName());
         return context.getString(errorID);

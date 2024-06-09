@@ -1,7 +1,6 @@
 package com.example.szakdolg.activity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,12 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.szakdolg.Error;
+import com.example.szakdolg.util.ErrorUtil;
 
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
@@ -23,10 +21,7 @@ import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiService;
 import com.example.szakdolg.user.UserToken;
 import com.example.szakdolg.util.SharedPreferencesUtil;
-import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -146,16 +141,16 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                             } else {
-                                Error.GetErrorMessageInToast("e2", RegisterActivity.this);
+                                ErrorUtil.GetErrorMessageInToast("e2", RegisterActivity.this);
                             }
                         } else {
-                            Error.GetErrorMessageInToast("e3", RegisterActivity.this);
+                            ErrorUtil.GetErrorMessageInToast("e3", RegisterActivity.this);
                         }
                     } else {
-                        Error.GetErrorMessageInToast("e4", RegisterActivity.this);
+                        ErrorUtil.GetErrorMessageInToast("e4", RegisterActivity.this);
                     }
                 } else {
-                    Error.GetErrorMessageInToast("e5", RegisterActivity.this);
+                    ErrorUtil.GetErrorMessageInToast("e5", RegisterActivity.this);
                 }
 
 
