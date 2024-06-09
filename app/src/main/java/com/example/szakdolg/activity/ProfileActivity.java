@@ -25,7 +25,9 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.szakdolg.FileHandling;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -170,6 +172,8 @@ public class ProfileActivity extends AppCompatActivity {
         singOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                SharedPreferencesUtil.deleteStringPreference(ProfileActivity.this, SharedPreferencesConstans.USERTOKEN);
 
                 Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
                 startActivity(intent);

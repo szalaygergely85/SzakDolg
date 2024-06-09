@@ -73,7 +73,6 @@ public class ChatActivity extends AppCompatActivity {
 
         initView();
 
-
         user = (User) this.getIntent().getSerializableExtra("logged_user");
         participant = (User) this.getIntent().getSerializableExtra("participant_user");
         conversationId = this.getIntent().getLongExtra("conversationId", 0);
@@ -94,11 +93,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
 
-
-
         Toolbar mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
         setSupportActionBar(mToolbar);
-
 
         //toolbar settings
 
@@ -109,11 +105,6 @@ public class ChatActivity extends AppCompatActivity {
             actionBar.setTitle(participant.getFirstName());
 
         }
-
-
-
-
-
 
     }
 

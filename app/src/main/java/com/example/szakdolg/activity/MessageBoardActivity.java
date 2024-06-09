@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.szakdolg.DTO.MessageBoard;
 
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.SQLConnect;
@@ -99,7 +100,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
 
-        Call<ArrayList<MessageBoard>> messagesCall= messageApiService.getLatestMessages(SharedPreferencesUtil.getStringPreference(this, "auth_token"));
+        Call<ArrayList<MessageBoard>> messagesCall= messageApiService.getLatestMessages(SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN));
 
         messagesCall.enqueue(new Callback<ArrayList<MessageBoard>>(){
             @Override

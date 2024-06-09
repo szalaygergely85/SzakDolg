@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat;
 import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiService;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        String token = SharedPreferencesUtil.getStringPreference(this, "auth_token");
+        String token = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
 
         if (token != null) {
 

@@ -20,4 +20,12 @@ public class SharedPreferencesUtil {
         editor.putString(key, value);
         editor.apply();
     }
+
+    public static void deleteStringPreference(Context context, String key) {
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+        editor.apply();
+    }
 }

@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.example.szakdolg.Contact;
 import com.example.szakdolg.DTO.MessageBoard;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.message.MessageApiService;
 import com.example.szakdolg.recviewadapter.ContactsAdapter;
@@ -84,7 +85,7 @@ public class ContactsActivity extends AppCompatActivity {
 
         ContactsApiService contactsApiService = RetrofitClient.getRetrofitInstance().create(ContactsApiService.class);
 
-        Call<List<User>> contactsCall= contactsApiService.getConversation(SharedPreferencesUtil.getStringPreference(this, "auth_token"));
+        Call<List<User>> contactsCall= contactsApiService.getConversation(SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN));
 
         contactsCall.enqueue(new Callback<List<User>>(){
             @Override

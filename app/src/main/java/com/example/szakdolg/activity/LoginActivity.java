@@ -18,6 +18,7 @@ import com.example.szakdolg.Error;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.ForgotPassword;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiService;
@@ -102,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if(userToken !=null){
 
 
-                                    SharedPreferencesUtil.setStringPreference(LoginActivity.this, "auth_token", userToken.getToken());
+                                    SharedPreferencesUtil.setStringPreference(LoginActivity.this, SharedPreferencesConstans.USERTOKEN, userToken.getToken());
 
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 

@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.Error;
 
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiService;
@@ -117,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                             if (userToken != null) {
 
-                                                SharedPreferencesUtil.setStringPreference(RegisterActivity.this, "auth_token", userToken.getToken());
+                                                SharedPreferencesUtil.setStringPreference(RegisterActivity.this, SharedPreferencesConstans.USERTOKEN, userToken.getToken());
 
                                                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
 
