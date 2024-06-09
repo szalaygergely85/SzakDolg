@@ -114,7 +114,7 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
 
     public static User findUserById(List<User> users, Long id) {
         for (User user : users) {
-            if (user.getUserId() != id) {
+            if (!user.getUserId().equals(id)) {
                 return user;
             }
         }
@@ -130,13 +130,15 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         User participant = findUserById(messageBoard.getParticipants(), user.getUserId());
 
 
-        //if (messageB.get(position).isRead() == 0) {
+        if (messageEntry.isRead() || user.getUserId().equals(messageEntry.getSenderId())) {
+            holder.txtMessage.setTypeface(null, Typeface.NORMAL);
+            holder.txtName.setTypeface(null, Typeface.NORMAL);
+
+        } else {
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
-       // } else {
-        //    holder.txtMessage.setTypeface(null, Typeface.NORMAL);
-        //    holder.txtName.setTypeface(null, Typeface.NORMAL);
-       // }
+
+        }
 
 
         holder.txtName.setText(participant.getFirstName());
@@ -145,7 +147,6 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Log.d(TAG, messageB.get(position).getContactId());
                 Intent intent = new Intent(mContext, ChatActivity.class);
                 intent.putExtra("conversationId", messageBoard.getConversationId());
                 intent.putExtra("participant_user", participant);

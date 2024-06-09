@@ -15,7 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.szakdolg.Chat;
+import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.conversation.ConversationApiService;
+import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.SQLConnect;
@@ -54,6 +56,10 @@ public class ChatActivity extends AppCompatActivity {
     private User user;
     private User participant;
     private JobScheduler scheduler;
+    private MessageApiHelper messageApiHelper = new MessageApiHelper();
+
+    private ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
+
 
     private void initView() {
         chatRecView = findViewById(R.id.recViewChat);
@@ -72,36 +78,19 @@ public class ChatActivity extends AppCompatActivity {
         participant = (User) this.getIntent().getSerializableExtra("participant_user");
         conversationId = this.getIntent().getLongExtra("conversationId", 0);
 
+        adapter = new ChatAdapter(this, user);
+
+        chatRecView.setAdapter(adapter);
+        chatRecView.setLayoutManager(new LinearLayoutManager(this));
+
         if(conversationId==0){
             if (participant!=null) {
-                ConversationApiService conversationApiService = RetrofitClient.getRetrofitInstance().create(ConversationApiService.class);
 
                 List<User> participants = new ArrayList<>();
                 participants.add(user);
                 participants.add(participant);
-                Call<Long> call = conversationApiService.addConversation(participants);
 
-                call.enqueue(new Callback<Long>(){
-                    @Override
-                    public void onResponse(Call<Long> call, Response<Long> response) {
-                        Log.e(TAG, ""+response.code());
-
-                        if (response.isSuccessful()) {
-                            conversationId = response.body();
-                            reloadMessages();
-
-                        } else {
-                            Log.e(TAG, ""+response.code());
-                            //TODO Handle the error
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Long> call, Throwable t) {
-                        Log.e(TAG, ""+t.getMessage());
-                    }
-                });
-
+             conversationApiHelper.addConversation(participants, adapter);
             }
         }
 
@@ -125,10 +114,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-        adapter = new ChatAdapter(this, user);
 
-        chatRecView.setAdapter(adapter);
-        chatRecView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -140,6 +126,8 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        messageApiHelper.reloadMessages(conversationId, adapter);
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,30 +141,8 @@ public class ChatActivity extends AppCompatActivity {
 
                         MessageEntry messageEntry = new MessageEntry(conversationId, user.getUserId(), System.currentTimeMillis(), content);
 
-                        MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
+                        messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
 
-                        Call<MessageEntry> call = messageApiService.sendMessage(messageEntry);
-
-                        call.enqueue(new Callback<MessageEntry>(){
-                            @Override
-                            public void onResponse(Call<MessageEntry> call, Response<MessageEntry> response) {
-                                Log.e(TAG, ""+response.code());
-
-                                if (response.isSuccessful()) {
-                                    Log.e(TAG, ""+response.body());
-                                    MessageEntry entry = response.body();
-                                    messageEntryList.add(entry);
-                                    adapter.setMessageEntries(messageEntryList);
-                                } else {
-                                    Log.e(TAG, ""+response.code());
-                                    //TODO Handle the error
-                                }
-                            }
-                            @Override
-                            public void onFailure(Call<MessageEntry> call, Throwable t) {
-                                Log.e(TAG, ""+t.getMessage());
-                            }
-                        });
                         edtMess.getText().clear();
                     }
                 } else {
@@ -184,37 +150,5 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    public void reloadMessages(){
-
-        MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
-
-        Call<ArrayList<MessageEntry>> call = messageApiService.getConversationMessages(conversationId);
-
-        call.enqueue(new Callback<ArrayList<MessageEntry>>(){
-            @Override
-            public void onResponse(Call<ArrayList<MessageEntry>> call, Response<ArrayList<MessageEntry>> response) {
-                Log.e(TAG, ""+response.code());
-
-                if (response.isSuccessful()) {
-                    messageEntryList = response.body();
-                    if (messageEntryList!=null){
-
-                        adapter.setMessageEntries(messageEntryList);
-                    }
-
-                } else {
-                    Log.e(TAG, ""+response.code());
-                    //TODO Handle the error
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<MessageEntry>> call, Throwable t) {
-                Log.e(TAG, ""+t.getMessage());
-            }
-        });
-
     }
 }

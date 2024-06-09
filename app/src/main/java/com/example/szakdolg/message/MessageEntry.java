@@ -14,6 +14,8 @@ public class MessageEntry {
 
     private String content;
 
+    private boolean isRead;
+
     public Long getMessageId() {
         return messageId;
     }
@@ -52,6 +54,14 @@ public class MessageEntry {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 
     public MessageEntry(long conversationId, long senderId, long timestamp, String content) {
