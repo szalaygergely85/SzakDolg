@@ -22,6 +22,7 @@ import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.UserApiService;
 import com.example.szakdolg.user.UserToken;
+import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import retrofit2.Call;
@@ -89,7 +90,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
 
-                    Call<UserToken> call = userApiService.logInUser(new LoginRequest(email, password));
+                    String hashPassword = HashUtils.hashPassword(password);
+
+                    Call<UserToken> call = userApiService.logInUser(new LoginRequest(email, hashPassword));
 
                     call.enqueue(new Callback<UserToken>(){
                         @Override

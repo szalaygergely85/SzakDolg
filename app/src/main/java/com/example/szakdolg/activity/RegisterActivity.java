@@ -20,6 +20,7 @@ import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiService;
 import com.example.szakdolg.user.UserToken;
+import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.util.regex.Matcher;
@@ -97,7 +98,8 @@ public class RegisterActivity extends AppCompatActivity {
                     if (pass.equals(pass2)) {
                         if (pass.length() > 5) {
                             if (isEmailValid(email)) {
-                                User user = new User(name, name, email, pass, Long.parseLong(phone));
+                                String hashPass = HashUtils.hashPassword(pass);
+                                User user = new User(name, name, email, hashPass, Long.parseLong(phone));
 
                                 UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
 
@@ -109,6 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         Log.e(TAG, "" + response.code());
 
                                         if (response.isSuccessful()) {
+
                                             UserToken userToken = response.body();
 
                                             if (userToken != null) {
