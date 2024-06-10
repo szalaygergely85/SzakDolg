@@ -16,24 +16,17 @@ import android.widget.EditText;
 
 import com.example.szakdolg.Chat;
 import com.example.szakdolg.conversation.ConversationApiHelper;
-import com.example.szakdolg.conversation.ConversationApiService;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.SQLConnect;
-import com.example.szakdolg.message.MessageApiService;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -82,16 +75,8 @@ public class ChatActivity extends AppCompatActivity {
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
 
-        if(conversationId==0){
-            if (participant!=null) {
 
-                List<User> participants = new ArrayList<>();
-                participants.add(user);
-                participants.add(participant);
 
-             conversationApiHelper.addConversation(participants, adapter);
-            }
-        }
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
         setSupportActionBar(mToolbar);
@@ -102,10 +87,11 @@ public class ChatActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-            actionBar.setTitle(participant.getFirstName());
+
 
         }
 
+        messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
     }
 
     @Override
@@ -118,28 +104,32 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        messageApiHelper.reloadMessages(conversationId, adapter);
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                String content = edtMess.getText().toString();
-                if (!content.isEmpty()) {
-                    if (user != null) {
+            messageApiHelper.reloadMessages(conversationId, adapter, null);
 
-                        LocalDateTime localDateTime = LocalDateTime.now();
 
-                        MessageEntry messageEntry = new MessageEntry(conversationId, user.getUserId(), System.currentTimeMillis(), content);
+            btnSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                        messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
+                    String content = edtMess.getText().toString();
+                    if (!content.isEmpty()) {
+                        if (user != null) {
 
-                        edtMess.getText().clear();
+                            LocalDateTime localDateTime = LocalDateTime.now();
+
+                            MessageEntry messageEntry = new MessageEntry(conversationId, user.getUserId(), System.currentTimeMillis(), content);
+
+                            messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
+
+                            edtMess.getText().clear();
+                        }
+                    } else {
+                        Log.d(TAG, "onClick: Message field is empty");
                     }
-                } else {
-                    Log.d(TAG, "onClick: Message field is empty");
                 }
-            }
-        });
-    }
+            });
+        }
+
 }

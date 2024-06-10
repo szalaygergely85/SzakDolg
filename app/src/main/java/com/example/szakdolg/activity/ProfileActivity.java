@@ -26,6 +26,7 @@ import com.example.szakdolg.FileHandling;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,6 +39,8 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final int PHOTO_PICKER_REQUEST_CODE = 101;
@@ -53,6 +56,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Button sendMessage;
     private User user;
     private User userLoggedIn;
+
+    private ConversationApiHelper conversationApiHelper= new ConversationApiHelper();
 
 
 /*
@@ -219,10 +224,11 @@ public class ProfileActivity extends AppCompatActivity {
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
-                intent.putExtra("logged_user", userLoggedIn);
-                intent.putExtra("participant_user", user);
-                startActivity(intent);
+                List<User> participants = new ArrayList<>();
+                participants.add(user);
+                participants.add(userLoggedIn);
+                conversationApiHelper.openConversation(ProfileActivity.this, null, participants, userLoggedIn);
+
             }
         });
     }

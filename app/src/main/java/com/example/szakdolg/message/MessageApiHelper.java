@@ -3,6 +3,8 @@ package com.example.szakdolg.message;
 import android.util.Log;
 import android.widget.Adapter;
 
+import androidx.appcompat.app.ActionBar;
+
 import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 
@@ -19,7 +21,7 @@ public class MessageApiHelper {
     private MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
 
 
-    public void reloadMessages(Long conversationId, ChatAdapter adapter){
+    public void reloadMessages(Long conversationId, ChatAdapter adapter, ActionBar actionBar){
 
 
 
@@ -35,6 +37,8 @@ public class MessageApiHelper {
                     if (messageEntryList!=null){
 
                         adapter.setMessageEntries(messageEntryList);
+
+
                     }
 
                 } else {
@@ -62,7 +66,7 @@ public class MessageApiHelper {
                 if (response.isSuccessful()) {
                     Log.e(TAG, ""+response.body());
 
-                    reloadMessages(conversationId, adapter);
+                    reloadMessages(conversationId, adapter, null);
 
                 } else {
                     Log.e(TAG, ""+response.code());
