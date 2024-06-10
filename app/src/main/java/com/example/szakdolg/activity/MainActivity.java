@@ -17,6 +17,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.user.UserApiService;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int READ_PERMISSION_CODE = 202;
     private static final int WRITE_PERMISSION_CODE = 203;
+    String token = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
+    UserApiHelper userApiHelper= new UserApiHelper();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -41,60 +44,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_PERMISSION_CODE);
-        }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_CODE);
-        }
+        _setPermissions();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        String token = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
-
         if (token != null) {
-
-            UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
-
-            Call<User> call = userApiService.getUser(token);
-            call.enqueue(new Callback<User>(){
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-
-                    Log.e(TAG, ""+response.code());
-
-                    if (response.isSuccessful()) {
-                        User user = response.body();
-
-                        if(user !=null){
-
-                            Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
-
-                            intent.putExtra("logged_user", user);
-
-                            startActivity(intent);
-
-                            Toast.makeText(MainActivity.this, "A user signed in", Toast.LENGTH_SHORT).show();
-
-                            finish();
-                        }
-
-
-                    } else {
-                        Log.e(TAG, ""+response.code());
-                        //TODO Handle the error
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    Log.e(TAG, ""+t.getMessage());
-                }
-            });
-
+            userApiHelper.getUserByTokenAndNavigateToActivity(MainActivity.this, token);
         } else {
 
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -102,46 +60,13 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        /*
-
-        UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
-
-        Call<User> call = userApiService.getAllUser(1);
-
-        call.enqueue(new Callback<User>(){
-                         @Override
-                         public void onResponse(Call<User> call, Response<User> response) {
-                             Log.e(TAG, ""+response.code());
-
-                             if (response.isSuccessful()) {
-                                 User user = response.body();
-                                 Log.i(TAG, user.getEmail());
-                                 // Handle the user object
-                             } else {
-                                 Log.e(TAG, ""+response.code());
-                                 // Handle the error
-                             }
-                         }
-
-                         @Override
-                         public void onFailure(Call<User> call, Throwable t) {
-                             Log.e(TAG, ""+t.getMessage());
-                         }
-                     }
-
-        );
-
-        if (firebaseConnect.isUserSigned()) {
-            Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
-            startActivity(intent);
-            Toast.makeText(this, "A user signed in", Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+    }
+    private void _setPermissions(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_PERMISSION_CODE);
         }
-
-         */
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_CODE);
+        }
     }
 }

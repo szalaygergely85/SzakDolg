@@ -1,34 +1,23 @@
 package com.example.szakdolg.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.util.ErrorUtil;
 
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
-import com.example.szakdolg.user.UserApiService;
-import com.example.szakdolg.user.UserToken;
 import com.example.szakdolg.util.HashUtils;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editEmail;
@@ -39,35 +28,23 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnReg;
 
     private static final String TAG = "RegisterActivity";
+    UserApiHelper userApiHelper = new UserApiHelper();
+    private String email;
+    private String pass;
+    private String pass2;
+    private String phone;
+    private String name;
 
-    /**
-     * method is used for checking valid email id format.
-     *
-     * @param email email address
-     * @return boolean true for valid false for invalid
-     */
-    public static boolean isEmailValid(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-    public void initView() {
-        editEmail = findViewById(R.id.edtRegEmail);
-        editPass = findViewById(R.id.edtRegPass1);
-        editPass2 = findViewById(R.id.edtRegPass2);
-        editName = findViewById(R.id.edtRegName);
-        editPhone = findViewById(R.id.edtRegPhone);
-        btnReg = findViewById(R.id.btnRegReg);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        initView();
+        _initView();
+        _setToolBar();
+    }
+    private void _setToolBar() {
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.registerToolbar);
         setSupportActionBar(mToolbar);
@@ -75,7 +52,6 @@ public class RegisterActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Register");
-
     }
 
     @Override
@@ -86,80 +62,77 @@ public class RegisterActivity extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
+
+        _setOnClickListeners();
+    }
+
+
+    private void _initView() {
+        editEmail = findViewById(R.id.edtRegEmail);
+        editPass = findViewById(R.id.edtRegPass1);
+        editPass2 = findViewById(R.id.edtRegPass2);
+        editName = findViewById(R.id.edtRegName);
+        editPhone = findViewById(R.id.edtRegPhone);
+        btnReg = findViewById(R.id.btnRegReg);
+
+        email = editEmail.getText().toString();
+        pass = editPass.getText().toString();
+        pass2 = editPass2.getText().toString();
+        phone = editPhone.getText().toString();
+        name = editName.getText().toString();
+    }
+
+    private boolean _isFieldNotEmpty(String email, String pass, String pass2, String name, String phone) {
+        return !email.isEmpty() && !pass.isEmpty() && !pass2.isEmpty() && !name.isEmpty() && !phone.isEmpty();
+    }
+
+    private boolean _isPasswordStrong(String pass) {
+        return pass.length() > 5;
+    }
+
+    public static boolean _isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+    private void _registerUser(String email, String pass, String pass2, String name, String phone) {
+        if (!_isFieldNotEmpty(email, pass, pass2, name, phone)) {
+            showError("All fields must be filled.");
+            return;
+        }
+
+        if (!pass.equals(pass2)) {
+            showError("Passwords do not match.");
+            return;
+        }
+
+        if (!_isPasswordStrong(pass)) {
+            showError("Password must be longer than 5 characters.");
+            return;
+        }
+
+        if (!_isEmailValid(email)) {
+            showError("Invalid email address.");
+            return;
+        }
+
+        String hashPass = HashUtils.hashPassword(pass);
+        User user = new User(name, name, email, hashPass, Long.parseLong(phone));
+        userApiHelper.registerUser(RegisterActivity.this, user);
+    }
+    private void _setOnClickListeners() {
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = editEmail.getText().toString();
-                String pass = editPass.getText().toString();
-                String pass2 = editPass2.getText().toString();
-                String phone = editPhone.getText().toString();
-                String name = editName.getText().toString();
-                if (!email.isEmpty() && !pass2.isEmpty() && !pass.isEmpty() && !name.isEmpty() && !phone.isEmpty()) {
-                    if (pass.equals(pass2)) {
-                        if (pass.length() > 5) {
-                            if (isEmailValid(email)) {
-                                String hashPass = HashUtils.hashPassword(pass);
-                                User user = new User(name, name, email, hashPass, Long.parseLong(phone));
-
-                                UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
-
-                                Call<UserToken> call = userApiService.createUser(user);
-                                call.enqueue(new Callback<UserToken>() {
-                                    @Override
-                                    public void onResponse(Call<UserToken> call, Response<UserToken> response) {
-
-                                        Log.e(TAG, "" + response.code());
-
-                                        if (response.isSuccessful()) {
-
-                                            UserToken userToken = response.body();
-
-                                            if (userToken != null) {
-
-                                                SharedPreferencesUtil.setStringPreference(RegisterActivity.this, SharedPreferencesConstans.USERTOKEN, userToken.getToken());
-
-                                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-
-                                                startActivity(intent);
-
-                                                Toast.makeText(RegisterActivity.this, "A user signed in", Toast.LENGTH_SHORT).show();
-
-                                                finish();
-                                            }
-
-
-                                        } else {
-                                            Log.e(TAG, "" + response.code());
-                                            //TODO Handle the error
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<UserToken> call, Throwable t) {
-
-                                    }
-                                });
-
-
-
-
-                            } else {
-                                ErrorUtil.GetErrorMessageInToast("e2", RegisterActivity.this);
-                            }
-                        } else {
-                            ErrorUtil.GetErrorMessageInToast("e3", RegisterActivity.this);
-                        }
-                    } else {
-                        ErrorUtil.GetErrorMessageInToast("e4", RegisterActivity.this);
-                    }
-                } else {
-                    ErrorUtil.GetErrorMessageInToast("e5", RegisterActivity.this);
-                }
-
+                _registerUser(email, pass, pass2, name, phone);
 
             }
         });
+    }
 
+    private void showError(String message) {
+        ErrorUtil.GetErrorMessageInToast(message, RegisterActivity.this);
     }
 
 }

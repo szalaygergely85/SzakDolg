@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.szakdolg.DTO.LoginRequest;
+import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.util.ErrorUtil;
 import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.ForgotPassword;
@@ -38,8 +39,27 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLog;
     private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final String TAG = "LoginActivity";
+    private UserApiHelper userApiHelper = new UserApiHelper();
 
-    public void initView() {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        _initView();
+        _setToolbar();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        _setOnClickListeners();
+
+    }
+
+    public void _initView() {
         editMail = findViewById(R.id.edtLgnEmail);
         editPass = findViewById(R.id.edtLgnPass);
         btnReg = findViewById(R.id.btnLgnReg);
@@ -47,24 +67,8 @@ public class LoginActivity extends AppCompatActivity {
         txtForgot = findViewById(R.id.txtLgnForgot);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        initView();
-
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.loginToolbar);
-        setSupportActionBar(mToolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Messenger");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+    private void _setOnClickListeners() {
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,54 +86,26 @@ public class LoginActivity extends AppCompatActivity {
         btnLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String email = editMail.getText().toString();
                 String password = editPass.getText().toString();
 
                 if (!email.isEmpty() && !password.isEmpty()) {
-
-                    UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
-
                     String hashPassword = HashUtils.hashPassword(password);
-
-                    Call<UserToken> call = userApiService.logInUser(new LoginRequest(email, hashPassword));
-
-                    call.enqueue(new Callback<UserToken>(){
-                        @Override
-                        public void onResponse(Call<UserToken> call, Response<UserToken> response) {
-                            Log.e(TAG, ""+response.code());
-
-                            if (response.isSuccessful()) {
-                                UserToken userToken = response.body();
-
-                                if(userToken !=null){
-
-
-                                    SharedPreferencesUtil.setStringPreference(LoginActivity.this, SharedPreferencesConstans.USERTOKEN, userToken.getToken());
-
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-
-                                    startActivity(intent);
-
-                                    finish();
-                                }
-
-
-                            } else {
-                                Log.e(TAG, ""+response.code());
-                                //TODO Handle the error
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<UserToken> call, Throwable t) {
-                            Log.e(TAG, ""+t.getMessage());
-                        }
-                    });
+                    userApiHelper.loginUser(LoginActivity.this, hashPassword, email);
                 } else {
                     ErrorUtil.GetErrorMessageInToast("e6", LoginActivity.this);
                 }
             }
         });
+
+    }
+
+    private void _setToolbar() {
+
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.loginToolbar);
+        setSupportActionBar(mToolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Messenger");
     }
 }
