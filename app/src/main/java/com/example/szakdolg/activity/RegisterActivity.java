@@ -1,9 +1,11 @@
 package com.example.szakdolg.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,9 +24,11 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends AppCompatActivity {
     private EditText editEmail;
     private EditText editPass;
+    private EditText editFullName;
     private EditText editPass2;
-    private EditText editName;
+    private EditText editDisplayName;
     private EditText editPhone;
+    private TextView textSignIn;
     private Button btnReg;
 
     private static final String TAG = "RegisterActivity";
@@ -33,27 +37,17 @@ public class RegisterActivity extends AppCompatActivity {
     private String pass;
     private String pass2;
     private String phone;
-    private String name;
+    private String displayName;
+    private String fullName;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
         _initView();
-        _setToolBar();
+
     }
-    private void _setToolBar() {
-
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.registerToolbar);
-        setSupportActionBar(mToolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Register");
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -71,15 +65,19 @@ public class RegisterActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.edtRegEmail);
         editPass = findViewById(R.id.edtRegPass1);
         editPass2 = findViewById(R.id.edtRegPass2);
-        editName = findViewById(R.id.edtRegName);
+        editDisplayName = findViewById(R.id.edtRegName);
+        editFullName = findViewById(R.id.edtFullName);
         editPhone = findViewById(R.id.edtRegPhone);
         btnReg = findViewById(R.id.btnRegReg);
+        textSignIn = findViewById(R.id.textSignIn);
+
 
         email = editEmail.getText().toString();
         pass = editPass.getText().toString();
         pass2 = editPass2.getText().toString();
         phone = editPhone.getText().toString();
-        name = editName.getText().toString();
+        displayName = editDisplayName.getText().toString();
+        fullName = editFullName.getText().toString();
     }
 
     private boolean _isFieldNotEmpty(String email, String pass, String pass2, String name, String phone) {
@@ -125,8 +123,16 @@ public class RegisterActivity extends AppCompatActivity {
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                _registerUser(email, pass, pass2, name, phone);
+                _registerUser(email, pass, pass2, displayName, phone);
 
+            }
+        });
+
+        textSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
     }

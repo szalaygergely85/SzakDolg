@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">SzakDolg</string>
-    <string name="edt_email">Email Address</string>
-    <string name="edt_pass">Password</string>
+    <string name="edt_email">Enter your email</string>
+    <string name="edt_pass">Enter password</string>
+    <string name="edt_confirmpass">Confirm password</string>
     <string name="txt_or">or</string>
     <string name="btn_reg">Register</string>
     <string name="btn_log">Login</string>
@@ -23,10 +24,15 @@
     <string name="delete_contact">Delete Contact</string>
     <string name="sign_out">Sign Out</string>
     <string name="delete_account">Delete Account</string>
-    <string name="display_name">Display Name</string>
-    <string name="phone_number">Phone number</string>
+    <string name="display_name">Enter your display name</string>
+    <string name="full_name">Enter your full name</string>
+    <string name="phone_number">Enter your phone number</string>
     <string name="search_for_users">Search for users</string>
     <string name="profile">Profile</string>
     <string name="contacts">Contacts</string>
     <string name="action_notification">action_notification</string>
+    <string name="sign_in">Sign in</string>
+    <string name="aleady_have_an_account">Aleady have an account?</string>
+    <string name="welcome_onboard">Welcome Onboard!</string>
+
 </resources>

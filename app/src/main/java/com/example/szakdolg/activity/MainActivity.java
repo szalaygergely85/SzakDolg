@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int READ_PERMISSION_CODE = 202;
     private static final int WRITE_PERMISSION_CODE = 203;
-    String token = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
+    String token;
     UserApiHelper userApiHelper= new UserApiHelper();
 
     @Override
@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        token = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
 
         if (token != null) {
             userApiHelper.getUserByTokenAndNavigateToActivity(MainActivity.this, token);
