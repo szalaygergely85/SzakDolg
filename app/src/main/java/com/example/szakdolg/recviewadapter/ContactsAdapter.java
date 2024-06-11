@@ -2,10 +2,6 @@ package com.example.szakdolg.recviewadapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,27 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.example.szakdolg.Contact;
-import com.example.szakdolg.FileHandling;
-import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.user.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,7 +107,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User contactUser = contact.get(holder.getAdapterPosition());
 
-        holder.txtName.setText(contactUser.getFirstName());
+        holder.txtName.setText(contactUser.getFullName());
         holder.txtEmail.setText(contactUser.getEmail());
         //setImageView(contact.get(position).getID(), mContext, holder.imageView);
         holder.txtPhone.setText(contactUser.getPhoneNumber().toString());
@@ -133,8 +115,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ProfileActivity.class);
-                intent.putExtra("user", contactUser);
-                intent.putExtra("logged_user", user);
+                intent.putExtra(SharedPreferencesConstans.CONTACT_USER, contactUser);
+                intent.putExtra(SharedPreferencesConstans.LOGGED_USER, user);
                 mContext.startActivity(intent);
                 Toast.makeText(view.getContext(), contactUser.toString(), Toast.LENGTH_SHORT).show();
             }

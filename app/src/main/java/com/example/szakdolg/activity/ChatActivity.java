@@ -6,79 +6,60 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.job.JobScheduler;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.szakdolg.Chat;
+import com.example.szakdolg.constans.MessageConstans;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.R;
-import com.example.szakdolg.SQLConnect;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
 
 public class ChatActivity extends AppCompatActivity {
-
     private static final String TAG = "ChatActivity";
-    final Handler handler = new Handler();
-
     private ChatAdapter adapter;
-    private ArrayList<Chat> messageList;
-
     private Long conversationId;
-    private ArrayList<MessageEntry> messageEntryList;
-    private Timer timer = new Timer();
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;
-    private SQLConnect sqlConnect;
-    private String uID;
-    private static final int JOB_ID = 201;
-
-    private User user;
+    private User loggedUser;
     private User participant;
-    private JobScheduler scheduler;
     private MessageApiHelper messageApiHelper = new MessageApiHelper();
-
     private ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
-
-
-    private void initView() {
-        chatRecView = findViewById(R.id.recViewChat);
-        btnSend = findViewById(R.id.btnChatSend);
-        edtMess = findViewById(R.id.edtChatMes);
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        initView();
 
-        user = (User) this.getIntent().getSerializableExtra("logged_user");
+
+        loggedUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
         participant = (User) this.getIntent().getSerializableExtra("participant_user");
-        conversationId = this.getIntent().getLongExtra("conversationId", 0);
+        conversationId = this.getIntent().getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
+        String publicKey = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.PUBLIC_KEY + conversationId);
+        String privateKey = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.PRIVATE_KEY+conversationId);
 
-        adapter = new ChatAdapter(this, user);
+        if (publicKey.isEmpty() || publicKey.isEmpty()){
+            conversationApiHelper.checkConversationKeyStatus(conversationId, loggedUser);
+        }
+
+        adapter = new ChatAdapter(this, loggedUser);
 
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
 
 
-
-
         Toolbar mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
+        mToolbar.setTitle(" ");
         setSupportActionBar(mToolbar);
 
         //toolbar settings
@@ -86,11 +67,7 @@ public class ChatActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-
-
-
         }
-
         messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
     }
 
@@ -104,22 +81,17 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-
-
-            messageApiHelper.reloadMessages(conversationId, adapter, null);
-
-
             btnSend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     String content = edtMess.getText().toString();
                     if (!content.isEmpty()) {
-                        if (user != null) {
+                        if (loggedUser != null) {
 
                             LocalDateTime localDateTime = LocalDateTime.now();
 
-                            MessageEntry messageEntry = new MessageEntry(conversationId, user.getUserId(), System.currentTimeMillis(), content);
+                            MessageEntry messageEntry = new MessageEntry(conversationId, loggedUser.getUserId(), System.currentTimeMillis(), content, MessageConstans.TYPE_MESSAGE);
 
                             messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
 
@@ -132,4 +104,9 @@ public class ChatActivity extends AppCompatActivity {
             });
         }
 
+    private void _initView() {
+        chatRecView = findViewById(R.id.recViewChat);
+        btnSend = findViewById(R.id.btnChatSend);
+        edtMess = findViewById(R.id.edtChatMes);
+    }
 }

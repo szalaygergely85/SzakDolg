@@ -63,7 +63,7 @@ public class ContactsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        user = (User) this.getIntent().getSerializableExtra("logged_user");
+        user = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
 
 
         initView();
@@ -113,7 +113,7 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ContactsActivity.this, SearchContactsActivity.class);
-                intent.putExtra("logged_user", user);
+                intent.putExtra(SharedPreferencesConstans.LOGGED_USER, user);
                 startActivity(intent);
             }
         });

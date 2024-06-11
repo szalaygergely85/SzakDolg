@@ -19,6 +19,8 @@ import com.example.szakdolg.DTO.MessageBoard;
 
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ChatActivity;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
 
@@ -30,10 +32,13 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
     private ArrayList<MessageBoard> messageB = new ArrayList<>();
     private final Context mContext;
 
-    private User user;
+    private User loggedUser;
+
+
     private static final String TAG = "MessageBoardRecAdapter";
 
 
+    ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
     public MessageBoardRecAdapter(Context mContext) {
         this.mContext = mContext;
         ;
@@ -127,10 +132,10 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         MessageBoard messageBoard = messageB.get(position);
         MessageEntry messageEntry = messageBoard.getMessage();
 
-        User participant = findUserById(messageBoard.getParticipants(), user.getUserId());
+        User participant = findUserById(messageBoard.getParticipants(), loggedUser.getUserId());
 
 
-        if (messageEntry.isRead() || user.getUserId().equals(messageEntry.getSenderId())) {
+        if (messageEntry.isRead() || loggedUser.getUserId().equals(messageEntry.getSenderId())) {
             holder.txtMessage.setTypeface(null, Typeface.NORMAL);
             holder.txtName.setTypeface(null, Typeface.NORMAL);
 
@@ -141,17 +146,16 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         }
 
 
-        holder.txtName.setText(participant.getFirstName());
+        holder.txtName.setText(participant.getDisplayName());
         holder.txtMessage.setText(messageEntry.getContent());
         // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra("conversationId", messageBoard.getConversationId());
-                intent.putExtra("participant_user", participant);
-                intent.putExtra("logged_user", user);
-                mContext.startActivity(intent);
+
+                List<User> participants = new ArrayList<>();
+                participants.add(participant);
+                conversationApiHelper.openConversation(mContext, messageBoard.getConversationId(), participants, loggedUser);
 
             }
         });
@@ -167,8 +171,8 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         notifyDataSetChanged();
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setLoggedUser(User loggedUser) {
+        this.loggedUser = loggedUser;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

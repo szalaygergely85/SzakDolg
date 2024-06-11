@@ -1,16 +1,10 @@
 package com.example.szakdolg.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -19,26 +13,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.example.szakdolg.FileHandling;
-import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Button deleteAccount;
     private Button deleteContact;
     private Button sendMessage;
-    private User user;
+    private User userContact;
     private User userLoggedIn;
 
     private ConversationApiHelper conversationApiHelper= new ConversationApiHelper();
@@ -135,9 +115,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        userLoggedIn = (User) this.getIntent().getSerializableExtra("logged_user");
+        userLoggedIn = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
 
-        user = (User) this.getIntent().getSerializableExtra("user");
+        userContact = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CONTACT_USER);
 
         initView();
 
@@ -149,19 +129,19 @@ public class ProfileActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("My Profile");
 
-        if (user != null) {
+        if (userContact != null) {
             changePW.setVisibility(View.GONE);
             singOut.setVisibility(View.GONE);
             deleteAccount.setVisibility(View.GONE);
 
-            name.setText(user.getFirstName() + " " + user.getSurName());
-            email.setText(user.getEmail());
+            name.setText(userContact.getFullName() + " " + userContact.getDisplayName());
+            email.setText(userContact.getEmail());
         } else {
 
             deleteContact.setVisibility(View.GONE);
             sendMessage.setVisibility(View.GONE);
 
-            name.setText(userLoggedIn.getFirstName() + " " + userLoggedIn.getSurName());
+            name.setText(userLoggedIn.getFullName() + " " + userLoggedIn.getDisplayName());
             email.setText(userLoggedIn.getEmail());
         }
         // setImageView(uID, this);
@@ -225,7 +205,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 List<User> participants = new ArrayList<>();
-                participants.add(user);
+                participants.add(userContact);
                 participants.add(userLoggedIn);
                 conversationApiHelper.openConversation(ProfileActivity.this, null, participants, userLoggedIn);
 

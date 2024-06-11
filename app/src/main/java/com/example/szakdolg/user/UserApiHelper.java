@@ -63,7 +63,7 @@ public class UserApiHelper {
 
                     if (user != null) {
                         Intent intent = new Intent(context, MessageBoardActivity.class);
-                        intent.putExtra("logged_user", user);
+                        intent.putExtra(SharedPreferencesConstans.LOGGED_USER, user);
                         Toast.makeText(context, "A user signed in", Toast.LENGTH_SHORT).show();
                         context.startActivity(intent);
                     }

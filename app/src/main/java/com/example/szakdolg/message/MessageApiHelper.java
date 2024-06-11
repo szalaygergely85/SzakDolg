@@ -5,7 +5,9 @@ import android.widget.Adapter;
 
 import androidx.appcompat.app.ActionBar;
 
+import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.recviewadapter.ChatAdapter;
+import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 
 import java.util.ArrayList;
@@ -84,4 +86,25 @@ public class MessageApiHelper {
 
     }
 
+    public void getLatestMessages(MessageBoardRecAdapter adapter, String userToken) {
+        MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
+
+        Call<ArrayList<MessageBoard>> messagesCall= messageApiService.getLatestMessages(userToken);
+
+        messagesCall.enqueue(new Callback<ArrayList<MessageBoard>>(){
+            @Override
+            public void onResponse(Call<ArrayList<MessageBoard>> call, Response<ArrayList<MessageBoard>> response) {
+                if (response.isSuccessful()) {
+                    Log.e(TAG, ""+response.code());
+                    ArrayList<MessageBoard> messageBoard = response.body();
+                    adapter.setMessageB(messageBoard);
+                }
+            }
+            @Override
+            public void onFailure(Call<ArrayList<MessageBoard>> call, Throwable t) {
+                Log.e(TAG, ""+t.getMessage());
+            }
+        });
+
+    }
 }

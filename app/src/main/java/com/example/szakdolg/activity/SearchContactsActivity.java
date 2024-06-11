@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.recviewadapter.SearchContactAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -49,7 +50,7 @@ public class SearchContactsActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         //toolbar settings
 
-        user = (User) this.getIntent().getSerializableExtra("logged_user");
+        user = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
         contactsAdapter = new SearchContactAdapter(this, user);
 
         ActionBar actionBar = getSupportActionBar();

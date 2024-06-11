@@ -16,6 +16,8 @@ public class MessageEntry {
 
     private boolean isRead;
 
+    private int type;
+
     public Long getMessageId() {
         return messageId;
     }
@@ -64,6 +66,14 @@ public class MessageEntry {
         isRead = read;
     }
 
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
     public MessageEntry(long conversationId, long senderId, long timestamp, String content) {
         this.conversationId = conversationId;
         this.senderId = senderId;
@@ -77,6 +87,14 @@ public class MessageEntry {
         this.senderId = senderId;
         this.timestamp = timestamp;
         this.content = content;
+    }
+
+    public MessageEntry(long conversationId, long senderId, long timestamp, String content, int type) {
+        this.conversationId = conversationId;
+        this.senderId = senderId;
+        this.timestamp = timestamp;
+        this.content = content;
+        this.type = type;
     }
 
     @Override

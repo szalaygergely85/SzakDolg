@@ -3,7 +3,6 @@ package com.example.szakdolg.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,22 +12,14 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.util.ErrorUtil;
-import com.example.szakdolg.FirebaseConnect;
+
 import com.example.szakdolg.ForgotPassword;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.UserApiService;
-import com.example.szakdolg.user.UserToken;
-import com.example.szakdolg.util.HashUtils;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.szakdolg.util.HashUtils;
+
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -37,7 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextView txtForgot;
     private Button btnReg;
     private Button btnLog;
-    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
     private static final String TAG = "LoginActivity";
     private UserApiHelper userApiHelper = new UserApiHelper();
 
@@ -53,10 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-
         _setOnClickListeners();
-
     }
 
     public void _initView() {
@@ -66,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLog = findViewById(R.id.btnLgnLogin);
         txtForgot = findViewById(R.id.txtLgnForgot);
     }
-
 
     private void _setOnClickListeners() {
         btnReg.setOnClickListener(new View.OnClickListener() {

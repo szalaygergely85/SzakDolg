@@ -4,6 +4,7 @@ package com.example.szakdolg.conversation;
 import java.util.HashMap;
 import java.util.List;
 import com.example.szakdolg.user.User;
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -24,4 +25,11 @@ public interface ConversationApiService {
     Call <Long> addConversation(
             @Body List<User> participants);
 
+    //TODO folytkov
+    @GET("conversation/status")
+    Call<Long> getConversationKeyStatus(
+            @Field("conversation_id") Long conversationId,
+            @Field("user_id") Long userID);
 }
+
+

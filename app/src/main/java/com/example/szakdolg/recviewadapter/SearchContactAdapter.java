@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +16,6 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -100,7 +98,7 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User userSearchResult = contactList.get(holder.getAdapterPosition());
 
-        holder.txtName.setText(userSearchResult.getFirstName());
+        holder.txtName.setText(userSearchResult.getFullName());
         holder.txtEmail.setText(userSearchResult.getEmail());
        // setImageView(contactList.get(position).getID(), mContext, holder.imageView);
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {

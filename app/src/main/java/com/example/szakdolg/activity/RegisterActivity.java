@@ -80,8 +80,8 @@ public class RegisterActivity extends AppCompatActivity {
         fullName = editFullName.getText().toString();
     }
 
-    private boolean _isFieldNotEmpty(String email, String pass, String pass2, String name, String phone) {
-        return !email.isEmpty() && !pass.isEmpty() && !pass2.isEmpty() && !name.isEmpty() && !phone.isEmpty();
+    private boolean _isFieldNotEmpty(String email, String pass, String pass2, String displayName, String fullName, String phone) {
+        return !email.isEmpty() && !pass.isEmpty() && !pass2.isEmpty() && !fullName.isEmpty() && !phone.isEmpty() && displayName.isEmpty();
     }
 
     private boolean _isPasswordStrong(String pass) {
@@ -94,8 +94,8 @@ public class RegisterActivity extends AppCompatActivity {
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
-    private void _registerUser(String email, String pass, String pass2, String name, String phone) {
-        if (!_isFieldNotEmpty(email, pass, pass2, name, phone)) {
+    private void _registerUser(String email, String pass, String pass2, String displayName, String fullName, String phone) {
+        if (!_isFieldNotEmpty(email, pass, pass2, displayName, fullName, phone)) {
             showError("All fields must be filled.");
             return;
         }
@@ -116,14 +116,14 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         String hashPass = HashUtils.hashPassword(pass);
-        User user = new User(name, name, email, hashPass, Long.parseLong(phone));
+        User user = new User(displayName, fullName, email, hashPass, Long.parseLong(phone));
         userApiHelper.registerUser(RegisterActivity.this, user);
     }
     private void _setOnClickListeners() {
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                _registerUser(email, pass, pass2, displayName, phone);
+                _registerUser(email, pass, pass2, displayName, fullName, phone);
 
             }
         });
