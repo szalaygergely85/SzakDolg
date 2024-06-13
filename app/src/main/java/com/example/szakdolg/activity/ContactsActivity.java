@@ -11,15 +11,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.szakdolg.Contact;
-import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiService;
-import com.example.szakdolg.message.MessageApiService;
 import com.example.szakdolg.recviewadapter.ContactsAdapter;
-import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
-import com.example.szakdolg.SQLConnect;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;

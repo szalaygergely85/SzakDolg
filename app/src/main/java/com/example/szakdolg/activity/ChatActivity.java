@@ -45,12 +45,7 @@ public class ChatActivity extends AppCompatActivity {
         loggedUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
         participant = (User) this.getIntent().getSerializableExtra("participant_user");
         conversationId = this.getIntent().getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
-        String publicKey = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.PUBLIC_KEY + conversationId);
-        String privateKey = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.PRIVATE_KEY+conversationId);
 
-        if (publicKey.isEmpty() || publicKey.isEmpty()){
-            conversationApiHelper.checkConversationKeyStatus(conversationId, loggedUser);
-        }
 
         adapter = new ChatAdapter(this, loggedUser);
 

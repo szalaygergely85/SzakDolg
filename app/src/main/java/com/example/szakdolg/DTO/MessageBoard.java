@@ -3,6 +3,8 @@ package com.example.szakdolg.DTO;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.List;
 
 public class MessageBoard {
@@ -11,6 +13,7 @@ public class MessageBoard {
     private MessageEntry message;
 
     private List<User> participants;
+    private PublicKey publicKey;
 
     public MessageBoard(Long conversationId, MessageEntry message, List<User> participants) {
         this.conversationId = conversationId;
@@ -40,5 +43,13 @@ public class MessageBoard {
 
     public void setParticipants(List<User> participants) {
         this.participants = participants;
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(PublicKey publicKey) {
+        this.publicKey = publicKey;
     }
 }

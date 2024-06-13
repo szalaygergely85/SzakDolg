@@ -9,7 +9,11 @@ import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +26,8 @@ public class MessageApiHelper {
 
     private MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
 
-
+    private UserApiHelper userApiHelper = new UserApiHelper();
+    User loggedUser;
     public void reloadMessages(Long conversationId, ChatAdapter adapter, ActionBar actionBar){
 
 
@@ -86,8 +91,9 @@ public class MessageApiHelper {
 
     }
 
-    public void getLatestMessages(MessageBoardRecAdapter adapter, String userToken) {
-        MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
+    public void getLatestMessages(MessageBoardRecAdapter adapter, String userToken, User loggedUser) {
+
+        this.loggedUser=loggedUser;
 
         Call<ArrayList<MessageBoard>> messagesCall= messageApiService.getLatestMessages(userToken);
 
@@ -96,8 +102,19 @@ public class MessageApiHelper {
             public void onResponse(Call<ArrayList<MessageBoard>> call, Response<ArrayList<MessageBoard>> response) {
                 if (response.isSuccessful()) {
                     Log.e(TAG, ""+response.code());
-                    ArrayList<MessageBoard> messageBoard = response.body();
-                    adapter.setMessageB(messageBoard);
+                    ArrayList<MessageBoard> messageBoards = response.body();
+                    for(MessageBoard messageBoard: messageBoards){
+                        User user = _findOtherUserById(messageBoard.getParticipants(), loggedUser.getUserId());
+                        try {
+                            PublicKey publicKey = KeyStoreUtil.getPublicKey(user.getEmail());
+                            if(publicKey==null){
+                             userApiHelper.getAndSavePublicKey(user);
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    adapter.setMessageB(messageBoards);
                 }
             }
             @Override
@@ -106,5 +123,14 @@ public class MessageApiHelper {
             }
         });
 
+    }
+
+    private User _findOtherUserById(List<User> users, Long id) {
+        for (User user : users) {
+            if (!user.getUserId().equals(id)) {
+                return user;
+            }
+        }
+        return null; // or throw an exception, or return an Optional<User>
     }
 }

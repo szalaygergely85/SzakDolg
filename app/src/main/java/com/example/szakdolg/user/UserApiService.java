@@ -1,6 +1,9 @@
 package com.example.szakdolg.user;
 
 import com.example.szakdolg.DTO.LoginRequest;
+import com.example.szakdolg.DTO.MessageBoard;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -25,4 +28,12 @@ public interface UserApiService {
     @POST("user")
     Call<UserToken> createUser(
             @Body User user);
+
+    @GET("user/key/{token}")
+    Call<String> getKeyByToken(
+        @Path("token") String token);
+
+    @GET("user/publickey/{userId}")
+   Call<String> getPublicKeyByUserId(
+            @Path("userId") Long userId);
 }

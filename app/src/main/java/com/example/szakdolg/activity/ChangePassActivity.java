@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.szakdolg.util.ErrorUtil;
-import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
 
 public class ChangePassActivity extends AppCompatActivity {
@@ -22,7 +21,6 @@ public class ChangePassActivity extends AppCompatActivity {
     private EditText edtPass2;
     private EditText edtOldPass;
     private Button btnSend;
-    private final FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
 
     private void initView() {
         edtPass1 = findViewById(R.id.edtChnPass1);
@@ -66,7 +64,7 @@ public class ChangePassActivity extends AppCompatActivity {
                 if (!pass1.isEmpty() && !pass2.isEmpty()) {
                     if (pass1.equals(pass2)) {
                         Log.d(TAG, "onClick: changing password");
-                        firebaseConnect.changePassword(pass1, oldPass);
+                        //firebaseConnect.changePassword(pass1, oldPass);
                         Toast.makeText(ChangePassActivity.this, "Password changed", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(ChangePassActivity.this, ProfileActivity.class);
                         startActivity(intent);

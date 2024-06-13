@@ -26,4 +26,6 @@ public interface MessageApiService {
     @GET("message/byconversationid/{id}")
     Call<ArrayList<MessageEntry>> getConversationMessages(
             @Path("id") long conversationId);
+
+
 }

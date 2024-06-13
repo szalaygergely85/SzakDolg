@@ -4,26 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.example.szakdolg.DTO.MessageBoard;
-import com.example.szakdolg.FirebaseConnect;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiHelper;
-import com.example.szakdolg.user.UserApiService;
 import com.example.szakdolg.util.SharedPreferencesUtil;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 

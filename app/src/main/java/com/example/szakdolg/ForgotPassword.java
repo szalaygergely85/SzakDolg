@@ -16,7 +16,6 @@ import com.example.szakdolg.activity.LoginActivity;
 public class ForgotPassword extends AppCompatActivity {
     private EditText email;
     private Button send;
-    FirebaseConnect firebaseConnect = FirebaseConnect.getInstance("firebase");
 
     public void initView() {
         email = findViewById(R.id.edtFrgtEmail);
@@ -46,7 +45,7 @@ public class ForgotPassword extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                firebaseConnect.sendForgotPassword(email.getText().toString());
+                //firebaseConnect.sendForgotPassword(email.getText().toString());
                 Toast.makeText(ForgotPassword.this, "Instruction sent to the email address", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(ForgotPassword.this, LoginActivity.class);
                 startActivity(intent);

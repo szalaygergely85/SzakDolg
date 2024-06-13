@@ -6,13 +6,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.szakdolg.DTO.LoginRequest;
-import com.example.szakdolg.activity.LoginActivity;
 import com.example.szakdolg.activity.MainActivity;
 import com.example.szakdolg.activity.MessageBoardActivity;
-import com.example.szakdolg.activity.RegisterActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.util.ErrorUtil;
+import com.example.szakdolg.util.KeyStoreUtil;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import retrofit2.Call;
@@ -22,6 +20,27 @@ import retrofit2.Response;
 public class UserApiHelper {
     private final String TAG = "UserApiHelper";
     UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
+
+    public void getAndSavePublicKey(User user) {
+        Call<String> messagesCall= userApiService.getPublicKeyByUserId(user.getUserId());
+
+        messagesCall.enqueue(new Callback<String>(){
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.isSuccessful()){
+                   String publicKey= response.body();
+                    try {
+                        KeyStoreUtil.savePublicKey(publicKey, user.getEmail());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
 
     public void registerUser(Context context, User user) {
         Call<UserToken> call = userApiService.createUser(user);
@@ -33,10 +52,8 @@ public class UserApiHelper {
                 if (response.isSuccessful()) {
                     UserToken userToken = response.body();
                     if (userToken != null) {
-                        SharedPreferencesUtil.setStringPreference(context, SharedPreferencesConstans.USERTOKEN, userToken.getToken());
-                        Intent intent = new Intent(context, MainActivity.class);
-                        context.startActivity(intent);
-                        Toast.makeText(context, "A user signed in", Toast.LENGTH_SHORT).show();
+                        _getAndSavePrivateKey(user, userToken.getToken());
+                        loginUser(context, user.getPassword(), user.getEmail());
                     }
                 } else {
                     Log.e(TAG, "" + response.code());
@@ -51,6 +68,30 @@ public class UserApiHelper {
         });
 
     }
+
+    private void _getAndSavePrivateKey(User user, String token) {
+        Call<String> call = userApiService.getKeyByToken(token);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.e(TAG, "" + response.code());
+                if (response.isSuccessful()) {
+                    String privateKey = response.body();
+                    try {
+                        KeyStoreUtil.savePrivateKey(privateKey, user.getEmail());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+    }
+
 
     public void getUserByTokenAndNavigateToActivity(Context context, String token) {
         Call<User> call = userApiService.getUser(token);
@@ -80,6 +121,7 @@ public class UserApiHelper {
         });
     }
 
+
     public void loginUser(Context context, String hashPassword, String email) {
         Call<UserToken> call = userApiService.logInUser(new LoginRequest(email, hashPassword));
 
@@ -92,10 +134,10 @@ public class UserApiHelper {
                     UserToken userToken = response.body();
 
                     if (userToken != null) {
-                        SharedPreferencesUtil.setStringPreference(context, SharedPreferencesConstans.USERTOKEN, userToken.getToken());
+                        String token = userToken.getToken();
+                        SharedPreferencesUtil.setStringPreference(context, SharedPreferencesConstans.USERTOKEN, token);
 
                         Intent intent = new Intent(context, MainActivity.class);
-
                         context.startActivity(intent);
                     }
                 } else {

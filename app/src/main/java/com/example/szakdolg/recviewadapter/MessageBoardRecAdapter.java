@@ -23,7 +23,10 @@ import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,10 +147,15 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
             holder.txtName.setTypeface(null, Typeface.BOLD);
 
         }
-
-
+        String decryptedContentString = null;
+        try {
+            decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent(), KeyStoreUtil.getPrivateKey(loggedUser.getEmail()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         holder.txtName.setText(participant.getDisplayName());
-        holder.txtMessage.setText(messageEntry.getContent());
+        holder.txtMessage.setText(decryptedContentString);
+
         // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
