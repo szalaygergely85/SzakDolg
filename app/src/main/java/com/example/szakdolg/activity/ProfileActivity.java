@@ -115,9 +115,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        userLoggedIn = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
+        userLoggedIn = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
 
-        userContact = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CONTACT_USER);
+        userContact = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.OTHER_USER);
 
         initView();
 

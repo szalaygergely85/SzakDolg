@@ -18,7 +18,6 @@ import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.recviewadapter.SearchContactAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ public class SearchContactsActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         //toolbar settings
 
-        user = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
+        user = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
         contactsAdapter = new SearchContactAdapter(this, user);
 
         ActionBar actionBar = getSupportActionBar();

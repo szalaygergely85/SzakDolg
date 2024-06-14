@@ -115,8 +115,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ProfileActivity.class);
-                intent.putExtra(SharedPreferencesConstans.CONTACT_USER, contactUser);
-                intent.putExtra(SharedPreferencesConstans.LOGGED_USER, user);
+                intent.putExtra(SharedPreferencesConstans.OTHER_USER, contactUser);
+                intent.putExtra(SharedPreferencesConstans.CURRENT_USER, user);
                 mContext.startActivity(intent);
                 Toast.makeText(view.getContext(), contactUser.toString(), Toast.LENGTH_SHORT).show();
             }

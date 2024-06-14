@@ -1,6 +1,6 @@
 package com.example.szakdolg.constans;
 
-public class SharedPreferencesConstans {
+public class IntentConstans {
     public static final String USERTOKEN = "user_token";
     public static final String CURRENT_USER = "current_user";
     public static final String OTHER_USER = "other_user";

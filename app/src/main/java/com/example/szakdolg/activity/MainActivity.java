@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int READ_PERMISSION_CODE = 202;
     private static final int WRITE_PERMISSION_CODE = 203;
-    String token;
-    UserApiHelper userApiHelper= new UserApiHelper();
+    private String _token;
+    private UserApiHelper _userApiHelper = new UserApiHelper();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -40,10 +40,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        token = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
+        _token = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
 
-        if (token != null) {
-            userApiHelper.getUserByTokenAndNavigateToActivity(MainActivity.this, token);
+        if (_token != null) {
+            _userApiHelper.getUserByTokenAndNavigateToActivity(MainActivity.this, _token);
         } else {
 
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);

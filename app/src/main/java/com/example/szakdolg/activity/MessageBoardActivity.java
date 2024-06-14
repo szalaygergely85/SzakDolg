@@ -46,7 +46,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         _initView();
 
-        loggedUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
+        loggedUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
         userToken = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
 
         mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
@@ -75,7 +75,7 @@ public class MessageBoardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MessageBoardActivity.this, ContactsActivity.class);
-                intent.putExtra(SharedPreferencesConstans.LOGGED_USER, loggedUser);
+                intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
                 startActivity(intent);
             }
         });
@@ -93,12 +93,12 @@ public class MessageBoardActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menuProfile:
                 intent = new Intent(MessageBoardActivity.this, ProfileActivity.class);
-                intent.putExtra(SharedPreferencesConstans.LOGGED_USER, loggedUser);
+                intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
                 startActivity(intent);
                 break;
             case R.id.menuContacts:
                 intent = new Intent(MessageBoardActivity.this, ContactsActivity.class);
-                intent.putExtra(SharedPreferencesConstans.LOGGED_USER, loggedUser);
+                intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
                 startActivity(intent);
                 break;
             case R.id.menuSingOut:

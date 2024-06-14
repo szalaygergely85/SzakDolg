@@ -23,9 +23,7 @@ import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.LocalDateTime;
 
@@ -36,8 +34,8 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView chatRecView;
     private Button btnSend;
     private EditText edtMess;
-    private User loggedUser;
-    private User participant;
+    private User currentUser;
+    private User otherUser;
     private MessageApiHelper messageApiHelper = new MessageApiHelper();
     private UserApiHelper userApiHelper = new UserApiHelper();
     private ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
@@ -48,16 +46,16 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         _initView();
 
-        loggedUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
-        participant = (User) this.getIntent().getSerializableExtra("participant_user");
+        currentUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+        otherUser = (User) this.getIntent().getSerializableExtra("participant_user");
         conversationId = this.getIntent().getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
 
         try {
-            PublicKey publicKey = KeyStoreUtil.getPublicKey(participant.getEmail());
+            PublicKey publicKey = KeyStoreUtil.getPublicKey(otherUser.getEmail());
             if (publicKey != null) {
                 btnSend.setActivated(true);
             } else {
-                userApiHelper.getAndSavePublicKey(participant,
+                userApiHelper.getAndSavePublicKey(otherUser,
                         () -> {
                             btnSend.setActivated(true);
                         }
@@ -70,7 +68,7 @@ public class ChatActivity extends AppCompatActivity {
         }
 
 
-        adapter = new ChatAdapter(this, loggedUser);
+        adapter = new ChatAdapter(this, currentUser);
 
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -109,16 +107,16 @@ public class ChatActivity extends AppCompatActivity {
                     try {
                         String encryptedContentString =
                                 EncryptionHelper.encrypt(content,
-                                        KeyStoreUtil.getPublicKey(participant.getEmail()));
+                                        KeyStoreUtil.getPublicKey(otherUser.getEmail()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
 
-                    if (loggedUser != null) {
+                    if (currentUser != null) {
 
                         LocalDateTime localDateTime = LocalDateTime.now();
 
-                        MessageEntry messageEntry = new MessageEntry(conversationId, loggedUser.getUserId(), System.currentTimeMillis(), content, MessageConstans.TYPE_MESSAGE);
+                        MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), content, MessageConstans.TYPE_MESSAGE);
 
                         messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
 

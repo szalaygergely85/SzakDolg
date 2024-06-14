@@ -1,7 +1,5 @@
 package com.example.szakdolg.conversation;
 
-import static com.example.szakdolg.constans.SharedPreferencesConstans.CONVERSATION_ID;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +8,6 @@ import android.util.Log;
 import com.example.szakdolg.activity.ChatActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
-import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.IntentUtil;
@@ -44,7 +41,7 @@ public class ConversationApiHelper {
 
                         Bundle extra = new Bundle();
                         extra.putLong(SharedPreferencesConstans.CONVERSATION_ID, conversationId);
-                        extra.putSerializable(SharedPreferencesConstans.LOGGED_USER, loggedUser);
+                        extra.putSerializable(SharedPreferencesConstans.CURRENT_USER, loggedUser);
 
                         IntentUtil.startActivity(context, ChatActivity.class, extra);
 
@@ -68,7 +65,7 @@ public class ConversationApiHelper {
             Intent intent = new Intent(context, ChatActivity.class);
             intent.putExtra(SharedPreferencesConstans.CONVERSATION_ID, conversationId);
             intent.putExtra("participant_user", new ArrayList<>(participants));
-            intent.putExtra(SharedPreferencesConstans.LOGGED_USER, loggedUser);
+            intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
             context.startActivity(intent);
 
         }
