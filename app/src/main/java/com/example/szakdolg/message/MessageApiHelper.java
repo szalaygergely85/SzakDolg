@@ -108,7 +108,7 @@ public class MessageApiHelper {
                         try {
                             PublicKey publicKey = KeyStoreUtil.getPublicKey(user.getEmail());
                             if(publicKey==null){
-                             userApiHelper.getAndSavePublicKey(user);
+                             userApiHelper.getAndSavePublicKey(user, null);
                             }
                         } catch (Exception e) {
                             throw new RuntimeException(e);

@@ -20,8 +20,13 @@ import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.time.LocalDateTime;
 
 public class ChatActivity extends AppCompatActivity {
@@ -34,17 +39,35 @@ public class ChatActivity extends AppCompatActivity {
     private User loggedUser;
     private User participant;
     private MessageApiHelper messageApiHelper = new MessageApiHelper();
+    private UserApiHelper userApiHelper = new UserApiHelper();
     private ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-
+        _initView();
 
         loggedUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.LOGGED_USER);
         participant = (User) this.getIntent().getSerializableExtra("participant_user");
         conversationId = this.getIntent().getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
+
+        try {
+            PublicKey publicKey = KeyStoreUtil.getPublicKey(participant.getEmail());
+            if (publicKey != null) {
+                btnSend.setActivated(true);
+            } else {
+                userApiHelper.getAndSavePublicKey(participant,
+                        () -> {
+                            btnSend.setActivated(true);
+                        }
+                );
+            }
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
 
         adapter = new ChatAdapter(this, loggedUser);
@@ -76,32 +99,43 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-            btnSend.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    String content = edtMess.getText().toString();
-                    if (!content.isEmpty()) {
-                        if (loggedUser != null) {
+                String content = edtMess.getText().toString();
+                if (!content.isEmpty()) {
 
-                            LocalDateTime localDateTime = LocalDateTime.now();
-
-                            MessageEntry messageEntry = new MessageEntry(conversationId, loggedUser.getUserId(), System.currentTimeMillis(), content, MessageConstans.TYPE_MESSAGE);
-
-                            messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
-
-                            edtMess.getText().clear();
-                        }
-                    } else {
-                        Log.d(TAG, "onClick: Message field is empty");
+                    try {
+                        String encryptedContentString =
+                                EncryptionHelper.encrypt(content,
+                                        KeyStoreUtil.getPublicKey(participant.getEmail()));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
+
+                    if (loggedUser != null) {
+
+                        LocalDateTime localDateTime = LocalDateTime.now();
+
+                        MessageEntry messageEntry = new MessageEntry(conversationId, loggedUser.getUserId(), System.currentTimeMillis(), content, MessageConstans.TYPE_MESSAGE);
+
+                        messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
+
+                        edtMess.getText().clear();
+                    }
+                } else {
+                    Log.d(TAG, "onClick: Message field is empty");
                 }
-            });
-        }
+            }
+        });
+    }
 
     private void _initView() {
         chatRecView = findViewById(R.id.recViewChat);
         btnSend = findViewById(R.id.btnChatSend);
         edtMess = findViewById(R.id.edtChatMes);
+
+        btnSend.setActivated(false);
     }
 }

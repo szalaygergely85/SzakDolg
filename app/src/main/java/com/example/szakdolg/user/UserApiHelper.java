@@ -21,7 +21,7 @@ public class UserApiHelper {
     private final String TAG = "UserApiHelper";
     UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
 
-    public void getAndSavePublicKey(User user) {
+    public void getAndSavePublicKey(User user, Runnable runnable) {
         Call<String> messagesCall= userApiService.getPublicKeyByUserId(user.getUserId());
 
         messagesCall.enqueue(new Callback<String>(){
@@ -31,6 +31,9 @@ public class UserApiHelper {
                    String publicKey= response.body();
                     try {
                         KeyStoreUtil.savePublicKey(publicKey, user.getEmail());
+                        if(runnable!=null){
+                            runnable.run();
+                        }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -57,7 +60,7 @@ public class UserApiHelper {
                     }
                 } else {
                     Log.e(TAG, "" + response.code());
-                    //TODO Handle the error
+
                 }
             }
 

@@ -15,6 +15,8 @@ import com.example.szakdolg.Chat;
 import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -57,7 +59,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             Format format = new SimpleDateFormat("HH:mm");
             String timeForm = format.format(date);
 
-            holder.txtTextFrMe.setText(messageEntry.getContent());
+        String decryptedContentString = null;
+        try {
+            decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent(), KeyStoreUtil.getPrivateKey(userLoggedIn.getEmail()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+            holder.txtTextFrMe.setText(decryptedContentString);
             holder.txtTimeOut.setText(timeForm);
 
             if (messageEntry.getSenderId() == userLoggedIn.getUserId()) {
