@@ -72,14 +72,14 @@ public class UserApiHelper {
 
     }
 
-    private void _getAndSavePrivateKey(User user, String token) {
+    public void _getAndSavePrivateKey(User user, String token) {
         Call<String> call = userApiService.getKeyByToken(token);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.e(TAG, "" + response.code());
+                Log.e(TAG, response.message()+ " " + response.code());
                 if (response.isSuccessful()) {
-                    String privateKey = response.body();
+                    String privateKey = response.body().trim();;
                     try {
                         KeyStoreUtil.savePrivateKey(privateKey, user.getEmail());
                     } catch (Exception e) {
@@ -90,7 +90,7 @@ public class UserApiHelper {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                Log.e(TAG, "" + t.getMessage());
             }
         });
     }

@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         _token = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
 
+
         if (_token != null) {
             _userApiHelper.getUserByTokenAndNavigateToActivity(MainActivity.this, _token);
         } else {

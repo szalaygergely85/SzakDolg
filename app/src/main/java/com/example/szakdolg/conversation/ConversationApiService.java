@@ -1,15 +1,14 @@
 package com.example.szakdolg.conversation;
 
 
-import java.util.HashMap;
 import java.util.List;
+
+import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.user.User;
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -17,7 +16,7 @@ import retrofit2.http.Path;
 public interface ConversationApiService {
 
     @GET("conversation/id/{id}")
-    Call<HashMap> getConversation(
+    Call<ConversationContent> getConversationAndContentById(
             @Path("id") long conversationId);
 
 
@@ -30,6 +29,7 @@ public interface ConversationApiService {
     Call<Long> getConversationKeyStatus(
             @Field("conversation_id") Long conversationId,
             @Field("user_id") Long userID);
+    
 }
 
 

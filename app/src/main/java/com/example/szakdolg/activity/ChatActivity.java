@@ -19,6 +19,7 @@ import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.recviewadapter.ChatAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
+import com.example.szakdolg.retrofit.CustomCallback;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.util.EncryptionHelper;
@@ -26,6 +27,10 @@ import com.example.szakdolg.util.KeyStoreUtil;
 
 import java.security.PublicKey;
 import java.time.LocalDateTime;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
@@ -35,37 +40,33 @@ public class ChatActivity extends AppCompatActivity {
     private Button btnSend;
     private EditText edtMess;
     private User currentUser;
+
     private User otherUser;
+
     private MessageApiHelper messageApiHelper = new MessageApiHelper();
-    private UserApiHelper userApiHelper = new UserApiHelper();
+
     private ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
         _initView();
 
         currentUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
-        otherUser = (User) this.getIntent().getSerializableExtra("participant_user");
         conversationId = this.getIntent().getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
-
-        try {
-            PublicKey publicKey = KeyStoreUtil.getPublicKey(otherUser.getEmail());
-            if (publicKey != null) {
-                btnSend.setActivated(true);
-            } else {
-                userApiHelper.getAndSavePublicKey(otherUser,
-                        () -> {
-                            btnSend.setActivated(true);
-                        }
-                );
+        conversationApiHelper.getConversationAndContentById(conversationId, currentUser.getUserId(), btnSend,new CustomCallback<User>() {
+            @Override
+            public void onSuccess(User result) {
+                otherUser = result;
             }
 
+            @Override
+            public void onError(Exception e) {
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            }
+        });
 
 
         adapter = new ChatAdapter(this, currentUser);
@@ -85,17 +86,6 @@ public class ChatActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return super.onSupportNavigateUp();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,9 +95,11 @@ public class ChatActivity extends AppCompatActivity {
                 if (!content.isEmpty()) {
 
                     try {
-                        String encryptedContentString =
-                                EncryptionHelper.encrypt(content,
-                                        KeyStoreUtil.getPublicKey(otherUser.getEmail()));
+                        if (otherUser != null) {
+                            String encryptedContentString =
+                                    EncryptionHelper.encrypt(content,
+                                            KeyStoreUtil.getPublicKey(otherUser.getEmail()));
+                        }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -127,6 +119,19 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
     }
 
     private void _initView() {

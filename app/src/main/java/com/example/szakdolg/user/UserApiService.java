@@ -1,11 +1,12 @@
 package com.example.szakdolg.user;
 
 import com.example.szakdolg.DTO.LoginRequest;
-import com.example.szakdolg.DTO.MessageBoard;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.util.ArrayList;
 
 import retrofit2.Call;
+import retrofit2.Retrofit;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -36,4 +37,8 @@ public interface UserApiService {
     @GET("user/publickey/{userId}")
    Call<String> getPublicKeyByUserId(
             @Path("userId") Long userId);
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .addConverterFactory(ScalarsConverterFactory.create()) // Use ScalarsConverterFactory for plain text
+            .build();
 }
