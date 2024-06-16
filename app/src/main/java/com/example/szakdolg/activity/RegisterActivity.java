@@ -70,18 +70,10 @@ public class RegisterActivity extends AppCompatActivity {
         editPhone = findViewById(R.id.edtRegPhone);
         btnReg = findViewById(R.id.btnRegReg);
         textSignIn = findViewById(R.id.textSignIn);
-
-
-        email = editEmail.getText().toString();
-        pass = editPass.getText().toString();
-        pass2 = editPass2.getText().toString();
-        phone = editPhone.getText().toString();
-        displayName = editDisplayName.getText().toString();
-        fullName = editFullName.getText().toString();
     }
 
     private boolean _isFieldNotEmpty(String email, String pass, String pass2, String displayName, String fullName, String phone) {
-        return !email.isEmpty() && !pass.isEmpty() && !pass2.isEmpty() && !fullName.isEmpty() && !phone.isEmpty() && displayName.isEmpty();
+        return !email.isEmpty() && !pass.isEmpty() && !pass2.isEmpty() && !fullName.isEmpty() && !phone.isEmpty() && !displayName.isEmpty();
     }
 
     private boolean _isPasswordStrong(String pass) {
@@ -96,22 +88,22 @@ public class RegisterActivity extends AppCompatActivity {
     }
     private void _registerUser(String email, String pass, String pass2, String displayName, String fullName, String phone) {
         if (!_isFieldNotEmpty(email, pass, pass2, displayName, fullName, phone)) {
-            showError("All fields must be filled.");
+            showError("e5");
             return;
         }
 
         if (!pass.equals(pass2)) {
-            showError("Passwords do not match.");
+            showError("e4");
             return;
         }
 
         if (!_isPasswordStrong(pass)) {
-            showError("Password must be longer than 5 characters.");
+            showError("e3");
             return;
         }
 
         if (!_isEmailValid(email)) {
-            showError("Invalid email address.");
+            showError("e2");
             return;
         }
 
@@ -123,6 +115,13 @@ public class RegisterActivity extends AppCompatActivity {
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                email = editEmail.getText().toString();
+                pass = editPass.getText().toString();
+                pass2 = editPass2.getText().toString();
+                phone = editPhone.getText().toString();
+                displayName = editDisplayName.getText().toString();
+                fullName = editFullName.getText().toString();
+
                 _registerUser(email, pass, pass2, displayName, fullName, phone);
 
             }

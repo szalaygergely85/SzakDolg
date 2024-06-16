@@ -1,7 +1,11 @@
 package com.example.szakdolg.activity;
 
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+import static com.example.szakdolg.util.KeyStoreUtil.getPrivateKey;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,10 +22,16 @@ import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 
 public class MessageBoardActivity extends AppCompatActivity {
@@ -48,6 +58,11 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         loggedUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
         userToken = SharedPreferencesUtil.getStringPreference(this, SharedPreferencesConstans.USERTOKEN);
+
+        UserApiHelper a = new UserApiHelper();
+
+        a._getAndSavePrivateKey(loggedUser, userToken);
+
 
         mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
         setSupportActionBar(mToolbar);

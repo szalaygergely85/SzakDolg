@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="e1">Email is already registered</string>
-    <string name="e2">Email Address is not Valid</string>
-    <string name="e3">Password must be minimum 6 character long</string>
-    <string name="e4">Password and repeat password must be the same</string>
-    <string name="e5">All fields are mandatory to fill</string>
+    <string name="e2">Invalid email address.</string>
+    <string name="e3">Password must be longer than 5 characters.</string>
+    <string name="e4">Passwords do not match.</string>
+    <string name="e5">All fields must be filled.</string>
     <string name="e6">Email and password must be provided to sign in</string>
     <string name="e7">Could not find the email address</string>
     <string name="e8">Password is not correct for this email</string>

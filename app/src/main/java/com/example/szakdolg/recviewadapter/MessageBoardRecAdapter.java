@@ -2,7 +2,6 @@ package com.example.szakdolg.recviewadapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 
 import android.view.LayoutInflater;
@@ -18,15 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.DTO.MessageBoard;
 
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.ChatActivity;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
 
-import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,22 +118,13 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         return holder;
     }
 
-    public static User findUserById(List<User> users, Long id) {
-        for (User user : users) {
-            if (!user.getUserId().equals(id)) {
-                return user;
-            }
-        }
-        return null; // or throw an exception, or return an Optional<User>
-    }
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         MessageBoard messageBoard = messageB.get(position);
         MessageEntry messageEntry = messageBoard.getMessage();
 
-        User participant = findUserById(messageBoard.getParticipants(), loggedUser.getUserId());
+        User participant = UserUtil.removeCurrentUserFromList(messageBoard.getParticipants(), loggedUser.getUserId());
 
 
         if (messageEntry.isRead() || loggedUser.getUserId().equals(messageEntry.getSenderId())) {

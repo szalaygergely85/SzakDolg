@@ -1,11 +1,12 @@
 package com.example.szakdolg.user;
 
 import com.example.szakdolg.DTO.LoginRequest;
-import com.example.szakdolg.DTO.MessageBoard;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.util.ArrayList;
 
 import retrofit2.Call;
+import retrofit2.Retrofit;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;

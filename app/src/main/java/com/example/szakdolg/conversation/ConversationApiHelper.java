@@ -2,17 +2,20 @@ package com.example.szakdolg.conversation;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 
+import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.activity.ChatActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
+import com.example.szakdolg.retrofit.CustomCallback;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
-import com.example.szakdolg.util.IntentUtil;
+import com.example.szakdolg.user.UserUtil;
+import com.example.szakdolg.util.KeyStoreUtil;
 
-import java.util.ArrayList;
+import java.security.PublicKey;
 import java.util.List;
 
 import retrofit2.Call;
@@ -35,15 +38,12 @@ public class ConversationApiHelper {
                     Log.e(TAG, "" + response.code());
 
                     if (response.isSuccessful()) {
-                        Long conversationId = response.body();
+                        Intent intent = new Intent(context, ChatActivity.class);
 
-                        //TODO meg kell csinalni a masik oldalt
+                        intent.putExtra(SharedPreferencesConstans.CONVERSATION_ID, response.body());
+                        intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
 
-                        Bundle extra = new Bundle();
-                        extra.putLong(SharedPreferencesConstans.CONVERSATION_ID, conversationId);
-                        extra.putSerializable(SharedPreferencesConstans.CURRENT_USER, loggedUser);
-
-                        IntentUtil.startActivity(context, ChatActivity.class, extra);
+                        context.startActivity(intent);
 
 
 
@@ -61,10 +61,8 @@ public class ConversationApiHelper {
             });
 
         }else{
-
             Intent intent = new Intent(context, ChatActivity.class);
             intent.putExtra(SharedPreferencesConstans.CONVERSATION_ID, conversationId);
-            intent.putExtra("participant_user", new ArrayList<>(participants));
             intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
             context.startActivity(intent);
 
@@ -76,19 +74,41 @@ public class ConversationApiHelper {
 
     }
 
-    public void getConversationKeyStatus(Long conversationId, User loggedUser) {
-
-        Call<Long> call = conversationApiService.getConversationKeyStatus(conversationId, loggedUser.getUserId());
-        call.enqueue(new Callback<Long>() {
+    public void getConversationAndContentById(Long conversationId, Long currentUserId, Button btnSend, CustomCallback<User> callback) {
+        Call<ConversationContent> call = conversationApiService.getConversationAndContentById(conversationId);
+        call.enqueue(new Callback<ConversationContent>() {
             @Override
-            public void onResponse(Call<Long> call, Response<Long> response) {
-                Long keyStatus= response.body();
+            public void onResponse(Call<ConversationContent> call, Response<ConversationContent> response) {
+                if (response.isSuccessful()) {
+                    ConversationContent conversationContent = response.body();
+                    List<User> allParticipants = conversationContent.getParticipants();
+                    //TODO must be different with groupchats
+                    User otherUser = UserUtil.removeCurrentUserFromList(conversationContent.getParticipants(), currentUserId);
+                    callback.onSuccess(otherUser);
+                    try {
+                        //TODO must be different with groupchats
+
+                        PublicKey publicKey = KeyStoreUtil.getPublicKey(otherUser.getEmail());
+
+                        if (publicKey != null) {
+                            btnSend.setActivated(true);
+                        } else {
+                            KeyStoreUtil.savePublicKey(conversationContent.getPublicKey(), otherUser.getEmail());
+                            btnSend.setActivated(true);
+                        }
+
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }else{
+                    callback.onError(new Exception("Failed to fetch conversation content"));
+                }
             }
-
             @Override
-            public void onFailure(Call<Long> call, Throwable t) {
-
+            public void onFailure(Call<ConversationContent> call, Throwable t) {
+                callback.onError(new Exception(t));
             }
         });
+
     }
 }

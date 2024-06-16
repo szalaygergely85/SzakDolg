@@ -23,8 +23,7 @@ import java.util.Base64;
 public class KeyStoreUtil {
 
     private static final String TAG = "KeyStoreUtil";
-    private static final String KEYSTORE_PROVIDER = "MessengerKeyStore";
-
+    private static final String KEYSTORE_PROVIDER = "PKCS12";
 
 
     public static void savePublicKey(String publicKeyString, String keyId) throws Exception {
