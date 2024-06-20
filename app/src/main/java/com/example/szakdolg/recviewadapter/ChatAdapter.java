@@ -61,12 +61,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         String decryptedContentString = null;
         try {
-            decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent(), KeyStoreUtil.getPrivateKey(userLoggedIn.getEmail()));
+       //     decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent(), KeyStoreUtil.getPrivateKey(userLoggedIn.getEmail()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-            holder.txtTextFrMe.setText(decryptedContentString);
+         //   holder.txtTextFrMe.setText(decryptedContentString);
             holder.txtTimeOut.setText(timeForm);
 
             if (messageEntry.getSenderId() == userLoggedIn.getUserId()) {

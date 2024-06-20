@@ -17,7 +17,7 @@ public interface ConversationApiService {
 
     @GET("conversation/id/{id}")
     Call<ConversationContent> getConversationAndContentById(
-            @Path("id") long conversationId);
+            @Path("id") long id);
 
 
     @POST("conversation")

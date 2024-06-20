@@ -1,5 +1,6 @@
 package com.example.szakdolg.message;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Adapter;
 
@@ -11,6 +12,7 @@ import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.KeyStoreUtil;
 
 import java.security.PublicKey;
@@ -91,9 +93,9 @@ public class MessageApiHelper {
 
     }
 
-    public void getLatestMessages(MessageBoardRecAdapter adapter, String userToken, User loggedUser) {
+    public void getLatestMessages(MessageBoardRecAdapter adapter, Context context, String userToken, User loggedUser) {
 
-        this.loggedUser=loggedUser;
+      //  this.loggedUser=loggedUser;
 
         Call<ArrayList<MessageBoard>> messagesCall= messageApiService.getLatestMessages(userToken);
 
@@ -105,13 +107,13 @@ public class MessageApiHelper {
                     ArrayList<MessageBoard> messageBoards = response.body();
                     for(MessageBoard messageBoard: messageBoards){
                         User user = _findOtherUserById(messageBoard.getParticipants(), loggedUser.getUserId());
-                        try {
-                            PublicKey publicKey = KeyStoreUtil.getPublicKey(user.getEmail());
-                            if(publicKey==null){
-                             userApiHelper.getAndSavePublicKey(user, null);
+                        if(user.getPublicKey()!=null) {
+                            try {
+                                CacheUtil.writePublicKeysCache(context, user);
+
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
                             }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
                         }
                     }
                     adapter.setMessageB(messageBoards);

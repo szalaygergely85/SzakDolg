@@ -7,6 +7,7 @@ import android.widget.Button;
 
 import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.activity.ChatActivity;
+import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.retrofit.CustomCallback;
@@ -29,6 +30,7 @@ public class ConversationApiHelper {
 
     private ConversationApiService conversationApiService = RetrofitClient.getRetrofitInstance().create(ConversationApiService.class);
 
+    @Deprecated
     public void openConversation(Context context, Long conversationId, List<User> participants, User loggedUser) {
         if(conversationId==null && participants!=null){
             Call<Long> call = conversationApiService.addConversation(participants);
@@ -74,7 +76,7 @@ public class ConversationApiHelper {
 
     }
 
-    public void getConversationAndContentById(Long conversationId, Long currentUserId, Button btnSend, CustomCallback<User> callback) {
+    public void openConversation(Long conversationId, Context context, User loggedUser) {
         Call<ConversationContent> call = conversationApiService.getConversationAndContentById(conversationId);
         call.enqueue(new Callback<ConversationContent>() {
             @Override
@@ -83,30 +85,16 @@ public class ConversationApiHelper {
                     ConversationContent conversationContent = response.body();
                     List<User> allParticipants = conversationContent.getParticipants();
                     //TODO must be different with groupchats
-                    User otherUser = UserUtil.removeCurrentUserFromList(conversationContent.getParticipants(), currentUserId);
-                    callback.onSuccess(otherUser);
-                    try {
-                        //TODO must be different with groupchats
 
-                        PublicKey publicKey = KeyStoreUtil.getPublicKey(otherUser.getEmail());
-
-                        if (publicKey != null) {
-                            btnSend.setActivated(true);
-                        } else {
-                            KeyStoreUtil.savePublicKey(conversationContent.getPublicKey(), otherUser.getEmail());
-                            btnSend.setActivated(true);
-                        }
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }else{
-                    callback.onError(new Exception("Failed to fetch conversation content"));
+                    Intent intent = new Intent(context, ChatActivity.class);
+                    intent.putExtra(IntentConstans.CONVERSATION_ID, conversationId);
+                    intent.putExtra(IntentConstans.CURRENT_USER, loggedUser);
+                    intent.putExtra(IntentConstans.CONVERSATION_CONTENT, conversationContent);
+                    context.startActivity(intent);
                 }
             }
             @Override
             public void onFailure(Call<ConversationContent> call, Throwable t) {
-                callback.onError(new Exception(t));
             }
         });
 

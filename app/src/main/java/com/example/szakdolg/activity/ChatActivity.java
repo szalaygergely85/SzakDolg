@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.szakdolg.DTO.ConversationContent;
+import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.MessageConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
@@ -22,6 +24,8 @@ import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.retrofit.CustomCallback;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.user.UserUtil;
+import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
 
@@ -41,6 +45,10 @@ public class ChatActivity extends AppCompatActivity {
     private EditText edtMess;
     private User currentUser;
 
+    private ConversationContent conversationContent;
+
+    private String encryptedContentString;
+
     private User otherUser;
 
     private MessageApiHelper messageApiHelper = new MessageApiHelper();
@@ -56,20 +64,12 @@ public class ChatActivity extends AppCompatActivity {
 
         currentUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
         conversationId = this.getIntent().getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
-        conversationApiHelper.getConversationAndContentById(conversationId, currentUser.getUserId(), btnSend,new CustomCallback<User>() {
-            @Override
-            public void onSuccess(User result) {
-                otherUser = result;
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        });
+        conversationContent = (ConversationContent) this.getIntent().getSerializableExtra(IntentConstans.CONVERSATION_CONTENT);
+        otherUser = UserUtil.removeCurrentUserFromList(conversationContent.getParticipants(), currentUser.getUserId());
 
 
         adapter = new ChatAdapter(this, currentUser);
+        adapter.setMessageEntries(conversationContent.getMessages());
 
         chatRecView.setAdapter(adapter);
         chatRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -79,13 +79,12 @@ public class ChatActivity extends AppCompatActivity {
         mToolbar.setTitle(" ");
         setSupportActionBar(mToolbar);
 
-        //toolbar settings
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
+
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,9 +95,8 @@ public class ChatActivity extends AppCompatActivity {
 
                     try {
                         if (otherUser != null) {
-                            String encryptedContentString =
-                                    EncryptionHelper.encrypt(content,
-                                            KeyStoreUtil.getPublicKey(otherUser.getEmail()));
+                             encryptedContentString =
+                                    EncryptionHelper.encrypt(content, KeyStoreUtil.getPublicKeyFromString(CacheUtil.getPublicKeyFromCache(ChatActivity.this, otherUser.getEmail())));
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -108,9 +106,11 @@ public class ChatActivity extends AppCompatActivity {
 
                         LocalDateTime localDateTime = LocalDateTime.now();
 
-                        MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), content, MessageConstans.TYPE_MESSAGE);
+                        MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), encryptedContentString, MessageConstans.TYPE_MESSAGE);
 
                         messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
+
+                        //messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
 
                         edtMess.getText().clear();
                     }
