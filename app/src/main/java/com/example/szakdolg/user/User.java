@@ -12,6 +12,17 @@ public class User implements Serializable {
 
     private Long userTokenId;
     private Long phoneNumber;
+    private String publicKey;
+
+
+    public User(String displayName, String fullName, String email, String password, Long phoneNumber, String publicKey) {
+        this.displayName = displayName;
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.publicKey = publicKey;
+    }
 
     public User(Long userId, String displayName, String fullName, String email, String password, Long userTokenId, Long phoneNumber) {
         this.userId = userId;
@@ -85,5 +96,13 @@ public class User implements Serializable {
 
     public void setPhoneNumber(Long phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 }

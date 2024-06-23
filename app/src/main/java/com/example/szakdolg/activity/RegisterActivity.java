@@ -17,6 +17,7 @@ import com.example.szakdolg.util.ErrorUtil;
 import com.example.szakdolg.R;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.HashUtils;
+import com.example.szakdolg.util.KeyStoreUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -108,7 +109,9 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         String hashPass = HashUtils.hashPassword(pass);
-        User user = new User(displayName, fullName, email, hashPass, Long.parseLong(phone));
+        KeyStoreUtil.generateKeyPair();
+
+        User user = new User(displayName, fullName, email, hashPass, Long.parseLong(phone), KeyStoreUtil.getPublicKeyAsString());
         userApiHelper.registerUser(RegisterActivity.this, user);
     }
     private void _setOnClickListeners() {

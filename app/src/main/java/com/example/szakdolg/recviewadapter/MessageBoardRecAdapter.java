@@ -124,38 +124,38 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
         MessageBoard messageBoard = messageB.get(position);
         MessageEntry messageEntry = messageBoard.getMessage();
 
-        User participant = UserUtil.removeCurrentUserFromList(messageBoard.getParticipants(), loggedUser.getUserId());
+        if(messageEntry.getContent()!=null) {
+            User participant = UserUtil.removeCurrentUserFromList(messageBoard.getParticipants(), loggedUser.getUserId());
 
 
-        if (messageEntry.isRead() || loggedUser.getUserId().equals(messageEntry.getSenderId())) {
-            holder.txtMessage.setTypeface(null, Typeface.NORMAL);
-            holder.txtName.setTypeface(null, Typeface.NORMAL);
+            if (messageEntry.isRead() || loggedUser.getUserId().equals(messageEntry.getSenderId())) {
+                holder.txtMessage.setTypeface(null, Typeface.NORMAL);
+                holder.txtName.setTypeface(null, Typeface.NORMAL);
 
-        } else {
-            holder.txtMessage.setTypeface(null, Typeface.BOLD);
-            holder.txtName.setTypeface(null, Typeface.BOLD);
-
-        }
-        String decryptedContentString = null;
-        try {
-            decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent(), KeyStoreUtil.getPrivateKey(loggedUser.getEmail()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        holder.txtName.setText(participant.getDisplayName());
-        holder.txtMessage.setText(decryptedContentString);
-
-        // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
-        holder.parent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                List<User> participants = new ArrayList<>();
-                participants.add(participant);
-                conversationApiHelper.openConversation(mContext, messageBoard.getConversationId(), participants, loggedUser);
+            } else {
+                holder.txtMessage.setTypeface(null, Typeface.BOLD);
+                holder.txtName.setTypeface(null, Typeface.BOLD);
 
             }
-        });
+            String decryptedContentString = null;
+            try {
+                decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            holder.txtName.setText(participant.getDisplayName());
+            holder.txtMessage.setText(decryptedContentString);
+
+            // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
+            holder.parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    conversationApiHelper.openConversation(messageBoard.getConversationId(), mContext, loggedUser);
+
+                }
+            });
+        }
     }
 
     @Override

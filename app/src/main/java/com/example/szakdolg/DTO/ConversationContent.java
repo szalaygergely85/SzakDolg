@@ -3,9 +3,10 @@ package com.example.szakdolg.DTO;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ConversationContent {
+public class ConversationContent implements Serializable {
     private  Long conversationId;
     private List<User> participants;
     private List<MessageEntry> messages;
