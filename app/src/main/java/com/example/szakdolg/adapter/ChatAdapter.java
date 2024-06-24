@@ -1,7 +1,6 @@
-package com.example.szakdolg.recviewadapter;
+package com.example.szakdolg.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.EncryptionHelper;
-import com.example.szakdolg.util.KeyStoreUtil;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -31,13 +29,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private List<MessageEntry> messageEntries = new ArrayList<>();
     private List<User> users = new ArrayList<>();
 
-    private final User userLoggedIn;
+    private final User currentUser;
 
     long time;
 
     public ChatAdapter(Context mContext, User user) {
         this.mContext = mContext;
-        this.userLoggedIn = user;
+        this.currentUser = user;
     }
 
     @NonNull
@@ -61,15 +59,19 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         String decryptedContentString = null;
         try {
-       //     decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent(), KeyStoreUtil.getPrivateKey(userLoggedIn.getEmail()));
+            if(isSenderLoggedUser(messageEntry)) {
+                decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContentSenderVersion());
+            }else{
+                decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-         //   holder.txtTextFrMe.setText(decryptedContentString);
+            holder.txtTextFrMe.setText(decryptedContentString);
             holder.txtTimeOut.setText(timeForm);
 
-            if (messageEntry.getSenderId() == userLoggedIn.getUserId()) {
+            if (messageEntry.getSenderId() == currentUser.getUserId()) {
                 holder.relIn.setVisibility(View.GONE);
                 holder.relOut.setVisibility(View.VISIBLE);
             } else {
@@ -121,5 +123,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             relIn = itemView.findViewById(R.id.chatRelIn);
             relOut = itemView.findViewById(R.id.chatRelOut);
         }
+    }
+
+    private boolean isSenderLoggedUser(MessageEntry messageEntry) {
+        return currentUser.getUserId().equals(messageEntry.getSenderId());
     }
 }

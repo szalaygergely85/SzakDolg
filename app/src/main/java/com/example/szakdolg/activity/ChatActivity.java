@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,23 +19,15 @@ import com.example.szakdolg.constans.MessageConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageApiHelper;
-import com.example.szakdolg.recviewadapter.ChatAdapter;
+import com.example.szakdolg.adapter.ChatAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.retrofit.CustomCallback;
 import com.example.szakdolg.user.User;
-import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
-import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.EncryptionHelper2;
 import com.example.szakdolg.util.KeyStoreUtil;
-
-import java.security.PublicKey;
-import java.time.LocalDateTime;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.szakdolg.util.KeyStoreUtil2;
 
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
@@ -44,23 +37,22 @@ public class ChatActivity extends AppCompatActivity {
     private Button btnSend;
     private EditText edtMess;
     private User currentUser;
-
     private ConversationContent conversationContent;
-
-    private String encryptedContentString;
-
     private User otherUser;
-
     private MessageApiHelper messageApiHelper = new MessageApiHelper();
-
     private ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
+    private ActionBar actionBar;
 
+    private Handler handler = new Handler();
+    private Runnable runnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
         _initView();
+        _startRepeatingTask();
+
 
         currentUser = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
         conversationId = this.getIntent().getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
@@ -80,7 +72,7 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
 
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -94,28 +86,25 @@ public class ChatActivity extends AppCompatActivity {
                 if (!content.isEmpty()) {
 
                     try {
-                        if (otherUser != null) {
-                             encryptedContentString =
-                                    EncryptionHelper.encrypt(content, KeyStoreUtil.getPublicKeyFromString(CacheUtil.getPublicKeyFromCache(ChatActivity.this, otherUser.getEmail())));
+                        if (otherUser != null && currentUser != null) {
+                            String encryptedContentString =
+                                    EncryptionHelper2.encrypt(content, CacheUtil.getPublicKeyFromCache(ChatActivity.this, otherUser.getEmail()));
+
+                            String encryptedContentSenderVersion = EncryptionHelper2.encrypt(content, currentUser.getPublicKey());
+
+                            Log.e(TAG, EncryptionHelper2.decrypt(encryptedContentSenderVersion, CacheUtil.getPrivateKeyFromCache(ChatActivity.this, currentUser)));
+
+                            MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), encryptedContentString, MessageConstans.TYPE_MESSAGE, encryptedContentSenderVersion);
+
+                            messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
+
+                            messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
+
+                            edtMess.getText().clear();
                         }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-
-                    if (currentUser != null) {
-
-                        LocalDateTime localDateTime = LocalDateTime.now();
-
-                        MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), encryptedContentString, MessageConstans.TYPE_MESSAGE);
-
-                        messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
-
-                        //messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
-
-                        edtMess.getText().clear();
-                    }
-                } else {
-                    Log.d(TAG, "onClick: Message field is empty");
                 }
             }
         });
@@ -130,8 +119,13 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        _stopRepeatingTask();
     }
 
     private void _initView() {
@@ -140,5 +134,25 @@ public class ChatActivity extends AppCompatActivity {
         edtMess = findViewById(R.id.edtChatMes);
 
         btnSend.setActivated(false);
+    }
+
+    private void _startRepeatingTask() {
+        if (conversationId!=null) {
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
+                    } finally {
+                        handler.postDelayed(runnable, 10000);
+                    }
+                }
+            };
+
+            runnable.run();
+        }
+    }
+    private void _stopRepeatingTask() {
+        handler.removeCallbacks(runnable);
     }
 }

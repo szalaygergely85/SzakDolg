@@ -39,4 +39,20 @@ public class CacheUtil {
         return keys.get(email);
 
     }
+
+    public static void writePrivateKeysCache(Context context, String privateKey, User user) {
+
+        File cacheDir = context.getCacheDir();
+        File privateKeyFile = new File(cacheDir, user.getEmail() + ".dat");
+        FileUtil.writeStringToFile(privateKey, privateKeyFile);
+    }
+
+    public static String getPrivateKeyFromCache(Context context, User user){
+        File cacheDir = context.getCacheDir();
+        File privateKeyFile = new File(cacheDir, user.getEmail()  + ".dat");
+
+        String privateKey = FileUtil.readStringFromFile(privateKeyFile);
+
+        return privateKey;
+    }
 }

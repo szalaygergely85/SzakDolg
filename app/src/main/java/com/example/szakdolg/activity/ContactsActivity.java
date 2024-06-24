@@ -13,7 +13,7 @@ import android.view.View;
 
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiService;
-import com.example.szakdolg.recviewadapter.ContactsAdapter;
+import com.example.szakdolg.adapter.ContactsAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;

@@ -10,7 +10,6 @@ import com.example.szakdolg.activity.MainActivity;
 import com.example.szakdolg.activity.MessageBoardActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.util.KeyStoreUtil;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.io.File;
@@ -25,19 +24,87 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UserApiHelper {
-    private final String TAG = "UserApiHelper";
-    UserApiService userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
+    private UserApiService _userApiService = RetrofitClient.getRetrofitInstance().create(UserApiService.class);
+    private final String _TAG = "UserApiHelper";
 
+    @Deprecated
+    public void getAndSaveAESKey(User user, String token, Context context) {
+        Call<ResponseBody> call = _userApiService.getAESByToken(token);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.e(_TAG, "server contacted and has file");
+
+                    boolean writtenToDisk = false;
+                    try {
+                        writtenToDisk = _writeResponseBodyToDisk(response.body(), context, "aes");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    Log.e(_TAG, "file download was a success? " + writtenToDisk);
+
+                    if(writtenToDisk){
+                        try {
+                            //KeyStoreUtil.savePrivateKeyFromFile(context, user.getEmail());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } else {
+                    Log.e(_TAG, "server contact failed");
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Deprecated
+    public void getAndSavePrivateKey(User user, String token, Context context) {
+        Call<ResponseBody> call = _userApiService.getKeyByToken(token);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.e(_TAG, "server contacted and has file");
+
+                    boolean writtenToDisk = false;
+                    try {
+                        writtenToDisk = _writeResponseBodyToDisk(response.body(), context, "key");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    Log.e(_TAG, "file download was a success? " + writtenToDisk);
+                    if(writtenToDisk){
+                        getAndSaveAESKey(user, token, context);
+                    }
+                } else {
+                    Log.e(_TAG, "server contact failed");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+    @Deprecated
     public void getAndSavePublicKey(User user, Runnable runnable) {
-        Call<String> messagesCall= userApiService.getPublicKeyByUserId(user.getUserId());
+        Call<String> messagesCall= _userApiService.getPublicKeyByUserId(user.getUserId());
 
         messagesCall.enqueue(new Callback<String>(){
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if(response.isSuccessful()){
-                   String publicKey= response.body();
+                    String publicKey= response.body();
                     try {
-                       // KeyStoreUtil.savePublicKey(publicKey, user.getEmail());
+                        // KeyStoreUtil.savePublicKey(publicKey, user.getEmail());
                         if(runnable!=null){
                             runnable.run();
                         }
@@ -52,21 +119,80 @@ public class UserApiHelper {
         });
     }
 
+
+    public void getUserByTokenAndNavigateToActivity(Context context, String token) {
+        Call<User> call = _userApiService.getUser(token);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                Log.e(_TAG, "" + response.code());
+                if (response.isSuccessful()) {
+                    User user = response.body();
+
+                    if (user != null) {
+                        Intent intent = new Intent(context, MessageBoardActivity.class);
+                        intent.putExtra(SharedPreferencesConstans.CURRENT_USER, user);
+                        Toast.makeText(context, "A user signed in", Toast.LENGTH_SHORT).show();
+                        context.startActivity(intent);
+                    }
+                } else {
+                    Log.e(_TAG, "" + response.code());
+                    //TODO Handle the error
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e(_TAG, "" + t.getMessage());
+            }
+        });
+    }
+
+
+    public void loginUser(Context context, String hashPassword, String email) {
+        Call<UserToken> call = _userApiService.logInUser(new LoginRequest(email, hashPassword));
+
+        call.enqueue(new Callback<UserToken>() {
+            @Override
+            public void onResponse(Call<UserToken> call, Response<UserToken> response) {
+                Log.e(_TAG, "" + response.code());
+
+                if (response.isSuccessful()) {
+                    UserToken userToken = response.body();
+
+                    if (userToken != null) {
+                        String token = userToken.getToken();
+                        SharedPreferencesUtil.setStringPreference(context, SharedPreferencesConstans.USERTOKEN, token);
+
+                        Intent intent = new Intent(context, MainActivity.class);
+                        context.startActivity(intent);
+                    }
+                } else {
+                    Log.e(_TAG, "" + response.code());
+                    //TODO Handle the error
+                }
+            }
+            @Override
+            public void onFailure(Call<UserToken> call, Throwable t) {
+                Log.e(_TAG, "" + t.getMessage());
+            }
+        });
+    }
+
     public void registerUser(Context context, User user) {
-        Call<UserToken> call = userApiService.createUser(user);
+        Call<UserToken> call = _userApiService.createUser(user);
         call.enqueue(new Callback<UserToken>() {
             @Override
             public void onResponse(Call<UserToken> call, Response<UserToken> response) {
 
-                Log.e(TAG, "" + response.code());
+                Log.e(_TAG, "" + response.code());
                 if (response.isSuccessful()) {
                     UserToken userToken = response.body();
                     if (userToken != null) {
-                        _getAndSavePrivateKey(user, userToken.getToken());
                         loginUser(context, user.getPassword(), user.getEmail());
                     }
                 } else {
-                    Log.e(TAG, "" + response.code());
+                    Log.e(_TAG, "" + response.code());
 
                 }
             }
@@ -79,73 +205,7 @@ public class UserApiHelper {
 
     }
 
-    public void getAndSavePrivateKey(User user, String token, Context context) {
-        Call<ResponseBody> call = userApiService.getKeyByToken(token);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    Log.e(TAG, "server contacted and has file");
-
-                    boolean writtenToDisk = false;
-                    try {
-                        writtenToDisk = _writeResponseBodyToDisk(response.body(), context, "key");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    Log.e(TAG, "file download was a success? " + writtenToDisk);
-                    if(writtenToDisk){
-                        getAndSaveAESKey(user, token, context);
-                    }
-                } else {
-                    Log.e(TAG, "server contact failed");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
-    }
-    public void getAndSaveAESKey(User user, String token, Context context) {
-        Call<ResponseBody> call = userApiService.getAESByToken(token);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    Log.e(TAG, "server contacted and has file");
-
-                    boolean writtenToDisk = false;
-                    try {
-                        writtenToDisk = _writeResponseBodyToDisk(response.body(), context, "aes");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    Log.e(TAG, "file download was a success? " + writtenToDisk);
-
-                    if(writtenToDisk){
-                        try {
-                            //KeyStoreUtil.savePrivateKeyFromFile(context, user.getEmail());
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                } else {
-                    Log.e(TAG, "server contact failed");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
-    }
-
-
+    @Deprecated
     private boolean _writeResponseBodyToDisk(ResponseBody body, Context c, String fileName) throws IOException {
         try {
             File path = new File(c.getFilesDir() + "/key/");
@@ -178,7 +238,7 @@ public class UserApiHelper {
 
                     fileSizeDownloaded += read;
 
-                    Log.e(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+                    Log.e(_TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
                 }
 
                 outputStream.flush();
@@ -200,65 +260,5 @@ public class UserApiHelper {
         }
 
 
-    }
-
-
-    public void getUserByTokenAndNavigateToActivity(Context context, String token) {
-        Call<User> call = userApiService.getUser(token);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                Log.e(TAG, "" + response.code());
-                if (response.isSuccessful()) {
-                    User user = response.body();
-
-                    if (user != null) {
-                        Intent intent = new Intent(context, MessageBoardActivity.class);
-                        intent.putExtra(SharedPreferencesConstans.CURRENT_USER, user);
-                        Toast.makeText(context, "A user signed in", Toast.LENGTH_SHORT).show();
-                        context.startActivity(intent);
-                    }
-                } else {
-                    Log.e(TAG, "" + response.code());
-                    //TODO Handle the error
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.e(TAG, "" + t.getMessage());
-            }
-        });
-    }
-
-
-    public void loginUser(Context context, String hashPassword, String email) {
-        Call<UserToken> call = userApiService.logInUser(new LoginRequest(email, hashPassword));
-
-        call.enqueue(new Callback<UserToken>() {
-            @Override
-            public void onResponse(Call<UserToken> call, Response<UserToken> response) {
-                Log.e(TAG, "" + response.code());
-
-                if (response.isSuccessful()) {
-                    UserToken userToken = response.body();
-
-                    if (userToken != null) {
-                        String token = userToken.getToken();
-                        SharedPreferencesUtil.setStringPreference(context, SharedPreferencesConstans.USERTOKEN, token);
-
-                        Intent intent = new Intent(context, MainActivity.class);
-                        context.startActivity(intent);
-                    }
-                } else {
-                    Log.e(TAG, "" + response.code());
-                    //TODO Handle the error
-                }
-            }
-            @Override
-            public void onFailure(Call<UserToken> call, Throwable t) {
-                Log.e(TAG, "" + t.getMessage());
-            }
-        });
     }
 }

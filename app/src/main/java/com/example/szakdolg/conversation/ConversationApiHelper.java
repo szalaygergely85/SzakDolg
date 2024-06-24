@@ -14,6 +14,7 @@ import com.example.szakdolg.retrofit.CustomCallback;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserUtil;
+import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.KeyStoreUtil;
 
 import java.security.PublicKey;
@@ -30,7 +31,7 @@ public class ConversationApiHelper {
 
     private ConversationApiService conversationApiService = RetrofitClient.getRetrofitInstance().create(ConversationApiService.class);
 
-    @Deprecated
+
     public void openConversation(Context context, Long conversationId, List<User> participants, User loggedUser) {
         if(conversationId==null && participants!=null){
             Call<Long> call = conversationApiService.addConversation(participants);
@@ -38,24 +39,13 @@ public class ConversationApiHelper {
                 @Override
                 public void onResponse(Call<Long> call, Response<Long> response) {
                     Log.e(TAG, "" + response.code());
-
                     if (response.isSuccessful()) {
-                        Intent intent = new Intent(context, ChatActivity.class);
-
-                        intent.putExtra(SharedPreferencesConstans.CONVERSATION_ID, response.body());
-                        intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
-
-                        context.startActivity(intent);
-
-
-
-
+                        openConversation(response.body(), context, loggedUser);
                     } else {
                         Log.e(TAG, "" + response.code());
                         //TODO Handle the error
                     }
                 }
-
                 @Override
                 public void onFailure(Call<Long> call, Throwable t) {
                     Log.e(TAG, "" + t.getMessage());
@@ -84,6 +74,17 @@ public class ConversationApiHelper {
                 if (response.isSuccessful()) {
                     ConversationContent conversationContent = response.body();
                     List<User> allParticipants = conversationContent.getParticipants();
+                    User otherUser = UserUtil.removeCurrentUserFromList(allParticipants, loggedUser.getUserId());
+
+                    if(otherUser.getPublicKey()!=null) {
+                        try {
+                            CacheUtil.writePublicKeysCache(context, otherUser);
+
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
                     //TODO must be different with groupchats
 
                     Intent intent = new Intent(context, ChatActivity.class);

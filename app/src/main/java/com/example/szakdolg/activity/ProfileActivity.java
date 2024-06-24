@@ -25,7 +25,6 @@ import java.util.List;
 public class ProfileActivity extends AppCompatActivity {
     private static final int PHOTO_PICKER_REQUEST_CODE = 101;
     private static final String TAG = "ProfileActivity";
-
     private ImageView imageView;
     private TextView name;
     private TextView email;
@@ -36,7 +35,6 @@ public class ProfileActivity extends AppCompatActivity {
     private Button sendMessage;
     private User userContact;
     private User userLoggedIn;
-
     private ConversationApiHelper conversationApiHelper= new ConversationApiHelper();
 
 
@@ -189,7 +187,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //TODO create delete contact
-                //firebaseConnect.deleteAccount(uID, ProfileActivity.this);
+
 
                 finish();
             }

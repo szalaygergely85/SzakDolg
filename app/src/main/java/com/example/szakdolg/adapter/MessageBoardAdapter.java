@@ -1,4 +1,4 @@
-package com.example.szakdolg.recviewadapter;
+package com.example.szakdolg.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,29 +20,20 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
-import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.EncryptionHelper;
-import com.example.szakdolg.util.KeyStoreUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRecAdapter.ViewHolder> {
-
+public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapter.ViewHolder> {
     private ArrayList<MessageBoard> messageB = new ArrayList<>();
     private final Context mContext;
-
     private User loggedUser;
-
-
-    private static final String TAG = "MessageBoardRecAdapter";
-
+    private static final String TAG = "MessageBoardAdapter";
 
     ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
-    public MessageBoardRecAdapter(Context mContext) {
+    public MessageBoardAdapter(Context mContext) {
         this.mContext = mContext;
-        ;
     }
 
     /*
@@ -122,13 +113,14 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         MessageBoard messageBoard = messageB.get(position);
+
         MessageEntry messageEntry = messageBoard.getMessage();
 
         if(messageEntry.getContent()!=null) {
             User participant = UserUtil.removeCurrentUserFromList(messageBoard.getParticipants(), loggedUser.getUserId());
 
 
-            if (messageEntry.isRead() || loggedUser.getUserId().equals(messageEntry.getSenderId())) {
+            if (messageEntry.isRead() || isSenderLoggedUser(messageEntry)) {
                 holder.txtMessage.setTypeface(null, Typeface.NORMAL);
                 holder.txtName.setTypeface(null, Typeface.NORMAL);
 
@@ -139,7 +131,11 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
             }
             String decryptedContentString = null;
             try {
-                decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent());
+                if(isSenderLoggedUser(messageEntry)) {
+                    decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContentSenderVersion());
+                }else{
+                    decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent());
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -187,4 +183,9 @@ public class MessageBoardRecAdapter extends RecyclerView.Adapter<MessageBoardRec
             parent = itemView.findViewById(R.id.parent);
         }
     }
+
+    private boolean isSenderLoggedUser(MessageEntry messageEntry) {
+        return loggedUser.getUserId().equals(messageEntry.getSenderId());
+    }
+
 }

@@ -11,25 +11,15 @@ public class RetrofitClient {
     private static Retrofit retrofit = null;
     private static String BASE_URL ="http://10.0.2.2:8080/api/";
 
-    public static Retrofit getRetrofitInstance(){
+
+
+    public static Retrofit getRetrofitInstance() {
+
         if (retrofit == null){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
             retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
-        return retrofit;
-    }
-
-    public static Retrofit getRetrofitInstanceWithCustomDeserializers(Object... deserializers){
-        if (retrofit == null){
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            for (Object deserializer : deserializers) {
-                gsonBuilder.registerTypeAdapter(deserializer.getClass(), deserializer);
-            }
-            Gson gson = gsonBuilder.create();
-
-            return new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();

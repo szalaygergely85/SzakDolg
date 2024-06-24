@@ -2,20 +2,17 @@ package com.example.szakdolg.message;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Adapter;
 
 import androidx.appcompat.app.ActionBar;
 
 import com.example.szakdolg.DTO.MessageBoard;
-import com.example.szakdolg.recviewadapter.ChatAdapter;
-import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
+import com.example.szakdolg.adapter.ChatAdapter;
+import com.example.szakdolg.adapter.MessageBoardAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserApiHelper;
 import com.example.szakdolg.util.CacheUtil;
-import com.example.szakdolg.util.KeyStoreUtil;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +90,7 @@ public class MessageApiHelper {
 
     }
 
-    public void getLatestMessages(MessageBoardRecAdapter adapter, Context context, String userToken, User loggedUser) {
+    public void getLatestMessages(MessageBoardAdapter adapter, Context context, String userToken, User loggedUser) {
 
       //  this.loggedUser=loggedUser;
 
@@ -104,6 +101,9 @@ public class MessageApiHelper {
             public void onResponse(Call<ArrayList<MessageBoard>> call, Response<ArrayList<MessageBoard>> response) {
                 if (response.isSuccessful()) {
                     Log.e(TAG, ""+response.code());
+
+                    //TODO need to use uuid for users.... or userid
+
                     ArrayList<MessageBoard> messageBoards = response.body();
                     for(MessageBoard messageBoard: messageBoards){
                         User user = _findOtherUserById(messageBoard.getParticipants(), loggedUser.getUserId());

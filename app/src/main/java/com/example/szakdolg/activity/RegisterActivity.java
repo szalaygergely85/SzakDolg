@@ -7,18 +7,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.ErrorUtil;
 
 import com.example.szakdolg.R;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.HashUtils;
-import com.example.szakdolg.util.KeyStoreUtil;
+import com.example.szakdolg.util.KeyStoreUtil2;
 
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         _initView();
+        _setOnClickListeners();
 
     }
     @Override
@@ -58,7 +59,6 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        _setOnClickListeners();
     }
 
 
@@ -73,6 +73,13 @@ public class RegisterActivity extends AppCompatActivity {
         textSignIn = findViewById(R.id.textSignIn);
     }
 
+    public static boolean _isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
     private boolean _isFieldNotEmpty(String email, String pass, String pass2, String displayName, String fullName, String phone) {
         return !email.isEmpty() && !pass.isEmpty() && !pass2.isEmpty() && !fullName.isEmpty() && !phone.isEmpty() && !displayName.isEmpty();
     }
@@ -81,37 +88,35 @@ public class RegisterActivity extends AppCompatActivity {
         return pass.length() > 5;
     }
 
-    public static boolean _isEmailValid(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
+
     private void _registerUser(String email, String pass, String pass2, String displayName, String fullName, String phone) {
         if (!_isFieldNotEmpty(email, pass, pass2, displayName, fullName, phone)) {
-            showError("e5");
+            _showError("e5");
             return;
         }
 
         if (!pass.equals(pass2)) {
-            showError("e4");
+            _showError("e4");
             return;
         }
 
         if (!_isPasswordStrong(pass)) {
-            showError("e3");
+            _showError("e3");
             return;
         }
 
         if (!_isEmailValid(email)) {
-            showError("e2");
+            _showError("e2");
             return;
         }
 
         String hashPass = HashUtils.hashPassword(pass);
-        KeyStoreUtil.generateKeyPair();
+        HashMap<String, String> keyPair= KeyStoreUtil2.generateKeyPair();
 
-        User user = new User(displayName, fullName, email, hashPass, Long.parseLong(phone), KeyStoreUtil.getPublicKeyAsString());
+        User user = new User(displayName, fullName, email, hashPass, Long.parseLong(phone), keyPair.get("Public"));
+
+        CacheUtil.writePrivateKeysCache(this, keyPair.get("Private"), user);
+
         userApiHelper.registerUser(RegisterActivity.this, user);
     }
     private void _setOnClickListeners() {
@@ -139,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void showError(String message) {
+    private void _showError(String message) {
         ErrorUtil.GetErrorMessageInToast(message, RegisterActivity.this);
     }
 

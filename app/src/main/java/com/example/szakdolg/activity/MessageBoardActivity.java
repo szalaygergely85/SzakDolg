@@ -3,7 +3,6 @@ package com.example.szakdolg.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,11 +16,9 @@ import com.example.szakdolg.DTO.MessageBoard;
 
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
-import com.example.szakdolg.recviewadapter.MessageBoardRecAdapter;
+import com.example.szakdolg.adapter.MessageBoardAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.user.User;
-import com.example.szakdolg.user.UserApiHelper;
-import com.example.szakdolg.util.KeyStoreUtil;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,7 +29,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     private static final String TAG = "MessageB";
     private FloatingActionButton contactsButton;
     private RecyclerView messageBoardRecView;
-    private MessageBoardRecAdapter adapter;
+    private MessageBoardAdapter adapter;
     private MaterialToolbar mToolbar;
     private User loggedUser;
     ArrayList<MessageBoard> messageBoard = new ArrayList<>();
@@ -58,7 +55,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
         messageBoardRecView = findViewById(R.id.messageBoardRecView);
         
-        adapter = new MessageBoardRecAdapter(this);
+        adapter = new MessageBoardAdapter(this);
         adapter.setMessageB(messageBoard);
         adapter.setLoggedUser(loggedUser);
 

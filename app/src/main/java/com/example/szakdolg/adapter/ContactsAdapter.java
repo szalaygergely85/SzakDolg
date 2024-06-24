@@ -1,4 +1,4 @@
-package com.example.szakdolg.recviewadapter;
+package com.example.szakdolg.adapter;
 
 import android.content.Context;
 import android.content.Intent;

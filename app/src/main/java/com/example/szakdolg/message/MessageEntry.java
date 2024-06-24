@@ -19,6 +19,8 @@ public class MessageEntry implements Serializable {
 
     private int type;
 
+    private String contentSenderVersion;
+
     public Long getMessageId() {
         return messageId;
     }
@@ -90,12 +92,22 @@ public class MessageEntry implements Serializable {
         this.content = content;
     }
 
-    public MessageEntry(long conversationId, long senderId, long timestamp, String content, int type) {
+    public MessageEntry(long conversationId, long senderId, long timestamp, String content, int type, String contentSenderVersion) {
         this.conversationId = conversationId;
         this.senderId = senderId;
         this.timestamp = timestamp;
         this.content = content;
         this.type = type;
+        this.contentSenderVersion = contentSenderVersion;
+    }
+
+
+    public String getContentSenderVersion() {
+        return contentSenderVersion;
+    }
+
+    public void setContentSenderVersion(String contentSenderVersion) {
+        this.contentSenderVersion = contentSenderVersion;
     }
 
     @Override
