@@ -16,7 +16,7 @@ import com.example.szakdolg.util.ErrorUtil;
 import com.example.szakdolg.R;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.util.HashUtils;
-import com.example.szakdolg.util.KeyStoreUtil2;
+import com.example.szakdolg.util.KeyStoreUtil;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -111,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         String hashPass = HashUtils.hashPassword(pass);
-        HashMap<String, String> keyPair= KeyStoreUtil2.generateKeyPair();
+        HashMap<String, String> keyPair= KeyStoreUtil.generateKeyPair();
 
         User user = new User(displayName, fullName, email, hashPass, Long.parseLong(phone), keyPair.get("Public"));
 

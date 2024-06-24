@@ -14,6 +14,7 @@ import com.example.szakdolg.Chat;
 import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
+import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 
 import java.text.Format;
@@ -60,9 +61,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         String decryptedContentString = null;
         try {
             if(isSenderLoggedUser(messageEntry)) {
-                decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContentSenderVersion());
+                decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContentSenderVersion(), CacheUtil.getPrivateKeyFromCache(mContext, currentUser));
             }else{
-                decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent());
+                decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent(), CacheUtil.getPrivateKeyFromCache(mContext, currentUser));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

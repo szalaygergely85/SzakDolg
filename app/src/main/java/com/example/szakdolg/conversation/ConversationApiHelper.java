@@ -15,9 +15,7 @@ import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
-import com.example.szakdolg.util.KeyStoreUtil;
 
-import java.security.PublicKey;
 import java.util.List;
 
 import retrofit2.Call;

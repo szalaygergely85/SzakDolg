@@ -47,7 +47,7 @@ public class UserApiHelper {
 
                     if(writtenToDisk){
                         try {
-                            //KeyStoreUtil.savePrivateKeyFromFile(context, user.getEmail());
+
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -104,7 +104,7 @@ public class UserApiHelper {
                 if(response.isSuccessful()){
                     String publicKey= response.body();
                     try {
-                        // KeyStoreUtil.savePublicKey(publicKey, user.getEmail());
+
                         if(runnable!=null){
                             runnable.run();
                         }

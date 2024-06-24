@@ -21,6 +21,7 @@ import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserUtil;
+import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapter.ViewHolder> {
     private ArrayList<MessageBoard> messageB = new ArrayList<>();
     private final Context mContext;
-    private User loggedUser;
+    private User currentUser;
     private static final String TAG = "MessageBoardAdapter";
 
     ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
@@ -117,7 +118,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
         MessageEntry messageEntry = messageBoard.getMessage();
 
         if(messageEntry.getContent()!=null) {
-            User participant = UserUtil.removeCurrentUserFromList(messageBoard.getParticipants(), loggedUser.getUserId());
+            User participant = UserUtil.removeCurrentUserFromList(messageBoard.getParticipants(), currentUser.getUserId());
 
 
             if (messageEntry.isRead() || isSenderLoggedUser(messageEntry)) {
@@ -132,9 +133,9 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
             String decryptedContentString = null;
             try {
                 if(isSenderLoggedUser(messageEntry)) {
-                    decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContentSenderVersion());
+                    decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContentSenderVersion(), CacheUtil.getPrivateKeyFromCache(mContext, currentUser));
                 }else{
-                    decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent());
+                    decryptedContentString = EncryptionHelper.decrypt(messageEntry.getContent(), CacheUtil.getPrivateKeyFromCache(mContext, currentUser));
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -147,7 +148,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
                 @Override
                 public void onClick(View view) {
 
-                    conversationApiHelper.openConversation(messageBoard.getConversationId(), mContext, loggedUser);
+                    conversationApiHelper.openConversation(messageBoard.getConversationId(), mContext, currentUser);
 
                 }
             });
@@ -164,8 +165,8 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
         notifyDataSetChanged();
     }
 
-    public void setLoggedUser(User loggedUser) {
-        this.loggedUser = loggedUser;
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -185,7 +186,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
     }
 
     private boolean isSenderLoggedUser(MessageEntry messageEntry) {
-        return loggedUser.getUserId().equals(messageEntry.getSenderId());
+        return currentUser.getUserId().equals(messageEntry.getSenderId());
     }
 
 }

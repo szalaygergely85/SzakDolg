@@ -1,65 +1,66 @@
 package com.example.szakdolg.util;
 
 
+import static com.example.szakdolg.util.KeyStoreUtil.getPrivateKey;
+
+
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import android.util.Base64;
-import android.util.Log;
+import java.util.Base64;
 
-
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class EncryptionHelper {
 
-    private static final String RSA_ALGORITHM = "RSA/ECB/PKCS1Padding";
-    private static final String ENCRYPTED_PREFIX = "ENC:";
-    private static final String TAG = "EncryptionHelper";
-
-    public static String encrypt(String data, PublicKey publicKey) throws Exception {
-        Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        byte[] encryptedBytes = cipher.doFinal(data.getBytes());
-        return ENCRYPTED_PREFIX +  Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
-    }
-
-    public static String decrypt(String encryptedData, PrivateKey privateKey) throws Exception {
-        if (!isEncrypted(encryptedData)) {
-            return encryptedData; // If not encrypted, return as is
-        }
-
-        String base64Data = encryptedData.substring(ENCRYPTED_PREFIX.length()); // Remove prefix
-        byte[] encryptedBytes = Base64.decode(base64Data, Base64.DEFAULT);
+    public static String encrypt(String message, String publicKeyString) {
+        PublicKey publicKey = null;
+        Cipher encryptCipher = null;
+        String encodedMessage = "null";
+        byte[] secretMessageBytes = message.getBytes(StandardCharsets.UTF_8);
         try {
-            Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
-            Log.d(TAG, "Initializing cipher for decryption with private key: " + privateKey);
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
-            Log.d(TAG, "Cipher initialized successfully.");
-            byte[] decryptedBytes = cipher.doFinal(Base64.decode(encryptedData, Base64.DEFAULT));
-            String decryptedString = new String(decryptedBytes, "UTF-8");
-            Log.d(TAG, "Data decrypted successfully: " + decryptedString);
-            return decryptedString;
-        } catch (Exception e) {
-            Log.e(TAG, "Decryption error", e);
-            return null;
+            publicKey = KeyStoreUtil.getPublicKeyFromString(publicKeyString);
+            encryptCipher = Cipher.getInstance("RSA");
+            encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            byte[] encryptedMessageBytes = encryptCipher.doFinal(secretMessageBytes);
+            encodedMessage = Base64.getEncoder().encodeToString(encryptedMessageBytes);
+
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
         }
+        return encodedMessage;
     }
 
-    public static String decrypt(String encryptedData) throws Exception {
-
-        PrivateKey privateKey = KeyStoreUtil2.getPrivateKey(encryptedData);
-        return decrypt(encryptedData, privateKey);
+    public static byte[] stringTOByte(String text) {
+        byte[] message = Base64.getDecoder().decode(text.getBytes());
+        return message;
     }
 
-    public static boolean isEncrypted(String data) {
-        if (!data.startsWith(ENCRYPTED_PREFIX)) {
-            return false;
-        }
+    public static String decrypt(String message, String privateKeyString) {
+        Cipher decryptCipher = null;
+        PrivateKey privateKey = null;
+        byte[] decryptedMessageBytes = null;
+        String decryptedMessage = null;
+        byte[] encryptedMessageBytes = stringTOByte(message);
         try {
-            Base64.decode(data.substring(ENCRYPTED_PREFIX.length()), Base64.DEFAULT);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
+            privateKey = getPrivateKey(privateKeyString);
+            decryptCipher = Cipher.getInstance("RSA");
+            decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
+            decryptedMessageBytes = decryptCipher.doFinal(encryptedMessageBytes);
+            decryptedMessage = new String(decryptedMessageBytes, StandardCharsets.UTF_8);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
         }
+        return decryptedMessage;
     }
 }

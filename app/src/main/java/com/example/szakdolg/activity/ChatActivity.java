@@ -25,9 +25,8 @@ import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.User;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
-import com.example.szakdolg.util.EncryptionHelper2;
-import com.example.szakdolg.util.KeyStoreUtil;
-import com.example.szakdolg.util.KeyStoreUtil2;
+import com.example.szakdolg.util.EncryptionHelper;
+
 
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
@@ -88,11 +87,11 @@ public class ChatActivity extends AppCompatActivity {
                     try {
                         if (otherUser != null && currentUser != null) {
                             String encryptedContentString =
-                                    EncryptionHelper2.encrypt(content, CacheUtil.getPublicKeyFromCache(ChatActivity.this, otherUser.getEmail()));
+                                    EncryptionHelper.encrypt(content, CacheUtil.getPublicKeyFromCache(ChatActivity.this, otherUser.getEmail()));
 
-                            String encryptedContentSenderVersion = EncryptionHelper2.encrypt(content, currentUser.getPublicKey());
+                            String encryptedContentSenderVersion = EncryptionHelper.encrypt(content, currentUser.getPublicKey());
 
-                            Log.e(TAG, EncryptionHelper2.decrypt(encryptedContentSenderVersion, CacheUtil.getPrivateKeyFromCache(ChatActivity.this, currentUser)));
+                            Log.e(TAG, EncryptionHelper.decrypt(encryptedContentSenderVersion, CacheUtil.getPrivateKeyFromCache(ChatActivity.this, currentUser)));
 
                             MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), encryptedContentString, MessageConstans.TYPE_MESSAGE, encryptedContentSenderVersion);
 
