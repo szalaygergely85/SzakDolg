@@ -19,7 +19,7 @@ import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.R;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;

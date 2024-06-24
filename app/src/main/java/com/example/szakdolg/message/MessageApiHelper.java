@@ -9,8 +9,8 @@ import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.adapter.ChatAdapter;
 import com.example.szakdolg.adapter.MessageBoardAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.User;
-import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.util.CacheUtil;
 
 import java.util.ArrayList;

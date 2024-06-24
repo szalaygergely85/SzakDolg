@@ -1,4 +1,4 @@
-package com.example.szakdolg;
+package com.example.szakdolg.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;

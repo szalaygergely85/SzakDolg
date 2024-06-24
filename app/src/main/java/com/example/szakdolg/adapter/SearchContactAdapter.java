@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;

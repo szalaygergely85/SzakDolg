@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;

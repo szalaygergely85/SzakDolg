@@ -3,16 +3,14 @@ package com.example.szakdolg.conversation;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Button;
 
 import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
-import com.example.szakdolg.retrofit.CustomCallback;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
 

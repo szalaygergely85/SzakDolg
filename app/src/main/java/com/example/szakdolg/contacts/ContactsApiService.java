@@ -1,6 +1,6 @@
 package com.example.szakdolg.contacts;
 
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 
 import java.util.List;
 

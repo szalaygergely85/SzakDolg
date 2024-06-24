@@ -10,10 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.szakdolg.Chat;
+
 import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 
@@ -26,7 +26,6 @@ import java.util.List;
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private static final String TAG = "ChatAdapter";
     private final Context mContext;
-    private ArrayList<Chat> chats = new ArrayList<>();
     private List<MessageEntry> messageEntries = new ArrayList<>();
     private List<User> users = new ArrayList<>();
 
@@ -89,11 +88,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return messageEntries.size();
     }
 
-    public void setChats(ArrayList<Chat> chats) {
-        this.chats = chats;
-        notifyDataSetChanged();
-
-    }
 
     public void setMessageEntries(List<MessageEntry> messageEntries) {
         this.messageEntries = messageEntries;

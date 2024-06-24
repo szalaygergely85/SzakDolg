@@ -16,7 +16,7 @@ import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.adapter.ContactsAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

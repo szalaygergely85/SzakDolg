@@ -12,10 +12,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.util.ErrorUtil;
 
-import com.example.szakdolg.ForgotPassword;
 import com.example.szakdolg.R;
 
 import com.example.szakdolg.util.HashUtils;
@@ -65,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         txtForgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, ForgotPassword.class);
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
                 startActivity(intent);
             }
         });

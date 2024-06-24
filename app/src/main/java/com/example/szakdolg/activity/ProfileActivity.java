@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;

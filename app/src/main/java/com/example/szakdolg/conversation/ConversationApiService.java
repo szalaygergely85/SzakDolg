@@ -1,17 +1,14 @@
 package com.example.szakdolg.conversation;
 
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.example.szakdolg.DTO.ConversationContent;
-import com.example.szakdolg.user.User;
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
+import com.example.szakdolg.user.entity.User;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;

@@ -22,7 +22,7 @@ import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.adapter.ChatAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;

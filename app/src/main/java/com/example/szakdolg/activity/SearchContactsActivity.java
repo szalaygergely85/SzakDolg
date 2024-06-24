@@ -17,7 +17,7 @@ import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.adapter.SearchContactAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;

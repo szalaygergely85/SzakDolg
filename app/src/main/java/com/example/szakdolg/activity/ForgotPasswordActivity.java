@@ -1,4 +1,4 @@
-package com.example.szakdolg;
+package com.example.szakdolg.activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,9 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.szakdolg.activity.LoginActivity;
+import com.example.szakdolg.R;
 
-public class ForgotPassword extends AppCompatActivity {
+public class ForgotPasswordActivity extends AppCompatActivity {
     private EditText email;
     private Button send;
 
@@ -46,8 +46,8 @@ public class ForgotPassword extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //firebaseConnect.sendForgotPassword(email.getText().toString());
-                Toast.makeText(ForgotPassword.this, "Instruction sent to the email address", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(ForgotPassword.this, LoginActivity.class);
+                Toast.makeText(ForgotPasswordActivity.this, "Instruction sent to the email address", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });

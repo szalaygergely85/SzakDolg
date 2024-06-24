@@ -1,4 +1,4 @@
-package com.example.szakdolg.user;
+package com.example.szakdolg.user.api;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import com.example.szakdolg.activity.MainActivity;
 import com.example.szakdolg.activity.MessageBoardActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.entity.UserToken;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.io.File;

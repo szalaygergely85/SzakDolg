@@ -11,7 +11,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.user.UserApiHelper;
+import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 public class MainActivity extends AppCompatActivity {

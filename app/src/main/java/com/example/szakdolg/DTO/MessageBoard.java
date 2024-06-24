@@ -1,9 +1,8 @@
 package com.example.szakdolg.DTO;
 
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.user.User;
+import com.example.szakdolg.user.entity.User;
 
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
 

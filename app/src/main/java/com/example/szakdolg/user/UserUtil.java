@@ -1,5 +1,7 @@
 package com.example.szakdolg.user;
 
+import com.example.szakdolg.user.entity.User;
+
 import java.util.List;
 public class UserUtil {
 
