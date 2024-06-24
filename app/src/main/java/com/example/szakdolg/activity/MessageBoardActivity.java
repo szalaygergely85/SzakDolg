@@ -3,6 +3,7 @@ package com.example.szakdolg.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,9 @@ public class MessageBoardActivity extends AppCompatActivity {
     private MessageApiHelper messageApiHelper= new MessageApiHelper();
 
     private String userToken;
+
+    private Handler handler = new Handler();
+    private Runnable runnable;
     
    
 
@@ -69,8 +73,8 @@ public class MessageBoardActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        messageApiHelper.getLatestMessages(adapter,this, userToken, loggedUser);
+        _startRepeatingTask();
+        //messageApiHelper.getLatestMessages(adapter,this, userToken, loggedUser);
 
         contactsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +113,35 @@ public class MessageBoardActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+       // _stopRepeatingTask();
+    }
+
     private void _initView() {
         contactsButton = findViewById(R.id.btnMesBrdNew);
+    }
+
+    private void _startRepeatingTask() {
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                     messageApiHelper.getLatestMessages(adapter,MessageBoardActivity.this, userToken, loggedUser);
+                } finally {
+                    handler.postDelayed(runnable, 15000);
+                }
+            }
+        };
+
+        runnable.run();
+
+    }
+    private void _stopRepeatingTask() {
+        handler.removeCallbacks(runnable);
     }
 }

@@ -8,29 +8,31 @@ import android.net.Uri;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 public class FileUtil {
 
-        public static void writeHashMapToFile(HashMap<String, String> hashMap, File file) {
-            try {
-                FileOutputStream fos = new FileOutputStream(file);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
+    public static void writeHashMapToFile(HashMap<String, String> hashMap, File file) {
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-                // Write HashMap to ObjectOutputStream
-                oos.writeObject(hashMap);
+            // Write HashMap to ObjectOutputStream
+            oos.writeObject(hashMap);
 
-                // Close streams
-                oos.close();
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // Close streams
+            oos.close();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
     public static void writeStringToFile(String data, File file) {
         try {
@@ -124,4 +126,26 @@ public class FileUtil {
         return uri;
     }
 
+    public static void saveFileFromUri(Uri fileUri, Context c) {
+        try {
+            File file = new File(c.getCacheDir(), "uploadFile");
+            try (InputStream inputStream = c.getContentResolver().openInputStream(fileUri);
+                 FileOutputStream outputStream = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4 * 1024];
+                int read;
+                while ((read = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, read);
+                }
+                outputStream.flush();
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

@@ -16,7 +16,6 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +140,6 @@ public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdap
         private final TextView txtName;
         private final TextView txtEmail;
         private final ImageButton btnAdd;
-        private FirebaseFirestore db;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
