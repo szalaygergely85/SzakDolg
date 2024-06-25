@@ -5,6 +5,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,10 +17,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class FileUtil {
 
+    public static final String USER_AGENT_FIREFOX = "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)";
     public static void writeHashMapToFile(HashMap<String, String> hashMap, File file) {
         try {
             FileOutputStream fos = new FileOutputStream(file);
@@ -127,25 +139,38 @@ public class FileUtil {
     }
 
     public static void saveFileFromUri(Uri fileUri, Context c) {
-        try {
-            File file = new File(c.getCacheDir(), "uploadFile");
-            try (InputStream inputStream = c.getContentResolver().openInputStream(fileUri);
-                 FileOutputStream outputStream = new FileOutputStream(file)) {
-                byte[] buffer = new byte[4 * 1024];
-                int read;
-                while ((read = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, read);
-                }
-                outputStream.flush();
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        File file = new File(c.getCacheDir(), fileUri.getLastPathSegment());
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(fileUri.toString())
+                .header("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+                try (InputStream inputStream = response.body().byteStream();
+                     FileOutputStream outputStream = new FileOutputStream(file)) {
+                    byte[] buffer = new byte[8 * 1024];
+                    int read;
+                    while ((read = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, read);
+                    }
+                    outputStream.flush();
+                    Uri fileUri = Uri.fromFile(file);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
     }
 }

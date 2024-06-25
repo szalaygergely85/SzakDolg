@@ -3,9 +3,7 @@ package com.example.szakdolg.activity;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.inputmethod.EditorInfoCompat;
-import androidx.core.view.inputmethod.InputConnectionCompat;
+
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,11 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
 
-import android.view.inputmethod.InputConnection;
+import android.view.View;
+
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -25,7 +21,8 @@ import com.example.szakdolg.DTO.ConversationContent;
 
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.constans.IntentConstans;
-import com.example.szakdolg.constans.MessageConstans;
+import com.example.szakdolg.constans.MessageTypeConstans;
+
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageApiHelper;
@@ -69,12 +66,13 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onCommitContent(InputContentInfoCompat inputContentInfo,
                                         int flags, Bundle opts) {
-                //you will get your gif/png/jpg here in inputContentInfo
-                // You can use a webView or ImageView to load the gif
-
-                Uri linkUri = inputContentInfo.getLinkUri();
 
 
+
+                _downloadPicture(inputContentInfo.getLinkUri());
+
+
+               // _sendMessage(MessageTypeConstans.IMAGE, link, link);
             }
         });
 
@@ -103,15 +101,10 @@ public class ChatActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 String content = edtMess.getText().toString();
-
-
                 if (!content.isEmpty()) {
                     try {
                         if (otherUser != null && currentUser != null) {
@@ -120,11 +113,7 @@ public class ChatActivity extends AppCompatActivity {
 
                             String encryptedContentSenderVersion = EncryptionHelper.encrypt(content, currentUser.getPublicKey());
 
-                            MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), encryptedContentString, MessageConstans.TYPE_MESSAGE, encryptedContentSenderVersion);
-
-                            messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
-
-                            messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
+                            _sendMessage(MessageTypeConstans.MESSAGE, encryptedContentSenderVersion, encryptedContentString);
 
                             edtMess.getText().clear();
                         }
@@ -180,7 +169,25 @@ public class ChatActivity extends AppCompatActivity {
             runnable.run();
 
     }
+
+    private void _sendMessage(int messageType, String encryptedContentSenderVersion, String encryptedContentString){
+
+        MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), encryptedContentString, messageType, encryptedContentSenderVersion);
+
+        messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
+
+        messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
+
+    }
     private void _stopRepeatingTask() {
         handler.removeCallbacks(runnable);
+    }
+
+    private void _downloadPicture(Uri uri){
+        new Thread(() -> {
+            FileUtil.saveFileFromUri(uri, ChatActivity.this);
+
+
+        }).start();
     }
 }

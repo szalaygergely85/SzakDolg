@@ -1,6 +1,7 @@
 package com.example.szakdolg.util;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.szakdolg.user.entity.User;
@@ -55,4 +56,5 @@ public class CacheUtil {
 
         return privateKey;
     }
+
 }
