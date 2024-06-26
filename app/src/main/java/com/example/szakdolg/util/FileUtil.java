@@ -4,6 +4,7 @@ package com.example.szakdolg.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -136,7 +137,7 @@ public class FileUtil {
         return uri;
     }
 
-    public static void saveFileFromUri(Uri fileUri, File file) {
+    public static void saveFileFromUri(Uri fileUri, File file, Runnable runnable ) {
 
 
         OkHttpClient client = new OkHttpClient();
@@ -162,6 +163,8 @@ public class FileUtil {
                     while ((read = inputStream.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, read);
                     }
+                    Log.e("FileApiHelper", "File saved" + file.toString());
+                    runnable.run();
                     outputStream.flush();
 
                 } catch (Exception e) {
@@ -184,5 +187,8 @@ public class FileUtil {
         }
 
         return path.substring(lastDotIndex + 1);
+    }
+
+    public static void saveFileFromUri(Uri uri, File file, Object o) {
     }
 }

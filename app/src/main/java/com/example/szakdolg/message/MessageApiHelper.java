@@ -9,6 +9,7 @@ import androidx.appcompat.app.ActionBar;
 import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.adapter.ChatAdapter;
 import com.example.szakdolg.adapter.MessageBoardAdapter;
+import com.example.szakdolg.file.apiservice.FileApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.user.api.UserApiHelper;
@@ -32,13 +33,12 @@ public class MessageApiHelper {
     private final String TAG ="MessageApiHelper";
 
     private MessageApiService messageApiService = RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
+    private FileApiService fileApiService = RetrofitClient.getRetrofitInstance().create(FileApiService.class);
+
 
     private UserApiHelper userApiHelper = new UserApiHelper();
     User loggedUser;
     public void reloadMessages(Long conversationId, ChatAdapter adapter, ActionBar actionBar){
-
-
-
         Call<ArrayList<MessageEntry>> call = messageApiService.getConversationMessages(conversationId);
 
         call.enqueue(new Callback<ArrayList<MessageEntry>>(){
@@ -52,7 +52,6 @@ public class MessageApiHelper {
 
                         adapter.setMessageEntries(messageEntryList);
 
-
                     }
 
                 } else {
@@ -60,13 +59,11 @@ public class MessageApiHelper {
                     //TODO Handle the error
                 }
             }
-
             @Override
             public void onFailure(Call<ArrayList<MessageEntry>> call, Throwable t) {
                 Log.e(TAG, ""+t.getMessage());
             }
         });
-
     }
     public void sendMessage(Long conversationId, MessageEntry messageEntry, ChatAdapter adapter){
 
@@ -135,34 +132,7 @@ public class MessageApiHelper {
 
     }
 
-    public void uploadImage(Uri uri) {
 
-        File file = FileUtils.getFileFromUri(context, uri);
-
-        RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file);
-
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-
-
-
-        Call<ResponseBody> uploadImageCall= messageApiService.uploadFile(body);
-
-        uploadImageCall.enqueue(new Callback<ResponseBody>(){
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
-
-    }
 
 
     private User _findOtherUserById(List<User> users, Long id) {
