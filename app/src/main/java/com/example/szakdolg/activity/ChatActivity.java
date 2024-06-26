@@ -189,7 +189,7 @@ public class ChatActivity extends AppCompatActivity {
 
             String uUId = UUIDUtil.UUIDGenerator();
 
-            File file = new File(this.getFilesDir() + "/Pictures/" + uUId + FileUtil.getFileExtensionFromUri(uri));
+            File file = new File(this.getFilesDir() + "/Pictures/" + uUId +"." +FileUtil.getFileExtensionFromUri(uri));
 
             FileUtil.saveFileFromUri(uri, file, () -> fileApiHelper.uploadFile(file));
 
