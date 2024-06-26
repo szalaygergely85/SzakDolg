@@ -34,6 +34,12 @@ import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.FileUtil;
+import com.example.szakdolg.util.UUIDUtil;
+
+import java.io.File;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -64,15 +70,9 @@ public class ChatActivity extends AppCompatActivity {
 
         edtMess.setKeyBoardInputCallbackListener(new MyEditText.KeyBoardInputCallbackListener() {
             @Override
-            public void onCommitContent(InputContentInfoCompat inputContentInfo,
-                                        int flags, Bundle opts) {
+            public void onCommitContent(InputContentInfoCompat inputContentInfo, int flags, Bundle opts) {
+            _sendPicture(inputContentInfo.getLinkUri());
 
-
-
-                _downloadPicture(inputContentInfo.getLinkUri());
-
-
-               // _sendMessage(MessageTypeConstans.IMAGE, link, link);
             }
         });
 
@@ -113,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
 
                             String encryptedContentSenderVersion = EncryptionHelper.encrypt(content, currentUser.getPublicKey());
 
-                            _sendMessage(MessageTypeConstans.MESSAGE, encryptedContentSenderVersion, encryptedContentString);
+                            _sendMessage(MessageTypeConstans.MESSAGE, encryptedContentSenderVersion, encryptedContentString, null);
 
                             edtMess.getText().clear();
                         }
@@ -170,12 +170,18 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void _sendMessage(int messageType, String encryptedContentSenderVersion, String encryptedContentString){
+    private void _sendMessage(int messageType, String encryptedContentSenderVersion, String encryptedContentString, Uri uri){
+
+        if(messageType== MessageTypeConstans.IMAGE){
+             if(uri!=null){
+                 encryptedContentString=uri.getLastPathSegment();
+                 messageApiHelper.uploadImage(Uri);
+             }
+        }
 
         MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), encryptedContentString, messageType, encryptedContentSenderVersion);
 
         messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
-
         messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
 
     }
@@ -183,11 +189,35 @@ public class ChatActivity extends AppCompatActivity {
         handler.removeCallbacks(runnable);
     }
 
-    private void _downloadPicture(Uri uri){
+
+    private void _sendPicture(Uri uri){
         new Thread(() -> {
-            FileUtil.saveFileFromUri(uri, ChatActivity.this);
+            CountDownLatch latch = new CountDownLatch(1);
+
+            String uUId = UUIDUtil.UUIDGenerator();
+
+            File file = new File(this.getFilesDir() + "/Pictures/" + uUId + FileUtil.getFileExtensionFromUri(uri));
+
+            Uri fileSavedUri = Uri.fromFile(file);
+
+            CompletableFuture<Void> downloadFuture = CompletableFuture.runAsync(() ->  FileUtil.saveFileFromUri(uri, file));
 
 
+            // Define the send message task
+
+            CompletableFuture<Void> sendMessageFuture = downloadFuture.thenRun(() -> _sendMessage(MessageTypeConstans.IMAGE, "link", null, fileSavedUri));
+
+            CompletableFuture<Void> uploadImage = sendMessageFuture.thenRun(()) -> messageApiHelper.uploadImage(file));
+           /*
+            try {
+                // Optionally, wait for the send message task to finish
+                sendMessageFuture.get();
+            } catch (InterruptedException | ExecutionException e) {
+                Thread.currentThread().interrupt();
+            }
+*/
+            System.out.println("Download and message sending tasks have finished.");
         }).start();
+
     }
 }

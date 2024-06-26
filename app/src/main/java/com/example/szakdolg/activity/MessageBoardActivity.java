@@ -73,7 +73,7 @@ public class MessageBoardActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        _startRepeatingTask();
+      //  _startRepeatingTask();
         //messageApiHelper.getLatestMessages(adapter,this, userToken, loggedUser);
 
         contactsButton.setOnClickListener(new View.OnClickListener() {

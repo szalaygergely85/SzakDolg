@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 
 import okhttp3.Call;
@@ -138,8 +136,8 @@ public class FileUtil {
         return uri;
     }
 
-    public static void saveFileFromUri(Uri fileUri, Context c) {
-        File file = new File(c.getCacheDir(), fileUri.getLastPathSegment());
+    public static void saveFileFromUri(Uri fileUri, File file) {
+
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -165,12 +163,26 @@ public class FileUtil {
                         outputStream.write(buffer, 0, read);
                     }
                     outputStream.flush();
-                    Uri fileUri = Uri.fromFile(file);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
 
+    }
+
+    public static String getFileExtensionFromUri(Uri uri) {
+        String path = uri.getPath();
+        if (path == null) {
+            return null;
+        }
+
+        int lastDotIndex = path.lastIndexOf('.');
+        if (lastDotIndex == -1) {
+            return null;
+        }
+
+        return path.substring(lastDotIndex + 1);
     }
 }
