@@ -31,10 +31,14 @@ public class ConversationApiHelper {
       Context context,
       Long conversationId,
       List<User> participants,
-      User loggedUser
+      User loggedUser,
+      String token
    ) {
       if (conversationId == null && participants != null) {
-         Call<Long> call = conversationApiService.addConversation(participants);
+         Call<Long> call = conversationApiService.addConversation(
+            participants,
+            token
+         );
          call.enqueue(
             new Callback<Long>() {
                @Override
@@ -44,7 +48,12 @@ public class ConversationApiHelper {
                ) {
                   Log.e(TAG, "" + response.code());
                   if (response.isSuccessful()) {
-                     openConversation(response.body(), context, loggedUser);
+                     openConversation(
+                        response.body(),
+                        context,
+                        loggedUser,
+                        token
+                     );
                   } else {
                      Log.e(TAG, "" + response.code());
                      //TODO Handle the error
@@ -71,10 +80,14 @@ public class ConversationApiHelper {
    public void openConversation(
       Long conversationId,
       Context context,
-      User loggedUser
+      User loggedUser,
+      String token
    ) {
       Call<ConversationContent> call =
-         conversationApiService.getConversationAndContentById(conversationId);
+         conversationApiService.getConversationAndContentById(
+            conversationId,
+            token
+         );
       call.enqueue(
          new Callback<ConversationContent>() {
             @Override

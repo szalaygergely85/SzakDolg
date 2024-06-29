@@ -59,7 +59,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
 
-      adapter = new MessageBoardAdapter(this);
+      adapter = new MessageBoardAdapter(this, userToken);
       adapter.setMessageB(messageBoard);
       adapter.setCurrentUser(loggedUser);
 

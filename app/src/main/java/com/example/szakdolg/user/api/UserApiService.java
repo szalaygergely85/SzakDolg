@@ -11,6 +11,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface UserApiService {
+   @Deprecated
    @GET("user/id/{id}")
    Call<User> getAllUser(@Path("id") long userId);
 
@@ -23,12 +24,15 @@ public interface UserApiService {
    @POST("user")
    Call<UserToken> createUser(@Body User user);
 
+
+   @Deprecated
    @GET("user/key/{token}")
    Call<ResponseBody> getKeyByToken(@Path("token") String token);
 
    @GET("user/publickey/{userId}")
    Call<String> getPublicKeyByUserId(@Path("userId") Long userId);
 
+   @Deprecated
    @GET("user/aes/{token}")
    Call<ResponseBody> getAESByToken(@Path("token") String token);
 }

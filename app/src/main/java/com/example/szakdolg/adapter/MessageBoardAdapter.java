@@ -29,10 +29,13 @@ public class MessageBoardAdapter
    private User currentUser;
    private static final String TAG = "MessageBoardAdapter";
 
+   private String _token;
+
    ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
 
-   public MessageBoardAdapter(Context mContext) {
+   public MessageBoardAdapter(Context mContext, String token) {
       this.mContext = mContext;
+      this._token = token;
    }
 
    /*
@@ -164,7 +167,8 @@ public class MessageBoardAdapter
                   conversationApiHelper.openConversation(
                      messageBoard.getConversationId(),
                      mContext,
-                     currentUser
+                     currentUser,
+                     _token
                   );
                }
             }

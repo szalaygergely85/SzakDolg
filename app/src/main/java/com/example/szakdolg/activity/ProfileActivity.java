@@ -32,7 +32,9 @@ public class ProfileActivity extends AppCompatActivity {
    private Button deleteContact;
    private Button sendMessage;
    private User userContact;
-   private User userLoggedIn;
+   private User currentUser;
+
+   private String userToken;
    private ConversationApiHelper conversationApiHelper =
       new ConversationApiHelper();
 
@@ -111,13 +113,19 @@ public class ProfileActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_profile);
 
-      userLoggedIn =
+      currentUser =
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
 
       userContact =
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstans.OTHER_USER);
+
+      userToken =
+      SharedPreferencesUtil.getStringPreference(
+         this,
+         SharedPreferencesConstans.USERTOKEN
+      );
 
       initView();
 
@@ -143,9 +151,9 @@ public class ProfileActivity extends AppCompatActivity {
          sendMessage.setVisibility(View.GONE);
 
          name.setText(
-            userLoggedIn.getFullName() + " " + userLoggedIn.getDisplayName()
+            currentUser.getFullName() + " " + currentUser.getDisplayName()
          );
-         email.setText(userLoggedIn.getEmail());
+         email.setText(currentUser.getEmail());
       }
       // setImageView(uID, this);
 
@@ -228,12 +236,13 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                List<User> participants = new ArrayList<>();
                participants.add(userContact);
-               participants.add(userLoggedIn);
+               participants.add(currentUser);
                conversationApiHelper.openConversation(
                   ProfileActivity.this,
                   null,
                   participants,
-                  userLoggedIn
+                  currentUser,
+                  userToken
                );
             }
          }
