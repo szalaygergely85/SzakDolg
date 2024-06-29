@@ -29,6 +29,8 @@ public class SearchContactAdapter
    private User user;
    private List<User> contactList = new ArrayList<>();
 
+   private String _token;
+
    /*
 	public void setImageView(String uID, Context context, ImageView image) {
 		try {
@@ -78,9 +80,10 @@ public class SearchContactAdapter
 		}
 	}
 */
-   public SearchContactAdapter(Context mContext, User user) {
+   public SearchContactAdapter(Context mContext, User user, String token) {
       this.user = user;
       this.mContext = mContext;
+      this._token = token;
    }
 
    @NonNull
@@ -114,7 +117,8 @@ public class SearchContactAdapter
 
                Call<Boolean> contactsCall = contactsApiService.addContact(
                   user.getUserId(),
-                  userSearchResult.getUserId()
+                  userSearchResult.getUserId(),
+                  _token
                );
 
                contactsCall.enqueue(

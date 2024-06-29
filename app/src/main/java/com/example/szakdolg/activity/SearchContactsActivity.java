@@ -16,6 +16,7 @@ import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -29,6 +30,7 @@ public class SearchContactsActivity extends AppCompatActivity {
    private List<User> contactList;
    private SearchContactAdapter contactsAdapter;
 
+   private String _token;
    private User user;
    private static final String TAG = "SearchContactsActivity";
 
@@ -46,10 +48,16 @@ public class SearchContactsActivity extends AppCompatActivity {
       setSupportActionBar(mToolbar);
       //toolbar settings
 
+      _token =
+      SharedPreferencesUtil.getStringPreference(
+         this,
+         SharedPreferencesConstans.USERTOKEN
+      );
+
       user =
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
-      contactsAdapter = new SearchContactAdapter(this, user);
+      contactsAdapter = new SearchContactAdapter(this, user, _token);
 
       ActionBar actionBar = getSupportActionBar();
       actionBar.setDisplayHomeAsUpEnabled(true);
@@ -101,7 +109,10 @@ public class SearchContactsActivity extends AppCompatActivity {
                      .create(ContactsApiService.class);
 
                   Call<List<User>> contactsCall =
-                     contactsApiService.searchContacts(editable.toString());
+                     contactsApiService.searchContacts(
+                        editable.toString(),
+                        _token
+                     );
 
                   contactsCall.enqueue(
                      new Callback<List<User>>() {

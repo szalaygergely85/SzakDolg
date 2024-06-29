@@ -80,7 +80,7 @@ public class ContactsActivity extends AppCompatActivity {
          .getRetrofitInstance()
          .create(ContactsApiService.class);
 
-      Call<List<User>> contactsCall = contactsApiService.getConversation(
+      Call<List<User>> contactsCall = contactsApiService.getContacts(
          SharedPreferencesUtil.getStringPreference(
             this,
             SharedPreferencesConstans.USERTOKEN
