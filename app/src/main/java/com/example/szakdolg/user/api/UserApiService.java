@@ -7,6 +7,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -24,13 +25,15 @@ public interface UserApiService {
    @POST("user")
    Call<UserToken> createUser(@Body User user);
 
-
    @Deprecated
    @GET("user/key/{token}")
    Call<ResponseBody> getKeyByToken(@Path("token") String token);
 
    @GET("user/publickey/{userId}")
-   Call<String> getPublicKeyByUserId(@Path("userId") Long userId);
+   Call<String> getPublicKeyByUserId(
+      @Path("userId") Long userId,
+      @Header("Authorization") String token
+   );
 
    @Deprecated
    @GET("user/aes/{token}")

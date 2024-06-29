@@ -105,9 +105,10 @@ public class UserApiHelper {
    }
 
    @Deprecated
-   public void getAndSavePublicKey(User user, Runnable runnable) {
+   public void getAndSavePublicKey(User user, String token, Runnable runnable) {
       Call<String> messagesCall = _userApiService.getPublicKeyByUserId(
-         user.getUserId()
+         user.getUserId(),
+         token
       );
 
       messagesCall.enqueue(
