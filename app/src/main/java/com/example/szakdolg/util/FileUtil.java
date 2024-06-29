@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 import okhttp3.Call;
@@ -25,6 +26,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class FileUtil {
 
@@ -128,7 +130,7 @@ public class FileUtil {
 
     public static Uri getUri(String uID, Context c) {
         Uri uri;
-        File file = new File(c.getFilesDir() + "/Pictures/" + uID + ".jpg");
+        File file = new File(c.getFilesDir() + "/Pictures/" + uID);
         if (file.exists()) {
             uri = Uri.fromFile(file);
         } else {
@@ -138,7 +140,7 @@ public class FileUtil {
     }
 
     public static void saveFileFromUri(Uri fileUri, File file, Runnable runnable ) {
-
+        ensureDirectoryExists(file);
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -189,6 +191,62 @@ public class FileUtil {
         return path.substring(lastDotIndex + 1);
     }
 
-    public static void saveFileFromUri(Uri uri, File file, Object o) {
+    public static void ensureDirectoryExists(File file) {
+        File directory = file.getParentFile();
+        if (directory != null && !directory.exists()) {
+            if (directory.mkdirs()) {
+                System.out.println("Directory created successfully: " + directory.getPath());
+            } else {
+                System.out.println("Failed to create directory: " + directory.getPath());
+            }
+        }
+    }
+
+    public static boolean writeResponseBodyToDisk(ResponseBody body, Context c, String fileName) throws IOException {
+        try {
+            File path = new File(c.getFilesDir() + "/Pictures/");
+            if (!path.exists()) {
+                path.mkdir();
+            }
+            File futureFile = new File(path + File.separator + fileName);
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
+            try {
+                byte[] fileReader = new byte[4096];
+                long fileSize = body.contentLength();
+                long fileSizeDownloaded = 0;
+                inputStream = body.byteStream();
+                outputStream = new FileOutputStream(futureFile);
+
+                while (true) {
+                    int read = inputStream.read(fileReader);
+
+                    if (read == -1) {
+                        break;
+                    }
+
+                    outputStream.write(fileReader, 0, read);
+
+                    fileSizeDownloaded += read;
+                }
+                outputStream.flush();
+
+                return true;
+            } catch (IOException e) {
+                return false;
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+
     }
 }

@@ -1,13 +1,12 @@
 package com.example.szakdolg.message;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.appcompat.app.ActionBar;
 
 import com.example.szakdolg.DTO.MessageBoard;
-import com.example.szakdolg.adapter.ChatAdapter;
+import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.adapter.MessageBoardAdapter;
 import com.example.szakdolg.file.apiservice.FileApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -16,14 +15,8 @@ import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.util.CacheUtil;
 
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 
 import retrofit2.Call;
 import retrofit2.Callback;

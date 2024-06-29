@@ -1,12 +1,17 @@
 package com.example.szakdolg.file.apihelper;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Adapter;
 
 import com.example.szakdolg.file.apiservice.FileApiService;
+import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -18,10 +23,12 @@ import retrofit2.Response;
 
 public class FileApiHelper {
 
+    private static final String TAG = "FileApiHelper";
+
     private FileApiService fileApiService = RetrofitClient.getRetrofitInstance().create(FileApiService.class);
 
 
-    public void uploadFile(File file) {
+    public void uploadFile(File file, MessageEntry messageEntry) {
 
 
     RequestBody requestFile =
@@ -33,7 +40,7 @@ public class FileApiHelper {
 
 
 
-    Call<ResponseBody> uploadImageCall= fileApiService.uploadFile(body);
+    Call<ResponseBody> uploadImageCall= fileApiService.uploadFile(body, messageEntry);
 
     uploadImageCall.enqueue(new Callback<ResponseBody>(){
         @Override
@@ -49,4 +56,35 @@ public class FileApiHelper {
     });
 
 }
+
+    public void getFile(String imageUrl, Context context, Runnable runnable) {
+        Call<ResponseBody> getFileCall= fileApiService.downloadFile(imageUrl);
+        getFileCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.e(TAG, "server contacted and has file");
+
+                    boolean writtenToDisk = false;
+                    try {
+                        writtenToDisk = FileUtil.writeResponseBodyToDisk(response.body(), context, imageUrl);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    Log.e(TAG, "file download was a success? " + writtenToDisk);
+                    if(writtenToDisk){
+                        runnable.run();
+                    }
+                } else {
+                    Log.e(TAG, "server contact failed");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
 }

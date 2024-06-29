@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.szakdolg.DTO.ConversationContent;
-import com.example.szakdolg.activity.ChatActivity;
+import com.example.szakdolg.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;

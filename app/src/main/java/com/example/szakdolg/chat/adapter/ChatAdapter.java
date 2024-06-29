@@ -1,4 +1,4 @@
-package com.example.szakdolg.adapter;
+package com.example.szakdolg.chat.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.szakdolg.R;
+import com.example.szakdolg.chat.viewholder.ImageViewHolder;
+import com.example.szakdolg.chat.viewholder.TextViewHolder;
+import com.example.szakdolg.constans.MessageTypeConstans;
+import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.CacheUtil;
@@ -23,12 +27,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "ChatAdapter";
     private final Context mContext;
     private List<MessageEntry> messageEntries = new ArrayList<>();
-    private List<User> users = new ArrayList<>();
 
+    private  MessageApiHelper messageApiHelper = new MessageApiHelper();
     private final User currentUser;
 
     long time;
@@ -38,16 +42,28 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         this.currentUser = user;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return messageEntries.get(position).getType();
+    }
+
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == MessageTypeConstans.MESSAGE) {
+
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false);
+            return new TextViewHolder(view);
+        }else if
+       (viewType == MessageTypeConstans.IMAGE) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_image_item, parent, false);
+            return new ImageViewHolder(view);
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MessageEntry messageEntry = messageEntries.get(holder.getAdapterPosition());
 
             time = (messageEntry.getTimestamp());
@@ -56,7 +72,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
             Format format = new SimpleDateFormat("HH:mm");
             String timeForm = format.format(date);
-
+        if (messageEntry.getType() == MessageTypeConstans.MESSAGE) {
         String decryptedContentString = null;
         try {
             if(isSenderLoggedUser(messageEntry)) {
@@ -68,17 +84,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             throw new RuntimeException(e);
         }
 
-            holder.txtTextFrMe.setText(decryptedContentString);
-            holder.txtTimeOut.setText(timeForm);
+            ((TextViewHolder) holder).bind(decryptedContentString, timeForm, messageEntry.getSenderId(), currentUser);
+        } else if (messageEntry.getType() == MessageTypeConstans.IMAGE) {
+            ((ImageViewHolder) holder).bind(messageEntry.getContent(), mContext, ()-> messageApiHelper.reloadMessages(messageEntry.getConversationId(), this, null));
+        }
 
-            if (messageEntry.getSenderId() == currentUser.getUserId()) {
-                holder.relIn.setVisibility(View.GONE);
-                holder.relOut.setVisibility(View.VISIBLE);
-            } else {
-                holder.relOut.setVisibility(View.GONE);
-                holder.relIn.setVisibility(View.VISIBLE);
-                holder.txtText.setText(messageEntry.getContent());
-            }
 
 
     }
@@ -95,29 +105,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     public void setUsers(List<User> users) {
-        this.users = users;
         notifyDataSetChanged();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        //declare here fields
-        private final TextView txtText;
-        private final TextView txtTimeIn;
-        private final TextView txtTimeOut;
-        private final TextView txtTextFrMe;
-        private final RelativeLayout relIn;
-        private final RelativeLayout relOut;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            txtText = itemView.findViewById(R.id.chatText);
-            txtTextFrMe = itemView.findViewById(R.id.chatTextFrMe);
-            txtTimeIn = itemView.findViewById(R.id.chatTextTimeIn);
-            txtTimeOut = itemView.findViewById(R.id.chatTextTimeOut);
-            relIn = itemView.findViewById(R.id.chatRelIn);
-            relOut = itemView.findViewById(R.id.chatRelOut);
-        }
     }
 
     private boolean isSenderLoggedUser(MessageEntry messageEntry) {

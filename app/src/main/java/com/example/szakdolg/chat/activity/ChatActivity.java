@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity;
+package com.example.szakdolg.chat.activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +26,7 @@ import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.file.apihelper.FileApiHelper;
 import com.example.szakdolg.message.MessageApiHelper;
-import com.example.szakdolg.adapter.ChatAdapter;
+import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.R;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
@@ -37,8 +37,6 @@ import com.example.szakdolg.util.FileUtil;
 import com.example.szakdolg.util.UUIDUtil;
 
 import java.io.File;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -172,7 +170,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void _sendMessage(int messageType, String encryptedContentSenderVersion, String encryptedContentString){
-
         MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), encryptedContentString, messageType, encryptedContentSenderVersion);
 
         messageApiHelper.sendMessage(conversationId, messageEntry, adapter);
@@ -186,16 +183,14 @@ public class ChatActivity extends AppCompatActivity {
 
     private void _sendFile(Uri uri){
         new Thread(() -> {
-
             String uUId = UUIDUtil.UUIDGenerator();
 
             File file = new File(this.getFilesDir() + "/Pictures/" + uUId +"." +FileUtil.getFileExtensionFromUri(uri));
 
-            FileUtil.saveFileFromUri(uri, file, () -> fileApiHelper.uploadFile(file));
-
-
+            MessageEntry messageEntry = new MessageEntry(conversationId, currentUser.getUserId(), System.currentTimeMillis(), uUId +"." +FileUtil.getFileExtensionFromUri(uri), MessageTypeConstans.IMAGE, null);
+            FileUtil.saveFileFromUri(uri, file, () -> fileApiHelper.uploadFile(file, messageEntry));
+            messageApiHelper.reloadMessages(conversationId, adapter, actionBar);
 
         }).start();
-
     }
 }
