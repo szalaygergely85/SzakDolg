@@ -4,37 +4,38 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class UserToken implements Serializable {
-    private String token;
-    private Date generationDate;
-    private Date expirationDate;
 
-    public String getToken() {
-        return token;
-    }
+   private String token;
+   private Date generationDate;
+   private Date expirationDate;
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+   public String getToken() {
+      return token;
+   }
 
-    public Date getGenerationDate() {
-        return generationDate;
-    }
+   public void setToken(String token) {
+      this.token = token;
+   }
 
-    public void setGenerationDate(Date generationDate) {
-        this.generationDate = generationDate;
-    }
+   public Date getGenerationDate() {
+      return generationDate;
+   }
 
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
+   public void setGenerationDate(Date generationDate) {
+      this.generationDate = generationDate;
+   }
 
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
+   public Date getExpirationDate() {
+      return expirationDate;
+   }
 
-    public UserToken(String token, Date generationDate, Date expirationDate) {
-        this.token = token;
-        this.generationDate = generationDate;
-        this.expirationDate = expirationDate;
-    }
+   public void setExpirationDate(Date expirationDate) {
+      this.expirationDate = expirationDate;
+   }
+
+   public UserToken(String token, Date generationDate, Date expirationDate) {
+      this.token = token;
+      this.generationDate = generationDate;
+      this.expirationDate = expirationDate;
+   }
 }

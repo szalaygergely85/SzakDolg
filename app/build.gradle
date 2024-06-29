@@ -53,7 +53,7 @@ dependencies {
 
 spotless {
     java {
-        importOrder()
+        target "src/*/java/**/*.java"
         indentWithTabs()
         removeUnusedImports()
         trimTrailingWhitespace()
@@ -64,11 +64,5 @@ spotless {
                         'printWidth': 80,
                         'plugins': ['prettier-plugin-java']
                 ])
-    }
-    format 'xml', {
-        target '**/*.xml'
-        indentWithSpaces()
-        trimTrailingWhitespace()
-        endWithNewline()
     }
 }

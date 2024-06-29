@@ -5,115 +5,131 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.szakdolg.R;
+import com.example.szakdolg.adapter.SearchContactAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiService;
-import com.example.szakdolg.adapter.SearchContactAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SearchContactsActivity extends AppCompatActivity {
-    private EditText search;
-    private RecyclerView contsRecView;
-    private List<User> contactList;
-    private SearchContactAdapter contactsAdapter;
 
-    private User user;
-    private static final String TAG = "SearchContactsActivity";
+   private EditText search;
+   private RecyclerView contsRecView;
+   private List<User> contactList;
+   private SearchContactAdapter contactsAdapter;
 
-    private void initViews() {
-        search = findViewById(R.id.edtContSearch);
-        contsRecView = findViewById(R.id.recvContactSearch);
-    }
+   private User user;
+   private static final String TAG = "SearchContactsActivity";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_contacts);
+   private void initViews() {
+      search = findViewById(R.id.edtContSearch);
+      contsRecView = findViewById(R.id.recvContactSearch);
+   }
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.contactsearchBoardToolbar);
-        setSupportActionBar(mToolbar);
-        //toolbar settings
+   @Override
+   protected void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      setContentView(R.layout.activity_search_contacts);
 
-        user = (User) this.getIntent().getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
-        contactsAdapter = new SearchContactAdapter(this, user);
+      Toolbar mToolbar = (Toolbar) findViewById(R.id.contactsearchBoardToolbar);
+      setSupportActionBar(mToolbar);
+      //toolbar settings
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("People Search");
+      user =
+      (User) this.getIntent()
+         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+      contactsAdapter = new SearchContactAdapter(this, user);
 
-        initViews();
+      ActionBar actionBar = getSupportActionBar();
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle("People Search");
 
-    }
+      initViews();
+   }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return super.onSupportNavigateUp();
-    }
+   @Override
+   public boolean onSupportNavigateUp() {
+      onBackPressed();
+      return super.onSupportNavigateUp();
+   }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        contactList = new ArrayList<>();
-        contactsAdapter.setContactList(contactList);
-        contsRecView.setAdapter(contactsAdapter);
-        contsRecView.setLayoutManager(new LinearLayoutManager(this));
-        search.addTextChangedListener(new TextWatcher() {
+   @Override
+   protected void onStart() {
+      super.onStart();
+      contactList = new ArrayList<>();
+      contactsAdapter.setContactList(contactList);
+      contsRecView.setAdapter(contactsAdapter);
+      contsRecView.setLayoutManager(new LinearLayoutManager(this));
+      search.addTextChangedListener(
+         new TextWatcher() {
             private CharSequence previousText = "";
 
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-                previousText = charSequence;
+            public void beforeTextChanged(
+               CharSequence charSequence,
+               int start,
+               int count,
+               int after
+            ) {
+               previousText = charSequence;
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-            }
+            public void onTextChanged(
+               CharSequence charSequence,
+               int start,
+               int before,
+               int count
+            ) {}
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.length() >= 3) {
+               if (editable.length() >= 3) {
+                  ContactsApiService contactsApiService = RetrofitClient
+                     .getRetrofitInstance()
+                     .create(ContactsApiService.class);
 
-                    ContactsApiService contactsApiService = RetrofitClient.getRetrofitInstance().create(ContactsApiService.class);
+                  Call<List<User>> contactsCall =
+                     contactsApiService.searchContacts(editable.toString());
 
-                    Call<List<User>> contactsCall= contactsApiService.searchContacts(editable.toString());
-
-                    contactsCall.enqueue(new Callback<List<User>>(){
+                  contactsCall.enqueue(
+                     new Callback<List<User>>() {
                         @Override
-                        public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                            if (response.isSuccessful()) {
-                                Log.e(TAG, ""+response.code());
+                        public void onResponse(
+                           Call<List<User>> call,
+                           Response<List<User>> response
+                        ) {
+                           if (response.isSuccessful()) {
+                              Log.e(TAG, "" + response.code());
 
-                                List<User> contactList = response.body();
-                                contactsAdapter.setContactList(contactList);
-                            }
+                              List<User> contactList = response.body();
+                              contactsAdapter.setContactList(contactList);
+                           }
                         }
 
                         @Override
-                        public void onFailure(Call<List<User>> call, Throwable t) {
-                            Log.e(TAG, ""+t.getMessage());
+                        public void onFailure(
+                           Call<List<User>> call,
+                           Throwable t
+                        ) {
+                           Log.e(TAG, "" + t.getMessage());
                         }
-                    });
-                }
+                     }
+                  );
+               }
             }
-        });
-
-    }
-
-
+         }
+      );
+   }
 }

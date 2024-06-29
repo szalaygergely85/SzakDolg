@@ -8,146 +8,161 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.szakdolg.R;
 import com.example.szakdolg.contacts.ContactsApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchContactAdapter extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder> {
-    private static final String TAG = "SearchContactAdapter";
-    private final Context mContext;
+public class SearchContactAdapter
+   extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder> {
 
-    private User user;
-    private List<User> contactList = new ArrayList<>();
+   private static final String TAG = "SearchContactAdapter";
+   private final Context mContext;
 
-    /*
-    public void setImageView(String uID, Context context, ImageView image) {
-        try {
-            storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
-                @Override
-                public void onComplete(@NonNull Task<StorageMetadata> task) {
-                    if (task.isSuccessful()) {
-                        storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Log.d(TAG, "getPicURl: " + uri);
-                                Glide.with(context)
-                                        .asBitmap()
-                                        .load(uri)
-                                        .into(new CustomTarget<Bitmap>() {
-                                            @Override
-                                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                                try {
-                                                    FileHandling.saveImageFile(uID, resource, context);
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
+   private User user;
+   private List<User> contactList = new ArrayList<>();
 
-                                            @Override
-                                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                                            }
-                                        });
+   /*
+	public void setImageView(String uID, Context context, ImageView image) {
+		try {
+			storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
+				@Override
+				public void onComplete(@NonNull Task<StorageMetadata> task) {
+					if (task.isSuccessful()) {
+						storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+							@Override
+							public void onSuccess(Uri uri) {
+								Log.d(TAG, "getPicURl: " + uri);
+								Glide.with(context)
+										.asBitmap()
+										.load(uri)
+										.into(new CustomTarget<Bitmap>() {
+											@Override
+											public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+												try {
+													FileHandling.saveImageFile(uID, resource, context);
+												} catch (IOException e) {
+													e.printStackTrace();
+												}
+											}
 
-                                Glide.with(context)
-                                        .asBitmap()
-                                        .load(uri)
-                                        .into(image);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Log.d(TAG, "onFailure: " + exception);
-                            }
-                        });
-                    }
-                }
-            });
+											@Override
+											public void onLoadCleared(@Nullable Drawable placeholder) {
+											}
+										});
 
-        } catch (Exception e) {
-            Log.d(TAG, "setImageView: " + e);
-        }
-    }
+								Glide.with(context)
+										.asBitmap()
+										.load(uri)
+										.into(image);
+							}
+						}).addOnFailureListener(new OnFailureListener() {
+							@Override
+							public void onFailure(@NonNull Exception exception) {
+								Log.d(TAG, "onFailure: " + exception);
+							}
+						});
+					}
+				}
+			});
+
+		} catch (Exception e) {
+			Log.d(TAG, "setImageView: " + e);
+		}
+	}
 */
-    public SearchContactAdapter(Context mContext, User user) {
-        this.user = user;
-        this.mContext = mContext;
-    }
+   public SearchContactAdapter(Context mContext, User user) {
+      this.user = user;
+      this.mContext = mContext;
+   }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_search_item, parent, false);
-        SearchContactAdapter.ViewHolder holder = new SearchContactAdapter.ViewHolder(view);
-        return holder;
-    }
+   @NonNull
+   @Override
+   public ViewHolder onCreateViewHolder(
+      @NonNull ViewGroup parent,
+      int viewType
+   ) {
+      View view = LayoutInflater
+         .from(parent.getContext())
+         .inflate(R.layout.contact_search_item, parent, false);
+      SearchContactAdapter.ViewHolder holder =
+         new SearchContactAdapter.ViewHolder(view);
+      return holder;
+   }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        User userSearchResult = contactList.get(holder.getAdapterPosition());
+   @Override
+   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+      User userSearchResult = contactList.get(holder.getAdapterPosition());
 
-        holder.txtName.setText(userSearchResult.getFullName());
-        holder.txtEmail.setText(userSearchResult.getEmail());
-       // setImageView(contactList.get(position).getID(), mContext, holder.imageView);
-        holder.btnAdd.setOnClickListener(new View.OnClickListener() {
+      holder.txtName.setText(userSearchResult.getFullName());
+      holder.txtEmail.setText(userSearchResult.getEmail());
+      // setImageView(contactList.get(position).getID(), mContext, holder.imageView);
+      holder.btnAdd.setOnClickListener(
+         new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContactsApiService contactsApiService = RetrofitClient.getRetrofitInstance().create(ContactsApiService.class);
+               ContactsApiService contactsApiService = RetrofitClient
+                  .getRetrofitInstance()
+                  .create(ContactsApiService.class);
 
-                Call<Boolean> contactsCall= contactsApiService.addContact(user.getUserId(), userSearchResult.getUserId());
+               Call<Boolean> contactsCall = contactsApiService.addContact(
+                  user.getUserId(),
+                  userSearchResult.getUserId()
+               );
 
-                contactsCall.enqueue(new Callback<Boolean>(){
-
-                    @Override
-                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+               contactsCall.enqueue(
+                  new Callback<Boolean>() {
+                     @Override
+                     public void onResponse(
+                        Call<Boolean> call,
+                        Response<Boolean> response
+                     ) {
                         if (response.isSuccessful()) {
-                            Log.e(TAG, ""+response.code());
+                           Log.e(TAG, "" + response.code());
                         }
-                    }
+                     }
 
-                    @Override
-                    public void onFailure(Call<Boolean> call, Throwable t) {
-                        Log.e(TAG, ""+t.getMessage());
-                    }
-                });
+                     @Override
+                     public void onFailure(Call<Boolean> call, Throwable t) {
+                        Log.e(TAG, "" + t.getMessage());
+                     }
+                  }
+               );
             }
-        });
-    }
+         }
+      );
+   }
 
-    @Override
-    public int getItemCount() {
-        return contactList.size();
-    }
+   @Override
+   public int getItemCount() {
+      return contactList.size();
+   }
 
-    public void setContactList(List<User> contactList) {
-        this.contactList = contactList;
-        notifyDataSetChanged();
-    }
+   public void setContactList(List<User> contactList) {
+      this.contactList = contactList;
+      notifyDataSetChanged();
+   }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView imageView;
-        private final TextView txtName;
-        private final TextView txtEmail;
-        private final ImageButton btnAdd;
+   public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imageView = itemView.findViewById(R.id.imgContItem);
-            txtName = itemView.findViewById(R.id.txtContItemName);
-            txtEmail = itemView.findViewById(R.id.txtContItemEmail);
-            btnAdd = itemView.findViewById(R.id.btnContItemAdd);
-        }
-    }
+      private final ImageView imageView;
+      private final TextView txtName;
+      private final TextView txtEmail;
+      private final ImageButton btnAdd;
+
+      public ViewHolder(@NonNull View itemView) {
+         super(itemView);
+         imageView = itemView.findViewById(R.id.imgContItem);
+         txtName = itemView.findViewById(R.id.txtContItemName);
+         txtEmail = itemView.findViewById(R.id.txtContItemEmail);
+         btnAdd = itemView.findViewById(R.id.btnContItemAdd);
+      }
+   }
 }
-

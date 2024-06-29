@@ -1,4 +1,3 @@
 package com.example.szakdolg.contacts;
 
-public class ContactsApiHelper {
-}
+public class ContactsApiHelper {}
