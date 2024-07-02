@@ -46,12 +46,6 @@ public class RegisterActivity extends AppCompatActivity {
       _setOnClickListeners();
    }
 
-   @Override
-   public boolean onSupportNavigateUp() {
-      onBackPressed();
-      return super.onSupportNavigateUp();
-   }
-
    protected void onStart() {
       super.onStart();
    }

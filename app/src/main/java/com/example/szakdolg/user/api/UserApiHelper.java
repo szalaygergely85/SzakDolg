@@ -17,6 +17,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -146,11 +148,12 @@ public class UserApiHelper {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                Log.e(_TAG, "" + response.code());
+               Intent intent;
                if (response.isSuccessful()) {
                   User user = response.body();
 
                   if (user != null) {
-                     Intent intent = new Intent(
+                      intent = new Intent(
                         context,
                         MessageBoardActivity.class
                      );
@@ -168,8 +171,14 @@ public class UserApiHelper {
                      context.startActivity(intent);
                   }
                } else {
-                  Log.e(_TAG, "" + response.code());
-                  //TODO Handle the error
+
+                  Log.e(_TAG, + response.code() + " " + response.errorBody());
+                  SharedPreferencesUtil.deleteStringPreference(context, SharedPreferencesConstans.USERTOKEN);
+                  intent = new Intent(
+                          context,
+                          MainActivity.class);
+
+                  context.startActivity(intent);
                }
             }
 
@@ -226,26 +235,37 @@ public class UserApiHelper {
    public void registerUser(Context context, User user) {
       Call<UserToken> call = _userApiService.createUser(user);
       call.enqueue(
-         new Callback<UserToken>() {
-            @Override
-            public void onResponse(
-               Call<UserToken> call,
-               Response<UserToken> response
-            ) {
-               Log.e(_TAG, "" + response.code());
-               if (response.isSuccessful()) {
-                  UserToken userToken = response.body();
-                  if (userToken != null) {
-                     loginUser(context, user.getPassword(), user.getEmail());
-                  }
-               } else {
-                  Log.e(_TAG, "" + response.code());
-               }
-            }
+              new Callback<UserToken>() {
+                 @Override
+                 public void onResponse(
+                         Call<UserToken> call,
+                         Response<UserToken> response
+                 ) {
+                    Log.e(_TAG, "" + response.code());
+                    if (response.isSuccessful()) {
+                       UserToken userToken = response.body();
+                       if (userToken != null) {
+                          loginUser(context, user.getPassword(), user.getEmail());
+                       }
+                    } else {
+                       if (response.code()== HttpURLConnection.HTTP_CONFLICT){
+                          Toast
+                                  .makeText(
+                                          context,
+                                          "Email already registered",
+                                          Toast.LENGTH_SHORT
+                                  )
+                                  .show();
+                       }else {
+                          Log.e(_TAG, "" + response.code());
+                       }
+                    }
+                 }
 
-            @Override
-            public void onFailure(Call<UserToken> call, Throwable t) {}
-         }
+                 @Override
+                 public void onFailure(Call<UserToken> call, Throwable t) {
+                 }
+              }
       );
    }
 
