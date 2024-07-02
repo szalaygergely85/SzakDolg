@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.MessageTypeConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.UserUtil;
@@ -138,26 +139,37 @@ public class MessageBoardAdapter
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
          }
-         String decryptedContentString = null;
-         try {
-            if (isSenderLoggedUser(messageEntry)) {
-               decryptedContentString =
-               EncryptionHelper.decrypt(
-                  messageEntry.getContentSenderVersion(),
-                  CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
-               );
-            } else {
-               decryptedContentString =
-               EncryptionHelper.decrypt(
-                  messageEntry.getContent(),
-                  CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
-               );
-            }
+         if(messageEntry.getType()==MessageTypeConstans.MESSAGE){
+            String decryptedContentString = null;
+            try {
+               if (isSenderLoggedUser(messageEntry)) {
+                  decryptedContentString =
+                          EncryptionHelper.decrypt(
+                                  messageEntry.getContentSenderVersion(),
+                                  CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
+                          );
+               } else {
+                  decryptedContentString =
+                          EncryptionHelper.decrypt(
+                                  messageEntry.getContent(),
+                                  CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
+                          );
+               }
+
+               holder.txtMessage.setText(decryptedContentString);
+
          } catch (Exception e) {
             throw new RuntimeException(e);
          }
+         }
+         if(messageEntry.getType()==MessageTypeConstans.IMAGE){
+            holder.txtMessage.setText("Image received from:");
+         }
          holder.txtName.setText(participant.getDisplayName());
-         holder.txtMessage.setText(decryptedContentString);
+
+
+
+
 
          // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
          holder.parent.setOnClickListener(

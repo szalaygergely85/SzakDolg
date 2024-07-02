@@ -45,6 +45,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       _initView();
 
+
       loggedUser =
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
@@ -53,6 +54,8 @@ public class MessageBoardActivity extends AppCompatActivity {
          this,
          SharedPreferencesConstans.USERTOKEN
       );
+
+
 
       mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
       setSupportActionBar(mToolbar);
@@ -63,8 +66,17 @@ public class MessageBoardActivity extends AppCompatActivity {
       adapter.setMessageB(messageBoard);
       adapter.setCurrentUser(loggedUser);
 
+
+
       messageBoardRecView.setAdapter(adapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
+
+      messageApiHelper.getLatestMessages(
+              adapter,
+              MessageBoardActivity.this,
+              userToken,
+              loggedUser
+      );
    }
 
    @Override

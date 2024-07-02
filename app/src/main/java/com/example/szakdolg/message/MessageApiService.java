@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface MessageApiService {
    @GET("message/messageboardentries")
@@ -21,9 +23,10 @@ public interface MessageApiService {
       @Header("Authorization") String token
    );
 
-   @GET("message/byconversationid/")
+
+   @GET("message/byconversationid/{id}")
    Call<ArrayList<MessageEntry>> getConversationMessages(
-      @Field("id") long conversationId,
+           @Path("id") long conversationId,
       @Header("Authorization") String token
    );
 }
