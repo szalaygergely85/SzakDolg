@@ -7,10 +7,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.util.SharedPreferencesUtil;
+
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
       setContentView(R.layout.activity_main);
 
       _setPermissions();
+      _scheduleMessageWorker();
    }
 
    @Override
@@ -84,4 +94,21 @@ public class MainActivity extends AppCompatActivity {
          );
       }
    }
+   private void _scheduleMessageWorker() {
+      Constraints constraints = new Constraints.Builder()
+           //   .setRequiredNetworkType(NetworkType.CONNECTED)
+              .setRequiresCharging(false)
+              .build();
+
+      PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(MessageWorker.class, 16, TimeUnit.MINUTES)
+              .setConstraints(constraints)
+              .build();
+
+      WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+              "MessageWorker",
+              ExistingPeriodicWorkPolicy.REPLACE,
+              workRequest
+      );
+   }
+
 }
