@@ -6,11 +6,11 @@ public class MessageEntry implements Serializable {
 
    private Long messageId;
 
-   private long conversationId;
+   private Long conversationId;
 
-   private long senderId;
+   private Long senderId;
 
-   private long timestamp;
+   private Long timestamp;
 
    private String content;
 
@@ -28,7 +28,7 @@ public class MessageEntry implements Serializable {
       this.messageId = messageId;
    }
 
-   public long getConversationId() {
+   public Long getConversationId() {
       return conversationId;
    }
 
@@ -36,7 +36,7 @@ public class MessageEntry implements Serializable {
       this.conversationId = conversationId;
    }
 
-   public long getSenderId() {
+   public Long getSenderId() {
       return senderId;
    }
 
@@ -44,7 +44,7 @@ public class MessageEntry implements Serializable {
       this.senderId = senderId;
    }
 
-   public long getTimestamp() {
+   public Long getTimestamp() {
       return timestamp;
    }
 

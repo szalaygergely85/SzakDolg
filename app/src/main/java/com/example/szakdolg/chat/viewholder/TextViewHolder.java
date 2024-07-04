@@ -32,12 +32,13 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
       Long senderId,
       User currentUser
    ) {
-      txtTextFrMe.setText(decryptedContentString);
+
       txtTimeOut.setText(timeForm);
 
-      if (senderId == currentUser.getUserId()) {
+      if (senderId.equals(currentUser.getUserId())) {
          relIn.setVisibility(View.GONE);
          relOut.setVisibility(View.VISIBLE);
+         txtTextFrMe.setText(decryptedContentString);
       } else {
          relOut.setVisibility(View.GONE);
          relIn.setVisibility(View.VISIBLE);
