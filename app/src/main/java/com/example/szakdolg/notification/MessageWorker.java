@@ -16,6 +16,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.conversation.ConversationApiService;
+import com.example.szakdolg.message.MessageApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.user.entity.User;
@@ -33,9 +34,9 @@ public class MessageWorker extends Worker {
     private static final String CHANNEL_ID = "default_channel_id";
     private static final String CHANNEL_NAME = "Default Channel";
 
-    private ConversationApiService conversationApiService = RetrofitClient
+    private MessageApiService messageApiService = RetrofitClient
             .getRetrofitInstance()
-            .create(ConversationApiService.class);
+            .create(MessageApiService.class);
     String userToken;
 
 
@@ -67,7 +68,7 @@ public class MessageWorker extends Worker {
         Log.e("MessageWorker", "Hellooooooo");
 
         Call<ArrayList<MessageBoard>> call =
-                conversationApiService.getConversationWithNewMessage(
+                messageApiService.getConversationWithNewMessage(
                         userToken
                 );
         call.enqueue(

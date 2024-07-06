@@ -3,6 +3,7 @@ package com.example.szakdolg.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +19,10 @@ import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
+
 import java.util.ArrayList;
 
 public class MessageBoardActivity extends AppCompatActivity {
@@ -45,6 +49,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       _initView();
 
+      setNavMenu();
 
       loggedUser =
       (User) this.getIntent()
@@ -165,5 +170,38 @@ public class MessageBoardActivity extends AppCompatActivity {
 
    private void _stopRepeatingTask() {
       handler.removeCallbacks(runnable);
+   }
+
+   private void setNavMenu(){
+      BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+      bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+         @Override
+         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Intent intent;
+            switch (item.getItemId()) {
+               case R.id.navigation_messages:
+                  // Handle home navigation
+                  return true;
+               case R.id.navigation_group:
+                  // Handle dashboard navigation
+                  return true;
+               case R.id.navigation_chat:
+                  // Handle notifications navigation
+                  return true;
+
+               case R.id.navigation_contact:
+                  Log.e("Ajaj", "ajaj");
+                  intent =
+                          new Intent(MessageBoardActivity.this, ContactsActivity.class);
+                  intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
+                  startActivity(intent);
+                  break;
+
+            }
+            return false;
+         }
+      });
+
    }
 }

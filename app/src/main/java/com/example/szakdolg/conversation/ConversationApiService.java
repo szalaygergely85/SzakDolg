@@ -27,8 +27,5 @@ public interface ConversationApiService {
       @Header("Authorization") String token
    );
 
-   @GET("conversation/new-message")
-   Call<ArrayList<MessageBoard>> getConversationWithNewMessage(
-           @Header("Authorization") String token
-   );
+
 }

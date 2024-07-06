@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
    }
    private void _scheduleMessageWorker() {
       Constraints constraints = new Constraints.Builder()
-           //   .setRequiredNetworkType(NetworkType.CONNECTED)
+              .setRequiredNetworkType(NetworkType.CONNECTED)
               .setRequiresCharging(false)
               .build();
 
