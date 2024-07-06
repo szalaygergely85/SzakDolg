@@ -23,10 +23,10 @@ public interface MessageApiService {
       @Header("Authorization") String token
    );
 
-
    @GET("message/byconversationid/{id}")
    Call<ArrayList<MessageEntry>> getConversationMessages(
            @Path("id") long conversationId,
       @Header("Authorization") String token
    );
+
 }

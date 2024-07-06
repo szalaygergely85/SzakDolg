@@ -11,6 +11,15 @@ public class UserUtil {
             return user;
          }
       }
-      return null; // or throw an exception, or return an Optional<User>
+      return null;
+   }
+
+   public static User getUserByID(List<User> users, Long id) {
+      for (User user : users) {
+         if (user.getUserId().equals(id)) {
+            return user;
+         }
+      }
+      return null;
    }
 }

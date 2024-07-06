@@ -11,20 +11,45 @@ import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.conversation.ConversationApiHelper;
+import com.example.szakdolg.conversation.ConversationApiService;
+import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.user.UserUtil;
+import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.util.SharedPreferencesUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessageWorker extends Worker {
 
     private static final String CHANNEL_ID = "default_channel_id";
     private static final String CHANNEL_NAME = "Default Channel";
 
-    public MessageWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    private ConversationApiService conversationApiService = RetrofitClient
+            .getRetrofitInstance()
+            .create(ConversationApiService.class);
+    String userToken;
+
+
+    public MessageWorker(@NonNull Context context, @NonNull WorkerParameters workerParams
+) {
         super(context, workerParams);
     }
 
     @NonNull
     @Override
     public Result doWork() {
+
+        userToken = SharedPreferencesUtil.getStringPreference(getApplicationContext(), SharedPreferencesConstans.USERTOKEN);
+
         Log.e("MessageWorker", "doWork: Starting background work");
 
         try {
@@ -40,29 +65,35 @@ public class MessageWorker extends Worker {
     private void fetchMessages() {
 
         Log.e("MessageWorker", "Hellooooooo");
-        /*
 
-
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        apiService.getMessages().enqueue(new Callback<List<Message>>() {
-            @Override
-            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Message> messages = response.body();
-                    for (Message message : messages) {
-                        showNotification(getApplicationContext(), "New Message", message.getText());
+        Call<ArrayList<MessageBoard>> call =
+                conversationApiService.getConversationWithNewMessage(
+                        userToken
+                );
+        call.enqueue(
+                new Callback<ArrayList<MessageBoard>>(){
+                    @Override
+                    public void onResponse(Call<ArrayList<MessageBoard>> call, Response<ArrayList<MessageBoard>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<MessageBoard> messageBoardEntries = response.body();
+                            if (messageBoardEntries!= null) {
+                                for (MessageBoard messageBoardEntry : messageBoardEntries) {
+                                    Log.e("Hello message", "Message from" + messageBoardEntry.getMessage().getContent());
+                                    showNotification(getApplicationContext(), "New Message: ", "" + messageBoardEntry.getMessage().getSenderId());
+                                }
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<List<Message>> call, Throwable t) {
-                // Handle failure
-            }
-        });*/
+                    @Override
+                    public void onFailure(Call<ArrayList<MessageBoard>> call, Throwable t) {
+
+                    };
+                });
+
     }
 
-    private void showNotification(Context context, String title, String message) {
+    public void showNotification(Context context, String title, String message) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

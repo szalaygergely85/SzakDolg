@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
 
-      _setPermissions();
       _scheduleMessageWorker();
+      _setPermissions();
+
+
    }
 
    @Override
