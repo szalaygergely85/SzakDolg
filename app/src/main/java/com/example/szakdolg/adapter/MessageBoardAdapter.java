@@ -139,37 +139,32 @@ public class MessageBoardAdapter
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
          }
-         if(messageEntry.getType()==MessageTypeConstans.MESSAGE){
+         if (messageEntry.getType() == MessageTypeConstans.MESSAGE) {
             String decryptedContentString = null;
             try {
                if (isSenderLoggedUser(messageEntry)) {
                   decryptedContentString =
-                          EncryptionHelper.decrypt(
-                                  messageEntry.getContentSenderVersion(),
-                                  CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
-                          );
+                  EncryptionHelper.decrypt(
+                     messageEntry.getContentSenderVersion(),
+                     CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
+                  );
                } else {
                   decryptedContentString =
-                          EncryptionHelper.decrypt(
-                                  messageEntry.getContent(),
-                                  CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
-                          );
+                  EncryptionHelper.decrypt(
+                     messageEntry.getContent(),
+                     CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
+                  );
                }
 
                holder.txtMessage.setText(decryptedContentString);
-
-         } catch (Exception e) {
-            throw new RuntimeException(e);
+            } catch (Exception e) {
+               throw new RuntimeException(e);
+            }
          }
-         }
-         if(messageEntry.getType()==MessageTypeConstans.IMAGE){
+         if (messageEntry.getType() == MessageTypeConstans.IMAGE) {
             holder.txtMessage.setText("Image received from:");
          }
          holder.txtName.setText(participant.getDisplayName());
-
-
-
-
 
          // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
          holder.parent.setOnClickListener(

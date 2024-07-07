@@ -1,6 +1,5 @@
 package com.example.szakdolg.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +17,6 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
-
 import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.R;
 import com.example.szakdolg.adapter.MessageBoardAdapter;
@@ -33,7 +31,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -76,7 +73,6 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       _scheduleMessageWorker();
 
-
       mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
       setSupportActionBar(mToolbar);
 
@@ -86,16 +82,14 @@ public class MessageBoardActivity extends AppCompatActivity {
       adapter.setMessageB(messageBoard);
       adapter.setCurrentUser(_currentUser);
 
-
-
       messageBoardRecView.setAdapter(adapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
 
       messageApiHelper.getLatestMessages(
-              adapter,
-              MessageBoardActivity.this,
-              userToken,
-              _currentUser
+         adapter,
+         MessageBoardActivity.this,
+         userToken,
+         _currentUser
       );
    }
 
@@ -115,7 +109,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                );
                intent.putExtra(
                   SharedPreferencesConstans.CURRENT_USER,
-                       _currentUser
+                  _currentUser
                );
                startActivity(intent);
             }
@@ -136,13 +130,19 @@ public class MessageBoardActivity extends AppCompatActivity {
          case R.id.menuProfile:
             intent =
             new Intent(MessageBoardActivity.this, ProfileActivity.class);
-            intent.putExtra(SharedPreferencesConstans.CURRENT_USER, _currentUser);
+            intent.putExtra(
+               SharedPreferencesConstans.CURRENT_USER,
+               _currentUser
+            );
             startActivity(intent);
             break;
          case R.id.menuContacts:
             intent =
             new Intent(MessageBoardActivity.this, ContactsActivity.class);
-            intent.putExtra(SharedPreferencesConstans.CURRENT_USER, _currentUser);
+            intent.putExtra(
+               SharedPreferencesConstans.CURRENT_USER,
+               _currentUser
+            );
             startActivity(intent);
             break;
          case R.id.menuSingOut:
@@ -172,7 +172,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                   adapter,
                   MessageBoardActivity.this,
                   userToken,
-                       _currentUser
+                  _currentUser
                );
             } finally {
                handler.postDelayed(runnable, 15000);
@@ -187,60 +187,73 @@ public class MessageBoardActivity extends AppCompatActivity {
       handler.removeCallbacks(runnable);
    }
 
-   private void setNavMenu(){
-      BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+   private void setNavMenu() {
+      BottomNavigationView bottomNavigationView = findViewById(
+         R.id.bottom_navigation
+      );
 
-      bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-         @Override
-         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Intent intent;
-            switch (item.getItemId()) {
-               case R.id.navigation_messages:
-                  // Handle home navigation
-                  return true;
-               case R.id.navigation_group:
-                  // Handle dashboard navigation
-                  return true;
-               case R.id.navigation_chat:
-                  // Handle notifications navigation
-                  return true;
-
-               case R.id.navigation_contact:
-                  Log.e("Ajaj", "ajaj");
-                  intent =
-                          new Intent(MessageBoardActivity.this, ContactsActivity.class);
-                  intent.putExtra(SharedPreferencesConstans.CURRENT_USER, _currentUser);
-                  startActivity(intent);
-                  break;
-
+      bottomNavigationView.setOnItemSelectedListener(
+         new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+               Intent intent;
+               switch (item.getItemId()) {
+                  case R.id.navigation_messages:
+                     // Handle home navigation
+                     return true;
+                  case R.id.navigation_group:
+                     // Handle dashboard navigation
+                     return true;
+                  case R.id.navigation_chat:
+                     // Handle notifications navigation
+                     return true;
+                  case R.id.navigation_contact:
+                     Log.e("Ajaj", "ajaj");
+                     intent =
+                     new Intent(
+                        MessageBoardActivity.this,
+                        ContactsActivity.class
+                     );
+                     intent.putExtra(
+                        SharedPreferencesConstans.CURRENT_USER,
+                        _currentUser
+                     );
+                     startActivity(intent);
+                     break;
+               }
+               return false;
             }
-            return false;
          }
-      });
-
+      );
    }
 
    private void _scheduleMessageWorker() {
       Constraints constraints = new Constraints.Builder()
-              .setRequiredNetworkType(NetworkType.CONNECTED)
-              .setRequiresCharging(false)
-              .build();
+         .setRequiredNetworkType(NetworkType.CONNECTED)
+         .setRequiresCharging(false)
+         .build();
 
       String currentUserJson = gson.toJson(_currentUser);
 
       Data inputData = new Data.Builder()
-              .putString(IntentConstans.CURRENT_USER, currentUserJson)
-              .build();
+         .putString(IntentConstans.CURRENT_USER, currentUserJson)
+         .build();
 
-      PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(MessageWorker.class, 16, TimeUnit.MINUTES)
-              .setInputData(inputData)
-              .setConstraints(constraints)
-              .build();
+      PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+         MessageWorker.class,
+         16,
+         TimeUnit.MINUTES
+      )
+         .setInputData(inputData)
+         .setConstraints(constraints)
+         .build();
 
-      WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-              "MessageWorker",
-              ExistingPeriodicWorkPolicy.REPLACE,
-              workRequest
-      );
+      WorkManager
+         .getInstance(this)
+         .enqueueUniquePeriodicWork(
+            "MessageWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            workRequest
+         );
    }
 }

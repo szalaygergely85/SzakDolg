@@ -4,19 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import com.example.szakdolg.DTO.ConversationContent;
-import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
-import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.CacheUtil;
-
-import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -141,12 +137,11 @@ public class ConversationApiHelper {
          }
       );
    }
-   public void getCoversationsWithNewMessage(Context context, String token, Long currentUserId, MessageWorker messageWorker){
 
-
-
-
-
-
-   }
+   public void getCoversationsWithNewMessage(
+      Context context,
+      String token,
+      Long currentUserId,
+      MessageWorker messageWorker
+   ) {}
 }

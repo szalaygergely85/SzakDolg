@@ -4,8 +4,6 @@ import com.example.szakdolg.DTO.MessageBoard;
 import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -25,13 +23,13 @@ public interface MessageApiService {
 
    @GET("message/byconversationid/{id}")
    Call<ArrayList<MessageEntry>> getConversationMessages(
-           @Path("id") long conversationId,
+      @Path("id") long conversationId,
       @Header("Authorization") String token
    );
 
    @Deprecated
    @GET("message/new-message")
    Call<ArrayList<MessageBoard>> getConversationWithNewMessage(
-           @Header("Authorization") String token
+      @Header("Authorization") String token
    );
 }

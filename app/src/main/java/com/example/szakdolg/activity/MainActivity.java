@@ -7,19 +7,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.work.Constraints;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
-
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.util.SharedPreferencesUtil;
-
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,10 +31,7 @@ public class MainActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
 
-
       _setPermissions();
-
-
    }
 
    @Override
@@ -96,6 +84,4 @@ public class MainActivity extends AppCompatActivity {
          );
       }
    }
-
-
 }

@@ -5,130 +5,140 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-
-import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.conversation.ConversationApiHelper;
-import com.example.szakdolg.conversation.ConversationApiService;
-import com.example.szakdolg.message.MessageApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MessageWorker extends Worker {
 
-    private static final String CHANNEL_ID = "default_channel_id";
-    private static final String CHANNEL_NAME = "Default Channel";
+   private static final String CHANNEL_ID = "default_channel_id";
+   private static final String CHANNEL_NAME = "Default Channel";
 
-    private Gson gson = new Gson();
+   private Gson gson = new Gson();
 
-    private User currentUser;
-    private NotificationApiService notificationApiService = RetrofitClient
-            .getRetrofitInstance()
-            .create(NotificationApiService.class);
-    String userToken;
+   private User currentUser;
+   private NotificationApiService notificationApiService = RetrofitClient
+      .getRetrofitInstance()
+      .create(NotificationApiService.class);
+   String userToken;
 
+   public MessageWorker(
+      @NonNull Context context,
+      @NonNull WorkerParameters workerParams
+   ) {
+      super(context, workerParams);
+   }
 
-    public MessageWorker(@NonNull Context context, @NonNull WorkerParameters workerParams
-) {
-        super(context, workerParams);
-    }
+   @NonNull
+   @Override
+   public Result doWork() {
+      userToken =
+      SharedPreferencesUtil.getStringPreference(
+         getApplicationContext(),
+         SharedPreferencesConstans.USERTOKEN
+      );
 
-    @NonNull
-    @Override
-    public Result doWork() {
+      String currentUserJson = getInputData()
+         .getString(IntentConstans.CURRENT_USER);
+      if (currentUserJson != null) {
+         currentUser = gson.fromJson(currentUserJson, User.class);
+      }
 
-        userToken = SharedPreferencesUtil.getStringPreference(getApplicationContext(), SharedPreferencesConstans.USERTOKEN);
+      Log.e("MessageWorker", "doWork: Starting background work");
 
-        String currentUserJson = getInputData().getString(IntentConstans.CURRENT_USER);
-        if (currentUserJson != null) {
-            currentUser = gson.fromJson(currentUserJson, User.class);
-        }
+      try {
+         fetchMessages();
+         Log.e(
+            "MessageWorker",
+            "doWork: Background work completed successfully"
+         );
+         return Result.success();
+      } catch (Throwable throwable) {
+         Log.e("MessageWorker", "doWork: Error occurred", throwable);
+         return Result.failure();
+      }
+   }
 
-        Log.e("MessageWorker", "doWork: Starting background work");
+   private void fetchMessages() {
+      Log.e("MessageWorker", "Hellooooooo");
 
-        try {
-            fetchMessages();
-            Log.e("MessageWorker", "doWork: Background work completed successfully");
-            return Result.success();
-        } catch (Throwable throwable) {
-            Log.e("MessageWorker", "doWork: Error occurred", throwable);
-            return Result.failure();
-        }
-    }
-
-    private void fetchMessages() {
-
-        Log.e("MessageWorker", "Hellooooooo");
-
-        Call<List<Notification>> call =
-                notificationApiService.getActiveNotifications(
-                        userToken
-                );
-        call.enqueue(
-
-
-                new Callback<List<Notification>>(){
-                    @Override
-                    public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            List<Notification> notifications = response.body();
-                            if (notifications!= null) {
-                                for (Notification notification : notifications) {
-                                    Log.e("Hello message", notification.getTitle());
-                                    String decryptContent = null;
-                                    if(currentUser!=null){
-                                        decryptContent= EncryptionHelper.decrypt(
-                                                notification.getContent(),
-                                                CacheUtil.getPrivateKeyFromCache(getApplicationContext(), currentUser)
-                                        );
-                                    }
-                                    showNotification(getApplicationContext(), notification.getTitle(), decryptContent);
-                                }
-                            }
+      Call<List<Notification>> call =
+         notificationApiService.getActiveNotifications(userToken);
+      call.enqueue(
+         new Callback<List<Notification>>() {
+            @Override
+            public void onResponse(
+               Call<List<Notification>> call,
+               Response<List<Notification>> response
+            ) {
+               if (response.isSuccessful() && response.body() != null) {
+                  List<Notification> notifications = response.body();
+                  if (notifications != null) {
+                     for (Notification notification : notifications) {
+                        Log.e("Hello message", notification.getTitle());
+                        String decryptContent = null;
+                        if (currentUser != null) {
+                           decryptContent =
+                           EncryptionHelper.decrypt(
+                              notification.getContent(),
+                              CacheUtil.getPrivateKeyFromCache(
+                                 getApplicationContext(),
+                                 currentUser
+                              )
+                           );
                         }
-                    }
+                        showNotification(
+                           getApplicationContext(),
+                           notification.getTitle(),
+                           decryptContent
+                        );
+                     }
+                  }
+               }
+            }
 
-                    @Override
-                    public void onFailure(Call<List<Notification>> call, Throwable t) {
+            @Override
+            public void onFailure(Call<List<Notification>> call, Throwable t) {}
+         }
+      );
+   }
 
-                    };
-                });
+   public void showNotification(Context context, String title, String message) {
+      NotificationManager notificationManager =
+         (NotificationManager) context.getSystemService(
+            Context.NOTIFICATION_SERVICE
+         );
 
-    }
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+         NotificationChannel channel = new NotificationChannel(
+            CHANNEL_ID,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT
+         );
+         notificationManager.createNotificationChannel(channel);
+      }
 
-    public void showNotification(Context context, String title, String message) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+      NotificationCompat.Builder notificationBuilder =
+         new NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setSmallIcon(R.drawable.ic_menu_notifications)
+            .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setSmallIcon(R.drawable.ic_menu_notifications)
-                .setAutoCancel(true);
-
-        notificationManager.notify(0, notificationBuilder.build());
-    }
+      notificationManager.notify(0, notificationBuilder.build());
+   }
 }

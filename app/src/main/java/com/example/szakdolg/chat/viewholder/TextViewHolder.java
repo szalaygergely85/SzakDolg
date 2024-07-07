@@ -32,7 +32,6 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
       Long senderId,
       User currentUser
    ) {
-
       txtTimeOut.setText(timeForm);
 
       if (senderId.equals(currentUser.getUserId())) {

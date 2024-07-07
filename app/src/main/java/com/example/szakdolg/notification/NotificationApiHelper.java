@@ -4,7 +4,7 @@ import com.example.szakdolg.retrofit.RetrofitClient;
 
 public class NotificationApiHelper {
 
-    private NotificationApiService notificationApiService = RetrofitClient
-            .getRetrofitInstance()
-            .create(NotificationApiService.class);
+   private NotificationApiService notificationApiService = RetrofitClient
+      .getRetrofitInstance()
+      .create(NotificationApiService.class);
 }
