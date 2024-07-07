@@ -1,10 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/chatParent"
+    android:background="@color/primaryLightColor"
     tools:context=".chat.activity.NewChatActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/newChatToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        app:title="Title"
+        app:titleMarginStart="32dp" />
+
+
+    <LinearLayout
+        android:id="@+id/recipient_input_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_below="@id/newChatToolbar"
+        android:layout_toStartOf="@id/endIconImageView"
+        android:orientation="vertical">
+
+        <MultiAutoCompleteTextView
+            android:id="@+id/recipient_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Add recipients..."
+            android:padding="8dp"
+            android:background="@drawable/edittext_background"
+            android:inputType="textEmailAddress"
+            android:completionThreshold="1" />
+
+        <ListView
+            android:id="@+id/dropdown_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/endIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/newChatToolbar"
+        android:layout_below="@id/newChatToolbar"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_contact_search" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recViewNewChat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/relLayNewChatSendBar"
+        android:layout_below="@id/recipient_input_container"
+        android:layout_alignParentBottom="false"
+        android:padding="5dp" />
+
+    <RelativeLayout
+        android:id="@+id/relLayNewChatSendBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btnNewChatSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/primaryDarkColor"
+            android:text="@string/send"
+            android:textColor="@color/primaryTextColor" />
+
+        <com.example.szakdolg.MyEditText
+            android:id="@+id/edtNewChatMes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_toStartOf="@id/btnNewChatSend"
+            android:inputType="textMultiLine|textCapSentences"
+            android:hint="Type a message"
+            android:maxLength="150"
+            android:minHeight="48dp"
+            android:textColor="@color/primaryTextColor" />
+    </RelativeLayout>
+
+</RelativeLayout>

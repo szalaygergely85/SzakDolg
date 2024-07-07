@@ -20,6 +20,7 @@ import androidx.work.WorkManager;
 import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.R;
 import com.example.szakdolg.adapter.MessageBoardAdapter;
+import com.example.szakdolg.chat.activity.NewChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
@@ -105,7 +106,7 @@ public class MessageBoardActivity extends AppCompatActivity {
             public void onClick(View view) {
                Intent intent = new Intent(
                   MessageBoardActivity.this,
-                  ContactsActivity.class
+                  NewChatActivity.class
                );
                intent.putExtra(
                   SharedPreferencesConstans.CURRENT_USER,
