@@ -93,7 +93,7 @@ public class MessageApiHelper {
                if (response.isSuccessful()) {
                   Log.e(TAG, "" + response.body());
 
-                  reloadMessages(conversationId, adapter, null);
+                  reloadMessages(conversationId, adapter, userToken);
                } else {
                   Log.e(TAG, "" + response.code());
                   //TODO Handle the error
