@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
 
-      _scheduleMessageWorker();
+
       _setPermissions();
 
 
@@ -96,21 +96,6 @@ public class MainActivity extends AppCompatActivity {
          );
       }
    }
-   private void _scheduleMessageWorker() {
-      Constraints constraints = new Constraints.Builder()
-              .setRequiredNetworkType(NetworkType.CONNECTED)
-              .setRequiresCharging(false)
-              .build();
 
-      PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(MessageWorker.class, 16, TimeUnit.MINUTES)
-              .setConstraints(constraints)
-              .build();
-
-      WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-              "MessageWorker",
-              ExistingPeriodicWorkPolicy.REPLACE,
-              workRequest
-      );
-   }
 
 }

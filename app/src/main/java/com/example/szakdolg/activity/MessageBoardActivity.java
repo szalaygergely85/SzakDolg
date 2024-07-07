@@ -1,5 +1,6 @@
 package com.example.szakdolg.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,19 +12,30 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.R;
 import com.example.szakdolg.adapter.MessageBoardAdapter;
+import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
+import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class MessageBoardActivity extends AppCompatActivity {
 
@@ -32,7 +44,7 @@ public class MessageBoardActivity extends AppCompatActivity {
    private RecyclerView messageBoardRecView;
    private MessageBoardAdapter adapter;
    private MaterialToolbar mToolbar;
-   private User loggedUser;
+   private User _currentUser;
    ArrayList<MessageBoard> messageBoard = new ArrayList<>();
 
    private MessageApiHelper messageApiHelper = new MessageApiHelper();
@@ -41,6 +53,8 @@ public class MessageBoardActivity extends AppCompatActivity {
 
    private Handler handler = new Handler();
    private Runnable runnable;
+
+   private Gson gson = new Gson();
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +65,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       setNavMenu();
 
-      loggedUser =
+      _currentUser =
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
       userToken =
@@ -60,6 +74,7 @@ public class MessageBoardActivity extends AppCompatActivity {
          SharedPreferencesConstans.USERTOKEN
       );
 
+      _scheduleMessageWorker();
 
 
       mToolbar = (MaterialToolbar) findViewById(R.id.messageBoardToolbar);
@@ -69,7 +84,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       adapter = new MessageBoardAdapter(this, userToken);
       adapter.setMessageB(messageBoard);
-      adapter.setCurrentUser(loggedUser);
+      adapter.setCurrentUser(_currentUser);
 
 
 
@@ -80,7 +95,7 @@ public class MessageBoardActivity extends AppCompatActivity {
               adapter,
               MessageBoardActivity.this,
               userToken,
-              loggedUser
+              _currentUser
       );
    }
 
@@ -100,7 +115,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                );
                intent.putExtra(
                   SharedPreferencesConstans.CURRENT_USER,
-                  loggedUser
+                       _currentUser
                );
                startActivity(intent);
             }
@@ -121,13 +136,13 @@ public class MessageBoardActivity extends AppCompatActivity {
          case R.id.menuProfile:
             intent =
             new Intent(MessageBoardActivity.this, ProfileActivity.class);
-            intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
+            intent.putExtra(SharedPreferencesConstans.CURRENT_USER, _currentUser);
             startActivity(intent);
             break;
          case R.id.menuContacts:
             intent =
             new Intent(MessageBoardActivity.this, ContactsActivity.class);
-            intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
+            intent.putExtra(SharedPreferencesConstans.CURRENT_USER, _currentUser);
             startActivity(intent);
             break;
          case R.id.menuSingOut:
@@ -157,7 +172,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                   adapter,
                   MessageBoardActivity.this,
                   userToken,
-                  loggedUser
+                       _currentUser
                );
             } finally {
                handler.postDelayed(runnable, 15000);
@@ -194,7 +209,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                   Log.e("Ajaj", "ajaj");
                   intent =
                           new Intent(MessageBoardActivity.this, ContactsActivity.class);
-                  intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
+                  intent.putExtra(SharedPreferencesConstans.CURRENT_USER, _currentUser);
                   startActivity(intent);
                   break;
 
@@ -203,5 +218,29 @@ public class MessageBoardActivity extends AppCompatActivity {
          }
       });
 
+   }
+
+   private void _scheduleMessageWorker() {
+      Constraints constraints = new Constraints.Builder()
+              .setRequiredNetworkType(NetworkType.CONNECTED)
+              .setRequiresCharging(false)
+              .build();
+
+      String currentUserJson = gson.toJson(_currentUser);
+
+      Data inputData = new Data.Builder()
+              .putString(IntentConstans.CURRENT_USER, currentUserJson)
+              .build();
+
+      PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(MessageWorker.class, 16, TimeUnit.MINUTES)
+              .setInputData(inputData)
+              .setConstraints(constraints)
+              .build();
+
+      WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+              "MessageWorker",
+              ExistingPeriodicWorkPolicy.REPLACE,
+              workRequest
+      );
    }
 }

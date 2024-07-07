@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.activity.MainActivity;
 import com.example.szakdolg.activity.MessageBoardActivity;
+import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
@@ -158,7 +159,7 @@ public class UserApiHelper {
                         MessageBoardActivity.class
                      );
                      intent.putExtra(
-                        SharedPreferencesConstans.CURRENT_USER,
+                        IntentConstans.CURRENT_USER,
                         user
                      );
                      Toast

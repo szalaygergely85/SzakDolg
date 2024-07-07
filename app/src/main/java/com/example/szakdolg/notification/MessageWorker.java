@@ -13,6 +13,7 @@ import androidx.work.WorkerParameters;
 
 import com.example.szakdolg.DTO.MessageBoard;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.conversation.ConversationApiService;
@@ -20,7 +21,10 @@ import com.example.szakdolg.message.MessageApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.util.CacheUtil;
+import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.SharedPreferencesUtil;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,9 @@ public class MessageWorker extends Worker {
     private static final String CHANNEL_ID = "default_channel_id";
     private static final String CHANNEL_NAME = "Default Channel";
 
+    private Gson gson = new Gson();
+
+    private User currentUser;
     private NotificationApiService notificationApiService = RetrofitClient
             .getRetrofitInstance()
             .create(NotificationApiService.class);
@@ -50,6 +57,11 @@ public class MessageWorker extends Worker {
     public Result doWork() {
 
         userToken = SharedPreferencesUtil.getStringPreference(getApplicationContext(), SharedPreferencesConstans.USERTOKEN);
+
+        String currentUserJson = getInputData().getString(IntentConstans.CURRENT_USER);
+        if (currentUserJson != null) {
+            currentUser = gson.fromJson(currentUserJson, User.class);
+        }
 
         Log.e("MessageWorker", "doWork: Starting background work");
 
@@ -82,7 +94,14 @@ public class MessageWorker extends Worker {
                             if (notifications!= null) {
                                 for (Notification notification : notifications) {
                                     Log.e("Hello message", notification.getTitle());
-                                    showNotification(getApplicationContext(), notification.getTitle(), notification.getContent());
+                                    String decryptContent = null;
+                                    if(currentUser!=null){
+                                        decryptContent= EncryptionHelper.decrypt(
+                                                notification.getContent(),
+                                                CacheUtil.getPrivateKeyFromCache(getApplicationContext(), currentUser)
+                                        );
+                                    }
+                                    showNotification(getApplicationContext(), notification.getTitle(), decryptContent);
                                 }
                             }
                         }
