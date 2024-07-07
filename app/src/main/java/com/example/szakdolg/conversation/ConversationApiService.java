@@ -1,11 +1,9 @@
 package com.example.szakdolg.conversation;
 
 import com.example.szakdolg.DTO.ConversationContent;
-import com.example.szakdolg.DTO.MessageBoard;
-import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;

@@ -34,9 +34,9 @@ public class MessageWorker extends Worker {
     private static final String CHANNEL_ID = "default_channel_id";
     private static final String CHANNEL_NAME = "Default Channel";
 
-    private MessageApiService messageApiService = RetrofitClient
+    private NotificationApiService notificationApiService = RetrofitClient
             .getRetrofitInstance()
-            .create(MessageApiService.class);
+            .create(NotificationApiService.class);
     String userToken;
 
 
@@ -67,27 +67,29 @@ public class MessageWorker extends Worker {
 
         Log.e("MessageWorker", "Hellooooooo");
 
-        Call<ArrayList<MessageBoard>> call =
-                messageApiService.getConversationWithNewMessage(
+        Call<List<Notification>> call =
+                notificationApiService.getActiveNotifications(
                         userToken
                 );
         call.enqueue(
-                new Callback<ArrayList<MessageBoard>>(){
+
+
+                new Callback<List<Notification>>(){
                     @Override
-                    public void onResponse(Call<ArrayList<MessageBoard>> call, Response<ArrayList<MessageBoard>> response) {
+                    public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            List<MessageBoard> messageBoardEntries = response.body();
-                            if (messageBoardEntries!= null) {
-                                for (MessageBoard messageBoardEntry : messageBoardEntries) {
-                                    Log.e("Hello message", "Message from" + messageBoardEntry.getMessage().getContent());
-                                    showNotification(getApplicationContext(), "New Message: ", "" + messageBoardEntry.getMessage().getSenderId());
+                            List<Notification> notifications = response.body();
+                            if (notifications!= null) {
+                                for (Notification notification : notifications) {
+                                    Log.e("Hello message", notification.getTitle());
+                                    showNotification(getApplicationContext(), notification.getTitle(), notification.getContent());
                                 }
                             }
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ArrayList<MessageBoard>> call, Throwable t) {
+                    public void onFailure(Call<List<Notification>> call, Throwable t) {
 
                     };
                 });
