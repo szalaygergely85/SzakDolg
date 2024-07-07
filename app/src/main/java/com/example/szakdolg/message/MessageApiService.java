@@ -29,6 +29,7 @@ public interface MessageApiService {
       @Header("Authorization") String token
    );
 
+   @Deprecated
    @GET("message/new-message")
    Call<ArrayList<MessageBoard>> getConversationWithNewMessage(
            @Header("Authorization") String token
