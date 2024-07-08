@@ -21,6 +21,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.contacts.ContactsApiHelper;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,10 +33,12 @@ public class NewChatActivity extends AppCompatActivity {
    private MultiAutoCompleteTextView recipientInput;
    private ArrayAdapter<String> dropdownAdapter;
    private ArrayList<String> contacts;
-   private ArrayList<String> existingContacts;
 
+   private ContactsApiHelper contactsApiHelper= new ContactsApiHelper();
    private Button btnSend;
    private MyEditText edtMess;
+
+   private String _token;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +48,15 @@ public class NewChatActivity extends AppCompatActivity {
       _setToolbar();
       initView();
 
+      _token =
+              SharedPreferencesUtil.getStringPreference(
+                      this,
+                      SharedPreferencesConstans.USERTOKEN
+              );
 
 
 
-
-      contacts = new ArrayList<>(Arrays.asList("Alice", "Bob", "Charlie", "Dave", "Eve"));
-      existingContacts = new ArrayList<>(Arrays.asList("Alice", "Charlie", "Eve"));
+      contacts = new ArrayList();
 
       dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, contacts);
 
@@ -56,6 +64,8 @@ public class NewChatActivity extends AppCompatActivity {
       recipientInput.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 
       recipientInput.setThreshold(1);
+
+      contactsApiHelper.getContactsToMultiTextView(this, _token, recipientInput, contacts);
 
       setListeners();
 
@@ -109,7 +119,7 @@ public class NewChatActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid recipient removed", Toast.LENGTH_SHORT).show();
          } else {
             // Optional: Change text color for existing contacts
-            recipientInput.setTextColor(existingContacts.contains(lastRecipient) ? Color.BLUE : Color.BLACK);
+            recipientInput.setTextColor(contacts.contains(lastRecipient) ? Color.BLUE : Color.BLACK);
          }
       }
    }
