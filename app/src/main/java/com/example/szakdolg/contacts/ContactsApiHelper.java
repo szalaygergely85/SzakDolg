@@ -1,11 +1,13 @@
 package com.example.szakdolg.contacts;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.MultiAutoCompleteTextView;
 
+import com.example.szakdolg.chat.activity.NewChatActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
@@ -23,12 +25,11 @@ public class ContactsApiHelper {
             .getRetrofitInstance()
             .create(ContactsApiService.class);
 
-    public interface OnContactsLoadedListener {
-        void onContactsLoaded(ArrayList<String> loadedContacts);
-        void onError(String errorMessage);
+    public interface ContactsCallback {
+        void onContactsFetched(List<String> newContacts);
     }
 
-public void getContactsToMultiTextView(Context context, String userToken, MultiAutoCompleteTextView recipientInput, OnContactsLoadedListener listener){
+public void getContactsToMultiTextView(Context context, String userToken, ContactsCallback callback){
     Call<List<User>> contactsCall = contactsApiService.getContacts(userToken);
 
     contactsCall.enqueue(
@@ -39,14 +40,16 @@ public void getContactsToMultiTextView(Context context, String userToken, MultiA
                         Response<List<User>> response
                 ) {
                     if (response.isSuccessful()) {
+                        List<String> contacts = new ArrayList<>();
                         List<User> contactList = response.body();
                         for(User contact : contactList){
                             contacts.add(contact.getDisplayName());
                         }
 
-                        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, contacts);
+                        if (callback!=null){
+                            callback.onContactsFetched(contacts);}
 
-                        recipientInput.setAdapter(dropdownAdapter);
+
                     }
                 }
 

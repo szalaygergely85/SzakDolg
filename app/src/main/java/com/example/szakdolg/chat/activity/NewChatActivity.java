@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,12 +28,13 @@ import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class NewChatActivity extends AppCompatActivity {
 
    private MultiAutoCompleteTextView recipientInput;
    private ArrayAdapter<String> dropdownAdapter;
-   private ArrayList<String> contacts;
+   private List<String> contacts;
 
    private ContactsApiHelper contactsApiHelper= new ContactsApiHelper();
    private Button btnSend;
@@ -62,16 +64,32 @@ public class NewChatActivity extends AppCompatActivity {
 
       recipientInput.setAdapter(dropdownAdapter);
       recipientInput.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-
       recipientInput.setThreshold(1);
 
-      contactsApiHelper.getContactsToMultiTextView(this, _token, recipientInput, contacts);
+      contactsApiHelper.getContactsToMultiTextView(this, _token, new ContactsApiHelper.ContactsCallback() {
+
+         @Override
+         public void onContactsFetched(List<String> newContacts) {
+            contacts.clear();
+            contacts.addAll(newContacts);
+
+            dropdownAdapter.notifyDataSetChanged();
+         }
+      });
 
       setListeners();
 
    }
 
    private void setListeners() {
+
+      btnSend.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view) {
+            Log.e("", recipientInput.getText().toString());
+         }
+      });
+
       recipientInput.addTextChangedListener(new TextWatcher() {
          @Override
          public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -138,4 +156,5 @@ public class NewChatActivity extends AppCompatActivity {
          validateLastRecipient();
       }
    };
+
 }
