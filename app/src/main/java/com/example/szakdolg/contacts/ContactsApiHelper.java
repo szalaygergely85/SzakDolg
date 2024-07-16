@@ -26,7 +26,7 @@ public class ContactsApiHelper {
             .create(ContactsApiService.class);
 
     public interface ContactsCallback {
-        void onContactsFetched(List<String> newContacts);
+        void onContactsFetched(List<User> newContacts);
     }
 
 public void getContactsToMultiTextView(Context context, String userToken, ContactsCallback callback){
@@ -40,14 +40,15 @@ public void getContactsToMultiTextView(Context context, String userToken, Contac
                         Response<List<User>> response
                 ) {
                     if (response.isSuccessful()) {
-                        List<String> contacts = new ArrayList<>();
+                        //List<String> contacts = new ArrayList<>();
                         List<User> contactList = response.body();
+                        /*
                         for(User contact : contactList){
                             contacts.add(contact.getDisplayName());
-                        }
+                        }*/
 
                         if (callback!=null){
-                            callback.onContactsFetched(contacts);}
+                            callback.onContactsFetched(contactList);}
 
 
                     }

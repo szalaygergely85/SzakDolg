@@ -24,6 +24,8 @@ import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiHelper;
+import com.example.szakdolg.user.UserUtil;
+import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ public class NewChatActivity extends AppCompatActivity {
    private MultiAutoCompleteTextView recipientInput;
    private ArrayAdapter<String> dropdownAdapter;
    private List<String> contacts;
+
+   private List<User> contactUsers;
 
    private ContactsApiHelper contactsApiHelper= new ContactsApiHelper();
    private Button btnSend;
@@ -69,9 +73,16 @@ public class NewChatActivity extends AppCompatActivity {
       contactsApiHelper.getContactsToMultiTextView(this, _token, new ContactsApiHelper.ContactsCallback() {
 
          @Override
-         public void onContactsFetched(List<String> newContacts) {
+         public void onContactsFetched(List<User> newContacts) {
+
             contacts.clear();
-            contacts.addAll(newContacts);
+
+            for (User user : newContacts) {
+               String displayNameWithId = user.getDisplayName() + " [" + user.getUserId()  + "]";
+               contacts.add(displayNameWithId);
+
+            }
+
 
             dropdownAdapter.notifyDataSetChanged();
          }
@@ -86,7 +97,15 @@ public class NewChatActivity extends AppCompatActivity {
       btnSend.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View view) {
-            Log.e("", recipientInput.getText().toString());
+            String recipients = recipientInput.getText().toString();
+            List<String> recipientIds = new ArrayList<>();
+            for (String recipient : recipients.split(", ")) {
+               String id = extractIdFromDisplayName(recipient.trim());
+               if (id != null) {
+                  recipientIds.add(id);
+               }
+            }
+            Log.e("Recipients", recipientIds.toString());
          }
       });
 
@@ -156,5 +175,13 @@ public class NewChatActivity extends AppCompatActivity {
          validateLastRecipient();
       }
    };
+
+   private String extractIdFromDisplayName(String displayNameWithId) {
+      if (displayNameWithId.contains("[")) {
+         return displayNameWithId.substring(displayNameWithId.indexOf("[") + 1, displayNameWithId.indexOf("]"));
+      }
+      return null;
+   }
+
 
 }
