@@ -5,32 +5,20 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.chat.adapter.UserAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiHelper;
-import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class NewChatActivity extends AppCompatActivity {
@@ -53,60 +41,80 @@ public class NewChatActivity extends AppCompatActivity {
       _setToolbar();
       initView();
 
-      _token = SharedPreferencesUtil.getStringPreference(
-              this,
-              SharedPreferencesConstans.USERTOKEN
+      _token =
+      SharedPreferencesUtil.getStringPreference(
+         this,
+         SharedPreferencesConstans.USERTOKEN
       );
 
       contacts = new ArrayList<>();
 
-      dropdownAdapter = new UserAdapter(this, android.R.layout.simple_list_item_1, contacts);
+      dropdownAdapter =
+      new UserAdapter(this, android.R.layout.simple_list_item_1, contacts);
       recipientInput.setAdapter(dropdownAdapter);
-      recipientInput.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+      recipientInput.setTokenizer(
+         new MultiAutoCompleteTextView.CommaTokenizer()
+      );
       recipientInput.setThreshold(1);
 
-      contactsApiHelper.getContactsToMultiTextView(this, _token, new ContactsApiHelper.ContactsCallback() {
-         @Override
-         public void onContactsFetched(List<User> newContacts) {
-            contacts.clear();
-            contacts.addAll(newContacts);
-            dropdownAdapter.updateUsers(newContacts);
+      contactsApiHelper.getContactsToMultiTextView(
+         this,
+         _token,
+         new ContactsApiHelper.ContactsCallback() {
+            @Override
+            public void onContactsFetched(List<User> newContacts) {
+               contacts.clear();
+               contacts.addAll(newContacts);
+               dropdownAdapter.updateUsers(newContacts);
+            }
          }
-      });
+      );
 
       setListeners();
    }
 
    private void setListeners() {
-      btnSend.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
-            String recipients = recipientInput.getText().toString();
-            List<String> recipientIds = new ArrayList<>();
-            for (String recipient : recipients.split(", ")) {
-               String id = extractIdFromDisplayName(recipient.trim());
-               if (id != null) {
-                  recipientIds.add(id);
+      btnSend.setOnClickListener(
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               String recipients = recipientInput.getText().toString();
+               List<String> recipientIds = new ArrayList<>();
+               for (String recipient : recipients.split(", ")) {
+                  String id = extractIdFromDisplayName(recipient.trim());
+                  if (id != null) {
+                     recipientIds.add(id);
+                  }
                }
+               Log.e("Recipients", recipientIds.toString());
             }
-            Log.e("Recipients", recipientIds.toString());
          }
-      });
+      );
 
-      recipientInput.addTextChangedListener(new TextWatcher() {
-         @Override
-         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-         }
+      recipientInput.addTextChangedListener(
+         new TextWatcher() {
+            @Override
+            public void beforeTextChanged(
+               CharSequence s,
+               int start,
+               int count,
+               int after
+            ) {}
 
-         @Override
-         public void onTextChanged(CharSequence s, int start, int before, int count) {
-         }
+            @Override
+            public void onTextChanged(
+               CharSequence s,
+               int start,
+               int before,
+               int count
+            ) {}
 
-         @Override
-         public void afterTextChanged(Editable s) {
-            validateLastRecipient();
+            @Override
+            public void afterTextChanged(Editable s) {
+               validateLastRecipient();
+            }
          }
-      });
+      );
    }
 
    private void initView() {
@@ -132,14 +140,22 @@ public class NewChatActivity extends AppCompatActivity {
             for (int i = 0; i < recipients.length - 1; i++) {
                validRecipients.append(recipients[i]).append(", ");
             }
-            recipientInput.removeTextChangedListener(validateRecipientInputWatcher);
+            recipientInput.removeTextChangedListener(
+               validateRecipientInputWatcher
+            );
             recipientInput.setText(validRecipients.toString());
             recipientInput.setSelection(validRecipients.length());
-            recipientInput.addTextChangedListener(validateRecipientInputWatcher);
-            Toast.makeText(this, "Invalid recipient removed", Toast.LENGTH_SHORT).show();
+            recipientInput.addTextChangedListener(
+               validateRecipientInputWatcher
+            );
+            Toast
+               .makeText(this, "Invalid recipient removed", Toast.LENGTH_SHORT)
+               .show();
          } else {
             // Optional: Change text color for existing contacts
-            recipientInput.setTextColor(isValidRecipient(lastRecipient) ? Color.BLUE : Color.BLACK);
+            recipientInput.setTextColor(
+               isValidRecipient(lastRecipient) ? Color.BLUE : Color.BLACK
+            );
          }
       }
    }
@@ -164,12 +180,20 @@ public class NewChatActivity extends AppCompatActivity {
 
    private TextWatcher validateRecipientInputWatcher = new TextWatcher() {
       @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-      }
+      public void beforeTextChanged(
+         CharSequence s,
+         int start,
+         int count,
+         int after
+      ) {}
 
       @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-      }
+      public void onTextChanged(
+         CharSequence s,
+         int start,
+         int before,
+         int count
+      ) {}
 
       @Override
       public void afterTextChanged(Editable s) {

@@ -172,8 +172,6 @@ public class ChatActivity extends AppCompatActivity {
       chatRecView = findViewById(R.id.recViewChat);
       btnSend = findViewById(R.id.btnChatSend);
       edtMess = findViewById(R.id.edtChatMes);
-
-
    }
 
    private void _startRepeatingTask() {
