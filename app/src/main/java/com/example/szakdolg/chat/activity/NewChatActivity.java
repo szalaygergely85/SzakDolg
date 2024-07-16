@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
+import com.example.szakdolg.chat.adapter.UserAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiHelper;
 import com.example.szakdolg.user.UserUtil;
@@ -35,12 +36,10 @@ import java.util.List;
 public class NewChatActivity extends AppCompatActivity {
 
    private MultiAutoCompleteTextView recipientInput;
-   private ArrayAdapter<String> dropdownAdapter;
-   private List<String> contacts;
+   private UserAdapter dropdownAdapter;
+   private List<User> contacts;
 
-   private List<User> contactUsers;
-
-   private ContactsApiHelper contactsApiHelper= new ContactsApiHelper();
+   private ContactsApiHelper contactsApiHelper = new ContactsApiHelper();
    private Button btnSend;
    private MyEditText edtMess;
 
@@ -54,46 +53,31 @@ public class NewChatActivity extends AppCompatActivity {
       _setToolbar();
       initView();
 
-      _token =
-              SharedPreferencesUtil.getStringPreference(
-                      this,
-                      SharedPreferencesConstans.USERTOKEN
-              );
+      _token = SharedPreferencesUtil.getStringPreference(
+              this,
+              SharedPreferencesConstans.USERTOKEN
+      );
 
+      contacts = new ArrayList<>();
 
-
-      contacts = new ArrayList();
-
-      dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, contacts);
-
+      dropdownAdapter = new UserAdapter(this, android.R.layout.simple_list_item_1, contacts);
       recipientInput.setAdapter(dropdownAdapter);
       recipientInput.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
       recipientInput.setThreshold(1);
 
       contactsApiHelper.getContactsToMultiTextView(this, _token, new ContactsApiHelper.ContactsCallback() {
-
          @Override
          public void onContactsFetched(List<User> newContacts) {
-
             contacts.clear();
-
-            for (User user : newContacts) {
-               String displayNameWithId = user.getDisplayName() + " [" + user.getUserId()  + "]";
-               contacts.add(displayNameWithId);
-
-            }
-
-
-            dropdownAdapter.notifyDataSetChanged();
+            contacts.addAll(newContacts);
+            dropdownAdapter.updateUsers(newContacts);
          }
       });
 
       setListeners();
-
    }
 
    private void setListeners() {
-
       btnSend.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View view) {
@@ -132,8 +116,7 @@ public class NewChatActivity extends AppCompatActivity {
    }
 
    private void _setToolbar() {
-
-      Toolbar mToolbar = (Toolbar) findViewById(R.id.newChatToolbar);
+      Toolbar mToolbar = findViewById(R.id.newChatToolbar);
       mToolbar.setTitle("New Message");
       setSupportActionBar(mToolbar);
    }
@@ -143,7 +126,7 @@ public class NewChatActivity extends AppCompatActivity {
       if (text.endsWith(", ")) {
          String[] recipients = text.split(", ");
          String lastRecipient = recipients[recipients.length - 1].trim();
-         if (!contacts.contains(lastRecipient)) {
+         if (!isValidRecipient(lastRecipient)) {
             // Remove the invalid recipient
             StringBuilder validRecipients = new StringBuilder();
             for (int i = 0; i < recipients.length - 1; i++) {
@@ -156,9 +139,27 @@ public class NewChatActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid recipient removed", Toast.LENGTH_SHORT).show();
          } else {
             // Optional: Change text color for existing contacts
-            recipientInput.setTextColor(contacts.contains(lastRecipient) ? Color.BLUE : Color.BLACK);
+            recipientInput.setTextColor(isValidRecipient(lastRecipient) ? Color.BLUE : Color.BLACK);
          }
       }
+   }
+
+   private boolean isValidRecipient(String recipient) {
+      for (User user : contacts) {
+         if (user.getDisplayName().equals(recipient)) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   private String extractIdFromDisplayName(String displayName) {
+      for (User user : contacts) {
+         if (user.getDisplayName().equals(displayName)) {
+            return user.getUserId().toString();
+         }
+      }
+      return null;
    }
 
    private TextWatcher validateRecipientInputWatcher = new TextWatcher() {
@@ -175,13 +176,4 @@ public class NewChatActivity extends AppCompatActivity {
          validateLastRecipient();
       }
    };
-
-   private String extractIdFromDisplayName(String displayNameWithId) {
-      if (displayNameWithId.contains("[")) {
-         return displayNameWithId.substring(displayNameWithId.indexOf("[") + 1, displayNameWithId.indexOf("]"));
-      }
-      return null;
-   }
-
-
 }
