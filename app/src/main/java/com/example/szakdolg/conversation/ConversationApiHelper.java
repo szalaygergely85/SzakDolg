@@ -8,6 +8,7 @@ import com.example.szakdolg.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
+import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.UserUtil;
@@ -28,6 +29,35 @@ public class ConversationApiHelper {
       .getRetrofitInstance()
       .create(ConversationApiService.class);
 
+   public void addNewConversation(List<Long> userIds, String message, String token){
+
+      Call<Long> call = conversationApiService.addNewConversation(
+              userIds,
+              token
+      );
+
+      call.enqueue(new Callback<Long>() {
+
+         @Override
+         public void onResponse(Call<Long> call, Response<Long> response) {
+            if (response.isSuccessful()) {
+               Long conversationId =response.body();
+               if (conversationId!=null){
+                  /*
+                  new MessageEntry(conversationId)
+                  messageApiHelper.sendMessage(conversationId);*/
+               }
+
+            }
+         }
+
+         @Override
+         public void onFailure(Call<Long> call, Throwable t) {
+
+         }
+      });
+
+   }
    public void openConversation(
       Context context,
       Long conversationId,
@@ -138,10 +168,4 @@ public class ConversationApiHelper {
       );
    }
 
-   public void getCoversationsWithNewMessage(
-      Context context,
-      String token,
-      Long currentUserId,
-      MessageWorker messageWorker
-   ) {}
 }

@@ -22,4 +22,9 @@ public interface ConversationApiService {
       @Body List<User> participants,
       @Header("Authorization") String token
    );
+
+   @POST("conversation/id")
+    Call<Long> addNewConversation(
+            @Body List<Long> userIds,
+            @Header("Authorization") String token);
 }

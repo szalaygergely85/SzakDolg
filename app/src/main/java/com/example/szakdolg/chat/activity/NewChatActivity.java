@@ -16,6 +16,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.chat.adapter.UserAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiHelper;
+import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
@@ -27,11 +28,14 @@ public class NewChatActivity extends AppCompatActivity {
    private UserAdapter dropdownAdapter;
    private List<User> contacts;
 
+   private ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
    private ContactsApiHelper contactsApiHelper = new ContactsApiHelper();
    private Button btnSend;
    private MyEditText edtMess;
 
    private String _token;
+
+   private User currentUser;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,10 @@ public class NewChatActivity extends AppCompatActivity {
          this,
          SharedPreferencesConstans.USERTOKEN
       );
+
+      currentUser =
+              (User) this.getIntent()
+                      .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
 
       contacts = new ArrayList<>();
 
@@ -79,14 +87,16 @@ public class NewChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                String recipients = recipientInput.getText().toString();
-               List<String> recipientIds = new ArrayList<>();
+               List<Long> recipientIds = new ArrayList<>();
                for (String recipient : recipients.split(", ")) {
-                  String id = extractIdFromDisplayName(recipient.trim());
+                  Long id = Long.valueOf(extractIdFromDisplayName(recipient.trim()));
                   if (id != null) {
                      recipientIds.add(id);
                   }
                }
-               Log.e("Recipients", recipientIds.toString());
+
+               recipientIds.add(currentUser.getUserId());
+               _sendMessage(recipientIds, edtMess.getText().toString());
             }
          }
       );
@@ -115,6 +125,10 @@ public class NewChatActivity extends AppCompatActivity {
             }
          }
       );
+   }
+
+   private void _sendMessage(List<Long> recipientIds, String message) {
+    conversationApiHelper.addNewConversation(recipientIds, message, _token );
    }
 
    private void initView() {
