@@ -96,7 +96,7 @@ public class NewChatActivity extends AppCompatActivity {
                }
 
                recipientIds.add(currentUser.getUserId());
-               _sendMessage(recipientIds, edtMess.getText().toString());
+               conversationApiHelper.addNewConversationAndSendMessage(recipientIds, edtMess.getText().toString(), _token, currentUser, NewChatActivity.this);
             }
          }
       );
@@ -125,10 +125,6 @@ public class NewChatActivity extends AppCompatActivity {
             }
          }
       );
-   }
-
-   private void _sendMessage(List<Long> recipientIds, String message) {
-    conversationApiHelper.addNewConversation(recipientIds, message, _token );
    }
 
    private void initView() {

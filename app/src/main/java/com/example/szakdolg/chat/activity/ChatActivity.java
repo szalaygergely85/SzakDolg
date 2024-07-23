@@ -15,6 +15,7 @@ import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
+import com.example.szakdolg.chat.helper.ChatHelper;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.MessageTypeConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
@@ -53,6 +54,8 @@ public class ChatActivity extends AppCompatActivity {
 
    private String _token;
 
+   private ChatHelper chatHelper;
+
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -61,42 +64,15 @@ public class ChatActivity extends AppCompatActivity {
       _initView();
       //  _startRepeatingTask();
 
-      edtMess.setKeyBoardInputCallbackListener(
-         new MyEditText.KeyBoardInputCallbackListener() {
-            @Override
-            public void onCommitContent(
-               InputContentInfoCompat inputContentInfo,
-               int flags,
-               Bundle opts
-            ) {
-               _sendFile(inputContentInfo.getLinkUri());
-            }
-         }
-      );
+      _getSharedPrefAndIntentExtras();
 
-      _token =
-      SharedPreferencesUtil.getStringPreference(
-         this,
-         SharedPreferencesConstans.USERTOKEN
-      );
-      currentUser =
-      (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+      _setListeners();
 
-      conversationId =
-      this.getIntent()
-         .getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
-      conversationContent =
-      (ConversationContent) this.getIntent()
-         .getSerializableExtra(IntentConstans.CONVERSATION_CONTENT);
-      otherUser =
-      UserUtil.removeCurrentUserFromList(
-         conversationContent.getParticipants(),
-         currentUser.getUserId()
-      );
 
       adapter = new ChatAdapter(this, currentUser);
       adapter.setMessageEntries(conversationContent.getMessages());
+
+      chatHelper = new ChatHelper(this, conversationId, currentUser, _token, adapter);
 
       chatRecView.setAdapter(adapter);
       chatRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -110,44 +86,85 @@ public class ChatActivity extends AppCompatActivity {
          actionBar.setDisplayHomeAsUpEnabled(true);
       }
 
-      btnSend.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               String content = edtMess.getText().toString();
-               if (!content.isEmpty()) {
-                  try {
-                     if (otherUser != null && currentUser != null) {
-                        String encryptedContentString =
-                           EncryptionHelper.encrypt(
-                              content,
-                              CacheUtil.getPublicKeyFromCache(
-                                 ChatActivity.this,
-                                 otherUser.getEmail()
-                              )
-                           );
 
-                        String encryptedContentSenderVersion =
-                           EncryptionHelper.encrypt(
-                              content,
-                              currentUser.getPublicKey()
-                           );
+   }
 
-                        _sendMessage(
-                           MessageTypeConstans.MESSAGE,
-                           encryptedContentSenderVersion,
-                           encryptedContentString
-                        );
-
-                        edtMess.getText().clear();
-                     }
-                  } catch (Exception e) {
-                     throw new RuntimeException(e);
-                  }
-               }
-            }
-         }
+   private void _setListeners() {
+      edtMess.setKeyBoardInputCallbackListener(
+              new MyEditText.KeyBoardInputCallbackListener() {
+                 @Override
+                 public void onCommitContent(
+                         InputContentInfoCompat inputContentInfo,
+                         int flags,
+                         Bundle opts
+                 ) {
+                    _sendFile(inputContentInfo.getLinkUri());
+                 }
+              }
       );
+
+      btnSend.setOnClickListener(
+              new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+                    String content = edtMess.getText().toString();
+                    if (!content.isEmpty()) {
+                       try {
+                          if (otherUser != null && currentUser != null) {
+                             String encryptedContentString =
+                                     EncryptionHelper.encrypt(
+                                             content,
+                                             CacheUtil.getPublicKeyFromCache(
+                                                     ChatActivity.this,
+                                                     otherUser.getEmail()
+                                             )
+                                     );
+
+                             String encryptedContentSenderVersion =
+                                     EncryptionHelper.encrypt(
+                                             content,
+                                             currentUser.getPublicKey()
+                                     );
+
+                             chatHelper.sendMessage(
+                                     MessageTypeConstans.MESSAGE,
+                                     encryptedContentSenderVersion,
+                                     encryptedContentString
+                             );
+
+                             edtMess.getText().clear();
+                          }
+                       } catch (Exception e) {
+                          throw new RuntimeException(e);
+                       }
+                    }
+                 }
+              }
+      );
+
+   }
+
+   private void _getSharedPrefAndIntentExtras() {
+      _token =
+              SharedPreferencesUtil.getStringPreference(
+                      this,
+                      SharedPreferencesConstans.USERTOKEN
+              );
+      currentUser =
+              (User) this.getIntent()
+                      .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+
+      conversationId =
+              this.getIntent()
+                      .getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
+      conversationContent =
+              (ConversationContent) this.getIntent()
+                      .getSerializableExtra(IntentConstans.CONVERSATION_CONTENT);
+      otherUser =
+              UserUtil.removeCurrentUserFromList(
+                      conversationContent.getParticipants(),
+                      currentUser.getUserId()
+              );
    }
 
    @Override

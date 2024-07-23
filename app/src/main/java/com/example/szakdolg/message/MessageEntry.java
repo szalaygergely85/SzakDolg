@@ -20,6 +20,10 @@ public class MessageEntry implements Serializable {
 
    private String contentSenderVersion;
 
+   public MessageEntry() {
+
+   }
+
    public Long getMessageId() {
       return messageId;
    }
@@ -113,6 +117,21 @@ public class MessageEntry implements Serializable {
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
+      this.content = content;
+      this.type = type;
+      this.contentSenderVersion = contentSenderVersion;
+   }
+
+   public MessageEntry(
+           long conversationId,
+           long senderId,
+           String content,
+           int type,
+           String contentSenderVersion
+   ) {
+      this.conversationId = conversationId;
+      this.senderId = senderId;
+      this.timestamp = System.currentTimeMillis();
       this.content = content;
       this.type = type;
       this.contentSenderVersion = contentSenderVersion;

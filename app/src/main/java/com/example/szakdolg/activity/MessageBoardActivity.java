@@ -23,6 +23,7 @@ import com.example.szakdolg.adapter.MessageBoardAdapter;
 import com.example.szakdolg.chat.activity.NewChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.db.util.DatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.user.entity.User;

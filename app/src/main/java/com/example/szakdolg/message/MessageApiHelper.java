@@ -70,6 +70,42 @@ public class MessageApiHelper {
       );
    }
 
+    public void sendMessageAndOpenChat(
+            Long conversationId,
+            MessageEntry messageEntry,
+            String userToken
+    ) {
+        Call<MessageEntry> call = messageApiService.sendMessage(
+                messageEntry,
+                userToken
+        );
+
+        call.enqueue(
+                new Callback<MessageEntry>() {
+                    @Override
+                    public void onResponse(
+                            Call<MessageEntry> call,
+                            Response<MessageEntry> response
+                    ) {
+                        Log.e(TAG, "" + response.code());
+
+                        if (response.isSuccessful()) {
+                            Log.e(TAG, "" + response.body());
+
+                        } else {
+                            Log.e(TAG, "" + response.code());
+                            //TODO Handle the error
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MessageEntry> call, Throwable t) {
+                        Log.e(TAG, "" + t.getMessage());
+                    }
+                }
+        );
+    }
+
    public void sendMessage(
       Long conversationId,
       MessageEntry messageEntry,

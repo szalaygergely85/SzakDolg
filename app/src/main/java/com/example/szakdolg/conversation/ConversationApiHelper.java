@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
+import com.example.szakdolg.constans.MessageTypeConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
@@ -29,7 +30,7 @@ public class ConversationApiHelper {
       .getRetrofitInstance()
       .create(ConversationApiService.class);
 
-   public void addNewConversation(List<Long> userIds, String message, String token){
+   public void addNewConversationAndSendMessage(List<Long> userIds, String message, String token, User currentUser, Context context){
 
       Call<Long> call = conversationApiService.addNewConversation(
               userIds,
@@ -43,9 +44,8 @@ public class ConversationApiHelper {
             if (response.isSuccessful()) {
                Long conversationId =response.body();
                if (conversationId!=null){
-                  /*
-                  new MessageEntry(conversationId)
-                  messageApiHelper.sendMessage(conversationId);*/
+                  messageApiHelper.sendMessageAndOpenChat(conversationId, new MessageEntry(conversationId, currentUser.getUserId(), message, MessageTypeConstans.MESSAGE, message), token);
+                  openConversation(conversationId, context, currentUser, token);
                }
 
             }
