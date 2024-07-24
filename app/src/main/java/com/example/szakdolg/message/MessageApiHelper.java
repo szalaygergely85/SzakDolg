@@ -2,8 +2,8 @@ package com.example.szakdolg.message;
 
 import android.content.Context;
 import android.util.Log;
-import com.example.szakdolg.DTO.MessageBoard;
-import com.example.szakdolg.adapter.MessageBoardAdapter;
+import com.example.szakdolg.messageboard.DTO.MessageBoard;
+import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.file.apiservice.FileApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;

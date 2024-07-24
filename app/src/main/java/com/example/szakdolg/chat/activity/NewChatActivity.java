@@ -28,8 +28,8 @@ public class NewChatActivity extends AppCompatActivity {
    private UserAdapter dropdownAdapter;
    private List<User> contacts;
 
-   private ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
-   private ContactsApiHelper contactsApiHelper = new ContactsApiHelper();
+   private final ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
+   private final ContactsApiHelper contactsApiHelper = new ContactsApiHelper();
    private Button btnSend;
    private MyEditText edtMess;
 
@@ -83,22 +83,19 @@ public class NewChatActivity extends AppCompatActivity {
 
    private void setListeners() {
       btnSend.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               String recipients = recipientInput.getText().toString();
-               List<Long> recipientIds = new ArrayList<>();
-               for (String recipient : recipients.split(", ")) {
-                  Long id = Long.valueOf(extractIdFromDisplayName(recipient.trim()));
-                  if (id != null) {
-                     recipientIds.add(id);
-                  }
-               }
+              view -> {
+                 String recipients = recipientInput.getText().toString();
+                 List<Long> recipientIds = new ArrayList<>();
+                 for (String recipient : recipients.split(", ")) {
+                    Long id = Long.valueOf(extractIdFromDisplayName(recipient.trim()));
+                    if (id != null) {
+                       recipientIds.add(id);
+                    }
+                 }
 
-               recipientIds.add(currentUser.getUserId());
-               conversationApiHelper.addNewConversationAndSendMessage(recipientIds, edtMess.getText().toString(), _token, currentUser, NewChatActivity.this);
-            }
-         }
+                 recipientIds.add(currentUser.getUserId());
+                 conversationApiHelper.addNewConversationAndSendMessage(recipientIds, edtMess.getText().toString(), _token, currentUser, NewChatActivity.this);
+              }
       );
 
       recipientInput.addTextChangedListener(

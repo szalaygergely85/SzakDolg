@@ -1,6 +1,6 @@
 package com.example.szakdolg.message;
 
-import com.example.szakdolg.DTO.MessageBoard;
+import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.Body;

@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.activity.MainActivity;
-import com.example.szakdolg.activity.MessageBoardActivity;
+import com.example.szakdolg.messageboard.activity.MessageBoardActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.retrofit.RetrofitClient;

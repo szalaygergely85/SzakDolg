@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity;
+package com.example.szakdolg.messageboard.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,13 +17,14 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
-import com.example.szakdolg.DTO.MessageBoard;
+import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.R;
-import com.example.szakdolg.adapter.MessageBoardAdapter;
+import com.example.szakdolg.activity.ContactsActivity;
+import com.example.szakdolg.activity.ProfileActivity;
+import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.chat.activity.NewChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.db.util.DatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.user.entity.User;

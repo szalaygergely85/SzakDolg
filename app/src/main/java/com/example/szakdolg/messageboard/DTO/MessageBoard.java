@@ -1,4 +1,4 @@
-package com.example.szakdolg.DTO;
+package com.example.szakdolg.messageboard.DTO;
 
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;

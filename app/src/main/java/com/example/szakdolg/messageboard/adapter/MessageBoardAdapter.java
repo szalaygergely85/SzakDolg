@@ -1,4 +1,4 @@
-package com.example.szakdolg.adapter;
+package com.example.szakdolg.messageboard.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.szakdolg.DTO.MessageBoard;
+import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.MessageTypeConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
