@@ -8,6 +8,8 @@ import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
 
+import java.util.List;
+
 public class ChatHelper {
     private Long conversationId;
     private User currentUser;
@@ -51,5 +53,9 @@ public class ChatHelper {
                 authToken
         );
         messageApiHelper.reloadMessages(conversationId, chatAdapter, authToken);
+    }
+
+    public List<MessageEntry> getMessages(Long conversationId){
+        return databaseUtil.getAllMessageEntriesOfConversation(conversationId);
     }
 }

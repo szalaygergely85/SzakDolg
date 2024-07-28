@@ -2,6 +2,8 @@ package com.example.szakdolg.message;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.example.szakdolg.db.util.DatabaseUtil;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
@@ -18,7 +20,6 @@ import retrofit2.Response;
 
 public class MessageApiHelper {
 
-   private String userToken;
    private final String TAG = "MessageApiHelper";
 
    private MessageApiService messageApiService = RetrofitClient
@@ -30,6 +31,31 @@ public class MessageApiHelper {
 
    private UserApiHelper userApiHelper = new UserApiHelper();
    User loggedUser;
+
+    public void checkCachedMessages(String authToken, Context context) {
+        DatabaseUtil databaseUtil = new DatabaseUtil(context);
+        Call<ArrayList<MessageEntry>> call = messageApiService.getMessagesAndCompareWithLocal(databaseUtil.getMessageEntryCount(), authToken);
+
+        call.enqueue(
+                new Callback<ArrayList<MessageEntry>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<MessageEntry>> call, Response<ArrayList<MessageEntry>> response) {
+                        if(response.isSuccessful()){
+                            if(response.body().size()>0){
+                                CacheUtil.validateMessages(response.body());
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<MessageEntry>> call, Throwable t) {
+
+                    }
+                });
+
+    }
+
 
    public void reloadMessages(
       Long conversationId,
@@ -204,4 +230,6 @@ public class MessageApiHelper {
       }
       return null; // or throw an exception, or return an Optional<User>
    }
+
+
 }

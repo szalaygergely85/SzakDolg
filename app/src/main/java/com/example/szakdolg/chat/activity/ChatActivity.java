@@ -70,9 +70,10 @@ public class ChatActivity extends AppCompatActivity {
 
 
       adapter = new ChatAdapter(this, currentUser);
-      adapter.setMessageEntries(conversationContent.getMessages());
 
       chatHelper = new ChatHelper(this, conversationId, currentUser, _token, adapter);
+
+      adapter.setMessageEntries(chatHelper.getMessages(conversationId));
 
       chatRecView.setAdapter(adapter);
       chatRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -211,29 +212,6 @@ public class ChatActivity extends AppCompatActivity {
       };
 
       runnable.run();
-   }
-
-   private void _sendMessage(
-      int messageType,
-      String encryptedContentSenderVersion,
-      String encryptedContentString
-   ) {
-      MessageEntry messageEntry = new MessageEntry(
-         conversationId,
-         currentUser.getUserId(),
-         System.currentTimeMillis(),
-         encryptedContentString,
-         messageType,
-         encryptedContentSenderVersion
-      );
-
-      messageApiHelper.sendMessage(
-         conversationId,
-         messageEntry,
-         adapter,
-         _token
-      );
-      messageApiHelper.reloadMessages(conversationId, adapter, _token);
    }
 
    private void _stopRepeatingTask() {

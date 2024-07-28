@@ -2,8 +2,11 @@ package com.example.szakdolg.util;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CacheUtil {
@@ -54,4 +57,7 @@ public class CacheUtil {
 
       return privateKey;
    }
+
+    public static void validateMessages(ArrayList<MessageEntry> messageEntries) {
+    }
 }

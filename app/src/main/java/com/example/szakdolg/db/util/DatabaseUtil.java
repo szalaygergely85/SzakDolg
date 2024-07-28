@@ -66,6 +66,48 @@ public class DatabaseUtil {
         return messages;
     }
 
+    public List<MessageEntry> getAllMessageEntriesOfConversation(Long conversationId) {
+        List<MessageEntry> messages = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.query("MessageEntry", null, "conversationId = ?", new String[]{String.valueOf(conversationId)}, null, null, null);
+
+            while (cursor.moveToNext()) {
+                MessageEntry message = new MessageEntry();
+                message.setMessageId(cursor.getLong(cursor.getColumnIndexOrThrow("messageId")));
+                message.setConversationId(cursor.getLong(cursor.getColumnIndexOrThrow("conversationId")));
+                message.setSenderId(cursor.getLong(cursor.getColumnIndexOrThrow("senderId")));
+                message.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
+                message.setContent(cursor.getString(cursor.getColumnIndexOrThrow("content")));
+                message.setRead(cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1);
+                message.setType(cursor.getInt(cursor.getColumnIndexOrThrow("type")));
+                message.setContentSenderVersion(cursor.getString(cursor.getColumnIndexOrThrow("contentSenderVersion")));
+                messages.add(message);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
+        return messages;
+
+
+    }
+    public Long getMessageEntryCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String countQuery = "SELECT COUNT(*) FROM " + dbHelper.TABLE_MESSAGE_ENTRY;
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.moveToFirst();
+        Long count = cursor.getLong(0);
+        cursor.close();
+        db.close();
+        return count;
+    }
+
     public void updateMessageEntry(MessageEntry message) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {

@@ -9,7 +9,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "mydatabase.db";
     private static final int DATABASE_VERSION = 1;
 
-    private static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
+    public static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
 
     private static final String CREATE_TABLE_MESSAGE_ENTRY =
             "CREATE TABLE " + TABLE_MESSAGE_ENTRY + " (" +

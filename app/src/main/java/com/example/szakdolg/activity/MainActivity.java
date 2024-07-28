@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
    private static final int WRITE_PERMISSION_CODE = 203;
    private String _token;
    private UserApiHelper _userApiHelper = new UserApiHelper();
+
+   private MessageApiHelper _messageApiHelper = new MessageApiHelper();
 
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,6 +48,21 @@ public class MainActivity extends AppCompatActivity {
       );
 
       if (_token != null) {
+
+         long cacheExpireTimeMillis = SharedPreferencesUtil.getLongPreference(
+                 this,
+                 SharedPreferencesConstans.CACHE_EXPIRE
+         );
+
+         if (isCacheExpired(cacheExpireTimeMillis)) {
+            new Thread(new Runnable() {
+               @Override
+               public void run() {
+                  _refreshDatabaseTask();
+               }
+            }).start();
+         }
+
          _userApiHelper.getUserByTokenAndNavigateToActivity(
             MainActivity.this,
             _token
@@ -54,6 +72,19 @@ public class MainActivity extends AppCompatActivity {
          startActivity(intent);
          finish();
       }
+   }
+
+   private void _refreshDatabaseTask() {
+      _messageApiHelper.checkCachedMessages(_token, this);
+   }
+
+   private boolean isCacheExpired(long cacheExpireTimeMillis) {
+      if (cacheExpireTimeMillis == -1) {
+         return true;
+      }
+
+      long currentTimeMillis = System.currentTimeMillis();
+      return currentTimeMillis > cacheExpireTimeMillis;
    }
 
    private void _setPermissions() {

@@ -40,4 +40,16 @@ public class SharedPreferencesUtil {
       editor.remove(key);
       editor.apply();
    }
+
+   public static long getLongPreference(Context context, String key) {
+      SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+      return preferences.getLong(key, -1);
+   }
+
+   public static void setLongPreference(Context context, String key, long value) {
+      SharedPreferences preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+      SharedPreferences.Editor editor = preferences.edit();
+      editor.putLong(key, value);
+      editor.apply();
+   }
 }

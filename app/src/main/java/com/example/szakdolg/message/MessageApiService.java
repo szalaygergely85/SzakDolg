@@ -4,10 +4,12 @@ import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface MessageApiService {
    @GET("message/messageboardentries")
@@ -25,6 +27,12 @@ public interface MessageApiService {
    Call<ArrayList<MessageEntry>> getConversationMessages(
       @Path("id") long conversationId,
       @Header("Authorization") String token
+   );
+
+   @GET("message/validate")
+   Call<ArrayList<MessageEntry>> getMessagesAndCompareWithLocal(
+           @Query("count") Long count,
+           @Header("Authorization") String token
    );
 
    @Deprecated
