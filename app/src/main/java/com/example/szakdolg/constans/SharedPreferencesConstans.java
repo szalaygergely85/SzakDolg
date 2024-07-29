@@ -11,4 +11,3 @@ public class SharedPreferencesConstans {
 
    public static final String CACHE_EXPIRE = "cache_date";
 }
-

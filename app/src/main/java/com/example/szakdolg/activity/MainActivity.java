@@ -48,19 +48,21 @@ public class MainActivity extends AppCompatActivity {
       );
 
       if (_token != null) {
-
          long cacheExpireTimeMillis = SharedPreferencesUtil.getLongPreference(
-                 this,
-                 SharedPreferencesConstans.CACHE_EXPIRE
+            this,
+            SharedPreferencesConstans.CACHE_EXPIRE
          );
 
          if (isCacheExpired(cacheExpireTimeMillis)) {
-            new Thread(new Runnable() {
-               @Override
-               public void run() {
-                  _refreshDatabaseTask();
+            new Thread(
+               new Runnable() {
+                  @Override
+                  public void run() {
+                     _refreshDatabaseTask();
+                  }
                }
-            }).start();
+            )
+               .start();
          }
 
          _userApiHelper.getUserByTokenAndNavigateToActivity(

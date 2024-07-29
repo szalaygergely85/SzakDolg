@@ -10,7 +10,6 @@ import com.example.szakdolg.constans.MessageTypeConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.user.entity.User;
@@ -30,34 +29,52 @@ public class ConversationApiHelper {
       .getRetrofitInstance()
       .create(ConversationApiService.class);
 
-   public void addNewConversationAndSendMessage(List<Long> userIds, String message, String token, User currentUser, Context context){
-
+   public void addNewConversationAndSendMessage(
+      List<Long> userIds,
+      String message,
+      String token,
+      User currentUser,
+      Context context
+   ) {
       Call<Long> call = conversationApiService.addNewConversation(
-              userIds,
-              token
+         userIds,
+         token
       );
 
-      call.enqueue(new Callback<Long>() {
-
-         @Override
-         public void onResponse(Call<Long> call, Response<Long> response) {
-            if (response.isSuccessful()) {
-               Long conversationId =response.body();
-               if (conversationId!=null){
-                  messageApiHelper.sendMessageAndOpenChat(conversationId, new MessageEntry(conversationId, currentUser.getUserId(), message, MessageTypeConstans.MESSAGE, message), token);
-                  openConversation(conversationId, context, currentUser, token);
+      call.enqueue(
+         new Callback<Long>() {
+            @Override
+            public void onResponse(Call<Long> call, Response<Long> response) {
+               if (response.isSuccessful()) {
+                  Long conversationId = response.body();
+                  if (conversationId != null) {
+                     messageApiHelper.sendMessageAndOpenChat(
+                        conversationId,
+                        new MessageEntry(
+                           conversationId,
+                           currentUser.getUserId(),
+                           message,
+                           MessageTypeConstans.MESSAGE,
+                           message
+                        ),
+                        token
+                     );
+                     openConversation(
+                        conversationId,
+                        context,
+                        currentUser,
+                        token
+                     );
+                  }
                }
-
             }
+
+            @Override
+            public void onFailure(Call<Long> call, Throwable t) {}
          }
-
-         @Override
-         public void onFailure(Call<Long> call, Throwable t) {
-
-         }
-      });
-
+      );
    }
+
    public void openConversation(
       Context context,
       Long conversationId,
@@ -167,5 +184,4 @@ public class ConversationApiHelper {
          }
       );
    }
-
 }

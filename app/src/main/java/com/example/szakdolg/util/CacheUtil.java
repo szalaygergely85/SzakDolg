@@ -2,12 +2,13 @@ package com.example.szakdolg.util;
 
 import android.content.Context;
 import android.util.Log;
-
+import com.example.szakdolg.db.util.DatabaseUtil;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CacheUtil {
 
@@ -58,6 +59,25 @@ public class CacheUtil {
       return privateKey;
    }
 
-    public static void validateMessages(ArrayList<MessageEntry> messageEntries) {
-    }
+   public static void validateMessages(
+      ArrayList<MessageEntry> messageEntries,
+      Context context
+   ) {
+      DatabaseUtil databaseUtil = new DatabaseUtil(context);
+      List<String> localMessageUUIds = databaseUtil.getAllMessageUuids();
+
+      if (messageEntries == null || messageEntries.isEmpty()) {
+         throw new IllegalArgumentException(
+            "messageEntries should not be null or empty"
+         );
+      }
+
+      if (localMessageUUIds.size() < messageEntries.size()) {
+         for (MessageEntry messageEntry : messageEntries) {
+            if (!localMessageUUIds.contains(messageEntry.getuUId())) {
+               databaseUtil.insertMessageEntry(messageEntry);
+            }
+         }
+      }
+   }
 }

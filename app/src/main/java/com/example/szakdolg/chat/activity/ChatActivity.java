@@ -68,10 +68,10 @@ public class ChatActivity extends AppCompatActivity {
 
       _setListeners();
 
-
       adapter = new ChatAdapter(this, currentUser);
 
-      chatHelper = new ChatHelper(this, conversationId, currentUser, _token, adapter);
+      chatHelper =
+      new ChatHelper(this, conversationId, currentUser, _token, adapter);
 
       adapter.setMessageEntries(chatHelper.getMessages(conversationId));
 
@@ -86,86 +86,83 @@ public class ChatActivity extends AppCompatActivity {
       if (actionBar != null) {
          actionBar.setDisplayHomeAsUpEnabled(true);
       }
-
-
    }
 
    private void _setListeners() {
       edtMess.setKeyBoardInputCallbackListener(
-              new MyEditText.KeyBoardInputCallbackListener() {
-                 @Override
-                 public void onCommitContent(
-                         InputContentInfoCompat inputContentInfo,
-                         int flags,
-                         Bundle opts
-                 ) {
-                    _sendFile(inputContentInfo.getLinkUri());
-                 }
-              }
+         new MyEditText.KeyBoardInputCallbackListener() {
+            @Override
+            public void onCommitContent(
+               InputContentInfoCompat inputContentInfo,
+               int flags,
+               Bundle opts
+            ) {
+               _sendFile(inputContentInfo.getLinkUri());
+            }
+         }
       );
 
       btnSend.setOnClickListener(
-              new View.OnClickListener() {
-                 @Override
-                 public void onClick(View view) {
-                    String content = edtMess.getText().toString();
-                    if (!content.isEmpty()) {
-                       try {
-                          if (otherUser != null && currentUser != null) {
-                             String encryptedContentString =
-                                     EncryptionHelper.encrypt(
-                                             content,
-                                             CacheUtil.getPublicKeyFromCache(
-                                                     ChatActivity.this,
-                                                     otherUser.getEmail()
-                                             )
-                                     );
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               String content = edtMess.getText().toString();
+               if (!content.isEmpty()) {
+                  try {
+                     if (otherUser != null && currentUser != null) {
+                        String encryptedContentString =
+                           EncryptionHelper.encrypt(
+                              content,
+                              CacheUtil.getPublicKeyFromCache(
+                                 ChatActivity.this,
+                                 otherUser.getEmail()
+                              )
+                           );
 
-                             String encryptedContentSenderVersion =
-                                     EncryptionHelper.encrypt(
-                                             content,
-                                             currentUser.getPublicKey()
-                                     );
+                        String encryptedContentSenderVersion =
+                           EncryptionHelper.encrypt(
+                              content,
+                              currentUser.getPublicKey()
+                           );
 
-                             chatHelper.sendMessage(
-                                     MessageTypeConstans.MESSAGE,
-                                     encryptedContentSenderVersion,
-                                     encryptedContentString
-                             );
+                        chatHelper.sendMessage(
+                           MessageTypeConstans.MESSAGE,
+                           encryptedContentSenderVersion,
+                           encryptedContentString
+                        );
 
-                             edtMess.getText().clear();
-                          }
-                       } catch (Exception e) {
-                          throw new RuntimeException(e);
-                       }
-                    }
-                 }
-              }
+                        edtMess.getText().clear();
+                     }
+                  } catch (Exception e) {
+                     throw new RuntimeException(e);
+                  }
+               }
+            }
+         }
       );
-
    }
 
    private void _getSharedPrefAndIntentExtras() {
       _token =
-              SharedPreferencesUtil.getStringPreference(
-                      this,
-                      SharedPreferencesConstans.USERTOKEN
-              );
+      SharedPreferencesUtil.getStringPreference(
+         this,
+         SharedPreferencesConstans.USERTOKEN
+      );
       currentUser =
-              (User) this.getIntent()
-                      .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+      (User) this.getIntent()
+         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
 
       conversationId =
-              this.getIntent()
-                      .getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
+      this.getIntent()
+         .getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
       conversationContent =
-              (ConversationContent) this.getIntent()
-                      .getSerializableExtra(IntentConstans.CONVERSATION_CONTENT);
+      (ConversationContent) this.getIntent()
+         .getSerializableExtra(IntentConstans.CONVERSATION_CONTENT);
       otherUser =
-              UserUtil.removeCurrentUserFromList(
-                      conversationContent.getParticipants(),
-                      currentUser.getUserId()
-              );
+      UserUtil.removeCurrentUserFromList(
+         conversationContent.getParticipants(),
+         currentUser.getUserId()
+      );
    }
 
    @Override
@@ -236,7 +233,8 @@ public class ChatActivity extends AppCompatActivity {
             System.currentTimeMillis(),
             uUId + "." + FileUtil.getFileExtensionFromUri(uri),
             MessageTypeConstans.IMAGE,
-            null
+            null,
+            UUIDUtil.UUIDGenerator()
          );
          FileUtil.saveFileFromUri(
             uri,

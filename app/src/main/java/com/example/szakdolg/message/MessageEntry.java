@@ -20,9 +20,9 @@ public class MessageEntry implements Serializable {
 
    private String contentSenderVersion;
 
-   public MessageEntry() {
+   private String uUId;
 
-   }
+   public MessageEntry() {}
 
    public Long getMessageId() {
       return messageId;
@@ -80,30 +80,44 @@ public class MessageEntry implements Serializable {
       this.type = type;
    }
 
+   public String getuUId() {
+      return uUId;
+   }
+
+   public void setuUId(String uUId) {
+      this.uUId = uUId;
+   }
+
+   @Deprecated
    public MessageEntry(
       long conversationId,
       long senderId,
       long timestamp,
-      String content
+      String content,
+      String uUId
    ) {
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
       this.content = content;
+      this.uUId = uUId;
    }
 
+   @Deprecated
    public MessageEntry(
       Long messageId,
       long conversationId,
       long senderId,
       long timestamp,
-      String content
+      String content,
+      String uUId
    ) {
       this.messageId = messageId;
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
       this.content = content;
+      this.uUId = uUId;
    }
 
    public MessageEntry(
@@ -112,7 +126,8 @@ public class MessageEntry implements Serializable {
       long timestamp,
       String content,
       int type,
-      String contentSenderVersion
+      String contentSenderVersion,
+      String uUId
    ) {
       this.conversationId = conversationId;
       this.senderId = senderId;
@@ -120,14 +135,15 @@ public class MessageEntry implements Serializable {
       this.content = content;
       this.type = type;
       this.contentSenderVersion = contentSenderVersion;
+      this.uUId = uUId;
    }
 
    public MessageEntry(
-           long conversationId,
-           long senderId,
-           String content,
-           int type,
-           String contentSenderVersion
+      long conversationId,
+      long senderId,
+      String content,
+      int type,
+      String contentSenderVersion
    ) {
       this.conversationId = conversationId;
       this.senderId = senderId;
@@ -159,6 +175,16 @@ public class MessageEntry implements Serializable {
          timestamp +
          ", content='" +
          content +
+         '\'' +
+         ", isRead=" +
+         isRead +
+         ", type=" +
+         type +
+         ", contentSenderVersion='" +
+         contentSenderVersion +
+         '\'' +
+         ", uUId='" +
+         uUId +
          '\'' +
          '}'
       );

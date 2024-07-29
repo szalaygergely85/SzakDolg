@@ -2,12 +2,11 @@ package com.example.szakdolg.message;
 
 import android.content.Context;
 import android.util.Log;
-
+import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.db.util.DatabaseUtil;
+import com.example.szakdolg.file.apiservice.FileApiService;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
-import com.example.szakdolg.chat.adapter.ChatAdapter;
-import com.example.szakdolg.file.apiservice.FileApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.user.entity.User;
@@ -32,30 +31,36 @@ public class MessageApiHelper {
    private UserApiHelper userApiHelper = new UserApiHelper();
    User loggedUser;
 
-    public void checkCachedMessages(String authToken, Context context) {
-        DatabaseUtil databaseUtil = new DatabaseUtil(context);
-        Call<ArrayList<MessageEntry>> call = messageApiService.getMessagesAndCompareWithLocal(databaseUtil.getMessageEntryCount(), authToken);
+   public void checkCachedMessages(String authToken, Context context) {
+      DatabaseUtil databaseUtil = new DatabaseUtil(context);
+      Call<ArrayList<MessageEntry>> call =
+         messageApiService.getMessagesAndCompareWithLocal(
+            databaseUtil.getMessageEntryCount(),
+            authToken
+         );
 
-        call.enqueue(
-                new Callback<ArrayList<MessageEntry>>() {
-                    @Override
-                    public void onResponse(Call<ArrayList<MessageEntry>> call, Response<ArrayList<MessageEntry>> response) {
-                        if(response.isSuccessful()){
-                            if(response.body().size()>0){
-                                CacheUtil.validateMessages(response.body());
-                            }
-                        }
+      call.enqueue(
+         new Callback<ArrayList<MessageEntry>>() {
+            @Override
+            public void onResponse(
+               Call<ArrayList<MessageEntry>> call,
+               Response<ArrayList<MessageEntry>> response
+            ) {
+               if (response.isSuccessful()) {
+                  if (response.body().size() > 0) {
+                     CacheUtil.validateMessages(response.body(), context);
+                  }
+               }
+            }
 
-                    }
-
-                    @Override
-                    public void onFailure(Call<ArrayList<MessageEntry>> call, Throwable t) {
-
-                    }
-                });
-
-    }
-
+            @Override
+            public void onFailure(
+               Call<ArrayList<MessageEntry>> call,
+               Throwable t
+            ) {}
+         }
+      );
+   }
 
    public void reloadMessages(
       Long conversationId,
@@ -96,41 +101,40 @@ public class MessageApiHelper {
       );
    }
 
-    public void sendMessageAndOpenChat(
-            Long conversationId,
-            MessageEntry messageEntry,
-            String userToken
-    ) {
-        Call<MessageEntry> call = messageApiService.sendMessage(
-                messageEntry,
-                userToken
-        );
+   public void sendMessageAndOpenChat(
+      Long conversationId,
+      MessageEntry messageEntry,
+      String userToken
+   ) {
+      Call<MessageEntry> call = messageApiService.sendMessage(
+         messageEntry,
+         userToken
+      );
 
-        call.enqueue(
-                new Callback<MessageEntry>() {
-                    @Override
-                    public void onResponse(
-                            Call<MessageEntry> call,
-                            Response<MessageEntry> response
-                    ) {
-                        Log.e(TAG, "" + response.code());
+      call.enqueue(
+         new Callback<MessageEntry>() {
+            @Override
+            public void onResponse(
+               Call<MessageEntry> call,
+               Response<MessageEntry> response
+            ) {
+               Log.e(TAG, "" + response.code());
 
-                        if (response.isSuccessful()) {
-                            Log.e(TAG, "" + response.body());
+               if (response.isSuccessful()) {
+                  Log.e(TAG, "" + response.body());
+               } else {
+                  Log.e(TAG, "" + response.code());
+                  //TODO Handle the error
+               }
+            }
 
-                        } else {
-                            Log.e(TAG, "" + response.code());
-                            //TODO Handle the error
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<MessageEntry> call, Throwable t) {
-                        Log.e(TAG, "" + t.getMessage());
-                    }
-                }
-        );
-    }
+            @Override
+            public void onFailure(Call<MessageEntry> call, Throwable t) {
+               Log.e(TAG, "" + t.getMessage());
+            }
+         }
+      );
+   }
 
    public void sendMessage(
       Long conversationId,
@@ -230,6 +234,4 @@ public class MessageApiHelper {
       }
       return null; // or throw an exception, or return an Optional<User>
    }
-
-
 }

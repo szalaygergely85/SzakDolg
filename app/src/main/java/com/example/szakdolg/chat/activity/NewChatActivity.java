@@ -4,8 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
@@ -28,7 +26,8 @@ public class NewChatActivity extends AppCompatActivity {
    private UserAdapter dropdownAdapter;
    private List<User> contacts;
 
-   private final ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
+   private final ConversationApiHelper conversationApiHelper =
+      new ConversationApiHelper();
    private final ContactsApiHelper contactsApiHelper = new ContactsApiHelper();
    private Button btnSend;
    private MyEditText edtMess;
@@ -52,8 +51,8 @@ public class NewChatActivity extends AppCompatActivity {
       );
 
       currentUser =
-              (User) this.getIntent()
-                      .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+      (User) this.getIntent()
+         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
 
       contacts = new ArrayList<>();
 
@@ -82,21 +81,25 @@ public class NewChatActivity extends AppCompatActivity {
    }
 
    private void setListeners() {
-      btnSend.setOnClickListener(
-              view -> {
-                 String recipients = recipientInput.getText().toString();
-                 List<Long> recipientIds = new ArrayList<>();
-                 for (String recipient : recipients.split(", ")) {
-                    Long id = Long.valueOf(extractIdFromDisplayName(recipient.trim()));
-                    if (id != null) {
-                       recipientIds.add(id);
-                    }
-                 }
+      btnSend.setOnClickListener(view -> {
+         String recipients = recipientInput.getText().toString();
+         List<Long> recipientIds = new ArrayList<>();
+         for (String recipient : recipients.split(", ")) {
+            Long id = Long.valueOf(extractIdFromDisplayName(recipient.trim()));
+            if (id != null) {
+               recipientIds.add(id);
+            }
+         }
 
-                 recipientIds.add(currentUser.getUserId());
-                 conversationApiHelper.addNewConversationAndSendMessage(recipientIds, edtMess.getText().toString(), _token, currentUser, NewChatActivity.this);
-              }
-      );
+         recipientIds.add(currentUser.getUserId());
+         conversationApiHelper.addNewConversationAndSendMessage(
+            recipientIds,
+            edtMess.getText().toString(),
+            _token,
+            currentUser,
+            NewChatActivity.this
+         );
+      });
 
       recipientInput.addTextChangedListener(
          new TextWatcher() {

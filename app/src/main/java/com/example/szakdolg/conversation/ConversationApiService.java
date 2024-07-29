@@ -24,7 +24,8 @@ public interface ConversationApiService {
    );
 
    @POST("conversation/id")
-    Call<Long> addNewConversation(
-            @Body List<Long> userIds,
-            @Header("Authorization") String token);
+   Call<Long> addNewConversation(
+      @Body List<Long> userIds,
+      @Header("Authorization") String token
+   );
 }

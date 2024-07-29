@@ -4,7 +4,6 @@ import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -31,8 +30,8 @@ public interface MessageApiService {
 
    @GET("message/validate")
    Call<ArrayList<MessageEntry>> getMessagesAndCompareWithLocal(
-           @Query("count") Long count,
-           @Header("Authorization") String token
+      @Query("count") Long count,
+      @Header("Authorization") String token
    );
 
    @Deprecated
