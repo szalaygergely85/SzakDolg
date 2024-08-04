@@ -9,11 +9,11 @@ import com.example.szakdolg.message.MessageEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseUtil {
+public class MessageDatabaseUtil {
 
    private DatabaseHelper dbHelper;
 
-   public DatabaseUtil(Context context) {
+   public MessageDatabaseUtil(Context context) {
       dbHelper = new DatabaseHelper(context);
    }
 

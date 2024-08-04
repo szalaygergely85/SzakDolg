@@ -3,7 +3,7 @@ package com.example.szakdolg.message;
 import android.content.Context;
 import android.util.Log;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
-import com.example.szakdolg.db.util.DatabaseUtil;
+import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.file.apiservice.FileApiService;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
@@ -32,10 +32,10 @@ public class MessageApiHelper {
    User loggedUser;
 
    public void checkCachedMessages(String authToken, Context context) {
-      DatabaseUtil databaseUtil = new DatabaseUtil(context);
+      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(context);
       Call<ArrayList<MessageEntry>> call =
          messageApiService.getMessagesAndCompareWithLocal(
-            databaseUtil.getMessageEntryCount(),
+            messageDatabaseUtil.getMessageEntryCount(),
             authToken
          );
 

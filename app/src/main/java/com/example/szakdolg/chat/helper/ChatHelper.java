@@ -2,7 +2,7 @@ package com.example.szakdolg.chat.helper;
 
 import android.content.Context;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
-import com.example.szakdolg.db.util.DatabaseUtil;
+import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
@@ -17,7 +17,7 @@ public class ChatHelper {
    private String authToken;
    private ChatAdapter chatAdapter;
 
-   private DatabaseUtil databaseUtil;
+   private MessageDatabaseUtil messageDatabaseUtil;
 
    public ChatHelper(
       Context context,
@@ -30,7 +30,7 @@ public class ChatHelper {
       this.currentUser = currentUser;
       this.authToken = authToken;
       this.chatAdapter = chatAdapter;
-      this.databaseUtil = new DatabaseUtil(context);
+      this.messageDatabaseUtil = new MessageDatabaseUtil(context);
    }
 
    MessageApiHelper messageApiHelper = new MessageApiHelper();
@@ -50,7 +50,7 @@ public class ChatHelper {
          UUIDUtil.UUIDGenerator()
       );
 
-      databaseUtil.insertMessageEntry(messageEntry);
+      messageDatabaseUtil.insertMessageEntry(messageEntry);
 
       messageApiHelper.sendMessage(
          conversationId,
@@ -62,6 +62,6 @@ public class ChatHelper {
    }
 
    public List<MessageEntry> getMessages(Long conversationId) {
-      return databaseUtil.getAllMessageEntriesOfConversation(conversationId);
+      return messageDatabaseUtil.getAllMessageEntriesOfConversation(conversationId);
    }
 }

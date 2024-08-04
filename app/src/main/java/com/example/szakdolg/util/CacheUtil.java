@@ -2,7 +2,7 @@ package com.example.szakdolg.util;
 
 import android.content.Context;
 import android.util.Log;
-import com.example.szakdolg.db.util.DatabaseUtil;
+import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
@@ -64,8 +64,8 @@ public class CacheUtil {
       ArrayList<MessageEntry> messageEntries,
       Context context
    ) {
-      DatabaseUtil databaseUtil = new DatabaseUtil(context);
-      List<String> localMessageUUIds = databaseUtil.getAllMessageUuids();
+      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(context);
+      List<String> localMessageUUIds = messageDatabaseUtil.getAllMessageUuids();
 
       if (messageEntries == null || messageEntries.isEmpty()) {
          throw new IllegalArgumentException(
@@ -75,7 +75,7 @@ public class CacheUtil {
 
       for (MessageEntry messageEntry : messageEntries) {
          if (!localMessageUUIds.contains(messageEntry.getuUId())) {
-            databaseUtil.insertMessageEntry(messageEntry);
+            messageDatabaseUtil.insertMessageEntry(messageEntry);
          }
       }
    }

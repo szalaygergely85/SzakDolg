@@ -65,6 +65,37 @@ public class UserDatabaseUtil {
       return users;
    }
 
+   public User getUserById(Long userId) {
+      SQLiteDatabase db = dbHelper.getReadableDatabase();
+      Cursor cursor = null;
+
+      try {
+         cursor = db.rawQuery("SELECT displayName, fullName, publicKey FROM " + dbHelper.TABLE_USER_ENTRY + " WHERE userId = ?", new String[]{String.valueOf(userId)});
+         if (cursor != null) {
+            if (cursor.moveToFirst()) {
+               String displayName = cursor.getString(0);
+               String fullName = cursor.getString(1);
+               String publicKey = cursor.getString(2);
+
+               User user = new User(userId, displayName, fullName, publicKey);
+               cursor.close();
+               return user;
+            }
+
+         }
+
+
+      }finally {
+         if (cursor != null) {
+            cursor.close();
+         }
+         db.close();
+      }
+
+      return null;
+   }
+
+
    public int getUserCount() {
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = null;
