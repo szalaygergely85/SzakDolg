@@ -63,6 +63,18 @@ public class User implements Serializable {
       this.phoneNumber = phoneNumber;
    }
 
+   public User(
+      Long userId,
+      String displayName,
+      String fullName,
+      String publicKey
+   ) {
+      this.userId = userId;
+      this.displayName = displayName;
+      this.fullName = fullName;
+      this.publicKey = publicKey;
+   }
+
    public Long getUserId() {
       return userId;
    }

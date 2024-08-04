@@ -3,6 +3,7 @@ package com.example.szakdolg.util;
 import android.content.Context;
 import android.util.Log;
 import com.example.szakdolg.db.util.DatabaseUtil;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
 import java.io.File;
@@ -72,11 +73,28 @@ public class CacheUtil {
          );
       }
 
-      if (localMessageUUIds.size() < messageEntries.size()) {
-         for (MessageEntry messageEntry : messageEntries) {
-            if (!localMessageUUIds.contains(messageEntry.getuUId())) {
-               databaseUtil.insertMessageEntry(messageEntry);
-            }
+      for (MessageEntry messageEntry : messageEntries) {
+         if (!localMessageUUIds.contains(messageEntry.getuUId())) {
+            databaseUtil.insertMessageEntry(messageEntry);
+         }
+      }
+   }
+
+   public static void validateContacts(
+      ArrayList<User> userEntries,
+      Context context
+   ) {
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context);
+      List<Long> localUserIds = userDatabaseUtil.getAllUserIds();
+
+      if (userEntries == null || userEntries.isEmpty()) {
+         throw new IllegalArgumentException(
+            "messageEntries should not be null or empty"
+         );
+      }
+      for (User user : userEntries) {
+         if (!localUserIds.contains(user.getUserId())) {
+            userDatabaseUtil.insertUser(user);
          }
       }
    }

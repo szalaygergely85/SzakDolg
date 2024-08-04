@@ -1,8 +1,11 @@
 package com.example.szakdolg.contacts;
 
 import android.content.Context;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.util.CacheUtil;
+import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -13,6 +16,33 @@ public class ContactsApiHelper {
    ContactsApiService contactsApiService = RetrofitClient
       .getRetrofitInstance()
       .create(ContactsApiService.class);
+
+   public void checkCachedContacts(String token, Context context) {
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context);
+      Call<ArrayList<User>> call =
+         contactsApiService.getContactsAndCompareWithLocal(
+            userDatabaseUtil.getUserCount(),
+            token
+         );
+      call.enqueue(
+         new Callback<ArrayList<User>>() {
+            @Override
+            public void onResponse(
+               Call<ArrayList<User>> call,
+               Response<ArrayList<User>> response
+            ) {
+               if (response.isSuccessful()) {
+                  if (response.body().size() > 0) {
+                     CacheUtil.validateContacts(response.body(), context);
+                  }
+               }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<User>> call, Throwable t) {}
+         }
+      );
+   }
 
    public interface ContactsCallback {
       void onContactsFetched(List<User> newContacts);

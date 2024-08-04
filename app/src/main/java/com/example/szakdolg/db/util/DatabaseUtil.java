@@ -154,7 +154,6 @@ public class DatabaseUtil {
       Cursor cursor = null;
 
       try {
-         // Query to select all UUIDs from the MessageEntry table
          cursor =
          db.query(
             "MessageEntry",

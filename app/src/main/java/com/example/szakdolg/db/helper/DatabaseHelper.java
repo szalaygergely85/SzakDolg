@@ -11,6 +11,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
    public static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
 
+   public static final String TABLE_USER_ENTRY = "UserEntry";
+
    private static final String CREATE_TABLE_MESSAGE_ENTRY =
       "CREATE TABLE " +
       TABLE_MESSAGE_ENTRY +
@@ -26,6 +28,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "uUId TEXT" +
       ");";
 
+   private static final String CREATE_TABLE_USER_ENTRY =
+      "CREATE TABLE " +
+      TABLE_USER_ENTRY +
+      " (" +
+      "userId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "displayName TEXT NOT NULL, " +
+      "fullName TEXT NOT NULL, " +
+      "publicKey LONGTEXT NOT NULL " +
+      ");";
+
    public DatabaseHelper(Context context) {
       super(context, DATABASE_NAME, null, DATABASE_VERSION);
    }
@@ -33,11 +45,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
    @Override
    public void onCreate(SQLiteDatabase db) {
       db.execSQL(CREATE_TABLE_MESSAGE_ENTRY);
+      db.execSQL(CREATE_TABLE_USER_ENTRY);
    }
 
    @Override
    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE_ENTRY);
+      db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_ENTRY);
       onCreate(db);
    }
 }

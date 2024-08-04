@@ -1,6 +1,7 @@
 package com.example.szakdolg.contacts;
 
 import com.example.szakdolg.user.entity.User;
+import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -9,6 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ContactsApiService {
    @GET("contacts")
@@ -26,5 +28,11 @@ public interface ContactsApiService {
       @Field("ownerId") Long ownerId,
       @Field("contactId") Long contactId,
       @Header("Authorization") String authToken
+   );
+
+   @GET("contacts/validate")
+   Call<ArrayList<User>> getContactsAndCompareWithLocal(
+      @Query("count") int count,
+      @Header("Authorization") String token
    );
 }
