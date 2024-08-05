@@ -8,6 +8,9 @@ import com.example.szakdolg.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.MessageTypeConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.conversation.entity.Conversation;
+import com.example.szakdolg.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -179,6 +182,72 @@ public class ConversationApiHelper {
             @Override
             public void onFailure(
                Call<ConversationContent> call,
+               Throwable t
+            ) {}
+         }
+      );
+   }
+
+   public void checkCachedConversation(String token, Context context) {
+      ConversationDatabaseUtil conversationDatabaseUtil =
+         new ConversationDatabaseUtil(context);
+      Call<List<Conversation>> call =
+         conversationApiService.getConversationAndCompareWithLocal(
+            conversationDatabaseUtil.getConversationCount(),
+            token
+         );
+
+      call.enqueue(
+         new Callback<List<Conversation>>() {
+            @Override
+            public void onResponse(
+               Call<List<Conversation>> call,
+               Response<List<Conversation>> response
+            ) {
+               if (response.isSuccessful()) {
+                  if (response.body().size() > 0) {
+                     CacheUtil.validateConversation(response.body(), context);
+                  }
+               }
+            }
+
+            @Override
+            public void onFailure(Call<List<Conversation>> call, Throwable t) {}
+         }
+      );
+   }
+
+   public void checkCachedConversationParticipant(
+      String token,
+      Context context
+   ) {
+      ConversationDatabaseUtil conversationDatabaseUtil =
+         new ConversationDatabaseUtil(context);
+      Call<List<ConversationParticipant>> call =
+         conversationApiService.getConversationParticipantAndCompareWithLocal(
+            conversationDatabaseUtil.getConversationParticipantCount(),
+            token
+         );
+      call.enqueue(
+         new Callback<List<ConversationParticipant>>() {
+            @Override
+            public void onResponse(
+               Call<List<ConversationParticipant>> call,
+               Response<List<ConversationParticipant>> response
+            ) {
+               if (response.isSuccessful()) {
+                  if (response.body().size() > 0) {
+                     CacheUtil.validateConversationParticipant(
+                        response.body(),
+                        context
+                     );
+                  }
+               }
+            }
+
+            @Override
+            public void onFailure(
+               Call<List<ConversationParticipant>> call,
                Throwable t
             ) {}
          }

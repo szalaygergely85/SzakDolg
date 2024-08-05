@@ -32,7 +32,9 @@ public class MessageApiHelper {
    User loggedUser;
 
    public void checkCachedMessages(String authToken, Context context) {
-      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(context);
+      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+         context
+      );
       Call<ArrayList<MessageEntry>> call =
          messageApiService.getMessagesAndCompareWithLocal(
             messageDatabaseUtil.getMessageEntryCount(),

@@ -2,6 +2,9 @@ package com.example.szakdolg.util;
 
 import android.content.Context;
 import android.util.Log;
+import com.example.szakdolg.conversation.entity.Conversation;
+import com.example.szakdolg.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.message.MessageEntry;
@@ -64,7 +67,9 @@ public class CacheUtil {
       ArrayList<MessageEntry> messageEntries,
       Context context
    ) {
-      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(context);
+      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+         context
+      );
       List<String> localMessageUUIds = messageDatabaseUtil.getAllMessageUuids();
 
       if (messageEntries == null || messageEntries.isEmpty()) {
@@ -95,6 +100,48 @@ public class CacheUtil {
       for (User user : userEntries) {
          if (!localUserIds.contains(user.getUserId())) {
             userDatabaseUtil.insertUser(user);
+         }
+      }
+   }
+
+   public static void validateConversation(
+      List<Conversation> conversations,
+      Context context
+   ) {
+      ConversationDatabaseUtil conversationDatabaseUtil =
+         new ConversationDatabaseUtil(context);
+      List<Conversation> localConversations =
+         conversationDatabaseUtil.getAllConversations();
+      if (conversations == null || conversations.isEmpty()) {
+         throw new IllegalArgumentException(
+            "conversations should not be null or empty"
+         );
+      }
+      for (Conversation conversation : conversations) {
+         if (!localConversations.contains(conversation)) {
+            conversationDatabaseUtil.insertConversation(conversation);
+         }
+      }
+   }
+
+   public static void validateConversationParticipant(
+      List<ConversationParticipant> participants,
+      Context context
+   ) {
+      ConversationDatabaseUtil conversationDatabaseUtil =
+         new ConversationDatabaseUtil(context);
+      List<ConversationParticipant> localParticipants =
+         conversationDatabaseUtil.getAllConversationParticipant();
+      if (participants == null || participants.isEmpty()) {
+         throw new IllegalArgumentException(
+            "conversations should not be null or empty"
+         );
+      }
+      for (ConversationParticipant conversationParticipant : participants) {
+         if (!localParticipants.contains(conversationParticipant)) {
+            conversationDatabaseUtil.insertConversationParticipant(
+               conversationParticipant
+            );
          }
       }
    }

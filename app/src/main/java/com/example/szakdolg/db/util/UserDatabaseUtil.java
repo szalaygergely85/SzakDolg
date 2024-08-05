@@ -22,7 +22,8 @@ public class UserDatabaseUtil {
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = null;
       try {
-         cursor = db.rawQuery("SELECT userId FROM " + dbHelper.TABLE_USER_ENTRY, null);
+         cursor =
+         db.rawQuery("SELECT userId FROM " + dbHelper.TABLE_USER_ENTRY, null);
 
          if (cursor.moveToFirst()) {
             do {
@@ -45,7 +46,8 @@ public class UserDatabaseUtil {
       Cursor cursor = null;
 
       try {
-         cursor = db.rawQuery("SELECT * FROM " + dbHelper.TABLE_USER_ENTRY, null);
+         cursor =
+         db.rawQuery("SELECT * FROM " + dbHelper.TABLE_USER_ENTRY, null);
 
          while (cursor.moveToNext()) {
             Long userId = cursor.getLong(0);
@@ -70,7 +72,13 @@ public class UserDatabaseUtil {
       Cursor cursor = null;
 
       try {
-         cursor = db.rawQuery("SELECT displayName, fullName, publicKey FROM " + dbHelper.TABLE_USER_ENTRY + " WHERE userId = ?", new String[]{String.valueOf(userId)});
+         cursor =
+         db.rawQuery(
+            "SELECT displayName, fullName, publicKey FROM " +
+            dbHelper.TABLE_USER_ENTRY +
+            " WHERE userId = ?",
+            new String[] { String.valueOf(userId) }
+         );
          if (cursor != null) {
             if (cursor.moveToFirst()) {
                String displayName = cursor.getString(0);
@@ -81,11 +89,8 @@ public class UserDatabaseUtil {
                cursor.close();
                return user;
             }
-
          }
-
-
-      }finally {
+      } finally {
          if (cursor != null) {
             cursor.close();
          }
@@ -95,13 +100,13 @@ public class UserDatabaseUtil {
       return null;
    }
 
-
    public int getUserCount() {
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = null;
       int count = 0;
       try {
-         cursor = db.rawQuery("SELECT COUNT(*) FROM " + dbHelper.TABLE_USER_ENTRY, null);
+         cursor =
+         db.rawQuery("SELECT COUNT(*) FROM " + dbHelper.TABLE_USER_ENTRY, null);
          if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
          }
@@ -134,7 +139,7 @@ public class UserDatabaseUtil {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       try {
          db.delete(
-                 dbHelper.TABLE_USER_ENTRY,
+            dbHelper.TABLE_USER_ENTRY,
             "userId = ?",
             new String[] { String.valueOf(userId) }
          );

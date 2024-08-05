@@ -62,6 +62,8 @@ public class ChatHelper {
    }
 
    public List<MessageEntry> getMessages(Long conversationId) {
-      return messageDatabaseUtil.getAllMessageEntriesOfConversation(conversationId);
+      return messageDatabaseUtil.getAllMessageEntriesOfConversation(
+         conversationId
+      );
    }
 }

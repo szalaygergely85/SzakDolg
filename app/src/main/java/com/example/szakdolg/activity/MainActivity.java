@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiHelper;
+import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
    private MessageApiHelper _messageApiHelper = new MessageApiHelper();
    private ContactsApiHelper _contactsApiHelper = new ContactsApiHelper();
+   private ConversationApiHelper _conversationApiHelper =
+      new ConversationApiHelper();
 
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
    private void _refreshDatabaseTask() {
       _messageApiHelper.checkCachedMessages(_token, this);
       _contactsApiHelper.checkCachedContacts(_token, this);
+      _conversationApiHelper.checkCachedConversation(_token, this);
+      _conversationApiHelper.checkCachedConversationParticipant(_token, this);
    }
 
    private boolean isCacheExpired(long cacheExpireTimeMillis) {

@@ -9,30 +9,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
    private static final String DATABASE_NAME = "mydatabase.db";
    private static final int DATABASE_VERSION = 1;
 
-   public static final String TABLE_CONVERSATION_PARTICIPANTS = "conversation_participants";
+   public static final String TABLE_CONVERSATION_PARTICIPANTS =
+      "conversation_participants";
    public static final String TABLE_CONVERSATIONS = "conversations";
    public static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
    public static final String TABLE_USER_ENTRY = "UserEntry";
 
    private static final String CREATE_TABLE_CONVERSATION_PARTICIPANTS =
-           "CREATE TABLE " +
-                   TABLE_CONVERSATION_PARTICIPANTS +
-                   " (" +
-                   "conversationParticipantId INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                   "conversationId INTEGER NOT NULL, " +
-                   "userId INTEGER NOT NULL" +
-                   ");";
+      "CREATE TABLE " +
+      TABLE_CONVERSATION_PARTICIPANTS +
+      " (" +
+      "conversationParticipantId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "conversationId INTEGER NOT NULL, " +
+      "userId INTEGER NOT NULL" +
+      ");";
 
    private static final String CREATE_TABLE_CONVERSATIONS =
-           "CREATE TABLE " +
-                   TABLE_CONVERSATIONS +
-                   " (" +
-                   "conversationId INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                   "conversationName TEXT, " +
-                   "timeStamp INTEGER, " +
-                   "creatorUserId INTEGER, " +
-                   "numberOfParticipants INTEGER" +
-                   ");";
+      "CREATE TABLE " +
+      TABLE_CONVERSATIONS +
+      " (" +
+      "conversationId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "conversationName TEXT, " +
+      "timeStamp INTEGER, " +
+      "creatorUserId INTEGER, " +
+      "numberOfParticipants INTEGER" +
+      ");";
 
    private static final String CREATE_TABLE_MESSAGE_ENTRY =
       "CREATE TABLE " +
