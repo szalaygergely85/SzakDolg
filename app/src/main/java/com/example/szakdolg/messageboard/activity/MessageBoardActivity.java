@@ -25,6 +25,7 @@ import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.conversation.entity.Conversation;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
+import com.example.szakdolg.db.util.ProfileDatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
@@ -69,14 +70,15 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       setNavMenu();
 
-      _currentUser =
-      (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
       userToken =
       SharedPreferencesUtil.getStringPreference(
          this,
          SharedPreferencesConstans.USERTOKEN
       );
+
+      ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(this);
+      _currentUser =
+              profileDatabaseUtil.getCurrentUserByToken(userToken);
 
       _scheduleMessageWorker();
 
@@ -93,26 +95,18 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       messageBoardAdapter.setConversationList(conversationList);
 
-    //  messageBoardAdapter.setMessageB(messageBoard);
       messageBoardAdapter.setCurrentUser(_currentUser);
 
       messageBoardRecView.setAdapter(messageBoardAdapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
 
-      /*
-      messageApiHelper.getLatestMessages(
-         adapter,
-         MessageBoardActivity.this,
-         userToken,
-         _currentUser
-      ); */
+
    }
 
    @Override
    protected void onStart() {
       super.onStart();
-      //  _startRepeatingTask();
-      //messageApiHelper.getLatestMessages(adapter,this, userToken, loggedUser);
+       _startRepeatingTask();
 
       contactsButton.setOnClickListener(
          new View.OnClickListener() {
@@ -170,7 +164,7 @@ public class MessageBoardActivity extends AppCompatActivity {
    @Override
    protected void onDestroy() {
       super.onDestroy();
-      // _stopRepeatingTask();
+       _stopRepeatingTask();
    }
 
    private void _initView() {
@@ -183,11 +177,7 @@ public class MessageBoardActivity extends AppCompatActivity {
          @Override
          public void run() {
             try {
-               messageApiHelper.getLatestMessages(
-                       messageBoardAdapter,
-                  MessageBoardActivity.this,
-                  userToken,
-                  _currentUser
+               messageApiHelper.getNewMessages(MessageBoardActivity.this, userToken
                );
             } finally {
                handler.postDelayed(runnable, 15000);

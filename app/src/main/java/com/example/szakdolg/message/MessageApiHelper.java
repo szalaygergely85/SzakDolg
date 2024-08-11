@@ -175,58 +175,61 @@ public class MessageApiHelper {
          }
       );
    }
+    public void getNewMessages(Context context,
+            String userToken
+    ){
+        MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+                context
+        );
+        Call<ArrayList<MessageEntry>> messagesCall =
+                messageApiService.getNewMessages(userToken);
 
-   public void getLatestMessages(
-      MessageBoardAdapter adapter,
-      Context context,
-      String userToken,
-      User loggedUser
-   ) {
-      //  this.loggedUser=loggedUser;
+        messagesCall.enqueue(
+                new Callback<ArrayList<MessageEntry>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<MessageEntry>> call, Response<ArrayList<MessageEntry>> response) {
+                        if (response.isSuccessful()) {
+                            Log.e(TAG, "" + response.code());
 
-      Call<ArrayList<MessageBoard>> messagesCall =
-         messageApiService.getLatestMessages(userToken);
+                            //TODO need to use uuid for users.... or userid
 
-      messagesCall.enqueue(
-         new Callback<ArrayList<MessageBoard>>() {
-            @Override
-            public void onResponse(
-               Call<ArrayList<MessageBoard>> call,
-               Response<ArrayList<MessageBoard>> response
-            ) {
-               if (response.isSuccessful()) {
-                  Log.e(TAG, "" + response.code());
-
-                  //TODO need to use uuid for users.... or userid
-
-                  ArrayList<MessageBoard> messageBoards = response.body();
-                  for (MessageBoard messageBoard : messageBoards) {
-                     User user = _findOtherUserById(
-                        messageBoard.getParticipants(),
-                        loggedUser.getUserId()
-                     );
-                     if (user.getPublicKey() != null) {
-                        try {
-                           CacheUtil.writePublicKeysCache(context, user);
-                        } catch (Exception e) {
-                           throw new RuntimeException(e);
+                            List<MessageEntry> messages = response.body();
+                            List<Long> messageIds = new ArrayList<>();
+                            if(messages.size()>0){
+                                for (MessageEntry messageEntry : messages){
+                                    messageDatabaseUtil.insertMessageEntry(messageEntry);
+                                    messageIds.add(messageEntry.getMessageId());
+                                }
+                                setMessagesToDownloaded(messageIds);
+                            }
                         }
-                     }
-                  }
-                 // adapter.setMessageB(messageBoards);
-               }
-            }
+                    }
 
-            @Override
-            public void onFailure(
-               Call<ArrayList<MessageBoard>> call,
-               Throwable t
-            ) {
-               Log.e(TAG, "" + t.getMessage());
-            }
-         }
-      );
-   }
+                    @Override
+                    public void onFailure(Call<ArrayList<MessageEntry>> call, Throwable t) {
+
+                    }
+                });
+
+    }
+    public void setMessagesToDownloaded(List<Long> messageIds){
+
+        Call<String> messagesCall =
+                messageApiService.markMessagesAsDownloaded(messageIds);
+        messagesCall.enqueue(
+                new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Log.e(TAG, "" + response.code());
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                }
+                );
+    }
 
    private User _findOtherUserById(List<User> users, Long id) {
       for (User user : users) {
