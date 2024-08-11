@@ -14,6 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.MessageTypeConstans;
 import com.example.szakdolg.conversation.ConversationApiHelper;
+import com.example.szakdolg.conversation.entity.Conversation;
+import com.example.szakdolg.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.db.util.ConversationDatabaseUtil;
+import com.example.szakdolg.db.util.MessageDatabaseUtil;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.user.UserUtil;
@@ -21,22 +26,30 @@ import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MessageBoardAdapter
    extends RecyclerView.Adapter<MessageBoardAdapter.ViewHolder> {
 
-   private ArrayList<MessageBoard> messageB = new ArrayList<>();
-   private final Context mContext;
+   private List<Conversation> conversationList = new ArrayList<>();
+   private final Context context;
    private User currentUser;
    private static final String TAG = "MessageBoardAdapter";
 
    private String _token;
 
+   private UserDatabaseUtil userDatabaseUtil;
+   private MessageDatabaseUtil messageDatabaseUtil;
+   private ConversationDatabaseUtil conversationDatabaseUtil;
+
    ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
 
    public MessageBoardAdapter(Context mContext, String token) {
-      this.mContext = mContext;
+      this.context = mContext;
       this._token = token;
+      this.userDatabaseUtil = new UserDatabaseUtil(mContext);
+      this.messageDatabaseUtil = new MessageDatabaseUtil(mContext);
+      this.conversationDatabaseUtil = new ConversationDatabaseUtil(mContext);
    }
 
    /*
@@ -122,15 +135,16 @@ public class MessageBoardAdapter
       @NonNull ViewHolder holder,
       @SuppressLint("RecyclerView") int position
    ) {
-      MessageBoard messageBoard = messageB.get(position);
+      Conversation conversation = conversationList.get(position);
 
-      MessageEntry messageEntry = messageBoard.getMessage();
+      holder.txtName.setText(conversation.getConversationName());
+
+      MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(conversation.getConversationId());
+
 
       if (messageEntry.getContent() != null) {
-         User participant = UserUtil.removeCurrentUserFromList(
-            messageBoard.getParticipants(),
-            currentUser.getUserId()
-         );
+         List<ConversationParticipant> participants = conversationDatabaseUtil.getParticipantsByConversationId(conversation.getConversationId());
+         User participant = userDatabaseUtil.getUserById(participants.get(0).getUserId());
 
          if (messageEntry.isRead() || isSenderLoggedUser(messageEntry)) {
             holder.txtMessage.setTypeface(null, Typeface.NORMAL);
@@ -146,13 +160,13 @@ public class MessageBoardAdapter
                   decryptedContentString =
                   EncryptionHelper.decrypt(
                      messageEntry.getContentSenderVersion(),
-                     CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
+                     CacheUtil.getPrivateKeyFromCache(context, currentUser)
                   );
                } else {
                   decryptedContentString =
                   EncryptionHelper.decrypt(
                      messageEntry.getContent(),
-                     CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
+                     CacheUtil.getPrivateKeyFromCache(context, currentUser)
                   );
                }
 
@@ -172,8 +186,8 @@ public class MessageBoardAdapter
                @Override
                public void onClick(View view) {
                   conversationApiHelper.openConversation(
-                     messageBoard.getConversationId(),
-                     mContext,
+                     conversation.getConversationId(),
+                     context,
                      currentUser,
                      _token
                   );
@@ -185,11 +199,16 @@ public class MessageBoardAdapter
 
    @Override
    public int getItemCount() {
-      return messageB.size();
+      return conversationList.size();
    }
-
+/*
    public void setMessageB(ArrayList<MessageBoard> messageB) {
       this.messageB = messageB;
+      notifyDataSetChanged();
+   }*/
+
+   public void setConversationList(List<Conversation> conversationList) {
+      this.conversationList = conversationList;
       notifyDataSetChanged();
    }
 

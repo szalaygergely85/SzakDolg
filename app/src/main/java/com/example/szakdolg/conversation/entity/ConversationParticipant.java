@@ -20,11 +20,23 @@ public class ConversationParticipant {
       return conversationParticipantId;
    }
 
+   public void setConversationParticipantId(long conversationParticipantId) {
+      this.conversationParticipantId = conversationParticipantId;
+   }
+
    public long getConversationId() {
       return conversationId;
    }
 
+   public void setConversationId(long conversationId) {
+      this.conversationId = conversationId;
+   }
+
    public long getUserId() {
       return userId;
+   }
+
+   public void setUserId(long userId) {
+      this.userId = userId;
    }
 }

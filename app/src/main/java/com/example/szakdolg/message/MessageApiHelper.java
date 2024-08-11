@@ -213,7 +213,7 @@ public class MessageApiHelper {
                         }
                      }
                   }
-                  adapter.setMessageB(messageBoards);
+                 // adapter.setMessageB(messageBoards);
                }
             }
 

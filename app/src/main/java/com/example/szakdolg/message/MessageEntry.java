@@ -120,6 +120,18 @@ public class MessageEntry implements Serializable {
       this.uUId = uUId;
    }
 
+   public MessageEntry(Long messageId, Long conversationId, Long senderId, Long timestamp, String content, boolean isRead, int type, String contentSenderVersion, String uUId) {
+      this.messageId = messageId;
+      this.conversationId = conversationId;
+      this.senderId = senderId;
+      this.timestamp = timestamp;
+      this.content = content;
+      this.isRead = isRead;
+      this.type = type;
+      this.contentSenderVersion = contentSenderVersion;
+      this.uUId = uUId;
+   }
+
    public MessageEntry(
       long conversationId,
       long senderId,

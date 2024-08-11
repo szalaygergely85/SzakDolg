@@ -35,6 +35,41 @@ public class MessageDatabaseUtil {
       }
    }
 
+   public MessageEntry getLatestMessageEntry(long conversationId) {
+      SQLiteDatabase db = dbHelper.getReadableDatabase();
+      MessageEntry latestMessage = null;
+      Cursor cursor = null;
+
+      try {
+         // Query to select the latest message based on the highest timestamp
+         String query = "SELECT * FROM MessageEntry WHERE conversationId = ? ORDER BY timestamp DESC LIMIT 1";
+         cursor = db.rawQuery(query, new String[]{String.valueOf(conversationId)});
+
+         if (cursor != null && cursor.moveToFirst()) {
+            // Extract the message details from the cursor using column indices
+            Long messageId = cursor.getLong(0); // Assuming messageId is the first column
+            Long convId = cursor.getLong(1); // Assuming conversationId is the second column
+            Long senderId = cursor.getLong(2); // Assuming senderId is the third column
+            Long timestamp = cursor.getLong(3); // Assuming timestamp is the fourth column
+            String content = cursor.getString(4); // Assuming content is the fifth column
+            boolean isRead = cursor.getInt(5) >0; // Assuming isRead is the sixth column
+            int type = cursor.getInt(6); // Assuming type is the seventh column
+            String contentSenderVersion = cursor.getString(7); // Assuming contentSenderVersion is the eighth column
+            String uUId = cursor.getString(8); // Assuming uUId is the ninth column
+
+            // Create a new MessageEntry object
+            latestMessage = new MessageEntry(messageId, convId, senderId, timestamp, content, isRead, type, contentSenderVersion, uUId);
+         }
+      } finally {
+         if (cursor != null) {
+            cursor.close();
+         }
+         db.close();
+      }
+
+      return latestMessage;
+   }
+
    public List<MessageEntry> getAllMessageEntries() {
       List<MessageEntry> messages = new ArrayList<>();
       SQLiteDatabase db = dbHelper.getReadableDatabase();

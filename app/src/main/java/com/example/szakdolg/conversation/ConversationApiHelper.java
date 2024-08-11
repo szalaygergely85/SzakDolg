@@ -120,7 +120,7 @@ public class ConversationApiHelper {
       } else {
          Intent intent = new Intent(context, ChatActivity.class);
          intent.putExtra(
-            SharedPreferencesConstans.CONVERSATION_ID,
+            IntentConstans.CONVERSATION_ID,
             conversationId
          );
          intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);

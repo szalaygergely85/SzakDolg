@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 import com.example.szakdolg.conversation.entity.Conversation;
 import com.example.szakdolg.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.helper.DatabaseHelper;
@@ -18,7 +20,7 @@ public class ConversationDatabaseUtil {
       dbHelper = new DatabaseHelper(context);
    }
 
-   public long insertConversation(Conversation conversation) {
+   public void insertConversation(Conversation conversation) {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       ContentValues values = new ContentValues();
       values.put("conversationId", conversation.getConversationId());
@@ -30,18 +32,22 @@ public class ConversationDatabaseUtil {
          conversation.getNumberOfParticipants()
       );
 
-      return db.insert(dbHelper.TABLE_CONVERSATIONS, null, values);
+      db.insert(dbHelper.TABLE_CONVERSATIONS, null, values);
+      db.close();
    }
 
-   public long insertConversationParticipant(
+   public void insertConversationParticipant(
       ConversationParticipant participant
    ) {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       ContentValues values = new ContentValues();
+      values.put("conversationParticipantId", participant.getConversationParticipantId());
       values.put("conversationId", participant.getConversationId());
       values.put("userId", participant.getUserId());
 
-      return db.insert(dbHelper.TABLE_CONVERSATION_PARTICIPANTS, null, values);
+      db.insert(dbHelper.TABLE_CONVERSATION_PARTICIPANTS, null, values);
+      db.close();
+
    }
 
    // Method to get all conversations
@@ -104,15 +110,26 @@ public class ConversationDatabaseUtil {
       return participants;
    }
 
-   public Long getConversationCount() {
+   public int getConversationCount() {
       SQLiteDatabase db = dbHelper.getReadableDatabase();
+      int count = 0;
+      Cursor cursor = null;
       String countQuery =
          "SELECT COUNT(*) FROM " + dbHelper.TABLE_CONVERSATIONS;
-      Cursor cursor = db.rawQuery(countQuery, null);
-      cursor.moveToFirst();
-      Long count = cursor.getLong(0);
-      cursor.close();
-      db.close();
+      try {
+         cursor = db.rawQuery(countQuery, null);
+         if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0);  // Retrieve as string
+               // Convert to Long
+         } else {
+            // Log.e("DatabaseError", "Cursor is null or empty");
+         }
+      }finally {
+         if (cursor != null) {
+            cursor.close();
+         }
+         db.close();
+      }
       return count;
    }
 

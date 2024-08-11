@@ -88,59 +88,6 @@ public class ChatActivity extends AppCompatActivity {
       }
    }
 
-   private void _setListeners() {
-      edtMess.setKeyBoardInputCallbackListener(
-         new MyEditText.KeyBoardInputCallbackListener() {
-            @Override
-            public void onCommitContent(
-               InputContentInfoCompat inputContentInfo,
-               int flags,
-               Bundle opts
-            ) {
-               _sendFile(inputContentInfo.getLinkUri());
-            }
-         }
-      );
-
-      btnSend.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               String content = edtMess.getText().toString();
-               if (!content.isEmpty()) {
-                  try {
-                     if (otherUser != null && currentUser != null) {
-                        String encryptedContentString =
-                           EncryptionHelper.encrypt(
-                              content,
-                              CacheUtil.getPublicKeyFromCache(
-                                 ChatActivity.this,
-                                 otherUser.getEmail()
-                              )
-                           );
-
-                        String encryptedContentSenderVersion =
-                           EncryptionHelper.encrypt(
-                              content,
-                              currentUser.getPublicKey()
-                           );
-
-                        chatHelper.sendMessage(
-                           MessageTypeConstans.MESSAGE,
-                           encryptedContentSenderVersion,
-                           encryptedContentString
-                        );
-
-                        edtMess.getText().clear();
-                     }
-                  } catch (Exception e) {
-                     throw new RuntimeException(e);
-                  }
-               }
-            }
-         }
-      );
-   }
 
    private void _getSharedPrefAndIntentExtras() {
       _token =
@@ -154,7 +101,7 @@ public class ChatActivity extends AppCompatActivity {
 
       conversationId =
       this.getIntent()
-         .getLongExtra(SharedPreferencesConstans.CONVERSATION_ID, 0);
+         .getLongExtra(IntentConstans.CONVERSATION_ID, 0);
       conversationContent =
       (ConversationContent) this.getIntent()
          .getSerializableExtra(IntentConstans.CONVERSATION_CONTENT);
@@ -210,6 +157,61 @@ public class ChatActivity extends AppCompatActivity {
 
       runnable.run();
    }
+
+   private void _setListeners() {
+      edtMess.setKeyBoardInputCallbackListener(
+              new MyEditText.KeyBoardInputCallbackListener() {
+                 @Override
+                 public void onCommitContent(
+                         InputContentInfoCompat inputContentInfo,
+                         int flags,
+                         Bundle opts
+                 ) {
+                    _sendFile(inputContentInfo.getLinkUri());
+                 }
+              }
+      );
+
+      btnSend.setOnClickListener(
+              new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+                    String content = edtMess.getText().toString();
+                    if (!content.isEmpty()) {
+                       try {
+                          if (otherUser != null && currentUser != null) {
+                             String encryptedContentString =
+                                     EncryptionHelper.encrypt(
+                                             content,
+                                             CacheUtil.getPublicKeyFromCache(
+                                                     ChatActivity.this,
+                                                     otherUser.getEmail()
+                                             )
+                                     );
+
+                             String encryptedContentSenderVersion =
+                                     EncryptionHelper.encrypt(
+                                             content,
+                                             currentUser.getPublicKey()
+                                     );
+
+                             chatHelper.sendMessage(
+                                     MessageTypeConstans.MESSAGE,
+                                     encryptedContentSenderVersion,
+                                     encryptedContentString
+                             );
+
+                             edtMess.getText().clear();
+                          }
+                       } catch (Exception e) {
+                          throw new RuntimeException(e);
+                       }
+                    }
+                 }
+              }
+      );
+   }
+
 
    private void _stopRepeatingTask() {
       handler.removeCallbacks(runnable);

@@ -32,17 +32,17 @@ public interface ConversationApiService {
       @Header("Authorization") String token
    );
 
-   @GET("conversation/validate")
+   @GET("conversation/validate-participant")
    Call<
       List<ConversationParticipant>
    > getConversationParticipantAndCompareWithLocal(
       @Query("count") Long count,
-      @Header("Authorization") String tokenn
+      @Header("Authorization") String token
    );
 
-   @GET("conversation-participant/validate")
+   @GET("conversation/validate")
    Call<List<Conversation>> getConversationAndCompareWithLocal(
-      @Query("Long") Long count,
+      @Query("count") int count,
       @Header("Authorization") String token
    );
 }

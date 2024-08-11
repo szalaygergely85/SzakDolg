@@ -23,6 +23,8 @@ import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.chat.activity.NewChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.conversation.entity.Conversation;
+import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
@@ -35,6 +37,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MessageBoardActivity extends AppCompatActivity {
@@ -42,7 +45,7 @@ public class MessageBoardActivity extends AppCompatActivity {
    private static final String TAG = "MessageB";
    private FloatingActionButton contactsButton;
    private RecyclerView messageBoardRecView;
-   private MessageBoardAdapter adapter;
+   private MessageBoardAdapter messageBoardAdapter;
    private MaterialToolbar mToolbar;
    private User _currentUser;
    ArrayList<MessageBoard> messageBoard = new ArrayList<>();
@@ -55,6 +58,7 @@ public class MessageBoardActivity extends AppCompatActivity {
    private Runnable runnable;
 
    private Gson gson = new Gson();
+   List<Conversation> conversationList = new ArrayList<>();
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -81,19 +85,27 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
 
-      adapter = new MessageBoardAdapter(this, userToken);
-      adapter.setMessageB(messageBoard);
-      adapter.setCurrentUser(_currentUser);
+      messageBoardAdapter = new MessageBoardAdapter(this, userToken);
 
-      messageBoardRecView.setAdapter(adapter);
+      ConversationDatabaseUtil conversationDatabaseUtil = new ConversationDatabaseUtil(this);
+
+      conversationList = conversationDatabaseUtil.getAllConversations();
+
+      messageBoardAdapter.setConversationList(conversationList);
+
+    //  messageBoardAdapter.setMessageB(messageBoard);
+      messageBoardAdapter.setCurrentUser(_currentUser);
+
+      messageBoardRecView.setAdapter(messageBoardAdapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
 
+      /*
       messageApiHelper.getLatestMessages(
          adapter,
          MessageBoardActivity.this,
          userToken,
          _currentUser
-      );
+      ); */
    }
 
    @Override
@@ -172,7 +184,7 @@ public class MessageBoardActivity extends AppCompatActivity {
          public void run() {
             try {
                messageApiHelper.getLatestMessages(
-                  adapter,
+                       messageBoardAdapter,
                   MessageBoardActivity.this,
                   userToken,
                   _currentUser
