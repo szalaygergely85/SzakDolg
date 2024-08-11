@@ -13,6 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "conversation_participants";
    public static final String TABLE_CONVERSATIONS = "conversations";
    public static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
+   public static final String TABLE_PROFILE = "Profile";
    public static final String TABLE_USER_ENTRY = "UserEntry";
 
    private static final String CREATE_TABLE_CONVERSATION_PARTICIPANTS =
@@ -50,6 +51,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "uUId TEXT" +
       ");";
 
+
+   private static final String CREATE_TABLE_PROFILE =
+           "CREATE TABLE " +
+                   TABLE_PROFILE +
+                   " (" +
+                   "userId INTEGER PRIMARY KEY, " +
+                   "displayName TEXT NOT NULL, " +
+                   "fullName TEXT NOT NULL, " +
+                   "email TEXT NOT NULL, " +
+                   "phoneNumber TEXT NOT NULL,"+
+                   "token TEXT NOT NULL"+
+                   ");";
    private static final String CREATE_TABLE_USER_ENTRY =
       "CREATE TABLE " +
       TABLE_USER_ENTRY +
@@ -70,6 +83,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL(CREATE_TABLE_USER_ENTRY);
       db.execSQL(CREATE_TABLE_CONVERSATION_PARTICIPANTS);
       db.execSQL(CREATE_TABLE_CONVERSATIONS);
+      db.execSQL(CREATE_TABLE_PROFILE);
    }
 
    @Override
@@ -78,6 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_ENTRY);
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATION_PARTICIPANTS);
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATIONS);
+      db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILE);
       onCreate(db);
    }
 }

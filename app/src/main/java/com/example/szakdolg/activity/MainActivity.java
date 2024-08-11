@@ -5,14 +5,20 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
 import com.example.szakdolg.contacts.ContactsApiHelper;
 import com.example.szakdolg.conversation.ConversationApiHelper;
+import com.example.szakdolg.db.util.ProfileDatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
+import com.example.szakdolg.messageboard.activity.MessageBoardActivity;
 import com.example.szakdolg.user.api.UserApiHelper;
+import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,16 +75,32 @@ public class MainActivity extends AppCompatActivity {
             )
                .start();
          }
+         ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(this);
+         User currentUser = profileDatabaseUtil.getCurrentUserByToken(_token);
+         if (currentUser!=null){
+            Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
+            Toast
+                    .makeText(
+                            this,
+                            "A user signed in",
+                            Toast.LENGTH_SHORT
+                    )
+                    .show();
+            startActivity(intent);
+            finish();
 
-         _userApiHelper.getUserByTokenAndNavigateToActivity(
-            MainActivity.this,
-            _token
-         );
+         }else {
+            _navigateToLogin();
+         }
       } else {
-         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-         startActivity(intent);
-         finish();
+         _navigateToLogin();
       }
+   }
+
+   private void _navigateToLogin() {
+      Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+      startActivity(intent);
+      finish();
    }
 
    private void _refreshDatabaseTask() {

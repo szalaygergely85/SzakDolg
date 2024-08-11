@@ -8,6 +8,7 @@ import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.activity.MainActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.db.util.ProfileDatabaseUtil;
 import com.example.szakdolg.messageboard.activity.MessageBoardActivity;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
@@ -19,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.util.function.Consumer;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -138,6 +141,42 @@ public class UserApiHelper {
       );
    }
 
+   public void getUserByToken(Context context, Consumer<User> onSuccess,
+                              String token){
+      Call<User> call = _userApiService.getUser(token);
+      call.enqueue(
+              new Callback<User>() {
+                 @Override
+                 public void onResponse(Call<User> call, Response<User> response) {
+                    Log.e(_TAG, "" + response.code());
+                    Intent intent;
+                    if (response.isSuccessful()) {
+                       User user = response.body();
+                       if (user != null) {
+                          onSuccess.accept(user);
+                       }
+                    } else {
+                       Log.e(_TAG, +response.code() + " " + response.errorBody());
+                    }
+                 }
+                 @Override
+                 public void onFailure(Call<User> call, Throwable t) {
+                    Log.e(_TAG, "" + t.getMessage());
+                 }
+              }
+      );
+   }
+   public void getUserByTokenAndInsertLocal(Context context,
+                              String token){
+      ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(context);
+      getUserByToken(context, user->{
+         profileDatabaseUtil.insertProfile(user, token);
+         Intent intent = new Intent(context, MainActivity.class);
+         context.startActivity(intent);
+      },token);
+
+   }
+
    public void getUserByTokenAndNavigateToActivity(
       Context context,
       String token
@@ -208,9 +247,7 @@ public class UserApiHelper {
                         SharedPreferencesConstans.USERTOKEN,
                         token
                      );
-
-                     Intent intent = new Intent(context, MainActivity.class);
-                     context.startActivity(intent);
+                     getUserByTokenAndInsertLocal(context, token);
                   }
                } else {
                   Log.e(_TAG, "" + response.code());
