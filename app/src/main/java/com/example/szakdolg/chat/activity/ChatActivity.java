@@ -144,6 +144,7 @@ public class ChatActivity extends AppCompatActivity {
             try {
                if (conversationId != null && adapter != null) {
                   messageApiHelper.reloadMessages(
+                          ChatActivity.this,
                      conversationId,
                      adapter,
                      _token
@@ -243,7 +244,7 @@ public class ChatActivity extends AppCompatActivity {
             file,
             () -> fileApiHelper.uploadFile(file, messageEntry)
          );
-         messageApiHelper.reloadMessages(conversationId, adapter, _token);
+         messageApiHelper.reloadMessages(ChatActivity.this, conversationId, adapter, _token);
       })
          .start();
    }

@@ -19,6 +19,8 @@ public class ChatHelper {
 
    private MessageDatabaseUtil messageDatabaseUtil;
 
+   private Context context;
+
    public ChatHelper(
       Context context,
       Long conversationId,
@@ -26,6 +28,7 @@ public class ChatHelper {
       String authToken,
       ChatAdapter chatAdapter
    ) {
+      this.context = context;
       this.conversationId = conversationId;
       this.currentUser = currentUser;
       this.authToken = authToken;
@@ -50,15 +53,13 @@ public class ChatHelper {
          UUIDUtil.UUIDGenerator()
       );
 
-      messageDatabaseUtil.insertMessageEntry(messageEntry);
-
       messageApiHelper.sendMessage(
+              context,
          conversationId,
          messageEntry,
          chatAdapter,
          authToken
       );
-      messageApiHelper.reloadMessages(conversationId, chatAdapter, authToken);
    }
 
    public List<MessageEntry> getMessages(Long conversationId) {

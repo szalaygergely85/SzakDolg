@@ -65,42 +65,17 @@ public class MessageApiHelper {
    }
 
    public void reloadMessages(
+           Context context,
       Long conversationId,
       ChatAdapter adapter,
       String userToken
    ) {
-      Call<ArrayList<MessageEntry>> call =
-         messageApiService.getConversationMessages(conversationId, userToken);
 
-      call.enqueue(
-         new Callback<ArrayList<MessageEntry>>() {
-            @Override
-            public void onResponse(
-               Call<ArrayList<MessageEntry>> call,
-               Response<ArrayList<MessageEntry>> response
-            ) {
-               Log.e(TAG, "" + response.code());
+       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+               context
+       );
+       adapter.setMessageEntries( messageDatabaseUtil.getAllMessageEntriesOfConversation(conversationId));
 
-               if (response.isSuccessful()) {
-                  ArrayList<MessageEntry> messageEntryList = response.body();
-                  if (messageEntryList != null) {
-                     adapter.setMessageEntries(messageEntryList);
-                  }
-               } else {
-                  Log.e(TAG, "" + response.code());
-                  //TODO Handle the error
-               }
-            }
-
-            @Override
-            public void onFailure(
-               Call<ArrayList<MessageEntry>> call,
-               Throwable t
-            ) {
-               Log.e(TAG, "" + t.getMessage());
-            }
-         }
-      );
    }
 
    public void sendMessageAndOpenChat(
@@ -139,6 +114,7 @@ public class MessageApiHelper {
    }
 
    public void sendMessage(
+           Context context,
       Long conversationId,
       MessageEntry messageEntry,
       ChatAdapter adapter,
@@ -148,6 +124,9 @@ public class MessageApiHelper {
          messageEntry,
          userToken
       );
+       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+               context
+       );
 
       call.enqueue(
          new Callback<MessageEntry>() {
@@ -159,9 +138,16 @@ public class MessageApiHelper {
                Log.e(TAG, "" + response.code());
 
                if (response.isSuccessful()) {
-                  Log.e(TAG, "" + response.body());
+                  if (response.body()!=null){
+                      MessageEntry message = response.body();
+                      messageDatabaseUtil.insertMessageEntry(message);
 
-                  reloadMessages(conversationId, adapter, userToken);
+                      reloadMessages(context, conversationId, adapter, userToken);
+
+                  }
+
+
+
                } else {
                   Log.e(TAG, "" + response.code());
                   //TODO Handle the error
