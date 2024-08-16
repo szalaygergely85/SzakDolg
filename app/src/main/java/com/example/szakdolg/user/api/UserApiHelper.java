@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.function.Consumer;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -141,40 +140,56 @@ public class UserApiHelper {
       );
    }
 
-   public void getUserByToken(Context context, Consumer<User> onSuccess,
-                              String token){
+   public void getUserByToken(
+      Context context,
+      Consumer<User> onSuccess,
+      String token
+   ) {
       Call<User> call = _userApiService.getUser(token);
       call.enqueue(
-              new Callback<User>() {
-                 @Override
-                 public void onResponse(Call<User> call, Response<User> response) {
-                    Log.e(_TAG, "" + response.code());
-                    Intent intent;
-                    if (response.isSuccessful()) {
-                       User user = response.body();
-                       if (user != null) {
-                          onSuccess.accept(user);
-                       }
-                    } else {
-                       Log.e(_TAG, +response.code() + " " + response.errorBody());
-                    }
-                 }
-                 @Override
-                 public void onFailure(Call<User> call, Throwable t) {
-                    Log.e(_TAG, "" + t.getMessage());
-                 }
-              }
+         new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+               Log.e(_TAG, "" + response.code());
+               Intent intent;
+               if (response.isSuccessful()) {
+                  User user = response.body();
+                  if (user != null) {
+                     onSuccess.accept(user);
+                  }
+               } else {
+                  Log.e(_TAG, +response.code() + " " + response.errorBody());
+               }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+               Log.e(_TAG, "" + t.getMessage());
+            }
+         }
       );
    }
-   public void getUserByTokenAndInsertLocal(Context context,
-                              String token){
-      ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(context);
-      getUserByToken(context, user->{
-         profileDatabaseUtil.insertProfile(user, token);
-         Intent intent = new Intent(context, MainActivity.class);
-         context.startActivity(intent);
-      },token);
 
+   public void getUserByTokenAndInsertLocal(Context context, String token) {
+      getUserByToken(
+         context,
+         user -> {
+            String userId = user.getUserId().toString();
+            ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(
+               context,
+               userId
+            );
+            profileDatabaseUtil.insertProfile(user, token);
+            SharedPreferencesUtil.setStringPreference(
+               context,
+               SharedPreferencesConstans.USER_ID,
+               userId
+            );
+            Intent intent = new Intent(context, MainActivity.class);
+            context.startActivity(intent);
+         },
+         token
+      );
    }
 
    public void getUserByTokenAndNavigateToActivity(

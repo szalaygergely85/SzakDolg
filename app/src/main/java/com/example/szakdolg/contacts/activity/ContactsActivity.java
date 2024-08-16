@@ -1,8 +1,7 @@
-package com.example.szakdolg.activity;
+package com.example.szakdolg.contacts.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,18 +9,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.adapter.ContactsAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.contacts.ContactsApiService;
-import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.contacts.adapter.ContactsAdapter;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.user.entity.User;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ContactsActivity extends AppCompatActivity {
 
@@ -29,7 +23,7 @@ public class ContactsActivity extends AppCompatActivity {
 
    private final String TAG = "ContactsActivity";
 
-   private User user;
+   private User currentUser;
 
    List<User> contactList;
    private FloatingActionButton btnNewContact;
@@ -55,7 +49,7 @@ public class ContactsActivity extends AppCompatActivity {
          actionBar.setDisplayHomeAsUpEnabled(true);
       }
 
-      user =
+      currentUser =
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
 
@@ -73,41 +67,16 @@ public class ContactsActivity extends AppCompatActivity {
       super.onStart();
       contactList = new ArrayList<>();
 
-      ContactsAdapter contactsAdapter = new ContactsAdapter(this, user);
+      ContactsAdapter contactsAdapter = new ContactsAdapter(this, currentUser);
       contactsAdapter.setContact(contactList);
 
-      ContactsApiService contactsApiService = RetrofitClient
-         .getRetrofitInstance()
-         .create(ContactsApiService.class);
-
-      Call<List<User>> contactsCall = contactsApiService.getContacts(
-         SharedPreferencesUtil.getStringPreference(
-            this,
-            SharedPreferencesConstans.USERTOKEN
-         )
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
+         this,
+         currentUser
       );
 
-      contactsCall.enqueue(
-         new Callback<List<User>>() {
-            @Override
-            public void onResponse(
-               Call<List<User>> call,
-               Response<List<User>> response
-            ) {
-               if (response.isSuccessful()) {
-                  Log.e(TAG, "" + response.code());
-
-                  List<User> contactList = response.body();
-                  contactsAdapter.setContact(contactList);
-               }
-            }
-
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-               Log.e(TAG, "" + t.getMessage());
-            }
-         }
-      );
+      List<User> contacts = userDatabaseUtil.getAllUsers();
+      contactsAdapter.setContact(contacts);
 
       contsRecView.setAdapter(contactsAdapter);
       contsRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -119,7 +88,10 @@ public class ContactsActivity extends AppCompatActivity {
                   ContactsActivity.this,
                   SearchContactsActivity.class
                );
-               intent.putExtra(SharedPreferencesConstans.CURRENT_USER, user);
+               intent.putExtra(
+                  SharedPreferencesConstans.CURRENT_USER,
+                  currentUser
+               );
                startActivity(intent);
             }
          }

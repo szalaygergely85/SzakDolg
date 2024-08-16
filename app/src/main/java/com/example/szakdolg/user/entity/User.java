@@ -75,15 +75,25 @@ public class User implements Serializable {
       this.publicKey = publicKey;
    }
 
-    public User(Long userId, String displayName, String fullName, String email, Long phoneNumber) {
-       this.userId = userId;
-       this.displayName = displayName;
-       this.fullName = fullName;
-       this.email = email;
-       this.phoneNumber = phoneNumber;
-    }
+   public User(
+      Long userId,
+      String displayName,
+      String fullName,
+      String email,
+      Long phoneNumber
+   ) {
+      this.userId = userId;
+      this.displayName = displayName;
+      this.fullName = fullName;
+      this.email = email;
+      this.phoneNumber = phoneNumber;
+   }
 
-    public Long getUserId() {
+   public User(Long userId) {
+      this.userId = userId;
+   }
+
+   public Long getUserId() {
       return userId;
    }
 

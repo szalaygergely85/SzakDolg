@@ -20,8 +20,6 @@ public class MessageEntry implements Serializable {
 
    private String contentSenderVersion;
 
-   private String uUId;
-
    public MessageEntry() {}
 
    public Long getMessageId() {
@@ -80,14 +78,6 @@ public class MessageEntry implements Serializable {
       this.type = type;
    }
 
-   public String getuUId() {
-      return uUId;
-   }
-
-   public void setuUId(String uUId) {
-      this.uUId = uUId;
-   }
-
    @Deprecated
    public MessageEntry(
       long conversationId,
@@ -100,7 +90,6 @@ public class MessageEntry implements Serializable {
       this.senderId = senderId;
       this.timestamp = timestamp;
       this.content = content;
-      this.uUId = uUId;
    }
 
    @Deprecated
@@ -117,10 +106,18 @@ public class MessageEntry implements Serializable {
       this.senderId = senderId;
       this.timestamp = timestamp;
       this.content = content;
-      this.uUId = uUId;
    }
 
-   public MessageEntry(Long messageId, Long conversationId, Long senderId, Long timestamp, String content, boolean isRead, int type, String contentSenderVersion, String uUId) {
+   public MessageEntry(
+      Long messageId,
+      Long conversationId,
+      Long senderId,
+      Long timestamp,
+      String content,
+      boolean isRead,
+      int type,
+      String contentSenderVersion
+   ) {
       this.messageId = messageId;
       this.conversationId = conversationId;
       this.senderId = senderId;
@@ -129,7 +126,6 @@ public class MessageEntry implements Serializable {
       this.isRead = isRead;
       this.type = type;
       this.contentSenderVersion = contentSenderVersion;
-      this.uUId = uUId;
    }
 
    public MessageEntry(
@@ -147,7 +143,6 @@ public class MessageEntry implements Serializable {
       this.content = content;
       this.type = type;
       this.contentSenderVersion = contentSenderVersion;
-      this.uUId = uUId;
    }
 
    public MessageEntry(
@@ -194,9 +189,6 @@ public class MessageEntry implements Serializable {
          type +
          ", contentSenderVersion='" +
          contentSenderVersion +
-         '\'' +
-         ", uUId='" +
-         uUId +
          '\'' +
          '}'
       );

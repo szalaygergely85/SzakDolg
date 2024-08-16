@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-   private static final String DATABASE_NAME = "mydatabase.db";
    private static final int DATABASE_VERSION = 1;
 
    public static final String TABLE_CONVERSATION_PARTICIPANTS =
@@ -51,18 +50,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "uUId TEXT" +
       ");";
 
-
    private static final String CREATE_TABLE_PROFILE =
-           "CREATE TABLE " +
-                   TABLE_PROFILE +
-                   " (" +
-                   "userId INTEGER PRIMARY KEY, " +
-                   "displayName TEXT NOT NULL, " +
-                   "fullName TEXT NOT NULL, " +
-                   "email TEXT NOT NULL, " +
-                   "phoneNumber TEXT NOT NULL,"+
-                   "token TEXT NOT NULL"+
-                   ");";
+      "CREATE TABLE " +
+      TABLE_PROFILE +
+      " (" +
+      "userId INTEGER PRIMARY KEY, " +
+      "displayName TEXT NOT NULL, " +
+      "fullName TEXT NOT NULL, " +
+      "email TEXT NOT NULL, " +
+      "phoneNumber TEXT NOT NULL," +
+      "token TEXT NOT NULL" +
+      ");";
    private static final String CREATE_TABLE_USER_ENTRY =
       "CREATE TABLE " +
       TABLE_USER_ENTRY +
@@ -73,8 +71,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "publicKey LONGTEXT NOT NULL " +
       ");";
 
-   public DatabaseHelper(Context context) {
-      super(context, DATABASE_NAME, null, DATABASE_VERSION);
+   public DatabaseHelper(Context context, String userId) {
+      super(context, userId + ".db", null, DATABASE_VERSION);
    }
 
    @Override

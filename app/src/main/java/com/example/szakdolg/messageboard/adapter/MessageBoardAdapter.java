@@ -20,8 +20,6 @@ import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.messageboard.DTO.MessageBoard;
-import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
@@ -44,12 +42,18 @@ public class MessageBoardAdapter
 
    ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
 
-   public MessageBoardAdapter(Context mContext, String token) {
+   public MessageBoardAdapter(
+      Context mContext,
+      String token,
+      User currentUser
+   ) {
       this.context = mContext;
       this._token = token;
-      this.userDatabaseUtil = new UserDatabaseUtil(mContext);
-      this.messageDatabaseUtil = new MessageDatabaseUtil(mContext);
-      this.conversationDatabaseUtil = new ConversationDatabaseUtil(mContext);
+      this.currentUser = currentUser;
+      this.userDatabaseUtil = new UserDatabaseUtil(mContext, currentUser);
+      this.messageDatabaseUtil = new MessageDatabaseUtil(mContext, currentUser);
+      this.conversationDatabaseUtil =
+      new ConversationDatabaseUtil(mContext, currentUser);
    }
 
    /*
@@ -139,12 +143,18 @@ public class MessageBoardAdapter
 
       holder.txtName.setText(conversation.getConversationName());
 
-      MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(conversation.getConversationId());
-
+      MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(
+         conversation.getConversationId()
+      );
 
       if (messageEntry.getContent() != null) {
-         List<ConversationParticipant> participants = conversationDatabaseUtil.getParticipantsByConversationId(conversation.getConversationId());
-         User participant = userDatabaseUtil.getUserById(participants.get(0).getUserId());
+         List<ConversationParticipant> participants =
+            conversationDatabaseUtil.getParticipantsByConversationId(
+               conversation.getConversationId()
+            );
+         User participant = userDatabaseUtil.getUserById(
+            participants.get(0).getUserId()
+         );
 
          if (messageEntry.isRead() || isSenderLoggedUser(messageEntry)) {
             holder.txtMessage.setTypeface(null, Typeface.NORMAL);
@@ -201,19 +211,16 @@ public class MessageBoardAdapter
    public int getItemCount() {
       return conversationList.size();
    }
-/*
-   public void setMessageB(ArrayList<MessageBoard> messageB) {
-      this.messageB = messageB;
-      notifyDataSetChanged();
-   }*/
+
+   /*
+public void setMessageB(ArrayList<MessageBoard> messageB) {
+	this.messageB = messageB;
+	notifyDataSetChanged();
+}*/
 
    public void setConversationList(List<Conversation> conversationList) {
       this.conversationList = conversationList;
       notifyDataSetChanged();
-   }
-
-   public void setCurrentUser(User currentUser) {
-      this.currentUser = currentUser;
    }
 
    public class ViewHolder extends RecyclerView.ViewHolder {

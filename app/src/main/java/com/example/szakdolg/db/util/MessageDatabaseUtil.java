@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.example.szakdolg.db.helper.DatabaseHelper;
 import com.example.szakdolg.message.MessageEntry;
+import com.example.szakdolg.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +14,15 @@ public class MessageDatabaseUtil {
 
    private DatabaseHelper dbHelper;
 
-   public MessageDatabaseUtil(Context context) {
-      dbHelper = new DatabaseHelper(context);
+   public MessageDatabaseUtil(Context context, User user) {
+      dbHelper = new DatabaseHelper(context, user.getUserId().toString());
    }
 
    public void insertMessageEntry(MessageEntry message) {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       try {
          ContentValues values = new ContentValues();
+         values.put("messageId", message.getMessageId());
          values.put("conversationId", message.getConversationId());
          values.put("senderId", message.getSenderId());
          values.put("timestamp", message.getTimestamp());
@@ -28,7 +30,6 @@ public class MessageDatabaseUtil {
          values.put("isRead", message.isRead());
          values.put("type", message.getType());
          values.put("contentSenderVersion", message.getContentSenderVersion());
-         values.put("uUId", message.getuUId());
          db.insert("MessageEntry", null, values);
       } finally {
          db.close();
@@ -42,8 +43,10 @@ public class MessageDatabaseUtil {
 
       try {
          // Query to select the latest message based on the highest timestamp
-         String query = "SELECT * FROM MessageEntry WHERE conversationId = ? ORDER BY timestamp DESC LIMIT 1";
-         cursor = db.rawQuery(query, new String[]{String.valueOf(conversationId)});
+         String query =
+            "SELECT * FROM MessageEntry WHERE conversationId = ? ORDER BY timestamp DESC LIMIT 1";
+         cursor =
+         db.rawQuery(query, new String[] { String.valueOf(conversationId) });
 
          if (cursor != null && cursor.moveToFirst()) {
             // Extract the message details from the cursor using column indices
@@ -52,13 +55,22 @@ public class MessageDatabaseUtil {
             Long senderId = cursor.getLong(2); // Assuming senderId is the third column
             Long timestamp = cursor.getLong(3); // Assuming timestamp is the fourth column
             String content = cursor.getString(4); // Assuming content is the fifth column
-            boolean isRead = cursor.getInt(5) >0; // Assuming isRead is the sixth column
+            boolean isRead = cursor.getInt(5) > 0; // Assuming isRead is the sixth column
             int type = cursor.getInt(6); // Assuming type is the seventh column
             String contentSenderVersion = cursor.getString(7); // Assuming contentSenderVersion is the eighth column
-            String uUId = cursor.getString(8); // Assuming uUId is the ninth column
 
             // Create a new MessageEntry object
-            latestMessage = new MessageEntry(messageId, convId, senderId, timestamp, content, isRead, type, contentSenderVersion, uUId);
+            latestMessage =
+            new MessageEntry(
+               messageId,
+               convId,
+               senderId,
+               timestamp,
+               content,
+               isRead,
+               type,
+               contentSenderVersion
+            );
          }
       } finally {
          if (cursor != null) {
@@ -105,9 +117,6 @@ public class MessageDatabaseUtil {
                cursor.getString(
                   cursor.getColumnIndexOrThrow("contentSenderVersion")
                )
-            );
-            message.setuUId(
-               cursor.getString(cursor.getColumnIndexOrThrow("uUId"))
             );
             messages.add(message);
          }
@@ -168,9 +177,7 @@ public class MessageDatabaseUtil {
                   cursor.getColumnIndexOrThrow("contentSenderVersion")
                )
             );
-            message.setuUId(
-               cursor.getString(cursor.getColumnIndexOrThrow("uUId"))
-            );
+
             messages.add(message);
          }
       } finally {
@@ -183,8 +190,8 @@ public class MessageDatabaseUtil {
       return messages;
    }
 
-   public List<String> getAllMessageUuids() {
-      List<String> uuids = new ArrayList<>();
+   public List<Long> getAllMessageIds() {
+      List<Long> ids = new ArrayList<>();
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = null;
 
@@ -192,7 +199,7 @@ public class MessageDatabaseUtil {
          cursor =
          db.query(
             "MessageEntry",
-            new String[] { "uUId" },
+            new String[] { "messageId" },
             null,
             null,
             null,
@@ -201,10 +208,8 @@ public class MessageDatabaseUtil {
          );
 
          while (cursor.moveToNext()) {
-            String uuid = cursor.getString(
-               cursor.getColumnIndexOrThrow("uUId")
-            );
-            uuids.add(uuid);
+            Long id = cursor.getLong(cursor.getColumnIndexOrThrow("messageId"));
+            ids.add(id);
          }
       } finally {
          if (cursor != null) {
@@ -213,7 +218,7 @@ public class MessageDatabaseUtil {
          db.close();
       }
 
-      return uuids;
+      return ids;
    }
 
    public Long getMessageEntryCount() {
@@ -232,6 +237,7 @@ public class MessageDatabaseUtil {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       try {
          ContentValues values = new ContentValues();
+         values.put("messageId", message.getMessageId());
          values.put("conversationId", message.getConversationId());
          values.put("senderId", message.getSenderId());
          values.put("timestamp", message.getTimestamp());
@@ -239,7 +245,7 @@ public class MessageDatabaseUtil {
          values.put("isRead", message.isRead());
          values.put("type", message.getType());
          values.put("contentSenderVersion", message.getContentSenderVersion());
-         values.put("uUId", message.getuUId());
+
          db.update(
             "MessageEntry",
             values,

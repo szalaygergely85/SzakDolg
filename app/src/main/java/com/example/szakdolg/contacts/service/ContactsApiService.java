@@ -1,4 +1,4 @@
-package com.example.szakdolg.contacts;
+package com.example.szakdolg.contacts.service;
 
 import com.example.szakdolg.user.entity.User;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public interface ContactsApiService {
 
    @FormUrlEncoded
    @POST("contacts")
-   Call<Boolean> addContact(
+   Call<User> addContact(
       @Field("ownerId") Long ownerId,
       @Field("contactId") Long contactId,
       @Header("Authorization") String authToken

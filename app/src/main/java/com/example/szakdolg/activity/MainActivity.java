@@ -6,13 +6,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.contacts.ContactsApiHelper;
+import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.db.util.ProfileDatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
@@ -33,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
    private ContactsApiHelper _contactsApiHelper = new ContactsApiHelper();
    private ConversationApiHelper _conversationApiHelper =
       new ConversationApiHelper();
+
+   private User currentUser;
 
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,38 +58,43 @@ public class MainActivity extends AppCompatActivity {
          SharedPreferencesConstans.USERTOKEN
       );
 
-      if (_token != null) {
+      String userId = SharedPreferencesUtil.getStringPreference(
+         this,
+         SharedPreferencesConstans.USER_ID
+      );
+
+      if (_token != null && userId != null) {
          long cacheExpireTimeMillis = SharedPreferencesUtil.getLongPreference(
             this,
             SharedPreferencesConstans.CACHE_EXPIRE
          );
 
-         if (isCacheExpired(cacheExpireTimeMillis)) {
-            new Thread(
-               new Runnable() {
-                  @Override
-                  public void run() {
-                     _refreshDatabaseTask();
+         ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(
+            this,
+            userId
+         );
+         currentUser = profileDatabaseUtil.getCurrentUserByToken(_token);
+         if (currentUser != null) {
+            if (isCacheExpired(cacheExpireTimeMillis)) {
+               new Thread(
+                  new Runnable() {
+                     @Override
+                     public void run() {
+                        _refreshDatabaseTask();
+                     }
                   }
-               }
-            )
-               .start();
-         }
-         ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(this);
-         User currentUser = profileDatabaseUtil.getCurrentUserByToken(_token);
-         if (currentUser!=null){
-            Intent intent = new Intent(MainActivity.this, MessageBoardActivity.class);
-            Toast
-                    .makeText(
-                            this,
-                            "A user signed in",
-                            Toast.LENGTH_SHORT
-                    )
-                    .show();
+               )
+                  .start();
+            }
+
+            Intent intent = new Intent(
+               MainActivity.this,
+               MessageBoardActivity.class
+            );
+            Toast.makeText(this, "A user signed in", Toast.LENGTH_SHORT).show();
             startActivity(intent);
             finish();
-
-         }else {
+         } else {
             _navigateToLogin();
          }
       } else {
@@ -104,10 +109,14 @@ public class MainActivity extends AppCompatActivity {
    }
 
    private void _refreshDatabaseTask() {
-      _messageApiHelper.checkCachedMessages(_token, this);
-      _contactsApiHelper.checkCachedContacts(_token, this);
-      _conversationApiHelper.checkCachedConversation(_token, this);
-      _conversationApiHelper.checkCachedConversationParticipant(_token, this);
+      _messageApiHelper.checkCachedMessages(_token, this, currentUser);
+      _contactsApiHelper.checkCachedContacts(_token, this, currentUser);
+      _conversationApiHelper.checkCachedConversation(_token, this, currentUser);
+      _conversationApiHelper.checkCachedConversationParticipant(
+         _token,
+         this,
+         currentUser
+      );
    }
 
    private boolean isCacheExpired(long cacheExpireTimeMillis) {

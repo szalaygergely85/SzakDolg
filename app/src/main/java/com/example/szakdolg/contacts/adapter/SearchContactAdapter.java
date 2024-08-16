@@ -1,4 +1,4 @@
-package com.example.szakdolg.adapter;
+package com.example.szakdolg.contacts.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,7 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.contacts.ContactsApiService;
+import com.example.szakdolg.contacts.service.ContactsApiService;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ public class SearchContactAdapter
    extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder> {
 
    private static final String TAG = "SearchContactAdapter";
-   private final Context mContext;
+   private final Context context;
 
-   private User user;
+   private User currentUser;
    private List<User> contactList = new ArrayList<>();
 
    private String _token;
@@ -80,9 +81,13 @@ public class SearchContactAdapter
 		}
 	}
 */
-   public SearchContactAdapter(Context mContext, User user, String token) {
-      this.user = user;
-      this.mContext = mContext;
+   public SearchContactAdapter(
+      Context context,
+      User currentUser,
+      String token
+   ) {
+      this.currentUser = currentUser;
+      this.context = context;
       this._token = token;
    }
 
@@ -111,30 +116,46 @@ public class SearchContactAdapter
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+               UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
+                  context,
+                  currentUser
+               );
+
                ContactsApiService contactsApiService = RetrofitClient
                   .getRetrofitInstance()
                   .create(ContactsApiService.class);
 
-               Call<Boolean> contactsCall = contactsApiService.addContact(
-                  user.getUserId(),
+               Call<User> contactsCall = contactsApiService.addContact(
+                  currentUser.getUserId(),
                   userSearchResult.getUserId(),
                   _token
                );
 
                contactsCall.enqueue(
-                  new Callback<Boolean>() {
+                  new Callback<User>() {
                      @Override
                      public void onResponse(
-                        Call<Boolean> call,
-                        Response<Boolean> response
+                        Call<User> call,
+                        Response<User> response
                      ) {
                         if (response.isSuccessful()) {
-                           Log.e(TAG, "" + response.code());
+                           User user = response.body();
+                           if (user != null) {
+                              if (
+                                 userDatabaseUtil.getUserById(
+                                    user.getUserId()
+                                 ) ==
+                                 null
+                              ) {
+                                 userDatabaseUtil.insertUser(user);
+                              }
+                           }
                         }
+                        Log.e(TAG, "" + response.code());
                      }
 
                      @Override
-                     public void onFailure(Call<Boolean> call, Throwable t) {
+                     public void onFailure(Call<User> call, Throwable t) {
                         Log.e(TAG, "" + t.getMessage());
                      }
                   }

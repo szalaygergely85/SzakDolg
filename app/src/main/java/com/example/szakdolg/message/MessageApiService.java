@@ -3,7 +3,6 @@ package com.example.szakdolg.message;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -27,7 +26,7 @@ public interface MessageApiService {
 
    @GET("message/new-message")
    Call<ArrayList<MessageEntry>> getNewMessages(
-           @Header("Authorization") String token
+      @Header("Authorization") String token
    );
 
    @GET("message/byconversationid/{id}")

@@ -4,11 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
 import com.example.szakdolg.conversation.entity.Conversation;
 import com.example.szakdolg.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.helper.DatabaseHelper;
+import com.example.szakdolg.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +15,8 @@ public class ConversationDatabaseUtil {
 
    private DatabaseHelper dbHelper;
 
-   public ConversationDatabaseUtil(Context context) {
-      dbHelper = new DatabaseHelper(context);
+   public ConversationDatabaseUtil(Context context, User user) {
+      dbHelper = new DatabaseHelper(context, user.getUserId().toString());
    }
 
    public void insertConversation(Conversation conversation) {
@@ -41,13 +40,15 @@ public class ConversationDatabaseUtil {
    ) {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       ContentValues values = new ContentValues();
-      values.put("conversationParticipantId", participant.getConversationParticipantId());
+      values.put(
+         "conversationParticipantId",
+         participant.getConversationParticipantId()
+      );
       values.put("conversationId", participant.getConversationId());
       values.put("userId", participant.getUserId());
 
       db.insert(dbHelper.TABLE_CONVERSATION_PARTICIPANTS, null, values);
       db.close();
-
    }
 
    // Method to get all conversations
@@ -119,12 +120,12 @@ public class ConversationDatabaseUtil {
       try {
          cursor = db.rawQuery(countQuery, null);
          if (cursor != null && cursor.moveToFirst()) {
-            count = cursor.getInt(0);  // Retrieve as string
-               // Convert to Long
+            count = cursor.getInt(0); // Retrieve as string
+            // Convert to Long
          } else {
             // Log.e("DatabaseError", "Cursor is null or empty");
          }
-      }finally {
+      } finally {
          if (cursor != null) {
             cursor.close();
          }

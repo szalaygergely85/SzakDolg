@@ -88,7 +88,6 @@ public class ChatActivity extends AppCompatActivity {
       }
    }
 
-
    private void _getSharedPrefAndIntentExtras() {
       _token =
       SharedPreferencesUtil.getStringPreference(
@@ -100,8 +99,7 @@ public class ChatActivity extends AppCompatActivity {
          .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
 
       conversationId =
-      this.getIntent()
-         .getLongExtra(IntentConstans.CONVERSATION_ID, 0);
+      this.getIntent().getLongExtra(IntentConstans.CONVERSATION_ID, 0);
       conversationContent =
       (ConversationContent) this.getIntent()
          .getSerializableExtra(IntentConstans.CONVERSATION_CONTENT);
@@ -144,10 +142,10 @@ public class ChatActivity extends AppCompatActivity {
             try {
                if (conversationId != null && adapter != null) {
                   messageApiHelper.reloadMessages(
-                          ChatActivity.this,
+                     ChatActivity.this,
                      conversationId,
                      adapter,
-                     _token
+                     currentUser
                   );
                }
             } finally {
@@ -161,58 +159,57 @@ public class ChatActivity extends AppCompatActivity {
 
    private void _setListeners() {
       edtMess.setKeyBoardInputCallbackListener(
-              new MyEditText.KeyBoardInputCallbackListener() {
-                 @Override
-                 public void onCommitContent(
-                         InputContentInfoCompat inputContentInfo,
-                         int flags,
-                         Bundle opts
-                 ) {
-                    _sendFile(inputContentInfo.getLinkUri());
-                 }
-              }
+         new MyEditText.KeyBoardInputCallbackListener() {
+            @Override
+            public void onCommitContent(
+               InputContentInfoCompat inputContentInfo,
+               int flags,
+               Bundle opts
+            ) {
+               _sendFile(inputContentInfo.getLinkUri());
+            }
+         }
       );
 
       btnSend.setOnClickListener(
-              new View.OnClickListener() {
-                 @Override
-                 public void onClick(View view) {
-                    String content = edtMess.getText().toString();
-                    if (!content.isEmpty()) {
-                       try {
-                          if (otherUser != null && currentUser != null) {
-                             String encryptedContentString =
-                                     EncryptionHelper.encrypt(
-                                             content,
-                                             CacheUtil.getPublicKeyFromCache(
-                                                     ChatActivity.this,
-                                                     otherUser.getEmail()
-                                             )
-                                     );
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               String content = edtMess.getText().toString();
+               if (!content.isEmpty()) {
+                  try {
+                     if (otherUser != null && currentUser != null) {
+                        String encryptedContentString =
+                           EncryptionHelper.encrypt(
+                              content,
+                              CacheUtil.getPublicKeyFromCache(
+                                 ChatActivity.this,
+                                 otherUser.getEmail()
+                              )
+                           );
 
-                             String encryptedContentSenderVersion =
-                                     EncryptionHelper.encrypt(
-                                             content,
-                                             currentUser.getPublicKey()
-                                     );
+                        String encryptedContentSenderVersion =
+                           EncryptionHelper.encrypt(
+                              content,
+                              currentUser.getPublicKey()
+                           );
 
-                             chatHelper.sendMessage(
-                                     MessageTypeConstans.MESSAGE,
-                                     encryptedContentSenderVersion,
-                                     encryptedContentString
-                             );
+                        chatHelper.sendMessage(
+                           MessageTypeConstans.MESSAGE,
+                           encryptedContentSenderVersion,
+                           encryptedContentString
+                        );
 
-                             edtMess.getText().clear();
-                          }
-                       } catch (Exception e) {
-                          throw new RuntimeException(e);
-                       }
-                    }
-                 }
-              }
+                        edtMess.getText().clear();
+                     }
+                  } catch (Exception e) {
+                     throw new RuntimeException(e);
+                  }
+               }
+            }
+         }
       );
    }
-
 
    private void _stopRepeatingTask() {
       handler.removeCallbacks(runnable);
@@ -244,7 +241,12 @@ public class ChatActivity extends AppCompatActivity {
             file,
             () -> fileApiHelper.uploadFile(file, messageEntry)
          );
-         messageApiHelper.reloadMessages(ChatActivity.this, conversationId, adapter, _token);
+         messageApiHelper.reloadMessages(
+            ChatActivity.this,
+            conversationId,
+            adapter,
+            currentUser
+         );
       })
          .start();
    }

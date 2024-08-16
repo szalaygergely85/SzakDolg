@@ -1,4 +1,4 @@
-package com.example.szakdolg.adapter;
+package com.example.szakdolg.contacts.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -111,10 +111,10 @@ public class ContactsAdapter
    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
       User contactUser = contact.get(holder.getAdapterPosition());
 
-      holder.txtName.setText(contactUser.getFullName());
+      holder.txtName.setText(contactUser.getDisplayName());
       holder.txtEmail.setText(contactUser.getEmail());
       //setImageView(contact.get(position).getID(), mContext, holder.imageView);
-      holder.txtPhone.setText(contactUser.getPhoneNumber().toString());
+      //holder.txtPhone.setText(contactUser.getPhoneNumber().toString());
       holder.relativeLayout.setOnClickListener(
          new View.OnClickListener() {
             @Override

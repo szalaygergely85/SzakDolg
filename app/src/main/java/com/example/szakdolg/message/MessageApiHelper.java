@@ -5,8 +5,6 @@ import android.util.Log;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.file.apiservice.FileApiService;
-import com.example.szakdolg.messageboard.DTO.MessageBoard;
-import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.user.entity.User;
@@ -31,9 +29,14 @@ public class MessageApiHelper {
    private UserApiHelper userApiHelper = new UserApiHelper();
    User loggedUser;
 
-   public void checkCachedMessages(String authToken, Context context) {
+   public void checkCachedMessages(
+      String authToken,
+      Context context,
+      User user
+   ) {
       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
-         context
+         context,
+         user
       );
       Call<ArrayList<MessageEntry>> call =
          messageApiService.getMessagesAndCompareWithLocal(
@@ -50,7 +53,7 @@ public class MessageApiHelper {
             ) {
                if (response.isSuccessful()) {
                   if (response.body().size() > 0) {
-                     CacheUtil.validateMessages(response.body(), context);
+                     CacheUtil.validateMessages(response.body(), context, user);
                   }
                }
             }
@@ -65,17 +68,18 @@ public class MessageApiHelper {
    }
 
    public void reloadMessages(
-           Context context,
+      Context context,
       Long conversationId,
       ChatAdapter adapter,
-      String userToken
+      User user
    ) {
-
-       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
-               context
-       );
-       adapter.setMessageEntries( messageDatabaseUtil.getAllMessageEntriesOfConversation(conversationId));
-
+      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+         context,
+         user
+      );
+      adapter.setMessageEntries(
+         messageDatabaseUtil.getAllMessageEntriesOfConversation(conversationId)
+      );
    }
 
    public void sendMessageAndOpenChat(
@@ -114,19 +118,21 @@ public class MessageApiHelper {
    }
 
    public void sendMessage(
-           Context context,
+      Context context,
       Long conversationId,
       MessageEntry messageEntry,
       ChatAdapter adapter,
-      String userToken
+      String userToken,
+      User user
    ) {
       Call<MessageEntry> call = messageApiService.sendMessage(
          messageEntry,
          userToken
       );
-       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
-               context
-       );
+      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+         context,
+         user
+      );
 
       call.enqueue(
          new Callback<MessageEntry>() {
@@ -138,16 +144,12 @@ public class MessageApiHelper {
                Log.e(TAG, "" + response.code());
 
                if (response.isSuccessful()) {
-                  if (response.body()!=null){
-                      MessageEntry message = response.body();
-                      messageDatabaseUtil.insertMessageEntry(message);
+                  if (response.body() != null) {
+                     MessageEntry message = response.body();
+                     messageDatabaseUtil.insertMessageEntry(message);
 
-                      reloadMessages(context, conversationId, adapter, userToken);
-
+                     reloadMessages(context, conversationId, adapter, user);
                   }
-
-
-
                } else {
                   Log.e(TAG, "" + response.code());
                   //TODO Handle the error
@@ -161,61 +163,67 @@ public class MessageApiHelper {
          }
       );
    }
-    public void getNewMessages(Context context,
-            String userToken
-    ){
-        MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
-                context
-        );
-        Call<ArrayList<MessageEntry>> messagesCall =
-                messageApiService.getNewMessages(userToken);
 
-        messagesCall.enqueue(
-                new Callback<ArrayList<MessageEntry>>() {
-                    @Override
-                    public void onResponse(Call<ArrayList<MessageEntry>> call, Response<ArrayList<MessageEntry>> response) {
-                        if (response.isSuccessful()) {
-                            Log.e(TAG, "" + response.code());
+   public void getNewMessages(Context context, String userToken, User user) {
+      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+         context,
+         user
+      );
+      Call<ArrayList<MessageEntry>> messagesCall =
+         messageApiService.getNewMessages(userToken);
 
-                            //TODO need to use uuid for users.... or userid
+      messagesCall.enqueue(
+         new Callback<ArrayList<MessageEntry>>() {
+            @Override
+            public void onResponse(
+               Call<ArrayList<MessageEntry>> call,
+               Response<ArrayList<MessageEntry>> response
+            ) {
+               if (response.isSuccessful()) {
+                  Log.e(TAG, "" + response.code());
 
-                            List<MessageEntry> messages = response.body();
-                            List<Long> messageIds = new ArrayList<>();
-                            if(messages.size()>0){
-                                for (MessageEntry messageEntry : messages){
-                                    messageDatabaseUtil.insertMessageEntry(messageEntry);
-                                    messageIds.add(messageEntry.getMessageId());
-                                }
-                                setMessagesToDownloaded(messageIds);
-                            }
-                        }
-                    }
+                  //TODO need to use uuid for users.... or userid
 
-                    @Override
-                    public void onFailure(Call<ArrayList<MessageEntry>> call, Throwable t) {
+                  List<MessageEntry> messages = response.body();
+                  List<Long> messageIds = new ArrayList<>();
+                  if (messages.size() > 0) {
+                     for (MessageEntry messageEntry : messages) {
+                        messageDatabaseUtil.insertMessageEntry(messageEntry);
+                        messageIds.add(messageEntry.getMessageId());
+                     }
+                     setMessagesToDownloaded(messageIds);
+                  }
+               }
+            }
 
-                    }
-                });
+            @Override
+            public void onFailure(
+               Call<ArrayList<MessageEntry>> call,
+               Throwable t
+            ) {}
+         }
+      );
+   }
 
-    }
-    public void setMessagesToDownloaded(List<Long> messageIds){
+   public void setMessagesToDownloaded(List<Long> messageIds) {
+      Call<String> messagesCall = messageApiService.markMessagesAsDownloaded(
+         messageIds
+      );
+      messagesCall.enqueue(
+         new Callback<String>() {
+            @Override
+            public void onResponse(
+               Call<String> call,
+               Response<String> response
+            ) {
+               Log.e(TAG, "" + response.code());
+            }
 
-        Call<String> messagesCall =
-                messageApiService.markMessagesAsDownloaded(messageIds);
-        messagesCall.enqueue(
-                new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        Log.e(TAG, "" + response.code());
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-
-                    }
-                }
-                );
-    }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {}
+         }
+      );
+   }
 
    private User _findOtherUserById(List<User> users, Long id) {
       for (User user : users) {

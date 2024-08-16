@@ -109,7 +109,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                mContext,
                () ->
                   messageApiHelper.reloadMessages(
-                          mContext,
+                     mContext,
                      messageEntry.getConversationId(),
                      this,
                      null

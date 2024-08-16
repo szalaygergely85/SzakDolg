@@ -65,12 +65,14 @@ public class CacheUtil {
 
    public static void validateMessages(
       ArrayList<MessageEntry> messageEntries,
-      Context context
+      Context context,
+      User user
    ) {
       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
-         context
+         context,
+         user
       );
-      List<String> localMessageUUIds = messageDatabaseUtil.getAllMessageUuids();
+      List<Long> localMessageIds = messageDatabaseUtil.getAllMessageIds();
 
       if (messageEntries == null || messageEntries.isEmpty()) {
          throw new IllegalArgumentException(
@@ -79,7 +81,7 @@ public class CacheUtil {
       }
 
       for (MessageEntry messageEntry : messageEntries) {
-         if (!localMessageUUIds.contains(messageEntry.getuUId())) {
+         if (!localMessageIds.contains(messageEntry.getMessageId())) {
             messageDatabaseUtil.insertMessageEntry(messageEntry);
          }
       }
@@ -87,10 +89,13 @@ public class CacheUtil {
 
    public static void validateContacts(
       ArrayList<User> userEntries,
-      Context context
+      Context context,
+      User currentUser
    ) {
-      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context);
-      List<Long> localUserIds = userDatabaseUtil.getAllUserIds();
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
+         context,
+         currentUser
+      );
 
       if (userEntries == null || userEntries.isEmpty()) {
          throw new IllegalArgumentException(
@@ -98,7 +103,7 @@ public class CacheUtil {
          );
       }
       for (User user : userEntries) {
-         if (!localUserIds.contains(user.getUserId())) {
+         if (userDatabaseUtil.getUserById(user.getUserId()) == null) {
             userDatabaseUtil.insertUser(user);
          }
       }
@@ -106,10 +111,11 @@ public class CacheUtil {
 
    public static void validateConversation(
       List<Conversation> conversations,
-      Context context
+      Context context,
+      User user
    ) {
       ConversationDatabaseUtil conversationDatabaseUtil =
-         new ConversationDatabaseUtil(context);
+         new ConversationDatabaseUtil(context, user);
       List<Conversation> localConversations =
          conversationDatabaseUtil.getAllConversations();
       if (conversations == null || conversations.isEmpty()) {
@@ -126,10 +132,11 @@ public class CacheUtil {
 
    public static void validateConversationParticipant(
       List<ConversationParticipant> participants,
-      Context context
+      Context context,
+      User user
    ) {
       ConversationDatabaseUtil conversationDatabaseUtil =
-         new ConversationDatabaseUtil(context);
+         new ConversationDatabaseUtil(context, user);
       List<ConversationParticipant> localParticipants =
          conversationDatabaseUtil.getAllConversationParticipant();
       if (participants == null || participants.isEmpty()) {

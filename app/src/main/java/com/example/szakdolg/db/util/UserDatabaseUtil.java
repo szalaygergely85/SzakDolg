@@ -13,8 +13,8 @@ public class UserDatabaseUtil {
 
    private DatabaseHelper dbHelper;
 
-   public UserDatabaseUtil(Context context) {
-      dbHelper = new DatabaseHelper(context);
+   public UserDatabaseUtil(Context context, User user) {
+      dbHelper = new DatabaseHelper(context, user.getUserId().toString());
    }
 
    public List<Long> getAllUserIds() {

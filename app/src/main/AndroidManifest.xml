@@ -34,11 +34,11 @@
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.SearchContactsActivity"
+            android:name=".contacts.activity.SearchContactsActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.ContactsActivity"
+            android:name=".contacts.activity.ContactsActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

@@ -33,7 +33,7 @@ public class ChatHelper {
       this.currentUser = currentUser;
       this.authToken = authToken;
       this.chatAdapter = chatAdapter;
-      this.messageDatabaseUtil = new MessageDatabaseUtil(context);
+      this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
    }
 
    MessageApiHelper messageApiHelper = new MessageApiHelper();
@@ -54,11 +54,12 @@ public class ChatHelper {
       );
 
       messageApiHelper.sendMessage(
-              context,
+         context,
          conversationId,
          messageEntry,
          chatAdapter,
-         authToken
+         authToken,
+         currentUser
       );
    }
 

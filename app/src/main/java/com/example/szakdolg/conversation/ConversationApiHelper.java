@@ -119,10 +119,7 @@ public class ConversationApiHelper {
          );
       } else {
          Intent intent = new Intent(context, ChatActivity.class);
-         intent.putExtra(
-            IntentConstans.CONVERSATION_ID,
-            conversationId
-         );
+         intent.putExtra(IntentConstans.CONVERSATION_ID, conversationId);
          intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
          context.startActivity(intent);
       }
@@ -188,9 +185,13 @@ public class ConversationApiHelper {
       );
    }
 
-   public void checkCachedConversation(String token, Context context) {
+   public void checkCachedConversation(
+      String token,
+      Context context,
+      User user
+   ) {
       ConversationDatabaseUtil conversationDatabaseUtil =
-         new ConversationDatabaseUtil(context);
+         new ConversationDatabaseUtil(context, user);
       Call<List<Conversation>> call =
          conversationApiService.getConversationAndCompareWithLocal(
             conversationDatabaseUtil.getConversationCount(),
@@ -206,7 +207,11 @@ public class ConversationApiHelper {
             ) {
                if (response.isSuccessful()) {
                   if (response.body().size() > 0) {
-                     CacheUtil.validateConversation(response.body(), context);
+                     CacheUtil.validateConversation(
+                        response.body(),
+                        context,
+                        user
+                     );
                   }
                }
             }
@@ -219,10 +224,11 @@ public class ConversationApiHelper {
 
    public void checkCachedConversationParticipant(
       String token,
-      Context context
+      Context context,
+      User user
    ) {
       ConversationDatabaseUtil conversationDatabaseUtil =
-         new ConversationDatabaseUtil(context);
+         new ConversationDatabaseUtil(context, user);
       Call<List<ConversationParticipant>> call =
          conversationApiService.getConversationParticipantAndCompareWithLocal(
             conversationDatabaseUtil.getConversationParticipantCount(),
@@ -239,7 +245,8 @@ public class ConversationApiHelper {
                   if (response.body().size() > 0) {
                      CacheUtil.validateConversationParticipant(
                         response.body(),
-                        context
+                        context,
+                        user
                      );
                   }
                }

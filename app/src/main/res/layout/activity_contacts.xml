@@ -7,7 +7,7 @@
     android:background="@color/primaryLightColor"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".activity.ContactsActivity">
+    tools:context=".contacts.activity.ContactsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

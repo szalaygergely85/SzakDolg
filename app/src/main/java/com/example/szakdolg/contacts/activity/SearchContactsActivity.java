@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity;
+package com.example.szakdolg.contacts.activity;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,9 +11,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.adapter.SearchContactAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.contacts.ContactsApiService;
+import com.example.szakdolg.contacts.adapter.SearchContactAdapter;
+import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;

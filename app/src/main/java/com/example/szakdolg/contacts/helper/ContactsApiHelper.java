@@ -1,6 +1,7 @@
-package com.example.szakdolg.contacts;
+package com.example.szakdolg.contacts.helper;
 
 import android.content.Context;
+import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
@@ -17,8 +18,15 @@ public class ContactsApiHelper {
       .getRetrofitInstance()
       .create(ContactsApiService.class);
 
-   public void checkCachedContacts(String token, Context context) {
-      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context);
+   public void checkCachedContacts(
+      String token,
+      Context context,
+      User currentUser
+   ) {
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
+         context,
+         currentUser
+      );
       Call<ArrayList<User>> call =
          contactsApiService.getContactsAndCompareWithLocal(
             userDatabaseUtil.getUserCount(),
@@ -33,7 +41,11 @@ public class ContactsApiHelper {
             ) {
                if (response.isSuccessful()) {
                   if (response.body().size() > 0) {
-                     CacheUtil.validateContacts(response.body(), context);
+                     CacheUtil.validateContacts(
+                        response.body(),
+                        context,
+                        currentUser
+                     );
                   }
                }
             }

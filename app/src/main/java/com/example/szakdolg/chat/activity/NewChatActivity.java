@@ -13,7 +13,7 @@ import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.chat.adapter.UserAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
-import com.example.szakdolg.contacts.ContactsApiHelper;
+import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;

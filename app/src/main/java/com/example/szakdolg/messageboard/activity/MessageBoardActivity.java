@@ -18,11 +18,11 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.ContactsActivity;
 import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.chat.activity.NewChatActivity;
 import com.example.szakdolg.constans.IntentConstans;
 import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.contacts.activity.ContactsActivity;
 import com.example.szakdolg.conversation.entity.Conversation;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.ProfileDatabaseUtil;
@@ -76,9 +76,16 @@ public class MessageBoardActivity extends AppCompatActivity {
          SharedPreferencesConstans.USERTOKEN
       );
 
-      ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(this);
-      _currentUser =
-              profileDatabaseUtil.getCurrentUserByToken(userToken);
+      String userId = SharedPreferencesUtil.getStringPreference(
+         this,
+         SharedPreferencesConstans.USER_ID
+      );
+
+      ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(
+         this,
+         userId
+      );
+      _currentUser = profileDatabaseUtil.getCurrentUserByToken(userToken);
 
       _scheduleMessageWorker();
 
@@ -87,26 +94,24 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
 
-      messageBoardAdapter = new MessageBoardAdapter(this, userToken);
+      messageBoardAdapter =
+      new MessageBoardAdapter(this, userToken, _currentUser);
 
-      ConversationDatabaseUtil conversationDatabaseUtil = new ConversationDatabaseUtil(this);
+      ConversationDatabaseUtil conversationDatabaseUtil =
+         new ConversationDatabaseUtil(this, _currentUser);
 
       conversationList = conversationDatabaseUtil.getAllConversations();
 
       messageBoardAdapter.setConversationList(conversationList);
 
-      messageBoardAdapter.setCurrentUser(_currentUser);
-
       messageBoardRecView.setAdapter(messageBoardAdapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
-
-
    }
 
    @Override
    protected void onStart() {
       super.onStart();
-       _startRepeatingTask();
+      _startRepeatingTask();
 
       contactsButton.setOnClickListener(
          new View.OnClickListener() {
@@ -164,7 +169,7 @@ public class MessageBoardActivity extends AppCompatActivity {
    @Override
    protected void onDestroy() {
       super.onDestroy();
-       _stopRepeatingTask();
+      _stopRepeatingTask();
    }
 
    private void _initView() {
@@ -177,7 +182,10 @@ public class MessageBoardActivity extends AppCompatActivity {
          @Override
          public void run() {
             try {
-               messageApiHelper.getNewMessages(MessageBoardActivity.this, userToken
+               messageApiHelper.getNewMessages(
+                  MessageBoardActivity.this,
+                  userToken,
+                  _currentUser
                );
             } finally {
                handler.postDelayed(runnable, 15000);
