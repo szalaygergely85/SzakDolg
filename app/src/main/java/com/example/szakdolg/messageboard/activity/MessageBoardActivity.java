@@ -104,6 +104,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       messageBoardAdapter.setConversationList(conversationList);
 
+
       messageBoardRecView.setAdapter(messageBoardAdapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
    }
@@ -185,7 +186,8 @@ public class MessageBoardActivity extends AppCompatActivity {
                messageApiHelper.getNewMessages(
                   MessageBoardActivity.this,
                   userToken,
-                  _currentUser
+                  _currentUser, messageBoardAdapter
+
                );
             } finally {
                handler.postDelayed(runnable, 15000);

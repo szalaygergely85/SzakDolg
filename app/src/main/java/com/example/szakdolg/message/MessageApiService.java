@@ -13,6 +13,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MessageApiService {
+   @Deprecated
    @GET("message/messageboardentries")
    Call<ArrayList<MessageBoard>> getLatestMessages(
       @Header("Authorization") String token
@@ -25,10 +26,11 @@ public interface MessageApiService {
    );
 
    @GET("message/new-message")
-   Call<ArrayList<MessageEntry>> getNewMessages(
+   Call<List<MessageEntry>> getNewMessages(
       @Header("Authorization") String token
    );
 
+   @Deprecated
    @GET("message/byconversationid/{id}")
    Call<ArrayList<MessageEntry>> getConversationMessages(
       @Path("id") long conversationId,

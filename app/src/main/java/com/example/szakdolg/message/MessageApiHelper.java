@@ -2,9 +2,12 @@ package com.example.szakdolg.message;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Adapter;
+
 import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.file.apiservice.FileApiService;
+import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.user.entity.User;
@@ -22,9 +25,6 @@ public class MessageApiHelper {
    private MessageApiService messageApiService = RetrofitClient
       .getRetrofitInstance()
       .create(MessageApiService.class);
-   private FileApiService fileApiService = RetrofitClient
-      .getRetrofitInstance()
-      .create(FileApiService.class);
 
    private UserApiHelper userApiHelper = new UserApiHelper();
    User loggedUser;
@@ -164,25 +164,25 @@ public class MessageApiHelper {
       );
    }
 
-   public void getNewMessages(Context context, String userToken, User user) {
+   public void getNewMessages(Context context, String userToken, User user, MessageBoardAdapter messageBoardAdapter) {
       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
          context,
          user
       );
-      Call<ArrayList<MessageEntry>> messagesCall =
+      Call<List<MessageEntry>> messagesCall =
          messageApiService.getNewMessages(userToken);
 
       messagesCall.enqueue(
-         new Callback<ArrayList<MessageEntry>>() {
+         new Callback<List<MessageEntry>>() {
             @Override
             public void onResponse(
-               Call<ArrayList<MessageEntry>> call,
-               Response<ArrayList<MessageEntry>> response
+               Call<List<MessageEntry>> call,
+               Response<List<MessageEntry>> response
             ) {
                if (response.isSuccessful()) {
                   Log.e(TAG, "" + response.code());
 
-                  //TODO need to use uuid for users.... or userid
+
 
                   List<MessageEntry> messages = response.body();
                   List<Long> messageIds = new ArrayList<>();
@@ -191,6 +191,8 @@ public class MessageApiHelper {
                         messageDatabaseUtil.insertMessageEntry(messageEntry);
                         messageIds.add(messageEntry.getMessageId());
                      }
+
+                      messageBoardAdapter.notifyDataSetChanged();
                      setMessagesToDownloaded(messageIds);
                   }
                }
@@ -198,7 +200,7 @@ public class MessageApiHelper {
 
             @Override
             public void onFailure(
-               Call<ArrayList<MessageEntry>> call,
+               Call<List<MessageEntry>> call,
                Throwable t
             ) {}
          }
