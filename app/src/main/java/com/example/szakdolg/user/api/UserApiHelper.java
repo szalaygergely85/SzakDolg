@@ -6,8 +6,8 @@ import android.util.Log;
 import android.widget.Toast;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.activity.MainActivity;
-import com.example.szakdolg.constans.IntentConstans;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.util.ProfileDatabaseUtil;
 import com.example.szakdolg.messageboard.activity.MessageBoardActivity;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -182,7 +182,7 @@ public class UserApiHelper {
             profileDatabaseUtil.insertProfile(user, token);
             SharedPreferencesUtil.setStringPreference(
                context,
-               SharedPreferencesConstans.USER_ID,
+               SharedPreferencesConstants.USER_ID,
                userId
             );
             Intent intent = new Intent(context, MainActivity.class);
@@ -208,7 +208,7 @@ public class UserApiHelper {
 
                   if (user != null) {
                      intent = new Intent(context, MessageBoardActivity.class);
-                     intent.putExtra(IntentConstans.CURRENT_USER, user);
+                     intent.putExtra(IntentConstants.CURRENT_USER, user);
                      Toast
                         .makeText(
                            context,
@@ -222,7 +222,7 @@ public class UserApiHelper {
                   Log.e(_TAG, +response.code() + " " + response.errorBody());
                   SharedPreferencesUtil.deleteStringPreference(
                      context,
-                     SharedPreferencesConstans.USERTOKEN
+                     SharedPreferencesConstants.USERTOKEN
                   );
                   intent = new Intent(context, MainActivity.class);
 
@@ -259,7 +259,7 @@ public class UserApiHelper {
                      String token = userToken.getToken();
                      SharedPreferencesUtil.setStringPreference(
                         context,
-                        SharedPreferencesConstans.USERTOKEN,
+                        SharedPreferencesConstants.USERTOKEN,
                         token
                      );
                      getUserByTokenAndInsertLocal(context, token);

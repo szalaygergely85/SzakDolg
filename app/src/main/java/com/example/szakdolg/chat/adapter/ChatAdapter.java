@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.chat.viewholder.ImageViewHolder;
 import com.example.szakdolg.chat.viewholder.TextViewHolder;
-import com.example.szakdolg.constans.MessageTypeConstans;
+import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
@@ -48,12 +48,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       @NonNull ViewGroup parent,
       int viewType
    ) {
-      if (viewType == MessageTypeConstans.MESSAGE) {
+      if (viewType == MessageTypeConstants.MESSAGE) {
          View view = LayoutInflater
             .from(parent.getContext())
             .inflate(R.layout.chat_item, parent, false);
          return new TextViewHolder(view);
-      } else if (viewType == MessageTypeConstans.IMAGE) {
+      } else if (viewType == MessageTypeConstants.IMAGE) {
          View view = LayoutInflater
             .from(parent.getContext())
             .inflate(R.layout.chat_image_item, parent, false);
@@ -77,7 +77,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
       Format format = new SimpleDateFormat("HH:mm");
       String timeForm = format.format(date);
-      if (messageEntry.getType() == MessageTypeConstans.MESSAGE) {
+      if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
          String decryptedContentString = null;
          try {
             if (isSenderLoggedUser(messageEntry)) {
@@ -103,7 +103,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                messageEntry.getSenderId(),
                currentUser
             );
-      } else if (messageEntry.getType() == MessageTypeConstans.IMAGE) {
+      } else if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
          ((ImageViewHolder) holder).bind(
                messageEntry.getContent(),
                mContext,

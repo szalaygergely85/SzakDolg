@@ -16,9 +16,9 @@ import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.chat.helper.ChatHelper;
-import com.example.szakdolg.constans.IntentConstans;
-import com.example.szakdolg.constans.MessageTypeConstans;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.constans.MessageTypeConstants;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.file.apihelper.FileApiHelper;
 import com.example.szakdolg.message.MessageApiHelper;
@@ -92,17 +92,17 @@ public class ChatActivity extends AppCompatActivity {
       _token =
       SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstans.USERTOKEN
+         SharedPreferencesConstants.USERTOKEN
       );
       currentUser =
       (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
 
       conversationId =
-      this.getIntent().getLongExtra(IntentConstans.CONVERSATION_ID, 0);
+      this.getIntent().getLongExtra(IntentConstants.CONVERSATION_ID, 0);
       conversationContent =
       (ConversationContent) this.getIntent()
-         .getSerializableExtra(IntentConstans.CONVERSATION_CONTENT);
+         .getSerializableExtra(IntentConstants.CONVERSATION_CONTENT);
       otherUser =
       UserUtil.removeCurrentUserFromList(
          conversationContent.getParticipants(),
@@ -195,7 +195,7 @@ public class ChatActivity extends AppCompatActivity {
                            );
 
                         chatHelper.sendMessage(
-                           MessageTypeConstans.MESSAGE,
+                           MessageTypeConstants.MESSAGE,
                            encryptedContentSenderVersion,
                            encryptedContentString
                         );
@@ -232,7 +232,7 @@ public class ChatActivity extends AppCompatActivity {
             currentUser.getUserId(),
             System.currentTimeMillis(),
             uUId + "." + FileUtil.getFileExtensionFromUri(uri),
-            MessageTypeConstans.IMAGE,
+            MessageTypeConstants.IMAGE,
             null,
             UUIDUtil.UUIDGenerator()
          );

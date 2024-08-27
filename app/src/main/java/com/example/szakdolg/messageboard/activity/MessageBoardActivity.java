@@ -20,8 +20,8 @@ import androidx.work.WorkManager;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.chat.activity.NewChatActivity;
-import com.example.szakdolg.constans.IntentConstans;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.activity.ContactsActivity;
 import com.example.szakdolg.conversation.entity.Conversation;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
@@ -73,12 +73,12 @@ public class MessageBoardActivity extends AppCompatActivity {
       userToken =
       SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstans.USERTOKEN
+         SharedPreferencesConstants.USERTOKEN
       );
 
       String userId = SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstans.USER_ID
+         SharedPreferencesConstants.USER_ID
       );
 
       ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(
@@ -123,7 +123,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                   NewChatActivity.class
                );
                intent.putExtra(
-                  SharedPreferencesConstans.CURRENT_USER,
+                  SharedPreferencesConstants.CURRENT_USER,
                   _currentUser
                );
                startActivity(intent);
@@ -146,7 +146,7 @@ public class MessageBoardActivity extends AppCompatActivity {
             intent =
             new Intent(MessageBoardActivity.this, ProfileActivity.class);
             intent.putExtra(
-               SharedPreferencesConstans.CURRENT_USER,
+               SharedPreferencesConstants.CURRENT_USER,
                _currentUser
             );
             startActivity(intent);
@@ -155,7 +155,7 @@ public class MessageBoardActivity extends AppCompatActivity {
             intent =
             new Intent(MessageBoardActivity.this, ContactsActivity.class);
             intent.putExtra(
-               SharedPreferencesConstans.CURRENT_USER,
+               SharedPreferencesConstants.CURRENT_USER,
                _currentUser
             );
             startActivity(intent);
@@ -230,7 +230,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                         ContactsActivity.class
                      );
                      intent.putExtra(
-                        SharedPreferencesConstans.CURRENT_USER,
+                        SharedPreferencesConstants.CURRENT_USER,
                         _currentUser
                      );
                      startActivity(intent);
@@ -251,7 +251,7 @@ public class MessageBoardActivity extends AppCompatActivity {
       String currentUserJson = gson.toJson(_currentUser);
 
       Data inputData = new Data.Builder()
-         .putString(IntentConstans.CURRENT_USER, currentUserJson)
+         .putString(IntentConstants.CURRENT_USER, currentUserJson)
          .build();
 
       PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(

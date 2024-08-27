@@ -1,6 +1,6 @@
 package com.example.szakdolg.constans;
 
-public class MessageTypeConstans {
+public class MessageTypeConstants {
 
    public static final int TYPE_KEY = 1;
 

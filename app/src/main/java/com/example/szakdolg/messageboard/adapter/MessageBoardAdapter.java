@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.MessageTypeConstans;
+import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.conversation.entity.Conversation;
 import com.example.szakdolg.conversation.entity.ConversationParticipant;
@@ -163,7 +163,7 @@ public class MessageBoardAdapter
             holder.txtMessage.setTypeface(null, Typeface.BOLD);
             holder.txtName.setTypeface(null, Typeface.BOLD);
          }
-         if (messageEntry.getType() == MessageTypeConstans.MESSAGE) {
+         if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
             String decryptedContentString = null;
             try {
                if (isSenderLoggedUser(messageEntry)) {
@@ -185,7 +185,7 @@ public class MessageBoardAdapter
                throw new RuntimeException(e);
             }
          }
-         if (messageEntry.getType() == MessageTypeConstans.IMAGE) {
+         if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
             holder.txtMessage.setText("Image received from:");
          }
          holder.txtName.setText(participant.getDisplayName());

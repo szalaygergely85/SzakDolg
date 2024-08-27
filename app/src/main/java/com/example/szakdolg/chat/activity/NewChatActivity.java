@@ -12,7 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.chat.adapter.UserAdapter;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.user.entity.User;
@@ -47,12 +47,12 @@ public class NewChatActivity extends AppCompatActivity {
       _token =
       SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstans.USERTOKEN
+         SharedPreferencesConstants.USERTOKEN
       );
 
       currentUser =
       (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
 
       contacts = new ArrayList<>();
 

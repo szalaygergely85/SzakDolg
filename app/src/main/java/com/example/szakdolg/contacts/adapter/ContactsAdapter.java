@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,10 +121,10 @@ public class ContactsAdapter
             public void onClick(View view) {
                Intent intent = new Intent(mContext, ProfileActivity.class);
                intent.putExtra(
-                  SharedPreferencesConstans.OTHER_USER,
+                  SharedPreferencesConstants.OTHER_USER,
                   contactUser
                );
-               intent.putExtra(SharedPreferencesConstans.CURRENT_USER, user);
+               intent.putExtra(SharedPreferencesConstants.CURRENT_USER, user);
                mContext.startActivity(intent);
                Toast
                   .makeText(

@@ -9,7 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.db.util.ProfileDatabaseUtil;
@@ -21,7 +21,7 @@ import com.example.szakdolg.util.SharedPreferencesUtil;
 
 public class MainActivity extends AppCompatActivity {
 
-   private static final String TAG = "MainActivity";
+
    private static final int READ_PERMISSION_CODE = 202;
    private static final int WRITE_PERMISSION_CODE = 203;
    private String _token;
@@ -55,18 +55,18 @@ public class MainActivity extends AppCompatActivity {
       _token =
       SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstans.USERTOKEN
+         SharedPreferencesConstants.USERTOKEN
       );
 
       String userId = SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstans.USER_ID
+         SharedPreferencesConstants.USER_ID
       );
 
       if (_token != null && userId != null) {
          long cacheExpireTimeMillis = SharedPreferencesUtil.getLongPreference(
             this,
-            SharedPreferencesConstans.CACHE_EXPIRE
+            SharedPreferencesConstants.CACHE_EXPIRE
          );
 
          ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(

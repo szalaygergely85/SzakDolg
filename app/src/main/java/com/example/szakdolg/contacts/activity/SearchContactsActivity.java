@@ -11,7 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.adapter.SearchContactAdapter;
 import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -51,12 +51,12 @@ public class SearchContactsActivity extends AppCompatActivity {
       _token =
       SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstans.USERTOKEN
+         SharedPreferencesConstants.USERTOKEN
       );
 
       user =
       (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
       contactsAdapter = new SearchContactAdapter(this, user, _token);
 
       ActionBar actionBar = getSupportActionBar();

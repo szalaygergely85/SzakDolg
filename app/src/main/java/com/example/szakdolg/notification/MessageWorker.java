@@ -10,8 +10,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.IntentConstans;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.CacheUtil;
@@ -49,11 +49,11 @@ public class MessageWorker extends Worker {
       userToken =
       SharedPreferencesUtil.getStringPreference(
          getApplicationContext(),
-         SharedPreferencesConstans.USERTOKEN
+         SharedPreferencesConstants.USERTOKEN
       );
 
       String currentUserJson = getInputData()
-         .getString(IntentConstans.CURRENT_USER);
+         .getString(IntentConstants.CURRENT_USER);
       if (currentUserJson != null) {
          currentUser = gson.fromJson(currentUserJson, User.class);
       }

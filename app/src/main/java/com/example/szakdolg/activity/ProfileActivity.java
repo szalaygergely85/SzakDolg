@@ -12,7 +12,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -22,7 +22,7 @@ import java.util.List;
 public class ProfileActivity extends AppCompatActivity {
 
    private static final int PHOTO_PICKER_REQUEST_CODE = 101;
-   private static final String TAG = "ProfileActivity";
+
    private ImageView imageView;
    private TextView name;
    private TextView email;
@@ -115,16 +115,16 @@ public class ProfileActivity extends AppCompatActivity {
 
       currentUser =
       (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
 
       userContact =
       (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstans.OTHER_USER);
+         .getSerializableExtra(SharedPreferencesConstants.OTHER_USER);
 
       userToken =
       SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstans.USERTOKEN
+         SharedPreferencesConstants.USERTOKEN
       );
 
       initView();
@@ -168,7 +168,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                SharedPreferencesUtil.deleteStringPreference(
                   ProfileActivity.this,
-                  SharedPreferencesConstans.USERTOKEN
+                  SharedPreferencesConstants.USERTOKEN
                );
 
                Intent intent = new Intent(

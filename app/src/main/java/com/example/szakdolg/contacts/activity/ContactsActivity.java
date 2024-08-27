@@ -9,7 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.adapter.ContactsAdapter;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.user.entity.User;
@@ -51,7 +51,7 @@ public class ContactsActivity extends AppCompatActivity {
 
       currentUser =
       (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstans.CURRENT_USER);
+         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
 
       initView();
    }
@@ -89,7 +89,7 @@ public class ContactsActivity extends AppCompatActivity {
                   SearchContactsActivity.class
                );
                intent.putExtra(
-                  SharedPreferencesConstans.CURRENT_USER,
+                  SharedPreferencesConstants.CURRENT_USER,
                   currentUser
                );
                startActivity(intent);

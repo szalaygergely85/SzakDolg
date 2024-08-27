@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -42,7 +43,7 @@ public class SearchContactAdapter
 						storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 							@Override
 							public void onSuccess(Uri uri) {
-								Log.d(TAG, "getPicURl: " + uri);
+								Log.d(AppConstants.LOG_TAG, TAG + " " "getPicURl: " + uri);
 								Glide.with(context)
 										.asBitmap()
 										.load(uri)
@@ -69,7 +70,7 @@ public class SearchContactAdapter
 						}).addOnFailureListener(new OnFailureListener() {
 							@Override
 							public void onFailure(@NonNull Exception exception) {
-								Log.d(TAG, "onFailure: " + exception);
+								Log.d(AppConstants.LOG_TAG, TAG + " " "onFailure: " + exception);
 							}
 						});
 					}
@@ -77,7 +78,7 @@ public class SearchContactAdapter
 			});
 
 		} catch (Exception e) {
-			Log.d(TAG, "setImageView: " + e);
+			Log.d(AppConstants.LOG_TAG, TAG + " " "setImageView: " + e);
 		}
 	}
 */
@@ -151,12 +152,12 @@ public class SearchContactAdapter
                               }
                            }
                         }
-                        Log.e(TAG, "" + response.code());
+                        Log.e(AppConstants.LOG_TAG, TAG + " " + response.code());
                      }
 
                      @Override
                      public void onFailure(Call<User> call, Throwable t) {
-                        Log.e(TAG, "" + t.getMessage());
+                        Log.e(AppConstants.LOG_TAG, TAG + " " + t.getMessage());
                      }
                   }
                );

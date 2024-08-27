@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.util.Log;
 import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.chat.activity.ChatActivity;
-import com.example.szakdolg.constans.IntentConstans;
-import com.example.szakdolg.constans.MessageTypeConstans;
-import com.example.szakdolg.constans.SharedPreferencesConstans;
+import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.constans.MessageTypeConstants;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.conversation.entity.Conversation;
 import com.example.szakdolg.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
@@ -57,7 +57,7 @@ public class ConversationApiHelper {
                            conversationId,
                            currentUser.getUserId(),
                            message,
-                           MessageTypeConstans.MESSAGE,
+                           MessageTypeConstants.MESSAGE,
                            message
                         ),
                         token
@@ -119,8 +119,8 @@ public class ConversationApiHelper {
          );
       } else {
          Intent intent = new Intent(context, ChatActivity.class);
-         intent.putExtra(IntentConstans.CONVERSATION_ID, conversationId);
-         intent.putExtra(SharedPreferencesConstans.CURRENT_USER, loggedUser);
+         intent.putExtra(IntentConstants.CONVERSATION_ID, conversationId);
+         intent.putExtra(SharedPreferencesConstants.CURRENT_USER, loggedUser);
          context.startActivity(intent);
       }
    }
@@ -164,12 +164,12 @@ public class ConversationApiHelper {
 
                   Intent intent = new Intent(context, ChatActivity.class);
                   intent.putExtra(
-                     IntentConstans.CONVERSATION_ID,
+                     IntentConstants.CONVERSATION_ID,
                      conversationId
                   );
-                  intent.putExtra(IntentConstans.CURRENT_USER, loggedUser);
+                  intent.putExtra(IntentConstants.CURRENT_USER, loggedUser);
                   intent.putExtra(
-                     IntentConstans.CONVERSATION_CONTENT,
+                     IntentConstants.CONVERSATION_CONTENT,
                      conversationContent
                   );
                   context.startActivity(intent);
