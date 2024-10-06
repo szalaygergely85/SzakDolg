@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserUtil {
-
+/*
+   @Deprecated
    public static User removeCurrentUserFromList(List<User> users, Long id) {
       for (User user : users) {
          if (!user.getUserId().equals(id)) {
@@ -13,6 +14,16 @@ public class UserUtil {
          }
       }
       return null;
+   }
+*/
+   public static List<User> removeCurrentUserFromList(List<User> users, Long id) {
+      List<User> newUserList = new ArrayList<>();
+      for (User user : users) {
+         if (!user.getUserId().equals(id)) {
+            newUserList.add(user);
+         }
+      }
+      return newUserList;
    }
 
    public static User getUserByID(List<User> users, Long id) {

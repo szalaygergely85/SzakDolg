@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Adapter;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.file.apiservice.FileApiService;
@@ -164,7 +166,7 @@ public class MessageApiHelper {
       );
    }
 
-   public void getNewMessages(Context context, String userToken, User user, MessageBoardAdapter messageBoardAdapter) {
+   public void getNewMessages(Context context, String userToken, User user, Runnable runnable) {
       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
          context,
          user
@@ -186,14 +188,15 @@ public class MessageApiHelper {
 
                   List<MessageEntry> messages = response.body();
                   List<Long> messageIds = new ArrayList<>();
+
                   if (messages.size() > 0) {
                      for (MessageEntry messageEntry : messages) {
                         messageDatabaseUtil.insertMessageEntry(messageEntry);
                         messageIds.add(messageEntry.getMessageId());
                      }
-
-                      messageBoardAdapter.notifyDataSetChanged();
                      setMessagesToDownloaded(messageIds);
+
+                      runnable.run();
                   }
                }
             }
@@ -225,14 +228,5 @@ public class MessageApiHelper {
             public void onFailure(Call<String> call, Throwable t) {}
          }
       );
-   }
-
-   private User _findOtherUserById(List<User> users, Long id) {
-      for (User user : users) {
-         if (!user.getUserId().equals(id)) {
-            return user;
-         }
-      }
-      return null; // or throw an exception, or return an Optional<User>
    }
 }

@@ -35,4 +35,8 @@
     <string name="aleady_have_an_account">Aleady have an account?</string>
     <string name="welcome_onboard">Welcome Onboard!</string>
 
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="signup_login_hint">Already have an account? Sign In</string>
+    <string name="login_signup_hint">Don\'t have an account? Sign Up</string>
 </resources>

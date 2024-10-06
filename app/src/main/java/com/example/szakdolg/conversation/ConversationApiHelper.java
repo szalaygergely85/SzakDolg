@@ -147,18 +147,20 @@ public class ConversationApiHelper {
                   ConversationContent conversationContent = response.body();
                   List<User> allParticipants =
                      conversationContent.getParticipants();
-                  User otherUser = UserUtil.removeCurrentUserFromList(
+                   List<User> otherUsers = UserUtil.removeCurrentUserFromList(
                      allParticipants,
                      loggedUser.getUserId()
                   );
-
-                  if (otherUser.getPublicKey() != null) {
-                     try {
-                        CacheUtil.writePublicKeysCache(context, otherUser);
-                     } catch (Exception e) {
-                        throw new RuntimeException(e);
-                     }
-                  }
+                   if (otherUsers.size()==1) {
+                       User otherUser = otherUsers.get(0);
+                       if (otherUser.getPublicKey() != null) {
+                           try {
+                               CacheUtil.writePublicKeysCache(context, otherUser);
+                           } catch (Exception e) {
+                               throw new RuntimeException(e);
+                           }
+                       }
+                   }
 
                   //TODO must be different with groupchats
 

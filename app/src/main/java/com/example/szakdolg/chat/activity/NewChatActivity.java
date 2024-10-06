@@ -36,6 +36,8 @@ public class NewChatActivity extends AppCompatActivity {
 
    private User currentUser;
 
+   private SharedPreferencesUtil sharedPreferencesUtil;
+
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -44,9 +46,9 @@ public class NewChatActivity extends AppCompatActivity {
       _setToolbar();
       initView();
 
+      sharedPreferencesUtil = new SharedPreferencesUtil(this);
       _token =
-      SharedPreferencesUtil.getStringPreference(
-         this,
+              sharedPreferencesUtil.getStringPreference(
          SharedPreferencesConstants.USERTOKEN
       );
 

@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.example.szakdolg.R;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
    private User currentUser;
 
+   private SharedPreferencesUtil sharedPreferencesUtil;
+
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
       getMenuInflater().inflate(R.menu.nav_menu, menu);
@@ -45,7 +49,11 @@ public class MainActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
 
-      _setPermissions();
+      if (this.sharedPreferencesUtil == null) {
+         this.sharedPreferencesUtil = new SharedPreferencesUtil(this);
+      }
+
+  //    _setPermissions();
    }
 
    @Override
@@ -53,19 +61,16 @@ public class MainActivity extends AppCompatActivity {
       super.onStart();
 
       _token =
-      SharedPreferencesUtil.getStringPreference(
-         this,
+              sharedPreferencesUtil.getStringPreference(
          SharedPreferencesConstants.USERTOKEN
       );
 
-      String userId = SharedPreferencesUtil.getStringPreference(
-         this,
+      String userId = sharedPreferencesUtil.getStringPreference(
          SharedPreferencesConstants.USER_ID
       );
 
       if (_token != null && userId != null) {
-         long cacheExpireTimeMillis = SharedPreferencesUtil.getLongPreference(
-            this,
+         long cacheExpireTimeMillis = sharedPreferencesUtil.getLongPreference(
             SharedPreferencesConstants.CACHE_EXPIRE
          );
 
@@ -119,6 +124,31 @@ public class MainActivity extends AppCompatActivity {
       );
    }
 
+   @Override
+   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+      switch (requestCode) {
+         case READ_PERMISSION_CODE:
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+               // Permission granted
+               Toast.makeText(this, "Read permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+               // Permission denied
+               Toast.makeText(this, "Read permission denied", Toast.LENGTH_SHORT).show();
+            }
+            break;
+         case WRITE_PERMISSION_CODE:
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+               // Permission granted
+               Toast.makeText(this, "Write permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+               // Permission denied
+               Toast.makeText(this, "Write permission denied", Toast.LENGTH_SHORT).show();
+            }
+            break;
+      }
+   }
+
    private boolean isCacheExpired(long cacheExpireTimeMillis) {
       if (cacheExpireTimeMillis == -1) {
          return true;
@@ -155,5 +185,9 @@ public class MainActivity extends AppCompatActivity {
             WRITE_PERMISSION_CODE
          );
       }
+   }
+
+   public void setSharedPreferencesUtil(SharedPreferencesUtil sharedPreferencesUtil) {
+      this.sharedPreferencesUtil = sharedPreferencesUtil;
    }
 }

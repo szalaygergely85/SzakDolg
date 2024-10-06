@@ -61,6 +61,8 @@ public class MessageBoardActivity extends AppCompatActivity {
    private Gson gson = new Gson();
    List<Conversation> conversationList = new ArrayList<>();
 
+   private SharedPreferencesUtil sharedPreferencesUtil;
+
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -70,14 +72,14 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       setNavMenu();
 
+
+      sharedPreferencesUtil = new SharedPreferencesUtil(this);
       userToken =
-      SharedPreferencesUtil.getStringPreference(
-         this,
+              sharedPreferencesUtil.getStringPreference(
          SharedPreferencesConstants.USERTOKEN
       );
 
-      String userId = SharedPreferencesUtil.getStringPreference(
-         this,
+      String userId = sharedPreferencesUtil.getStringPreference(
          SharedPreferencesConstants.USER_ID
       );
 
@@ -186,7 +188,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                messageApiHelper.getNewMessages(
                   MessageBoardActivity.this,
                   userToken,
-                  _currentUser, messageBoardAdapter
+                  _currentUser, () -> {messageBoardAdapter.notifyDataSetChanged();}
 
                );
             } finally {
@@ -223,7 +225,6 @@ public class MessageBoardActivity extends AppCompatActivity {
                      // Handle notifications navigation
                      return true;
                   case R.id.navigation_contact:
-                     Log.e("Ajaj", "ajaj");
                      intent =
                      new Intent(
                         MessageBoardActivity.this,

@@ -12,6 +12,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.user.entity.User;
@@ -38,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
    private ConversationApiHelper conversationApiHelper =
       new ConversationApiHelper();
 
+   private  SharedPreferencesUtil sharedPreferencesUtil;
    /*
 	public void setImageView(String uID, Context context) {
 
@@ -113,6 +115,8 @@ public class ProfileActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_profile);
 
+      sharedPreferencesUtil =new SharedPreferencesUtil(this);
+
       currentUser =
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
@@ -122,8 +126,7 @@ public class ProfileActivity extends AppCompatActivity {
          .getSerializableExtra(SharedPreferencesConstants.OTHER_USER);
 
       userToken =
-      SharedPreferencesUtil.getStringPreference(
-         this,
+              sharedPreferencesUtil.getStringPreference(
          SharedPreferencesConstants.USERTOKEN
       );
 
@@ -166,8 +169,7 @@ public class ProfileActivity extends AppCompatActivity {
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               SharedPreferencesUtil.deleteStringPreference(
-                  ProfileActivity.this,
+               sharedPreferencesUtil.deleteStringPreference(
                   SharedPreferencesConstants.USERTOKEN
                );
 
@@ -197,7 +199,7 @@ public class ProfileActivity extends AppCompatActivity {
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               Log.d(TAG, "onClick: clicked on delete account");
+               Log.d(AppConstants.LOG_TAG, "onClick: clicked on delete account");
                Intent intent = new Intent(
                   ProfileActivity.this,
                   LoginActivity.class

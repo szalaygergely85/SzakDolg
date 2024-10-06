@@ -2,6 +2,7 @@ package com.example.szakdolg.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,8 +20,10 @@ public class LoginActivity extends AppCompatActivity {
    private EditText editMail;
    private EditText editPass;
    private TextView txtForgot;
-   private Button btnReg;
+   private TextView btnReg;
    private Button btnLog;
+
+   private TextView txtError;
    private static final String TAG = "LoginActivity";
    private UserApiHelper userApiHelper = new UserApiHelper();
 
@@ -28,15 +31,16 @@ public class LoginActivity extends AppCompatActivity {
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_login);
-
+      Log.d("LoginActivity", "onCreate called");
       _initView();
-      _setToolbar();
+      _setOnClickListeners();
+
    }
 
    @Override
    protected void onStart() {
       super.onStart();
-      _setOnClickListeners();
+
    }
 
    public void _initView() {
@@ -45,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
       btnReg = findViewById(R.id.btnLgnReg);
       btnLog = findViewById(R.id.btnLgnLogin);
       txtForgot = findViewById(R.id.txtLgnForgot);
+      txtError = findViewById(R.id.txtLgnError);
    }
 
    private void _setOnClickListeners() {
@@ -86,19 +91,15 @@ public class LoginActivity extends AppCompatActivity {
                      hashPassword,
                      email
                   );
+                  txtError.setVisibility(View.GONE);
                } else {
-                  ErrorUtil.GetErrorMessageInToast("e6", LoginActivity.this);
+                  txtError.setVisibility(View.VISIBLE);
+                  txtError.setText("Email and password are required.");
+
                }
             }
          }
       );
    }
 
-   private void _setToolbar() {
-      Toolbar mToolbar = (Toolbar) findViewById(R.id.loginToolbar);
-      setSupportActionBar(mToolbar);
-
-      ActionBar actionBar = getSupportActionBar();
-      actionBar.setTitle("Messenger");
-   }
 }

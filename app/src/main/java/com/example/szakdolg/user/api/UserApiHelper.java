@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.activity.MainActivity;
+import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.util.ProfileDatabaseUtil;
@@ -151,7 +152,6 @@ public class UserApiHelper {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                Log.e(_TAG, "" + response.code());
-               Intent intent;
                if (response.isSuccessful()) {
                   User user = response.body();
                   if (user != null) {
@@ -179,9 +179,10 @@ public class UserApiHelper {
                context,
                userId
             );
+
             profileDatabaseUtil.insertProfile(user, token);
-            SharedPreferencesUtil.setStringPreference(
-               context,
+             SharedPreferencesUtil sharedPreferencesUtil =new SharedPreferencesUtil(context);
+            sharedPreferencesUtil.setStringPreference(
                SharedPreferencesConstants.USER_ID,
                userId
             );
@@ -192,6 +193,7 @@ public class UserApiHelper {
       );
    }
 
+   @Deprecated
    public void getUserByTokenAndNavigateToActivity(
       Context context,
       String token
@@ -201,7 +203,6 @@ public class UserApiHelper {
          new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-               Log.e(_TAG, "" + response.code());
                Intent intent;
                if (response.isSuccessful()) {
                   User user = response.body();
@@ -219,9 +220,10 @@ public class UserApiHelper {
                      context.startActivity(intent);
                   }
                } else {
-                  Log.e(_TAG, +response.code() + " " + response.errorBody());
-                  SharedPreferencesUtil.deleteStringPreference(
-                     context,
+                  Log.e(AppConstants.LOG_TAG, _TAG + response.code() + " " + response.errorBody());
+                   SharedPreferencesUtil sharedPreferencesUtil =new SharedPreferencesUtil(context);
+                  sharedPreferencesUtil.deleteStringPreference(
+
                      SharedPreferencesConstants.USERTOKEN
                   );
                   intent = new Intent(context, MainActivity.class);
@@ -232,7 +234,7 @@ public class UserApiHelper {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-               Log.e(_TAG, "" + t.getMessage());
+               Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
             }
          }
       );
@@ -250,29 +252,28 @@ public class UserApiHelper {
                Call<UserToken> call,
                Response<UserToken> response
             ) {
-               Log.e(_TAG, "" + response.code());
+               Log.d(AppConstants.LOG_TAG, _TAG  + response.code());
 
                if (response.isSuccessful()) {
                   UserToken userToken = response.body();
 
                   if (userToken != null) {
                      String token = userToken.getToken();
-                     SharedPreferencesUtil.setStringPreference(
-                        context,
+                      SharedPreferencesUtil sharedPreferencesUtil =new SharedPreferencesUtil(context);
+                      sharedPreferencesUtil.setStringPreference(
                         SharedPreferencesConstants.USERTOKEN,
                         token
                      );
                      getUserByTokenAndInsertLocal(context, token);
                   }
                } else {
-                  Log.e(_TAG, "" + response.code());
-                  //TODO Handle the error
+                  Log.e(AppConstants.LOG_TAG, _TAG + response.code() + response.message());
                }
             }
 
             @Override
             public void onFailure(Call<UserToken> call, Throwable t) {
-               Log.e(_TAG, "" + t.getMessage());
+                Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
             }
          }
       );
