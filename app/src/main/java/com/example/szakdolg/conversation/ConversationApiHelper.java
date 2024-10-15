@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import com.example.szakdolg.DTO.ConversationContent;
+import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.MessageTypeConstants;
@@ -147,20 +148,20 @@ public class ConversationApiHelper {
                   ConversationContent conversationContent = response.body();
                   List<User> allParticipants =
                      conversationContent.getParticipants();
-                   List<User> otherUsers = UserUtil.removeCurrentUserFromList(
+                  List<User> otherUsers = UserUtil.removeCurrentUserFromList(
                      allParticipants,
                      loggedUser.getUserId()
                   );
-                   if (otherUsers.size()==1) {
-                       User otherUser = otherUsers.get(0);
-                       if (otherUser.getPublicKey() != null) {
-                           try {
-                               CacheUtil.writePublicKeysCache(context, otherUser);
-                           } catch (Exception e) {
-                               throw new RuntimeException(e);
-                           }
-                       }
-                   }
+                  if (otherUsers.size() == 1) {
+                     User otherUser = otherUsers.get(0);
+                     if (otherUser.getPublicKey() != null) {
+                        try {
+                           CacheUtil.writePublicKeysCache(context, otherUser);
+                        } catch (Exception e) {
+                           throw new RuntimeException(e);
+                        }
+                     }
+                  }
 
                   //TODO must be different with groupchats
 
@@ -209,7 +210,7 @@ public class ConversationApiHelper {
             ) {
                if (response.isSuccessful()) {
                   if (response.body().size() > 0) {
-                     CacheUtil.validateConversation(
+                     CacheAction.validateConversation(
                         response.body(),
                         context,
                         user
@@ -245,7 +246,7 @@ public class ConversationApiHelper {
             ) {
                if (response.isSuccessful()) {
                   if (response.body().size() > 0) {
-                     CacheUtil.validateConversationParticipant(
+                     CacheAction.validateConversationParticipant(
                         response.body(),
                         context,
                         user

@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:fillViewport="true">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -44,14 +43,6 @@
                 android:inputType="textPersonName"
                 android:maxLines="1" />
 
-            <EditText
-                android:id="@+id/edtFullName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="@string/full_name"
-                android:inputType="textPersonName"
-                android:maxLines="1" />
 
             <EditText
                 android:id="@+id/edtRegEmail"
@@ -80,14 +71,15 @@
                 android:inputType="textPassword"
                 android:maxLines="1" />
 
-            <EditText
-                android:id="@+id/edtRegPhone"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/txtRegError"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="@string/phone_number"
-                android:inputType="phone"
-                android:maxLines="1" />
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone"
+                android:text="Error message"
+                android:layout_marginTop="8dp"
+                />
 
 
             <Button

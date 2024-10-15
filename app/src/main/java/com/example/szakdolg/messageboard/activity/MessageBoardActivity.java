@@ -3,7 +3,6 @@ package com.example.szakdolg.messageboard.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,15 +71,13 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       setNavMenu();
 
-
-      sharedPreferencesUtil = new SharedPreferencesUtil(this);
       userToken =
-              sharedPreferencesUtil.getStringPreference(
-         SharedPreferencesConstants.USERTOKEN
+              SharedPreferencesUtil.getStringPreference(this,
+                      SharedPreferencesConstants.USERTOKEN
       );
 
-      String userId = sharedPreferencesUtil.getStringPreference(
-         SharedPreferencesConstants.USER_ID
+      String userId = SharedPreferencesUtil.getStringPreference(this,
+              SharedPreferencesConstants.USER_ID
       );
 
       ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(
@@ -105,7 +102,6 @@ public class MessageBoardActivity extends AppCompatActivity {
       conversationList = conversationDatabaseUtil.getAllConversations();
 
       messageBoardAdapter.setConversationList(conversationList);
-
 
       messageBoardRecView.setAdapter(messageBoardAdapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -188,8 +184,10 @@ public class MessageBoardActivity extends AppCompatActivity {
                messageApiHelper.getNewMessages(
                   MessageBoardActivity.this,
                   userToken,
-                  _currentUser, () -> {messageBoardAdapter.notifyDataSetChanged();}
-
+                  _currentUser,
+                  () -> {
+                     messageBoardAdapter.notifyDataSetChanged();
+                  }
                );
             } finally {
                handler.postDelayed(runnable, 15000);

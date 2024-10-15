@@ -11,7 +11,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
@@ -20,14 +19,12 @@ import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.conversation.ConversationApiHelper;
-import com.example.szakdolg.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.file.apihelper.FileApiHelper;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.messageboard.activity.MessageBoardActivity;
 import com.example.szakdolg.user.UserUtil;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.CacheUtil;
@@ -83,19 +80,18 @@ public class ChatActivity extends AppCompatActivity {
 
       _setListeners();
 
-
-
       adapter = new ChatAdapter(this, currentUser);
 
       chatHelper =
       new ChatHelper(this, conversationId, currentUser, _token, adapter);
 
-      List <User> otherUsers = chatHelper.getUsers(conversationId);
+      List<User> otherUsers = chatHelper.getUsers(conversationId);
 
       adapter.setMessageEntries(chatHelper.getMessages(conversationId));
 
-      adapter.setUsers(UserUtil.removeCurrentUserFromList(otherUsers,currentUser.getUserId()));
-
+      adapter.setUsers(
+         UserUtil.removeCurrentUserFromList(otherUsers, currentUser.getUserId())
+      );
 
       chatRecView.setAdapter(adapter);
       chatRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -112,7 +108,8 @@ public class ChatActivity extends AppCompatActivity {
 
    private void _getSharedPrefAndIntentExtras() {
       _token =
-      sharedPreferencesUtil.getStringPreference(
+      SharedPreferencesUtil.getStringPreference(
+         this,
          SharedPreferencesConstants.USERTOKEN
       );
       currentUser =
@@ -121,7 +118,6 @@ public class ChatActivity extends AppCompatActivity {
 
       conversationId =
       this.getIntent().getLongExtra(IntentConstants.CONVERSATION_ID, 0);
-
    }
 
    @Override
@@ -155,9 +151,17 @@ public class ChatActivity extends AppCompatActivity {
          public void run() {
             try {
                messageApiHelper.getNewMessages(
-                       ChatActivity.this,
-                       _token,
-                       currentUser, () -> {messageApiHelper.reloadMessages(ChatActivity.this, conversationId, adapter, currentUser);}
+                  ChatActivity.this,
+                  _token,
+                  currentUser,
+                  () -> {
+                     messageApiHelper.reloadMessages(
+                        ChatActivity.this,
+                        conversationId,
+                        adapter,
+                        currentUser
+                     );
+                  }
                );
             } finally {
                handler.postDelayed(runnable, 15000);

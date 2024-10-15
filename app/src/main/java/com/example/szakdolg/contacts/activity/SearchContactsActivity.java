@@ -34,7 +34,7 @@ public class SearchContactsActivity extends AppCompatActivity {
    private User user;
    private static final String TAG = "SearchContactsActivity";
 
-    private SharedPreferencesUtil sharedPreferencesUtil;
+   private SharedPreferencesUtil sharedPreferencesUtil;
 
    private void initViews() {
       search = findViewById(R.id.edtContSearch);
@@ -50,9 +50,9 @@ public class SearchContactsActivity extends AppCompatActivity {
       setSupportActionBar(mToolbar);
       //toolbar settings
 
-       sharedPreferencesUtil = new SharedPreferencesUtil(this);
       _token =
-              sharedPreferencesUtil.getStringPreference(
+      SharedPreferencesUtil.getStringPreference(
+         this,
          SharedPreferencesConstants.USERTOKEN
       );
 

@@ -56,7 +56,6 @@
                 android:enabled="true"
                 android:text="Forgot Password?"
                 android:textColor="@color/primaryTextColor"
-                android:textSize="@dimen/newsMoreTextSize"
                 android:layout_gravity="end"
                 android:layout_marginTop="10dp"/>
 
@@ -76,7 +75,7 @@
                 style="@style/loginButton"
                 android:text="Login"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/loginViewsMargin"/>
+                />
 
 
             <TextView

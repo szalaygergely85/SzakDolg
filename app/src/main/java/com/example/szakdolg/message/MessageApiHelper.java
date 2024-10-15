@@ -2,14 +2,10 @@ package com.example.szakdolg.message;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Adapter;
 
-import androidx.recyclerview.widget.RecyclerView;
-
+import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
-import com.example.szakdolg.file.apiservice.FileApiService;
-import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.user.entity.User;
@@ -55,7 +51,7 @@ public class MessageApiHelper {
             ) {
                if (response.isSuccessful()) {
                   if (response.body().size() > 0) {
-                     CacheUtil.validateMessages(response.body(), context, user);
+                     CacheAction.validateMessages(response.body(), context, user);
                   }
                }
             }
@@ -166,13 +162,19 @@ public class MessageApiHelper {
       );
    }
 
-   public void getNewMessages(Context context, String userToken, User user, Runnable runnable) {
+   public void getNewMessages(
+      Context context,
+      String userToken,
+      User user,
+      Runnable runnable
+   ) {
       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
          context,
          user
       );
-      Call<List<MessageEntry>> messagesCall =
-         messageApiService.getNewMessages(userToken);
+      Call<List<MessageEntry>> messagesCall = messageApiService.getNewMessages(
+         userToken
+      );
 
       messagesCall.enqueue(
          new Callback<List<MessageEntry>>() {
@@ -184,8 +186,6 @@ public class MessageApiHelper {
                if (response.isSuccessful()) {
                   Log.e(TAG, "" + response.code());
 
-
-
                   List<MessageEntry> messages = response.body();
                   List<Long> messageIds = new ArrayList<>();
 
@@ -196,16 +196,13 @@ public class MessageApiHelper {
                      }
                      setMessagesToDownloaded(messageIds);
 
-                      runnable.run();
+                     runnable.run();
                   }
                }
             }
 
             @Override
-            public void onFailure(
-               Call<List<MessageEntry>> call,
-               Throwable t
-            ) {}
+            public void onFailure(Call<List<MessageEntry>> call, Throwable t) {}
          }
       );
    }

@@ -7,14 +7,9 @@ import android.content.SharedPreferences;
 
 public class SharedPreferencesUtil {
 
-   private Context context;
-   public SharedPreferencesUtil(Context context) {
-      this.context = context;
-   }
+   private static final String PREF_NAME = "MyAppPrefs";
 
-   private final String PREF_NAME = "MyAppPrefs";
-
-   public String getStringPreference(String key) {
+   public static String getStringPreference(Context context, String key) {
       SharedPreferences sharedPreferences = context.getSharedPreferences(
          PREF_NAME,
          MODE_PRIVATE
@@ -22,7 +17,8 @@ public class SharedPreferencesUtil {
       return sharedPreferences.getString(key, null);
    }
 
-   public void setStringPreference(
+   public static void setStringPreference(
+      Context context,
       String key,
       String value
    ) {
@@ -35,7 +31,7 @@ public class SharedPreferencesUtil {
       editor.apply();
    }
 
-   public void deleteStringPreference(String key) {
+   public static void deletePreference(Context context, String key) {
       SharedPreferences sharedPreferences = context.getSharedPreferences(
          PREF_NAME,
          Context.MODE_PRIVATE
@@ -45,7 +41,7 @@ public class SharedPreferencesUtil {
       editor.apply();
    }
 
-   public long getLongPreference(String key) {
+   public static long getLongPreference(Context context, String key) {
       SharedPreferences preferences = context.getSharedPreferences(
          PREF_NAME,
          Context.MODE_PRIVATE
@@ -53,7 +49,8 @@ public class SharedPreferencesUtil {
       return preferences.getLong(key, -1);
    }
 
-   public void setLongPreference(
+   public static void setLongPreference(
+      Context context,
       String key,
       long value
    ) {
@@ -65,4 +62,5 @@ public class SharedPreferencesUtil {
       editor.putLong(key, value);
       editor.apply();
    }
+
 }

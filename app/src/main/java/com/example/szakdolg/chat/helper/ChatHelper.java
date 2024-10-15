@@ -1,8 +1,6 @@
 package com.example.szakdolg.chat.helper;
 
 import android.content.Context;
-
-import com.example.szakdolg.chat.activity.ChatActivity;
 import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
@@ -12,7 +10,6 @@ import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.entity.User;
 import com.example.szakdolg.util.UUIDUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +23,6 @@ public class ChatHelper {
    private ConversationDatabaseUtil conversationDatabaseUtil;
 
    private UserDatabaseUtil userDatabaseUtil;
-
 
    private MessageDatabaseUtil messageDatabaseUtil;
 
@@ -46,7 +42,8 @@ public class ChatHelper {
       this.chatAdapter = chatAdapter;
       this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
       this.userDatabaseUtil = new UserDatabaseUtil(context, currentUser);
-      this.conversationDatabaseUtil = new ConversationDatabaseUtil(context, currentUser);
+      this.conversationDatabaseUtil =
+      new ConversationDatabaseUtil(context, currentUser);
    }
 
    MessageApiHelper messageApiHelper = new MessageApiHelper();
@@ -82,19 +79,16 @@ public class ChatHelper {
       );
    }
 
-   public List <User> getUsers(Long conversationId) {
-
+   public List<User> getUsers(Long conversationId) {
       List<ConversationParticipant> participants =
-              conversationDatabaseUtil.getParticipantsByConversationId(
-                      conversationId
-              );
-      List <User> users = new ArrayList<>();
+         conversationDatabaseUtil.getParticipantsByConversationId(
+            conversationId
+         );
+      List<User> users = new ArrayList<>();
 
-      for (ConversationParticipant participant : participants){
-
+      for (ConversationParticipant participant : participants) {
          users.add(userDatabaseUtil.getUserById(participant.getUserId()));
       }
-
 
       return users;
    }

@@ -13,19 +13,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="testSuccessfulLoginWithoutError()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testMissingFieldsError()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="LoginActivityTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testRegisterButtonNavigatesToRegisterActivity()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testForgotPasswordButtonNavigatesToForgotPasswordActivity()">
+      <SelectionState runConfigName="testInsertAndRetrieveUser()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

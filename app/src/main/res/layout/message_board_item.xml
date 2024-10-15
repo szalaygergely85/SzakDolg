@@ -1,39 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:layout_margin="8dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="@android:color/white">
 
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/mesBrdImage"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/ic_blank_profile"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
-
-    <TextView
-        android:id="@+id/mesBrdName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@id/mesBrdImage"
-        android:text="Contact Name" />
-
-    <TextView
-        android:id="@+id/mesBrdMessage"
+    <RelativeLayout
+        android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/mesBrdName"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_toRightOf="@id/mesBrdImage"
-        android:maxLines="2"
-        android:text="Message" />
+        android:padding="10dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-</RelativeLayout>
+            <!-- Left Image Section -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/mesBrdImage"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_blank_profile"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+            <!-- Middle Section for Name and Message -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="10dp">
+
+                <TextView
+                    android:id="@+id/mesBrdName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contact Name"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/mesBrdMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:text="Last message here"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Right Section for Time -->
+            <TextView
+                android:id="@+id/mesBrdTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="HH:mm" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

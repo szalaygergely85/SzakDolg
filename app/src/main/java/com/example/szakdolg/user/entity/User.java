@@ -93,6 +93,18 @@ public class User implements Serializable {
       this.userId = userId;
    }
 
+   public User(
+      String displayName,
+      String email,
+      String hashPass,
+      String publicKey
+   ) {
+      this.displayName = displayName;
+      this.email = email;
+      this.password = hashPass;
+      this.publicKey = publicKey;
+   }
+
    public Long getUserId() {
       return userId;
    }

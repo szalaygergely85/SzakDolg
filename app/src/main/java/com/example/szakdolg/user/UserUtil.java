@@ -5,18 +5,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserUtil {
-/*
-   @Deprecated
-   public static User removeCurrentUserFromList(List<User> users, Long id) {
-      for (User user : users) {
-         if (!user.getUserId().equals(id)) {
-            return user;
-         }
-      }
-      return null;
-   }
+
+   /*
+@Deprecated
+public static User removeCurrentUserFromList(List<User> users, Long id) {
+	for (User user : users) {
+		if (!user.getUserId().equals(id)) {
+			return user;
+		}
+	}
+	return null;
+}
 */
-   public static List<User> removeCurrentUserFromList(List<User> users, Long id) {
+   public static List<User> removeCurrentUserFromList(
+      List<User> users,
+      Long id
+   ) {
       List<User> newUserList = new ArrayList<>();
       for (User user : users) {
          if (!user.getUserId().equals(id)) {

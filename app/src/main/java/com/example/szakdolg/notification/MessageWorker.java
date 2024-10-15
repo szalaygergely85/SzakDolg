@@ -35,7 +35,6 @@ public class MessageWorker extends Worker {
       .getRetrofitInstance()
       .create(NotificationApiService.class);
    String userToken;
-   private SharedPreferencesUtil sharedPreferencesUtil;
 
 
    public MessageWorker(
@@ -49,9 +48,8 @@ public class MessageWorker extends Worker {
    @Override
    public Result doWork() {
 
-      sharedPreferencesUtil = new SharedPreferencesUtil(getApplicationContext());
       userToken =
-              sharedPreferencesUtil.getStringPreference(
+      SharedPreferencesUtil.getStringPreference(getApplicationContext(),
          SharedPreferencesConstants.USERTOKEN
       );
 

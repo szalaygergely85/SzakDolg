@@ -46,9 +46,9 @@ public class NewChatActivity extends AppCompatActivity {
       _setToolbar();
       initView();
 
-      sharedPreferencesUtil = new SharedPreferencesUtil(this);
       _token =
-              sharedPreferencesUtil.getStringPreference(
+      SharedPreferencesUtil.getStringPreference(
+         this,
          SharedPreferencesConstants.USERTOKEN
       );
 

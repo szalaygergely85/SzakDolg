@@ -152,7 +152,10 @@ public class SearchContactAdapter
                               }
                            }
                         }
-                        Log.e(AppConstants.LOG_TAG, TAG + " " + response.code());
+                        Log.e(
+                           AppConstants.LOG_TAG,
+                           TAG + " " + response.code()
+                        );
                      }
 
                      @Override

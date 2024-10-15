@@ -2,17 +2,13 @@ package com.example.szakdolg.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.R;
 import com.example.szakdolg.user.api.UserApiHelper;
-import com.example.szakdolg.util.ErrorUtil;
 import com.example.szakdolg.util.HashUtils;
 
 public class LoginActivity extends AppCompatActivity {
@@ -31,16 +27,14 @@ public class LoginActivity extends AppCompatActivity {
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_login);
-      Log.d("LoginActivity", "onCreate called");
+
       _initView();
       _setOnClickListeners();
-
    }
 
    @Override
    protected void onStart() {
       super.onStart();
-
    }
 
    public void _initView() {
@@ -95,11 +89,9 @@ public class LoginActivity extends AppCompatActivity {
                } else {
                   txtError.setVisibility(View.VISIBLE);
                   txtError.setText("Email and password are required.");
-
                }
             }
          }
       );
    }
-
 }

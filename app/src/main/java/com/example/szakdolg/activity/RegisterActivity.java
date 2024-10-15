@@ -8,10 +8,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
+import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.user.api.UserApiHelper;
 import com.example.szakdolg.user.entity.User;
-import com.example.szakdolg.util.CacheUtil;
-import com.example.szakdolg.util.ErrorUtil;
 import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.KeyStoreUtil;
 import java.util.HashMap;
@@ -29,14 +28,14 @@ public class RegisterActivity extends AppCompatActivity {
    private TextView textSignIn;
    private Button btnReg;
 
+   private TextView txtRegError;
+
    private static final String TAG = "RegisterActivity";
    UserApiHelper userApiHelper = new UserApiHelper();
    private String email;
    private String pass;
    private String pass2;
-   private String phone;
    private String displayName;
-   private String fullName;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +54,10 @@ public class RegisterActivity extends AppCompatActivity {
       editPass = findViewById(R.id.edtRegPass1);
       editPass2 = findViewById(R.id.edtRegPass2);
       editDisplayName = findViewById(R.id.edtRegName);
-      editFullName = findViewById(R.id.edtFullName);
-      editPhone = findViewById(R.id.edtRegPhone);
       btnReg = findViewById(R.id.btnRegReg);
       textSignIn = findViewById(R.id.textSignIn);
+      txtRegError = findViewById(R.id.txtRegError);
+      txtRegError.setVisibility(View.GONE);
    }
 
    public static boolean _isEmailValid(String email) {
@@ -66,24 +65,6 @@ public class RegisterActivity extends AppCompatActivity {
       Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
       Matcher matcher = pattern.matcher(email);
       return matcher.matches();
-   }
-
-   private boolean _isFieldNotEmpty(
-      String email,
-      String pass,
-      String pass2,
-      String displayName,
-      String fullName,
-      String phone
-   ) {
-      return (
-         !email.isEmpty() &&
-         !pass.isEmpty() &&
-         !pass2.isEmpty() &&
-         !fullName.isEmpty() &&
-         !phone.isEmpty() &&
-         !displayName.isEmpty()
-      );
    }
 
    private boolean _isPasswordStrong(String pass) {
@@ -94,43 +75,43 @@ public class RegisterActivity extends AppCompatActivity {
       String email,
       String pass,
       String pass2,
-      String displayName,
-      String fullName,
-      String phone
+      String displayName
    ) {
-      if (!_isFieldNotEmpty(email, pass, pass2, displayName, fullName, phone)) {
-         _showError("e5");
+      if (
+         email.isEmpty() ||
+         pass.isEmpty() ||
+         pass2.isEmpty() ||
+         displayName.isEmpty()
+      ) {
+         txtRegError.setVisibility(View.VISIBLE);
+         txtRegError.setText("Please fill in all fields.");
          return;
       }
 
       if (!pass.equals(pass2)) {
-         _showError("e4");
+         txtRegError.setVisibility(View.VISIBLE);
+         txtRegError.setText("Passwords do not match. Please try again.");
          return;
       }
 
       if (!_isPasswordStrong(pass)) {
-         _showError("e3");
+         txtRegError.setVisibility(View.VISIBLE);
+         txtRegError.setText("Password must be at least 6 characters long.");
          return;
       }
 
       if (!_isEmailValid(email)) {
-         _showError("e2");
+         txtRegError.setVisibility(View.VISIBLE);
+         txtRegError.setText("Please enter a valid email address.");
          return;
       }
 
       String hashPass = HashUtils.hashPassword(pass);
       HashMap<String, String> keyPair = KeyStoreUtil.generateKeyPair();
 
-      User user = new User(
-         displayName,
-         fullName,
-         email,
-         hashPass,
-         Long.parseLong(phone),
-         keyPair.get("Public")
-      );
+      User user = new User(displayName, email, hashPass, keyPair.get("Public"));
 
-      CacheUtil.writePrivateKeysCache(this, keyPair.get("Private"), user);
+      KeyStoreUtil.writePrivateKeysToFile(this, keyPair.get("Private"), user);
 
       userApiHelper.registerUser(RegisterActivity.this, user);
    }
@@ -143,11 +124,8 @@ public class RegisterActivity extends AppCompatActivity {
                email = editEmail.getText().toString();
                pass = editPass.getText().toString();
                pass2 = editPass2.getText().toString();
-               phone = editPhone.getText().toString();
                displayName = editDisplayName.getText().toString();
-               fullName = editFullName.getText().toString();
-
-               _registerUser(email, pass, pass2, displayName, fullName, phone);
+               _registerUser(email, pass, pass2, displayName);
             }
          }
       );
@@ -164,9 +142,5 @@ public class RegisterActivity extends AppCompatActivity {
             }
          }
       );
-   }
-
-   private void _showError(String message) {
-      ErrorUtil.GetErrorMessageInToast(message, RegisterActivity.this);
    }
 }

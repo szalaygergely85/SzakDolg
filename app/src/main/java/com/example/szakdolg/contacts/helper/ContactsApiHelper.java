@@ -1,6 +1,8 @@
 package com.example.szakdolg.contacts.helper;
 
 import android.content.Context;
+
+import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -41,7 +43,7 @@ public class ContactsApiHelper {
             ) {
                if (response.isSuccessful()) {
                   if (response.body().size() > 0) {
-                     CacheUtil.validateContacts(
+                     CacheAction.validateContacts(
                         response.body(),
                         context,
                         currentUser

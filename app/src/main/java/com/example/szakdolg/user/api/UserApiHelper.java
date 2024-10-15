@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 import com.example.szakdolg.DTO.LoginRequest;
-import com.example.szakdolg.activity.MainActivity;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.util.ProfileDatabaseUtil;
+import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.messageboard.activity.MessageBoardActivity;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.entity.User;
@@ -181,8 +181,9 @@ public class UserApiHelper {
             );
 
             profileDatabaseUtil.insertProfile(user, token);
-             SharedPreferencesUtil sharedPreferencesUtil =new SharedPreferencesUtil(context);
-            sharedPreferencesUtil.setStringPreference(
+
+            SharedPreferencesUtil.setStringPreference(
+               context,
                SharedPreferencesConstants.USER_ID,
                userId
             );
@@ -220,10 +221,12 @@ public class UserApiHelper {
                      context.startActivity(intent);
                   }
                } else {
-                  Log.e(AppConstants.LOG_TAG, _TAG + response.code() + " " + response.errorBody());
-                   SharedPreferencesUtil sharedPreferencesUtil =new SharedPreferencesUtil(context);
-                  sharedPreferencesUtil.deleteStringPreference(
-
+                  Log.e(
+                     AppConstants.LOG_TAG,
+                     _TAG + response.code() + " " + response.errorBody()
+                  );
+                  SharedPreferencesUtil.deletePreference(
+                     context,
                      SharedPreferencesConstants.USERTOKEN
                   );
                   intent = new Intent(context, MainActivity.class);
@@ -252,28 +255,31 @@ public class UserApiHelper {
                Call<UserToken> call,
                Response<UserToken> response
             ) {
-               Log.d(AppConstants.LOG_TAG, _TAG  + response.code());
+               Log.d(AppConstants.LOG_TAG, _TAG + response.code());
 
                if (response.isSuccessful()) {
                   UserToken userToken = response.body();
 
                   if (userToken != null) {
                      String token = userToken.getToken();
-                      SharedPreferencesUtil sharedPreferencesUtil =new SharedPreferencesUtil(context);
-                      sharedPreferencesUtil.setStringPreference(
+                     SharedPreferencesUtil.setStringPreference(
+                        context,
                         SharedPreferencesConstants.USERTOKEN,
                         token
                      );
                      getUserByTokenAndInsertLocal(context, token);
                   }
                } else {
-                  Log.e(AppConstants.LOG_TAG, _TAG + response.code() + response.message());
+                  Log.e(
+                     AppConstants.LOG_TAG,
+                     _TAG + response.code() + response.message()
+                  );
                }
             }
 
             @Override
             public void onFailure(Call<UserToken> call, Throwable t) {
-                Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
+               Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
             }
          }
       );

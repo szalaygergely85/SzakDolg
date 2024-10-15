@@ -1,6 +1,9 @@
 package com.example.szakdolg.util;
 
+import android.content.Context;
 import android.util.Log;
+import com.example.szakdolg.user.entity.User;
+import java.io.File;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -66,5 +69,15 @@ public class KeyStoreUtil {
          ex.printStackTrace();
       }
       return prvKey;
+   }
+
+   public static void writePrivateKeysToFile(
+      Context context,
+      String privateKey,
+      User user
+   ) {
+      File cacheDir = context.getCacheDir();
+      File privateKeyFile = new File(cacheDir, user.getEmail() + ".dat");
+      FileUtil.writeStringToFile(privateKey, privateKeyFile);
    }
 }
