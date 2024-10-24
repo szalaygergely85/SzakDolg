@@ -3,7 +3,7 @@ package com.example.szakdolg.conversation;
 import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.conversation.entity.Conversation;
 import com.example.szakdolg.conversation.entity.ConversationParticipant;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;

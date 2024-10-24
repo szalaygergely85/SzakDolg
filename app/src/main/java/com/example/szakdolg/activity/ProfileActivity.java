@@ -16,7 +16,7 @@ import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.main.activity.MainActivity;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,17 +146,13 @@ public class ProfileActivity extends AppCompatActivity {
          singOut.setVisibility(View.GONE);
          deleteAccount.setVisibility(View.GONE);
 
-         name.setText(
-            userContact.getFullName() + " " + userContact.getDisplayName()
-         );
+
          email.setText(userContact.getEmail());
       } else {
          deleteContact.setVisibility(View.GONE);
          sendMessage.setVisibility(View.GONE);
 
-         name.setText(
-            currentUser.getFullName() + " " + currentUser.getDisplayName()
-         );
+
          email.setText(currentUser.getEmail());
       }
       // setImageView(uID, this);

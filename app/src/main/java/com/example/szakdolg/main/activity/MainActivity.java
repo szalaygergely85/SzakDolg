@@ -1,23 +1,14 @@
 package com.example.szakdolg.main.activity;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.LoginActivity;
 import com.example.szakdolg.base.BaseActivity;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.contacts.helper.ContactsApiHelper;
-import com.example.szakdolg.conversation.ConversationApiHelper;
 import com.example.szakdolg.main.helper.MainActivityHelper;
-import com.example.szakdolg.message.MessageApiHelper;
-import com.example.szakdolg.user.api.UserApiHelper;
-import com.example.szakdolg.user.entity.User;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 
 public class MainActivity extends BaseActivity {
 

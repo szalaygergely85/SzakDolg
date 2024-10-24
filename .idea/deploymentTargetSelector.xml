@@ -13,7 +13,10 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="testInsertAndRetrieveUser()">
+      <SelectionState runConfigName="testStartCacheCheckingWhenCacheExpired()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testAddUser()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

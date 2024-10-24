@@ -1,4 +1,4 @@
-package com.example.szakdolg.user.entity;
+package com.example.szakdolg.user.model;
 
 import java.io.Serializable;
 
@@ -6,87 +6,57 @@ public class User implements Serializable {
 
    private Long userId;
    private String displayName;
-   private String fullName;
    private String email;
 
    private String password;
 
    private Long userTokenId;
-   private Long phoneNumber;
    private String publicKey;
 
    public User(
-      String displayName,
-      String fullName,
-      String email,
-      String password,
-      Long phoneNumber,
-      String publicKey
-   ) {
-      this.displayName = displayName;
-      this.fullName = fullName;
-      this.email = email;
-      this.password = password;
-      this.phoneNumber = phoneNumber;
-      this.publicKey = publicKey;
-   }
-
-   public User(
       Long userId,
       String displayName,
-      String fullName,
       String email,
       String password,
-      Long userTokenId,
-      Long phoneNumber
-   ) {
+      Long userTokenId) {
       this.userId = userId;
       this.displayName = displayName;
-      this.fullName = fullName;
       this.email = email;
       this.password = password;
       this.userTokenId = userTokenId;
-      this.phoneNumber = phoneNumber;
    }
 
    public User(
       String displayName,
-      String fullName,
       String email,
-      String password,
-      Long phoneNumber
+      String password
    ) {
       this.displayName = displayName;
-      this.fullName = fullName;
       this.email = email;
       this.password = password;
-      this.phoneNumber = phoneNumber;
    }
 
    public User(
-      Long userId,
+           Long userId,
       String displayName,
-      String fullName,
-      String publicKey
+      String publicKey,
+      String email
    ) {
       this.userId = userId;
       this.displayName = displayName;
-      this.fullName = fullName;
       this.publicKey = publicKey;
+      this.email = email;
    }
 
    public User(
       Long userId,
       String displayName,
-      String fullName,
-      String email,
-      Long phoneNumber
+      String email
    ) {
       this.userId = userId;
       this.displayName = displayName;
-      this.fullName = fullName;
       this.email = email;
-      this.phoneNumber = phoneNumber;
+
    }
 
    public User(Long userId) {
@@ -105,7 +75,11 @@ public class User implements Serializable {
       this.publicKey = publicKey;
    }
 
-   public Long getUserId() {
+    public User() {
+
+    }
+
+    public Long getUserId() {
       return userId;
    }
 
@@ -121,13 +95,6 @@ public class User implements Serializable {
       this.displayName = displayName;
    }
 
-   public String getFullName() {
-      return fullName;
-   }
-
-   public void setFullName(String fullName) {
-      this.fullName = fullName;
-   }
 
    public String getEmail() {
       return email;
@@ -153,13 +120,6 @@ public class User implements Serializable {
       this.userTokenId = userTokenId;
    }
 
-   public Long getPhoneNumber() {
-      return phoneNumber;
-   }
-
-   public void setPhoneNumber(Long phoneNumber) {
-      this.phoneNumber = phoneNumber;
-   }
 
    public String getPublicKey() {
       return publicKey;

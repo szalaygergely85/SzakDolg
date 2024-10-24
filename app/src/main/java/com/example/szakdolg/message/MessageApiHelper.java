@@ -8,8 +8,8 @@ import com.example.szakdolg.chat.adapter.ChatAdapter;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.api.UserApiHelper;
-import com.example.szakdolg.user.entity.User;
-import com.example.szakdolg.util.CacheUtil;
+import com.example.szakdolg.user.model.User;
+
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;

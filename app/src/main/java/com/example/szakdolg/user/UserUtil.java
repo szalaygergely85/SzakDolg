@@ -1,6 +1,6 @@
 package com.example.szakdolg.user;
 
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 

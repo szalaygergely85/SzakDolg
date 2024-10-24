@@ -8,7 +8,7 @@ import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import com.example.szakdolg.util.UUIDUtil;
 import java.util.ArrayList;
 import java.util.List;

@@ -12,8 +12,8 @@ import com.example.szakdolg.db.util.ProfileDatabaseUtil;
 import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.messageboard.activity.MessageBoardActivity;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.entity.User;
-import com.example.szakdolg.user.entity.UserToken;
+import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.user.model.UserToken;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -191,55 +191,6 @@ public class UserApiHelper {
             context.startActivity(intent);
          },
          token
-      );
-   }
-
-   @Deprecated
-   public void getUserByTokenAndNavigateToActivity(
-      Context context,
-      String token
-   ) {
-      Call<User> call = _userApiService.getUser(token);
-      call.enqueue(
-         new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-               Intent intent;
-               if (response.isSuccessful()) {
-                  User user = response.body();
-
-                  if (user != null) {
-                     intent = new Intent(context, MessageBoardActivity.class);
-                     intent.putExtra(IntentConstants.CURRENT_USER, user);
-                     Toast
-                        .makeText(
-                           context,
-                           "A user signed in",
-                           Toast.LENGTH_SHORT
-                        )
-                        .show();
-                     context.startActivity(intent);
-                  }
-               } else {
-                  Log.e(
-                     AppConstants.LOG_TAG,
-                     _TAG + response.code() + " " + response.errorBody()
-                  );
-                  SharedPreferencesUtil.deletePreference(
-                     context,
-                     SharedPreferencesConstants.USERTOKEN
-                  );
-                  intent = new Intent(context, MainActivity.class);
-
-                  context.startActivity(intent);
-               }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-               Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
-            }
-         }
       );
    }
 

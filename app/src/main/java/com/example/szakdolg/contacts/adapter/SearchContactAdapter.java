@@ -15,7 +15,7 @@ import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -110,7 +110,7 @@ public class SearchContactAdapter
    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
       User userSearchResult = contactList.get(holder.getAdapterPosition());
 
-      holder.txtName.setText(userSearchResult.getFullName());
+
       holder.txtEmail.setText(userSearchResult.getEmail());
       // setImageView(contactList.get(position).getID(), mContext, holder.imageView);
       holder.btnAdd.setOnClickListener(

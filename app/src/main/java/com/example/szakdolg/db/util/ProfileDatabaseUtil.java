@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.example.szakdolg.db.helper.DatabaseHelper;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 
 public class ProfileDatabaseUtil {
 
@@ -21,9 +21,7 @@ public class ProfileDatabaseUtil {
          ContentValues values = new ContentValues();
          values.put("userId", user.getUserId());
          values.put("displayName", user.getDisplayName());
-         values.put("fullName", user.getFullName());
          values.put("email", user.getEmail());
-         values.put("phoneNumber", user.getPhoneNumber());
          values.put("token", token);
 
          db.insert(dbHelper.TABLE_PROFILE, null, values);

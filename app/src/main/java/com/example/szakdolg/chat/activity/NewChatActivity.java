@@ -15,7 +15,7 @@ import com.example.szakdolg.chat.adapter.UserAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.conversation.ConversationApiHelper;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
 import java.util.List;

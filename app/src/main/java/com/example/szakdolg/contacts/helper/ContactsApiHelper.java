@@ -6,8 +6,8 @@ import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.entity.User;
-import com.example.szakdolg.util.CacheUtil;
+import com.example.szakdolg.user.model.User;
+
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;

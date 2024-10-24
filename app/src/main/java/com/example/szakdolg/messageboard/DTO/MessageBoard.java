@@ -1,7 +1,7 @@
 package com.example.szakdolg.messageboard.DTO;
 
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import java.security.PublicKey;
 import java.util.List;
 

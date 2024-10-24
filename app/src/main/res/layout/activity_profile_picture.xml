@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primaryLightColor"
+    tools:context=".activity.ProfilePictureActivity">
+
+    <!-- Circular Frame for Profile Picture -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileImageView"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:background="@drawable/circular_border"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_blank_profile"
+        android:scaleType="centerCrop"
+        android:contentDescription="Profile Image"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- Button to Choose Picture -->
+    <Button
+        android:id="@+id/chooseImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Picture"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#FF6200EE"
+        android:padding="12dp"
+        android:textAllCaps="false"
+        android:layout_marginTop="20dp"
+        android:contentDescription="Choose a profile picture"
+        app:layout_constraintTop_toBottomOf="@+id/profileImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Button to Skip -->
+    <Button
+        android:id="@+id/skipButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skip"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#FF018786"
+        android:padding="12dp"
+        android:textAllCaps="false"
+        android:contentDescription="Skip profile picture upload"
+        app:layout_constraintTop_toBottomOf="@+id/chooseImageButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

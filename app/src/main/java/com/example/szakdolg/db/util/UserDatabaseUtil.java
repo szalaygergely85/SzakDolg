@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.example.szakdolg.db.helper.DatabaseHelper;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,7 +126,6 @@ public class UserDatabaseUtil {
          ContentValues values = new ContentValues();
          values.put("userId", user.getUserId());
          values.put("displayName", user.getDisplayName());
-         values.put("fullName", user.getFullName());
          values.put("publicKey", user.getPublicKey());
 
          db.insert(dbHelper.TABLE_USER_ENTRY, null, values);

@@ -10,7 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
 import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.user.api.UserApiHelper;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.user.service.UserService;
 import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.KeyStoreUtil;
 import java.util.HashMap;
@@ -105,15 +106,12 @@ public class RegisterActivity extends AppCompatActivity {
          txtRegError.setText("Please enter a valid email address.");
          return;
       }
+      User user = new User(displayName, email, pass);
 
-      String hashPass = HashUtils.hashPassword(pass);
-      HashMap<String, String> keyPair = KeyStoreUtil.generateKeyPair();
+      UserService userService = new UserService();
+      userService.addUser(user, RegisterActivity.this);
 
-      User user = new User(displayName, email, hashPass, keyPair.get("Public"));
 
-      KeyStoreUtil.writePrivateKeysToFile(this, keyPair.get("Private"), user);
-
-      userApiHelper.registerUser(RegisterActivity.this, user);
    }
 
    private void _setOnClickListeners() {

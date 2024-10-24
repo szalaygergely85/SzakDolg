@@ -26,7 +26,7 @@ import com.example.szakdolg.file.apihelper.FileApiHelper;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.user.UserUtil;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.FileUtil;

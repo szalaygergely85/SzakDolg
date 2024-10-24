@@ -2,17 +2,10 @@ package com.example.szakdolg.util;
 
 import android.content.Context;
 import android.util.Log;
-import com.example.szakdolg.conversation.entity.Conversation;
-import com.example.szakdolg.conversation.entity.ConversationParticipant;
-import com.example.szakdolg.db.util.ConversationDatabaseUtil;
-import com.example.szakdolg.db.util.MessageDatabaseUtil;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.user.entity.User;
+
+import com.example.szakdolg.user.model.User;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class CacheUtil {
 

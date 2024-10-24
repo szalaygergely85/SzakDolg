@@ -5,7 +5,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 
 public class TextViewHolder extends RecyclerView.ViewHolder {
 

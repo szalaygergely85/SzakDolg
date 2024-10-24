@@ -29,7 +29,7 @@ import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.notification.MessageWorker;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

@@ -1,17 +1,13 @@
 package com.example.szakdolg.main.helper;
 
 import android.content.Context;
-import android.content.Intent;
 
-import com.example.szakdolg.activity.LoginActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.conversation.ConversationApiHelper;
-import com.example.szakdolg.db.util.ProfileDatabaseUtil;
-import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.user.api.UserApiHelper;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 public class MainActivityHelper {
@@ -24,7 +20,7 @@ public class MainActivityHelper {
       new ConversationApiHelper();
    private String token;
    private String userId;
-   private User currentUser;
+
 
    public MainActivityHelper(Context _context, String token, String userId) {
       this._context = _context;

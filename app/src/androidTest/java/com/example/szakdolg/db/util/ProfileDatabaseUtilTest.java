@@ -6,8 +6,7 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.szakdolg.db.helper.DatabaseHelper;
-import com.example.szakdolg.db.util.ProfileDatabaseUtil;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,9 +49,7 @@ public class ProfileDatabaseUtilTest {
         assertNotNull(retrievedUser);
         assertEquals(testUser.getUserId(), retrievedUser.getUserId());
         assertEquals(testUser.getDisplayName(), retrievedUser.getDisplayName());
-        assertEquals(testUser.getFullName(), retrievedUser.getFullName());
         assertEquals(testUser.getEmail(), retrievedUser.getEmail());
-        assertEquals(testUser.getPhoneNumber(), retrievedUser.getPhoneNumber());
     }
 
     @After

@@ -1,8 +1,8 @@
 package com.example.szakdolg.user.api;
 
 import com.example.szakdolg.DTO.LoginRequest;
-import com.example.szakdolg.user.entity.User;
-import com.example.szakdolg.user.entity.UserToken;
+import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.user.model.UserToken;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;

@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.example.szakdolg.db.helper.DatabaseHelper;
 import com.example.szakdolg.message.MessageEntry;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 

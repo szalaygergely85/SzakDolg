@@ -16,7 +16,7 @@ import com.example.szakdolg.message.MessageApiHelper;
 import com.example.szakdolg.message.MessageEntry;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.user.UserUtil;
-import com.example.szakdolg.user.entity.User;
+import com.example.szakdolg.user.model.User;
 import com.example.szakdolg.util.CacheUtil;
 import java.util.List;
 import retrofit2.Call;
