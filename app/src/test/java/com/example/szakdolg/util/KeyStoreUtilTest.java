@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 import android.content.Context;
-import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.model.user.model.User;
 import java.io.File;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

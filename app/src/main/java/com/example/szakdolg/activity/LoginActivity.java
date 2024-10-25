@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
-import com.example.szakdolg.user.api.UserApiHelper;
+import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.util.HashUtils;
 
 public class LoginActivity extends AppCompatActivity {

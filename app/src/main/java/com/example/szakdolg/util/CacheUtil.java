@@ -3,7 +3,7 @@ package com.example.szakdolg.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.model.user.model.User;
 import java.io.File;
 import java.util.HashMap;
 

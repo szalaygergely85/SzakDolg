@@ -14,9 +14,9 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.conversation.ConversationApiHelper;
+import com.example.szakdolg.model.conversation.ConversationApiHelper;
 import com.example.szakdolg.main.activity.MainActivity;
-import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -151,8 +151,6 @@ public class ProfileActivity extends AppCompatActivity {
       } else {
          deleteContact.setVisibility(View.GONE);
          sendMessage.setVisibility(View.GONE);
-
-
          email.setText(currentUser.getEmail());
       }
       // setImageView(uID, this);

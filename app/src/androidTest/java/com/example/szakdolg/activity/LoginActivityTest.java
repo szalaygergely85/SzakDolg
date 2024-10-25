@@ -19,7 +19,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
 import com.example.szakdolg.R;
-import com.example.szakdolg.user.api.UserApiHelper;
+import com.example.szakdolg.model.user.api.UserApiHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

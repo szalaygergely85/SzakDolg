@@ -11,8 +11,9 @@ import android.content.Context;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.szakdolg.user.api.UserApiHelper;
-import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.model.user.api.UserApiHelper;
+import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.service.UserService;
 import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.KeyStoreUtil;
 

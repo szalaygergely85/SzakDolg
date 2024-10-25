@@ -7,7 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.szakdolg.R;
-import com.example.szakdolg.base.BaseActivity;
+import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.main.helper.MainActivityHelper;
 
 public class MainActivity extends BaseActivity {

@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.ProfilePictureActivity"
+            android:name=".activity.profilepicture.activity.ProfilePictureActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -29,7 +29,7 @@
         </activity>
 
         <activity
-            android:name=".chat.activity.NewChatActivity"
+            android:name=".activity.chat.activity.NewChatActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -53,7 +53,7 @@
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".chat.activity.ChatActivity"
+            android:name=".activity.chat.activity.ChatActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

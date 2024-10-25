@@ -6,52 +6,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primaryLightColor"
-    tools:context=".activity.ProfilePictureActivity">
+    tools:context=".activity.profilepicture.activity.ProfilePictureActivity">
 
-    <!-- Circular Frame for Profile Picture -->
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profileImageView"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:background="@drawable/circular_border"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_blank_profile"
-        android:scaleType="centerCrop"
-        android:contentDescription="Profile Image"
-        android:clickable="true"
-        android:focusable="true" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/CircularImage" />
 
-    <!-- Button to Choose Picture -->
-    <Button
-        android:id="@+id/chooseImageButton"
+    <ImageView
+        android:id="@+id/editIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_baseline_more_vert_24"
+        android:contentDescription="Edit Profile Picture"
+        app:layout_constraintTop_toTopOf="@+id/profileImageView"
+        app:layout_constraintEnd_toEndOf="@+id/profileImageView" />
+
+
+    <TextView
+        android:id="@+id/uploadTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Picture"
+        android:text="Tap on the picture to upload"
         android:textColor="#FFFFFF"
-        android:backgroundTint="#FF6200EE"
-        android:padding="12dp"
-        android:textAllCaps="false"
         android:layout_marginTop="20dp"
-        android:contentDescription="Choose a profile picture"
+        android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@+id/profileImageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Button to Skip -->
-    <Button
-        android:id="@+id/skipButton"
+
+
+    <TextView
+        android:id="@+id/skipTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Skip"
         android:textColor="#FFFFFF"
-        android:backgroundTint="#FF018786"
-        android:padding="12dp"
-        android:textAllCaps="false"
-        android:contentDescription="Skip profile picture upload"
-        app:layout_constraintTop_toBottomOf="@+id/chooseImageButton"
+        android:layout_marginTop="10dp"
+        android:textAlignment="center"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@+id/uploadTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>

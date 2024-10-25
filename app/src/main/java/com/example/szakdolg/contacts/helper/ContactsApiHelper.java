@@ -5,8 +5,8 @@ import android.content.Context;
 import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.db.retrofit.RetrofitClient;
+import com.example.szakdolg.model.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

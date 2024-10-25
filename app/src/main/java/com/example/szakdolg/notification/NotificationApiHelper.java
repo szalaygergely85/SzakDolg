@@ -1,6 +1,6 @@
 package com.example.szakdolg.notification;
 
-import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.db.retrofit.RetrofitClient;
 
 public class NotificationApiHelper {
 

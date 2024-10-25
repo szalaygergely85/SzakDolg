@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/chatParent"
     android:background="@color/primaryLightColor"
-    tools:context=".chat.activity.NewChatActivity">
+    tools:context=".activity.chat.activity.NewChatActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/newChatToolbar"

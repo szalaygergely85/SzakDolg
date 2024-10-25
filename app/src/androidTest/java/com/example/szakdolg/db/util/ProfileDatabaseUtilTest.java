@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.szakdolg.db.helper.DatabaseHelper;
-import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.model.user.model.User;
 
 import org.junit.After;
 import org.junit.Before;

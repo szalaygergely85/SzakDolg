@@ -38,6 +38,6 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="10dp"
         android:src="@drawable/ic_blank_profile"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />/>
+        app:shapeAppearanceOverlay="@style/CircularImage" />/>
 
 </RelativeLayout>

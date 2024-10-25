@@ -1,6 +1,6 @@
 package com.example.szakdolg.file.apiservice;
 
-import com.example.szakdolg.message.MessageEntry;
+import com.example.szakdolg.model.message.message.MessageEntry;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;

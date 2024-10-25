@@ -9,12 +9,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
 import com.example.szakdolg.main.activity.MainActivity;
-import com.example.szakdolg.user.api.UserApiHelper;
-import com.example.szakdolg.user.model.User;
-import com.example.szakdolg.user.service.UserService;
-import com.example.szakdolg.util.HashUtils;
-import com.example.szakdolg.util.KeyStoreUtil;
-import java.util.HashMap;
+import com.example.szakdolg.model.user.api.UserApiHelper;
+import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.service.UserService;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

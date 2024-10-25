@@ -4,10 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.example.szakdolg.conversation.entity.Conversation;
-import com.example.szakdolg.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.model.conversation.entity.Conversation;
+import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.helper.DatabaseHelper;
-import com.example.szakdolg.user.model.User;
+import com.example.szakdolg.model.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
