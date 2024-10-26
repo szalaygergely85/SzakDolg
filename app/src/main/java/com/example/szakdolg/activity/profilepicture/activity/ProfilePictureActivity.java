@@ -14,6 +14,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.example.szakdolg.activity.profilepicture.helper.ProfilePictureActivityHelper;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
+import com.example.szakdolg.model.user.model.User;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.example.szakdolg.R;
 
@@ -23,14 +25,22 @@ public class ProfilePictureActivity extends AppCompatActivity {
     private ShapeableImageView _profileImageView;
     private ProfilePictureActivityHelper _profilePictureActivityHelper;
 
+    private User currentUser;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_picture);
 
+       /* currentUser =
+                (User) this.getIntent()
+                        .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);*/
+        currentUser = new User(123L, "gege", "aaa@aaa.hu");
+
+
         _initView();
 
-        _profilePictureActivityHelper = new ProfilePictureActivityHelper(this);
+        _profilePictureActivityHelper = new ProfilePictureActivityHelper(this, currentUser);
         _setOnClickListeners();
     }
 
@@ -74,7 +84,8 @@ public class ProfilePictureActivity extends AppCompatActivity {
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Uri imageUri = result.getData().getData();
-                    _profileImageView.setImageURI(imageUri); // Set the selected image to the ImageView
+
+                    _profilePictureActivityHelper.addImage(imageUri, _profileImageView, "currentUser.getDisplayName()");
                 }
             });
 

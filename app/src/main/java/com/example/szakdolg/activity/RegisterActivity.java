@@ -107,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
       User user = new User(displayName, email, pass);
 
       UserService userService = new UserService();
-      userService.addUser(user, RegisterActivity.this);
+      userService.registerUser(user, RegisterActivity.this);
 
 
    }

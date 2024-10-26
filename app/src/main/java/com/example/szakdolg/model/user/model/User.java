@@ -4,82 +4,63 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
+   private Long id;
    private Long userId;
    private String displayName;
    private String email;
-
    private String password;
-
-   private Long userTokenId;
    private String publicKey;
+   private String profilePictureUuid;
+   private String status;
+   private String tags;
+   private String authToken;
 
-   public User(
-      Long userId,
-      String displayName,
-      String email,
-      String password,
-      Long userTokenId) {
+   public User(Long id, Long userId, String displayName, String email, String publicKey, String profilePictureUuid, String status, String tags, String authToken) {
+      this.id = id;
       this.userId = userId;
+      this.displayName = displayName;
+      this.email = email;
+
+      this.publicKey = publicKey;
+      this.profilePictureUuid = profilePictureUuid;
+      this.status = status;
+      this.tags = tags;
+      this.authToken = authToken;
+   }
+
+   public User(String displayName, String email, String password) {
       this.displayName = displayName;
       this.email = email;
       this.password = password;
-      this.userTokenId = userTokenId;
    }
 
-   public User(
-      String displayName,
-      String email,
-      String password
-   ) {
+   public User(Long id, String displayName, String email) {
+      this.id = id;
       this.displayName = displayName;
       this.email = email;
+   }
+
+   public User() {
+
+   }
+
+   public String getPassword() {
+      return password;
+   }
+
+   public void setPassword(String password) {
       this.password = password;
    }
 
-   public User(
-           Long userId,
-      String displayName,
-      String publicKey,
-      String email
-   ) {
-      this.userId = userId;
-      this.displayName = displayName;
-      this.publicKey = publicKey;
-      this.email = email;
+   public Long getId() {
+      return id;
    }
 
-   public User(
-      Long userId,
-      String displayName,
-      String email
-   ) {
-      this.userId = userId;
-      this.displayName = displayName;
-      this.email = email;
-
+   public void setId(Long id) {
+      this.id = id;
    }
 
-   public User(Long userId) {
-      this.userId = userId;
-   }
-
-   public User(
-      String displayName,
-      String email,
-      String hashPass,
-      String publicKey
-   ) {
-      this.displayName = displayName;
-      this.email = email;
-      this.password = hashPass;
-      this.publicKey = publicKey;
-   }
-
-    public User() {
-
-    }
-
-    public Long getUserId() {
+   public Long getUserId() {
       return userId;
    }
 
@@ -95,7 +76,6 @@ public class User implements Serializable {
       this.displayName = displayName;
    }
 
-
    public String getEmail() {
       return email;
    }
@@ -104,28 +84,43 @@ public class User implements Serializable {
       this.email = email;
    }
 
-   public String getPassword() {
-      return password;
-   }
-
-   public void setPassword(String password) {
-      this.password = password;
-   }
-
-   public Long getUserTokenId() {
-      return userTokenId;
-   }
-
-   public void setUserTokenId(Long userTokenId) {
-      this.userTokenId = userTokenId;
-   }
-
-
    public String getPublicKey() {
       return publicKey;
    }
 
    public void setPublicKey(String publicKey) {
       this.publicKey = publicKey;
+   }
+
+   public String getProfilePictureUuid() {
+      return profilePictureUuid;
+   }
+
+   public void setProfilePictureUuid(String profilePictureUuid) {
+      this.profilePictureUuid = profilePictureUuid;
+   }
+
+   public String getStatus() {
+      return status;
+   }
+
+   public void setStatus(String status) {
+      this.status = status;
+   }
+
+   public String getTags() {
+      return tags;
+   }
+
+   public void setTags(String tags) {
+      this.tags = tags;
+   }
+
+   public String getAuthToken() {
+      return authToken;
+   }
+
+   public void setAuthToken(String authToken) {
+      this.authToken = authToken;
    }
 }

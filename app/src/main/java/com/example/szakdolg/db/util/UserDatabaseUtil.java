@@ -46,16 +46,20 @@ public class UserDatabaseUtil {
       Cursor cursor = null;
 
       try {
-         cursor =
-         db.rawQuery("SELECT * FROM " + dbHelper.TABLE_USER_ENTRY, null);
+         cursor = db.rawQuery("SELECT * FROM " + dbHelper.TABLE_USER_ENTRY, null);
 
          while (cursor.moveToNext()) {
-            Long userId = cursor.getLong(0);
-            String displayName = cursor.getString(1);
-            String fullName = cursor.getString(2);
-            String publicKey = cursor.getString(3);
+            Long id = cursor.getLong(0);
+            Long userId = cursor.getLong(1);
+            String displayName = cursor.getString(2);
+            String email = cursor.getString(3);
+            String publicKey = cursor.getString(4);
+            String profilePictureUuid = cursor.getString(5);
+            String status = cursor.getString(6);
+            String tags = cursor.getString(7);
+            String authToken = cursor.getString(8);
 
-            User user = new User(userId, displayName, fullName, publicKey);
+            User user = new User(id, userId, displayName, email, publicKey, profilePictureUuid, status, tags, authToken);
             users.add(user);
          }
       } finally {
@@ -66,29 +70,31 @@ public class UserDatabaseUtil {
       }
       return users;
    }
-
    public User getUserById(Long userId) {
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = null;
 
       try {
-         cursor =
-         db.rawQuery(
-            "SELECT displayName, fullName, publicKey FROM " +
-            dbHelper.TABLE_USER_ENTRY +
-            " WHERE userId = ?",
-            new String[] { String.valueOf(userId) }
+         cursor = db.rawQuery(
+                 "SELECT id, displayName, email, publicKey, profilePictureUuid, status, tags, authToken FROM " +
+                         dbHelper.TABLE_USER_ENTRY +
+                         " WHERE userId = ?",
+                 new String[]{String.valueOf(userId)}
          );
-         if (cursor != null) {
-            if (cursor.moveToFirst()) {
-               String displayName = cursor.getString(0);
-               String fullName = cursor.getString(1);
-               String publicKey = cursor.getString(2);
 
-               User user = new User(userId, displayName, fullName, publicKey);
-               cursor.close();
-               return user;
-            }
+         if (cursor != null && cursor.moveToFirst()) {
+            Long id = cursor.getLong(0);
+            String displayName = cursor.getString(1);
+            String email = cursor.getString(2);
+            String publicKey = cursor.getString(3);
+            String profilePictureUuid = cursor.getString(4);
+            String status = cursor.getString(5);
+            String tags = cursor.getString(6);
+            String authToken = cursor.getString(7);
+
+            // Initialize user object with all retrieved fields
+            User user = new User(id, userId, displayName, email, publicKey, profilePictureUuid, status, tags, authToken);
+            return user;
          }
       } finally {
          if (cursor != null) {
@@ -126,7 +132,12 @@ public class UserDatabaseUtil {
          ContentValues values = new ContentValues();
          values.put("userId", user.getUserId());
          values.put("displayName", user.getDisplayName());
+         values.put("email", user.getEmail());
          values.put("publicKey", user.getPublicKey());
+         values.put("profilePictureUuid", user.getProfilePictureUuid());
+         values.put("status", user.getStatus());
+         values.put("tags", user.getTags());
+         values.put("authToken", user.getAuthToken());
 
          db.insert(dbHelper.TABLE_USER_ENTRY, null, values);
       } finally {

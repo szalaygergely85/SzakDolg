@@ -7,12 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
    private static final int DATABASE_VERSION = 1;
-
    public static final String TABLE_CONVERSATION_PARTICIPANTS =
       "conversation_participants";
-   public static final String TABLE_CONVERSATIONS = "conversations";
+   public static final String TABLE_CONVERSATIONS = "Conversations";
+   public static final String TABLE_IMAGE = "Image";
    public static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
-   public static final String TABLE_PROFILE = "Profile";
    public static final String TABLE_USER_ENTRY = "UserEntry";
 
    private static final String CREATE_TABLE_CONVERSATION_PARTICIPANTS =
@@ -35,6 +34,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "numberOfParticipants INTEGER" +
       ");";
 
+   private static final String CREATE_TABLE_IMAGE =
+           "CREATE TABLE " +
+                   TABLE_IMAGE +
+                   " (" +
+                   "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                   "fileName TEXT NOT NULL, " +
+                   "userId INTEGER, " +
+                   "imageUri TEXT, " +
+                   "mimeType TEXT, " +
+                   "width INTEGER, " +
+                   "height INTEGER, " +
+                   "size INTEGER, " +
+                   "dateAdded INTEGER, " +
+                   "status TEXT, " +
+                   "tags TEXT, " +
+                   "uuid TEXT"+
+                   ");";
+
    private static final String CREATE_TABLE_MESSAGE_ENTRY =
       "CREATE TABLE " +
       TABLE_MESSAGE_ENTRY +
@@ -50,38 +67,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "uUId TEXT" +
       ");";
 
-   private static final String CREATE_TABLE_PROFILE =
-      "CREATE TABLE " +
-      TABLE_PROFILE +
-      " (" +
-      "userId INTEGER PRIMARY KEY, " +
-      "displayName TEXT NOT NULL, " +
-      "fullName TEXT NOT NULL, " +
-      "email TEXT NOT NULL, " +
-      "phoneNumber TEXT NOT NULL," +
-      "token TEXT NOT NULL" +
-      ");";
    private static final String CREATE_TABLE_USER_ENTRY =
-      "CREATE TABLE " +
-      TABLE_USER_ENTRY +
-      " (" +
-      "userId INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      "displayName TEXT NOT NULL, " +
-      "fullName TEXT NOT NULL, " +
-      "publicKey LONGTEXT NOT NULL " +
-      ");";
-
-   public DatabaseHelper(Context context, String userId) {
-      super(context, userId + ".db", null, DATABASE_VERSION);
-   }
-
+           "CREATE TABLE " +
+                   TABLE_USER_ENTRY +
+                   " (" +
+                   "id INTEGER PRIMARY KEY AUTOINCREMENT, " + // Optional internal ID
+                   "userId INTEGER UNIQUE, " +
+                   "displayName TEXT NOT NULL, " +
+                   "email TEXT NOT NULL, " +
+                   "publicKey LONGTEXT NOT NULL, " +
+                   "profilePictureUuid TEXT, " +
+                   "status TEXT, " +
+                   "tags TEXT, " +
+                   "authToken TEXT" + // Store token, encrypted if possible
+                   ");";
    @Override
    public void onCreate(SQLiteDatabase db) {
       db.execSQL(CREATE_TABLE_MESSAGE_ENTRY);
       db.execSQL(CREATE_TABLE_USER_ENTRY);
       db.execSQL(CREATE_TABLE_CONVERSATION_PARTICIPANTS);
       db.execSQL(CREATE_TABLE_CONVERSATIONS);
-      db.execSQL(CREATE_TABLE_PROFILE);
+      db.execSQL(CREATE_TABLE_IMAGE);
    }
 
    @Override
@@ -90,7 +96,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_ENTRY);
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATION_PARTICIPANTS);
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATIONS);
-      db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILE);
+      db.execSQL("DROP TABLE IF EXISTS " + TABLE_IMAGE);
       onCreate(db);
    }
+
+   public DatabaseHelper(Context context, String userId) {
+      super(context, userId + ".db", null, DATABASE_VERSION);
+   }
+
 }
