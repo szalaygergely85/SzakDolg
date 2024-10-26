@@ -1,4 +1,4 @@
-package com.example.szakdolg.model.image;
+package com.example.szakdolg.model.image.entity;
 
 import android.net.Uri;
 

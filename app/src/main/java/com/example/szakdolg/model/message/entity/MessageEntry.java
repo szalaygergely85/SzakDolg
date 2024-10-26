@@ -1,4 +1,4 @@
-package com.example.szakdolg.model.message.message;
+package com.example.szakdolg.model.message.entity;
 
 import java.io.Serializable;
 

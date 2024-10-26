@@ -13,7 +13,13 @@ import java.util.HashMap;
 
 public class UserService {
 
-    public User addUser(User user, Context context, User currentUser){
+    private Context context;
+
+    public UserService(Context context) {
+        this.context = context;
+    }
+
+    public User addUser(User user, User currentUser){
         User newUser = new User();
         newUser.setId(user.getId());
         newUser.setUserId(user.getUserId());
@@ -31,7 +37,7 @@ public class UserService {
     }
 
 
-    public void registerUser(User user, Context context){
+    public void registerUser(User user){
         String pass = user.getPassword();
         String hashPass = HashUtils.hashPassword(pass);
 
@@ -47,6 +53,6 @@ public class UserService {
         UserApiHelper userApiHelper =new UserApiHelper();
         userApiHelper.registerUser(context, newUser);
 
-        addUser(newUser, context, null);
+
     }
 }

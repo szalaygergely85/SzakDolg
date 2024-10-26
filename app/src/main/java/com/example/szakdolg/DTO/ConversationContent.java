@@ -1,6 +1,6 @@
 package com.example.szakdolg.DTO;
 
-import com.example.szakdolg.model.message.message.MessageEntry;
+import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.model.User;
 import java.io.Serializable;
 import java.util.List;

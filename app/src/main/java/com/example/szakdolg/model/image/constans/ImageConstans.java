@@ -1,4 +1,4 @@
-package com.example.szakdolg.model.image;
+package com.example.szakdolg.model.image.constans;
 public class ImageConstans {
     // Tags
     public static final String TAG_PROFILE = "Profile";

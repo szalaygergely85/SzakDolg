@@ -12,6 +12,7 @@ import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
 import com.example.szakdolg.model.user.model.UserToken;
+import com.example.szakdolg.model.user.service.UserService;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -247,6 +248,9 @@ public class UserApiHelper {
                if (response.isSuccessful()) {
                   UserToken userToken = response.body();
                   if (userToken != null) {
+                      user.setUserId(userToken.getUserId());
+                      UserService userService =new UserService(context);
+                      userService.addUser(user, user);
                      loginUser(context, user.getPassword(), user.getEmail());
                   }
                } else {

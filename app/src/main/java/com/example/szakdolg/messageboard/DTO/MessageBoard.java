@@ -1,6 +1,6 @@
 package com.example.szakdolg.messageboard.DTO;
 
-import com.example.szakdolg.model.message.message.MessageEntry;
+import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.model.User;
 import java.security.PublicKey;
 import java.util.List;

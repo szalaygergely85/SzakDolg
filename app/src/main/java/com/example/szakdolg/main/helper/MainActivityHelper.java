@@ -5,7 +5,7 @@ import android.content.Context;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
-import com.example.szakdolg.model.message.message.MessageApiHelper;
+import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;

@@ -1,4 +1,4 @@
-package com.example.szakdolg.model.message.message;
+package com.example.szakdolg.model.message.api;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,6 +7,7 @@ import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
+import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.model.user.model.User;
 

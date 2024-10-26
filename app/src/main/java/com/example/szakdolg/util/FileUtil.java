@@ -96,6 +96,8 @@ public class FileUtil {
       return data;
    }
 
+
+   @Deprecated
    public static void saveImageFile(String uID, Bitmap pic, Context c)
       throws IOException {
       double height = pic.getHeight();

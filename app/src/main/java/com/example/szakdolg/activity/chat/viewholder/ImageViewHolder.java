@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.file.apihelper.FileApiHelper;
+import com.example.szakdolg.file.api.FileApiHelper;
 import com.example.szakdolg.util.FileUtil;
 
 public class ImageViewHolder extends RecyclerView.ViewHolder {

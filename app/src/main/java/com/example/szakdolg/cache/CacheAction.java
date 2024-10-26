@@ -7,7 +7,7 @@ import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.message.message.MessageEntry;
+import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.model.User;
 
 import java.util.ArrayList;

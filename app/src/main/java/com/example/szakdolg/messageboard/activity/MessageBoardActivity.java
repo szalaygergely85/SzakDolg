@@ -25,7 +25,7 @@ import com.example.szakdolg.contacts.activity.ContactsActivity;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
-import com.example.szakdolg.model.message.message.MessageApiHelper;
+import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.notification.MessageWorker;

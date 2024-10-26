@@ -36,6 +36,7 @@ public class ProfilePictureActivity extends AppCompatActivity {
                 (User) this.getIntent()
                         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);*/
         currentUser = new User(123L, "gege", "aaa@aaa.hu");
+        currentUser.setUserId(1234L);
 
 
         _initView();
@@ -85,7 +86,7 @@ public class ProfilePictureActivity extends AppCompatActivity {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Uri imageUri = result.getData().getData();
 
-                    _profilePictureActivityHelper.addImage(imageUri, _profileImageView, "currentUser.getDisplayName()");
+                    _profilePictureActivityHelper.addImage(imageUri, _profileImageView);
                 }
             });
 

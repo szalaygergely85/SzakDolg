@@ -45,7 +45,7 @@ public class UserServiceTest {
         @Before
         public void setUp() {
             MockitoAnnotations.openMocks(this);
-            userService = new UserService();
+            userService = new UserService(mockContext);
         }
 /*
         @Test

@@ -9,6 +9,14 @@ public class UserToken implements Serializable {
    private Date generationDate;
    private Date expirationDate;
 
+   private Long userId;
+
+   public Long getUserId() {
+      return userId;
+   }
+   public void setUserId(Long userId) {
+      this.userId = userId;
+   }
    public String getToken() {
       return token;
    }
@@ -37,5 +45,12 @@ public class UserToken implements Serializable {
       this.token = token;
       this.generationDate = generationDate;
       this.expirationDate = expirationDate;
+   }
+
+   public UserToken(String token, Date generationDate, Date expirationDate, Long userId) {
+      this.token = token;
+      this.generationDate = generationDate;
+      this.expirationDate = expirationDate;
+      this.userId = userId;
    }
 }

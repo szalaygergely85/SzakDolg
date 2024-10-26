@@ -1,9 +1,10 @@
-package com.example.szakdolg.file.apihelper;
+package com.example.szakdolg.file.api;
 
 import android.content.Context;
 import android.util.Log;
-import com.example.szakdolg.file.apiservice.FileApiService;
-import com.example.szakdolg.model.message.message.MessageEntry;
+
+import com.example.szakdolg.constans.AppConstants;
+import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
 import com.example.szakdolg.util.FileUtil;
 import java.io.File;
@@ -18,8 +19,6 @@ import retrofit2.Response;
 
 public class FileApiHelper {
 
-   private static final String TAG = "FileApiHelper";
-
    private FileApiService fileApiService = RetrofitClient
       .getRetrofitInstance()
       .create(FileApiService.class);
@@ -30,7 +29,6 @@ public class FileApiHelper {
          file
       );
 
-      // MultipartBody.Part is used to send also the actual file name
       MultipartBody.Part body = MultipartBody.Part.createFormData(
          "file",
          file.getName(),
@@ -70,7 +68,7 @@ public class FileApiHelper {
                Response<ResponseBody> response
             ) {
                if (response.isSuccessful()) {
-                  Log.e(TAG, "server contacted and has file");
+                  Log.e(AppConstants.LOG_TAG, "server contacted and has file");
 
                   boolean writtenToDisk = false;
                   try {
@@ -84,12 +82,12 @@ public class FileApiHelper {
                      throw new RuntimeException(e);
                   }
 
-                  Log.e(TAG, "file download was a success? " + writtenToDisk);
+                  Log.e(AppConstants.LOG_TAG, "file download was a success? " + writtenToDisk);
                   if (writtenToDisk) {
                      runnable.run();
                   }
                } else {
-                  Log.e(TAG, "server contact failed");
+                  Log.e(AppConstants.LOG_TAG, "server contact failed");
                }
             }
 

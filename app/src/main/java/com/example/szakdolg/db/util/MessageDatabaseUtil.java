@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.example.szakdolg.db.helper.DatabaseHelper;
-import com.example.szakdolg.model.message.message.MessageEntry;
+import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.model.User;
 import java.util.ArrayList;
 import java.util.List;

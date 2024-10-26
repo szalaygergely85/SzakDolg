@@ -1,26 +1,18 @@
 package com.example.szakdolg.activity.profilepicture.helper;
 
 
-import static android.app.Activity.RESULT_OK;
 import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-
-import com.example.szakdolg.activity.profilepicture.activity.ProfilePictureActivity;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.model.image.ImageConstans;
-import com.example.szakdolg.model.image.ImageService;
+import com.example.szakdolg.model.image.constans.ImageConstans;
+import com.example.szakdolg.model.image.service.ImageService;
 import com.example.szakdolg.model.user.model.User;
 import com.google.android.material.imageview.ShapeableImageView;
-
-import java.io.File;
 
 public class ProfilePictureActivityHelper {
 
@@ -35,11 +27,12 @@ public class ProfilePictureActivityHelper {
 
 
 
-    public void addImage(Uri imageUri, ShapeableImageView imageView, String displayName) {
+    public void addImage(Uri imageUri, ShapeableImageView imageView) {
         String mimeType = getMimeType(imageUri);
         if (mimeType != null && (mimeType.startsWith("image/"))) {
+
             ImageService imageService = new ImageService(context, user);
-            imageService.createAndAddImage(imageUri, null, displayName, mimeType, ImageConstans.TAG_PROFILE);
+            imageService.createAndAddImage(imageUri, user.getUserId(), mimeType, ImageConstans.TAG_PROFILE);
 
             imageView.setImageURI(imageUri);
         } else {

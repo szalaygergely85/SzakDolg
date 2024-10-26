@@ -1,9 +1,10 @@
-package com.example.szakdolg.model.image;
+package com.example.szakdolg.model.image.service;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,7 +12,11 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.db.util.ImageDatabaseUtil;
+import com.example.szakdolg.model.image.api.ImageApiHelper;
+import com.example.szakdolg.model.image.entity.ImageEntity;
+import com.example.szakdolg.model.image.constans.ImageConstans;
 import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.util.UUIDUtil;
 
@@ -60,16 +65,27 @@ public class ImageService {
                         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
 
                         // Save locally
-                        saveImageLocally(resizedBitmap, imageEntity.getFileName());
+                        File savedFile =saveImageLocally(resizedBitmap, imageEntity.getFileName());
 
-                        imageEntity.setHeight(newHeight);
-                        imageEntity.setWidth(newWidth);
-                        imageEntity.setSize(resizedBitmap.getByteCount());
+                        if (savedFile.exists()) {
+                            imageEntity.setHeight(newHeight);
+                            imageEntity.setWidth(newWidth);
+                            imageEntity.setSize(resizedBitmap.getByteCount());
 
-                        // Add to the database
+                            // Add to the database
+                            ImageDatabaseUtil imageDatabaseUtil = new ImageDatabaseUtil(context, user);
+                            imageDatabaseUtil.insertImageEntity(imageEntity);
 
-                        ImageDatabaseUtil imageDatabaseUtil = new ImageDatabaseUtil(context, user);
-                        imageDatabaseUtil.insertImageEntity(imageEntity);
+                            //Upload
+
+                            ImageApiHelper imageApiHelper = new ImageApiHelper();
+                            imageApiHelper.uploadImage(savedFile, imageEntity);
+
+                        } else {
+                            // Handle the case where the file was not saved successfully
+                            Log.e(AppConstants.LOG_TAG, "File not found: " + savedFile.getAbsolutePath());
+                        }
+
                     }
 
                     @Override
@@ -80,25 +96,25 @@ public class ImageService {
     }
 
 
-    public void createAndAddImage(Uri imageUri, Long userId, String name, String mimeType, String tags) {
+    public void createAndAddImage(Uri imageUri, Long userId, String mimeType, String tags) {
         ImageEntity imageEntity = new ImageEntity(imageUri.toString(), userId, mimeType, System.currentTimeMillis(), ImageConstans.STATUS_PENDING, ImageConstans.TAG_PROFILE, UUIDUtil.UUIDGenerator());
 
         if (tags != null && tags.equals(ImageConstans.TAG_PROFILE)){
-            imageEntity.setFileName(name + "_profile_image");
+            imageEntity.setFileName(imageEntity.getUuid() + "_profile_image");
         }else{
-            imageEntity.setFileName(name);
+            imageEntity.setFileName(imageEntity.getUuid());
         }
         addImage(imageEntity);
     }
 
 
-    private void saveImageLocally(Bitmap bitmap, String name) {
+    private File saveImageLocally(Bitmap bitmap, String name) {
 
         File path = new File(context.getFilesDir() + "/Pictures/");
         if (!path.exists()) {
-            path.mkdir();
+            path.mkdirs();
         }
-        File file = new File(path + "/" + name + ".jpg");
+        File file = new File(path, name + ".jpg");
         try (FileOutputStream out = new FileOutputStream(file)) {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
@@ -107,6 +123,7 @@ public class ImageService {
             e.printStackTrace();
 
         }
+        return file;
 
     }
 }

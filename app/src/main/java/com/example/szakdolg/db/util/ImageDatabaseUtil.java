@@ -4,11 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.db.helper.DatabaseHelper;
-import com.example.szakdolg.model.image.ImageEntity;
+import com.example.szakdolg.model.image.entity.ImageEntity;
 import com.example.szakdolg.model.user.model.User;
 
 public class ImageDatabaseUtil {
