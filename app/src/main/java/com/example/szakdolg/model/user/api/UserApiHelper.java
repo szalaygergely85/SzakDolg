@@ -7,7 +7,7 @@ import android.widget.Toast;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.db.util.ProfileDatabaseUtil;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
@@ -173,12 +173,12 @@ public class UserApiHelper {
          context,
          user -> {
             String userId = user.getUserId().toString();
-            ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(
+            UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
                context,
                userId
             );
 
-            profileDatabaseUtil.insertProfile(user, token);
+             userDatabaseUtil.insertUser(user);
 
             SharedPreferencesUtil.setStringPreference(
                context,

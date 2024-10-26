@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.szakdolg.activity.LoginActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.db.util.ProfileDatabaseUtil;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
@@ -50,11 +50,11 @@ public class BaseActivity extends AppCompatActivity {
         finish();
     }
     private User _getCurrentUser(String token, String userId) {
-        ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(
+        UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
                 this,
                 userId
         );
 
-        return profileDatabaseUtil.getCurrentUserByToken(token);
+        return userDatabaseUtil.getCurrentUserByToken(token);
     }
 }

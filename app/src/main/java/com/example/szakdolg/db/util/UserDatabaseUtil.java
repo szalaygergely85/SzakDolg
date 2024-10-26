@@ -17,6 +17,10 @@ public class UserDatabaseUtil {
       dbHelper = new DatabaseHelper(context, user.getUserId().toString());
    }
 
+   public UserDatabaseUtil(Context context, String userId) {
+      dbHelper = new DatabaseHelper(context, userId.toString());
+   }
+
    public List<Long> getAllUserIds() {
       List<Long> userIds = new ArrayList<>();
       SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -70,6 +74,42 @@ public class UserDatabaseUtil {
       }
       return users;
    }
+
+   public User getCurrentUserByToken(String token) {
+      SQLiteDatabase db = dbHelper.getReadableDatabase();
+      Cursor cursor = null;
+
+      try {
+         cursor = db.rawQuery(
+                 "SELECT id, userId, displayName, email, publicKey, profilePictureUuid, status, tags, authToken FROM " +
+                         dbHelper.TABLE_USER_ENTRY +
+                         " WHERE authToken = ?",
+                 new String[] { token }
+         );
+
+         if (cursor != null && cursor.moveToFirst()) {
+            Long id = cursor.getLong(cursor.getColumnIndexOrThrow("id"));
+            Long userId = cursor.getLong(cursor.getColumnIndexOrThrow("userId"));
+            String displayName = cursor.getString(cursor.getColumnIndexOrThrow("displayName"));
+            String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
+            String publicKey = cursor.getString(cursor.getColumnIndexOrThrow("publicKey"));
+            String profilePictureUuid = cursor.getString(cursor.getColumnIndexOrThrow("profilePictureUuid"));
+            String status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+            String tags = cursor.getString(cursor.getColumnIndexOrThrow("tags"));
+            String authToken = cursor.getString(cursor.getColumnIndexOrThrow("authToken"));
+
+            return new User(id, userId, displayName, email, publicKey, profilePictureUuid, status, tags, authToken);
+         }
+      } finally {
+         if (cursor != null) {
+            cursor.close();
+         }
+         db.close();
+      }
+
+      return null; // Return null if no user found with the given token
+   }
+
    public User getUserById(Long userId) {
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = null;

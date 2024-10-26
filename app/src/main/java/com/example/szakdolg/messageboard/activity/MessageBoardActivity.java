@@ -22,9 +22,9 @@ import com.example.szakdolg.activity.chat.activity.NewChatActivity;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.activity.ContactsActivity;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
-import com.example.szakdolg.db.util.ProfileDatabaseUtil;
 import com.example.szakdolg.model.message.message.MessageApiHelper;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
@@ -80,11 +80,11 @@ public class MessageBoardActivity extends AppCompatActivity {
               SharedPreferencesConstants.USER_ID
       );
 
-      ProfileDatabaseUtil profileDatabaseUtil = new ProfileDatabaseUtil(
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
          this,
          userId
       );
-      _currentUser = profileDatabaseUtil.getCurrentUserByToken(userToken);
+      _currentUser = userDatabaseUtil.getCurrentUserByToken(userToken);
 
       _scheduleMessageWorker();
 
