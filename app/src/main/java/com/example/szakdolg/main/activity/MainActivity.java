@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.main.helper.MainActivityHelper;
@@ -33,9 +32,8 @@ public class MainActivity extends BaseActivity {
    @Override
    protected void onStart() {
       super.onStart();
-       _mainActivityHelper.startCacheChecking(token, currentUser);
+      _mainActivityHelper.startCacheChecking(token, currentUser);
    }
-
 
    @Override
    public void onRequestPermissionsResult(

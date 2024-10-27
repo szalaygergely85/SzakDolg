@@ -1,12 +1,11 @@
 package com.example.szakdolg.activity.chat.helper;
 
 import android.content.Context;
-
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
-import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
+import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.model.User;

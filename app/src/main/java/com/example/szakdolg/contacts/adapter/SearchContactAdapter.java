@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.contacts.service.ContactsApiService;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +109,6 @@ public class SearchContactAdapter
    @Override
    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
       User userSearchResult = contactList.get(holder.getAdapterPosition());
-
 
       holder.txtEmail.setText(userSearchResult.getEmail());
       // setImageView(contactList.get(position).getID(), mContext, holder.imageView);

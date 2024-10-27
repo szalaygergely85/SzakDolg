@@ -62,5 +62,4 @@ public class SharedPreferencesUtil {
       editor.putLong(key, value);
       editor.apply();
    }
-
 }

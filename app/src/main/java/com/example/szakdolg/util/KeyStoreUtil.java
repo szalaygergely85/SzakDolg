@@ -71,13 +71,22 @@ public class KeyStoreUtil {
       return prvKey;
    }
 
+   public static String getPrivateKeyFromFile(Context context, User user) {
+      File cacheDir = context.getCacheDir();
+      File privateKeyFile = new File(cacheDir, user.getEmail() + ".dat");
+
+      String privateKey = FileUtil.readStringFromFile(privateKeyFile);
+
+      return privateKey;
+   }
+
    public static void writePrivateKeysToFile(
       Context context,
       String privateKey,
       User user
    ) {
       File cacheDir = context.getCacheDir();
-      File privateKeyFile = new File(cacheDir, user.getEmail() + ".dat");
+      File privateKeyFile = new File(cacheDir, user.getUserId() + ".dat");
       FileUtil.writeStringToFile(privateKey, privateKeyFile);
    }
 }

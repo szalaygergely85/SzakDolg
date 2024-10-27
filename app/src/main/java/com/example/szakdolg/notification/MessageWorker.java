@@ -14,8 +14,8 @@ import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
 import com.example.szakdolg.model.user.model.User;
-import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.gson.Gson;
 import java.util.List;
@@ -36,7 +36,6 @@ public class MessageWorker extends Worker {
       .create(NotificationApiService.class);
    String userToken;
 
-
    public MessageWorker(
       @NonNull Context context,
       @NonNull WorkerParameters workerParams
@@ -47,9 +46,9 @@ public class MessageWorker extends Worker {
    @NonNull
    @Override
    public Result doWork() {
-
       userToken =
-      SharedPreferencesUtil.getStringPreference(getApplicationContext(),
+      SharedPreferencesUtil.getStringPreference(
+         getApplicationContext(),
          SharedPreferencesConstants.USERTOKEN
       );
 
@@ -96,7 +95,7 @@ public class MessageWorker extends Worker {
                            decryptContent =
                            EncryptionHelper.decrypt(
                               notification.getContent(),
-                              CacheUtil.getPrivateKeyFromCache(
+                              KeyStoreUtil.getPrivateKeyFromFile(
                                  getApplicationContext(),
                                  currentUser
                               )

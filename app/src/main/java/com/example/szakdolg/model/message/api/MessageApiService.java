@@ -2,7 +2,6 @@ package com.example.szakdolg.model.message.api;
 
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.model.message.entity.MessageEntry;
-
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;

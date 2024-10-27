@@ -2,15 +2,13 @@ package com.example.szakdolg.model.message.api;
 
 import android.content.Context;
 import android.util.Log;
-
-import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
-import com.example.szakdolg.db.util.MessageDatabaseUtil;
+import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
+import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.model.user.model.User;
-
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -52,7 +50,11 @@ public class MessageApiHelper {
             ) {
                if (response.isSuccessful()) {
                   if (response.body().size() > 0) {
-                     CacheAction.validateMessages(response.body(), context, user);
+                     CacheAction.validateMessages(
+                        response.body(),
+                        context,
+                        user
+                     );
                   }
                }
             }

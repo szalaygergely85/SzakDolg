@@ -1,7 +1,6 @@
 package com.example.szakdolg.main.helper;
 
 import android.content.Context;
-
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
@@ -21,7 +20,6 @@ public class MainActivityHelper {
    private String token;
    private String userId;
 
-
    public MainActivityHelper(Context _context, String token, String userId) {
       this._context = _context;
       this.token = token;
@@ -39,17 +37,25 @@ public class MainActivityHelper {
             new Runnable() {
                @Override
                public void run() {
-                  _messageApiHelper.checkCachedMessages(token, _context, currentUser);
-                  _contactsApiHelper.checkCachedContacts(token, _context, currentUser);
+                  _messageApiHelper.checkCachedMessages(
+                     token,
+                     _context,
+                     currentUser
+                  );
+                  _contactsApiHelper.checkCachedContacts(
+                     token,
+                     _context,
+                     currentUser
+                  );
                   _conversationApiHelper.checkCachedConversation(
-                          token,
-                          _context,
-                          currentUser
+                     token,
+                     _context,
+                     currentUser
                   );
                   _conversationApiHelper.checkCachedConversationParticipant(
-                          token,
-                          _context,
-                          currentUser
+                     token,
+                     _context,
+                     currentUser
                   );
                }
             }
@@ -66,5 +72,4 @@ public class MainActivityHelper {
       long currentTimeMillis = System.currentTimeMillis();
       return currentTimeMillis > cacheExpireTimeMillis;
    }
-
 }

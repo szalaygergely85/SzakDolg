@@ -13,16 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.MessageTypeConstants;
-import com.example.szakdolg.model.conversation.ConversationApiHelper;
-import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
+import com.example.szakdolg.model.conversation.ConversationApiHelper;
+import com.example.szakdolg.model.conversation.entity.Conversation;
+import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.model.User;
-import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,13 +170,13 @@ public class MessageBoardAdapter
                   decryptedContentString =
                   EncryptionHelper.decrypt(
                      messageEntry.getContentSenderVersion(),
-                     CacheUtil.getPrivateKeyFromCache(context, currentUser)
+                     KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
                   );
                } else {
                   decryptedContentString =
                   EncryptionHelper.decrypt(
                      messageEntry.getContent(),
-                     CacheUtil.getPrivateKeyFromCache(context, currentUser)
+                     KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
                   );
                }
 

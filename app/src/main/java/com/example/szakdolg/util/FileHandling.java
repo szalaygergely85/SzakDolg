@@ -8,10 +8,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
 @Deprecated
 public class FileHandling {
-
 
    public static void saveImageFile(String uID, Bitmap pic, Context c)
       throws IOException {

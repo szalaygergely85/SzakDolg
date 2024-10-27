@@ -13,8 +13,8 @@ import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.model.User;
-import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,13 +84,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                decryptedContentString =
                EncryptionHelper.decrypt(
                   messageEntry.getContentSenderVersion(),
-                  CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
+                  KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
                );
             } else {
                decryptedContentString =
                EncryptionHelper.decrypt(
                   messageEntry.getContent(),
-                  CacheUtil.getPrivateKeyFromCache(mContext, currentUser)
+                  KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
                );
             }
          } catch (Exception e) {

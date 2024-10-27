@@ -22,14 +22,14 @@ import com.example.szakdolg.activity.chat.activity.NewChatActivity;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.contacts.activity.ContactsActivity;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
-import com.example.szakdolg.model.message.api.MessageApiHelper;
+import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
-import com.example.szakdolg.notification.MessageWorker;
+import com.example.szakdolg.model.conversation.entity.Conversation;
+import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -72,18 +72,17 @@ public class MessageBoardActivity extends AppCompatActivity {
       setNavMenu();
 
       userToken =
-              SharedPreferencesUtil.getStringPreference(this,
-                      SharedPreferencesConstants.USERTOKEN
-      );
-
-      String userId = SharedPreferencesUtil.getStringPreference(this,
-              SharedPreferencesConstants.USER_ID
-      );
-
-      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
+      SharedPreferencesUtil.getStringPreference(
          this,
-         userId
+         SharedPreferencesConstants.USERTOKEN
       );
+
+      String userId = SharedPreferencesUtil.getStringPreference(
+         this,
+         SharedPreferencesConstants.USER_ID
+      );
+
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(this, userId);
       _currentUser = userDatabaseUtil.getCurrentUserByToken(userToken);
 
       _scheduleMessageWorker();

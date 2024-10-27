@@ -15,7 +15,17 @@ public class User implements Serializable {
    private String tags;
    private String authToken;
 
-   public User(Long id, Long userId, String displayName, String email, String publicKey, String profilePictureUuid, String status, String tags, String authToken) {
+   public User(
+      Long id,
+      Long userId,
+      String displayName,
+      String email,
+      String publicKey,
+      String profilePictureUuid,
+      String status,
+      String tags,
+      String authToken
+   ) {
       this.id = id;
       this.userId = userId;
       this.displayName = displayName;
@@ -26,6 +36,22 @@ public class User implements Serializable {
       this.status = status;
       this.tags = tags;
       this.authToken = authToken;
+   }
+
+   public User(
+      String displayName,
+      String email,
+      String password,
+      String publicKey,
+      String status,
+      String tags
+   ) {
+      this.displayName = displayName;
+      this.email = email;
+      this.password = password;
+      this.publicKey = publicKey;
+      this.status = status;
+      this.tags = tags;
    }
 
    public User(String displayName, String email, String password) {
@@ -40,9 +66,7 @@ public class User implements Serializable {
       this.email = email;
    }
 
-   public User() {
-
-   }
+   public User() {}
 
    public String getPassword() {
       return password;

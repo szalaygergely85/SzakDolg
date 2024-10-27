@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity;
+package com.example.szakdolg.activity.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +8,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.login.LoginActivityHelper;
-import com.example.szakdolg.model.user.api.UserApiHelper;
-import com.example.szakdolg.util.HashUtils;
+import com.example.szakdolg.activity.ForgotPasswordActivity;
+import com.example.szakdolg.activity.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 

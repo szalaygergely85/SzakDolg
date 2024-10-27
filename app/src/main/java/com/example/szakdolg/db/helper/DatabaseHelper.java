@@ -35,22 +35,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       ");";
 
    private static final String CREATE_TABLE_IMAGE =
-           "CREATE TABLE " +
-                   TABLE_IMAGE +
-                   " (" +
-                   "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                   "fileName TEXT NOT NULL, " +
-                   "userId INTEGER, " +
-                   "imageUri TEXT, " +
-                   "mimeType TEXT, " +
-                   "width INTEGER, " +
-                   "height INTEGER, " +
-                   "size INTEGER, " +
-                   "dateAdded INTEGER, " +
-                   "status TEXT, " +
-                   "tags TEXT, " +
-                   "uuid TEXT"+
-                   ");";
+      "CREATE TABLE " +
+      TABLE_IMAGE +
+      " (" +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "fileName TEXT NOT NULL, " +
+      "userId INTEGER, " +
+      "imageUri TEXT, " +
+      "mimeType TEXT, " +
+      "width INTEGER, " +
+      "height INTEGER, " +
+      "size INTEGER, " +
+      "dateAdded INTEGER, " +
+      "status TEXT, " +
+      "tags TEXT, " +
+      "uuid TEXT" +
+      ");";
 
    private static final String CREATE_TABLE_MESSAGE_ENTRY =
       "CREATE TABLE " +
@@ -68,19 +68,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       ");";
 
    private static final String CREATE_TABLE_USER_ENTRY =
-           "CREATE TABLE " +
-                   TABLE_USER_ENTRY +
-                   " (" +
-                   "id INTEGER PRIMARY KEY AUTOINCREMENT, " + // Optional internal ID
-                   "userId INTEGER UNIQUE, " +
-                   "displayName TEXT NOT NULL, " +
-                   "email TEXT NOT NULL, " +
-                   "publicKey LONGTEXT NOT NULL, " +
-                   "profilePictureUuid TEXT, " +
-                   "status TEXT, " +
-                   "tags TEXT, " +
-                   "authToken TEXT" + // Store token, encrypted if possible
-                   ");";
+      "CREATE TABLE " +
+      TABLE_USER_ENTRY +
+      " (" +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT, " + // Optional internal ID
+      "userId INTEGER UNIQUE, " +
+      "displayName TEXT NOT NULL, " +
+      "email TEXT NOT NULL, " +
+      "publicKey LONGTEXT NOT NULL, " +
+      "profilePictureUuid TEXT, " +
+      "status TEXT, " +
+      "tags TEXT, " +
+      "authToken TEXT" + // Store token, encrypted if possible
+      ");";
+
    @Override
    public void onCreate(SQLiteDatabase db) {
       db.execSQL(CREATE_TABLE_MESSAGE_ENTRY);
@@ -103,5 +104,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
    public DatabaseHelper(Context context, String userId) {
       super(context, userId + ".db", null, DATABASE_VERSION);
    }
-
 }

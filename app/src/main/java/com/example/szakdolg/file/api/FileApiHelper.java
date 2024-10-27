@@ -2,10 +2,9 @@ package com.example.szakdolg.file.api;
 
 import android.content.Context;
 import android.util.Log;
-
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
+import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +81,10 @@ public class FileApiHelper {
                      throw new RuntimeException(e);
                   }
 
-                  Log.e(AppConstants.LOG_TAG, "file download was a success? " + writtenToDisk);
+                  Log.e(
+                     AppConstants.LOG_TAG,
+                     "file download was a success? " + writtenToDisk
+                  );
                   if (writtenToDisk) {
                      runnable.run();
                   }

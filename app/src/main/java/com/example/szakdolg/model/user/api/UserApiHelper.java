@@ -1,19 +1,13 @@
 package com.example.szakdolg.model.user.api;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.main.activity.MainActivity;
-import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
+import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.model.user.model.UserToken;
-import com.example.szakdolg.model.user.service.UserService;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +26,115 @@ public class UserApiHelper {
       .getRetrofitInstance()
       .create(UserApiService.class);
    private final String _TAG = "UserApiHelper";
+
+   public void addUser(
+      Context context,
+      User user,
+      Consumer<UserToken> onSuccess
+   ) {
+      Call<UserToken> call = _userApiService.createUser(user);
+      call.enqueue(
+         new Callback<UserToken>() {
+            @Override
+            public void onResponse(
+               Call<UserToken> call,
+               Response<UserToken> response
+            ) {
+               if (response.isSuccessful()) {
+                  UserToken userToken = response.body();
+                  if (userToken != null) {
+                     onSuccess.accept(userToken);
+                  }
+               } else {
+                  if (response.code() == HttpURLConnection.HTTP_CONFLICT) {
+                     Toast
+                        .makeText(
+                           context,
+                           "Email already registered",
+                           Toast.LENGTH_SHORT
+                        )
+                        .show();
+                  } else {
+                     Log.e(_TAG, "" + response.code());
+                  }
+               }
+            }
+
+            @Override
+            public void onFailure(Call<UserToken> call, Throwable t) {}
+         }
+      );
+   }
+
+   public void getUserByToken(
+      Context context,
+      Consumer<User> onSuccess,
+      String token
+   ) {
+      Call<User> call = _userApiService.getUser(token);
+      call.enqueue(
+         new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+               Log.e(_TAG, "" + response.code());
+               if (response.isSuccessful()) {
+                  User user = response.body();
+                  if (user != null) {
+                     onSuccess.accept(user);
+                  }
+               } else {
+                  Log.e(_TAG, +response.code() + " " + response.errorBody());
+               }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+               Log.e(_TAG, "" + t.getMessage());
+            }
+         }
+      );
+   }
+
+   public void getTokenByPasswordAndEmail(
+      Context context,
+      String hashPassword,
+      String email,
+      Consumer<UserToken> onSuccess
+   ) {
+      Call<UserToken> call = _userApiService.logInUser(
+         new LoginRequest(email, hashPassword)
+      );
+
+      call.enqueue(
+         new Callback<UserToken>() {
+            @Override
+            public void onResponse(
+               Call<UserToken> call,
+               Response<UserToken> response
+            ) {
+               Log.d(AppConstants.LOG_TAG, _TAG + response.code());
+
+               if (response.isSuccessful()) {
+                  UserToken userToken = response.body();
+
+                  if (userToken != null) {
+                     onSuccess.accept(userToken);
+                  }
+               } else {
+                  Log.e(
+                     AppConstants.LOG_TAG,
+                     _TAG + response.code() + response.message()
+                  );
+               }
+            }
+
+            @Override
+            public void onFailure(Call<UserToken> call, Throwable t) {
+               Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
+            }
+         }
+      );
+   }
 
    @Deprecated
    public void getAndSaveAESKey(User user, String token, Context context) {
@@ -136,176 +239,6 @@ public class UserApiHelper {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {}
-         }
-      );
-   }
-
-   public void getUserByToken(
-      Context context,
-      Consumer<User> onSuccess,
-      String token
-   ) {
-      Call<User> call = _userApiService.getUser(token);
-      call.enqueue(
-         new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-               Log.e(_TAG, "" + response.code());
-               if (response.isSuccessful()) {
-                  User user = response.body();
-                  if (user != null) {
-                     onSuccess.accept(user);
-                  }
-               } else {
-                  Log.e(_TAG, +response.code() + " " + response.errorBody());
-               }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-               Log.e(_TAG, "" + t.getMessage());
-            }
-         }
-      );
-   }
-
-   public void getUserByTokenAndInsertLocal(Context context, String token) {
-      getUserByToken(
-         context,
-         user -> {
-            String userId = user.getUserId().toString();
-            UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
-               context,
-               userId
-            );
-
-             userDatabaseUtil.insertUser(user);
-
-            SharedPreferencesUtil.setStringPreference(
-               context,
-               SharedPreferencesConstants.USER_ID,
-               userId
-            );
-            Intent intent = new Intent(context, MainActivity.class);
-            context.startActivity(intent);
-         },
-         token
-      );
-   }
-
-   public void loginUser(Context context, String hashPassword, String email) {
-      Call<UserToken> call = _userApiService.logInUser(
-         new LoginRequest(email, hashPassword)
-      );
-
-      call.enqueue(
-         new Callback<UserToken>() {
-            @Override
-            public void onResponse(
-               Call<UserToken> call,
-               Response<UserToken> response
-            ) {
-               Log.d(AppConstants.LOG_TAG, _TAG + response.code());
-
-               if (response.isSuccessful()) {
-                  UserToken userToken = response.body();
-
-                  if (userToken != null) {
-                     String token = userToken.getToken();
-                     SharedPreferencesUtil.setStringPreference(
-                        context,
-                        SharedPreferencesConstants.USERTOKEN,
-                        token
-                     );
-                     getUserByTokenAndInsertLocal(context, token);
-                  }
-               } else {
-                  Log.e(
-                     AppConstants.LOG_TAG,
-                     _TAG + response.code() + response.message()
-                  );
-               }
-            }
-
-            @Override
-            public void onFailure(Call<UserToken> call, Throwable t) {
-               Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
-            }
-         }
-      );
-   }
-
-    public void getTokenByPasswordAndEmail(Context context, String hashPassword, String email, Consumer<UserToken> onSuccess) {
-        Call<UserToken> call = _userApiService.logInUser(
-                new LoginRequest(email, hashPassword)
-        );
-
-        call.enqueue(
-                new Callback<UserToken>() {
-                    @Override
-                    public void onResponse(
-                            Call<UserToken> call,
-                            Response<UserToken> response
-                    ) {
-                        Log.d(AppConstants.LOG_TAG, _TAG + response.code());
-
-                        if (response.isSuccessful()) {
-                            UserToken userToken = response.body();
-
-                            if (userToken != null) {
-                                onSuccess.accept(userToken);
-                            }
-                        } else {
-                            Log.e(
-                                    AppConstants.LOG_TAG,
-                                    _TAG + response.code() + response.message()
-                            );
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<UserToken> call, Throwable t) {
-                        Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
-                    }
-                }
-        );
-    }
-
-   public void registerUser(Context context, User user) {
-      Call<UserToken> call = _userApiService.createUser(user);
-      call.enqueue(
-         new Callback<UserToken>() {
-            @Override
-            public void onResponse(
-               Call<UserToken> call,
-               Response<UserToken> response
-            ) {
-               Log.e(_TAG, "" + response.code());
-               if (response.isSuccessful()) {
-                  UserToken userToken = response.body();
-                  if (userToken != null) {
-                      user.setUserId(userToken.getUserId());
-                      UserService userService =new UserService(context);
-                      userService.addUser(user, user);
-                     loginUser(context, user.getPassword(), user.getEmail());
-                  }
-               } else {
-                  if (response.code() == HttpURLConnection.HTTP_CONFLICT) {
-                     Toast
-                        .makeText(
-                           context,
-                           "Email already registered",
-                           Toast.LENGTH_SHORT
-                        )
-                        .show();
-                  } else {
-                     Log.e(_TAG, "" + response.code());
-                  }
-               }
-            }
-
-            @Override
-            public void onFailure(Call<UserToken> call, Throwable t) {}
          }
       );
    }
