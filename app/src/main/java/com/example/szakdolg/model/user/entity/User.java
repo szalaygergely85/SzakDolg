@@ -1,6 +1,7 @@
 package com.example.szakdolg.model.user.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class User implements Serializable {
 
@@ -36,6 +37,19 @@ public class User implements Serializable {
       this.status = status;
       this.tags = tags;
       this.authToken = authToken;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true; // Check for reference equality
+      if (obj == null || getClass() != obj.getClass()) return false; // Check for null or different class
+      User other = (User) obj;
+      return userId.equals(other.userId); // Compare only by ID
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(userId); // Hash based on ID
    }
 
    public User(

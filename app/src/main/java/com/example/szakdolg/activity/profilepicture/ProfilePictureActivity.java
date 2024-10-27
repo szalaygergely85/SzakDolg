@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity.profilepicture.activity;
+package com.example.szakdolg.activity.profilepicture;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,8 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
-import com.example.szakdolg.activity.profilepicture.helper.ProfilePictureActivityHelper;
-import com.example.szakdolg.main.activity.MainActivity;
+import com.example.szakdolg.activity.main.activity.MainActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 

@@ -79,8 +79,13 @@ public class ImageDatabaseUtil {
                cursor.getString(cursor.getColumnIndexOrThrow("uuid"))
             );
          }
+      } catch (Exception e) {
+         // Handle the exception (e.g., log it)
+         e.printStackTrace();
       } finally {
-         db.close();
+         if (db != null && db.isOpen()) {
+            db.close(); // Ensure the database is closed
+         }
       }
 
       return imageEntity;

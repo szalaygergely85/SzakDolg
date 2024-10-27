@@ -3,6 +3,8 @@ package com.example.szakdolg.messageboard.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
@@ -19,9 +24,13 @@ import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.model.image.entity.ImageEntity;
+import com.example.szakdolg.model.image.service.ImageService;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.FileHandling;
+import com.example.szakdolg.util.FileUtil;
 import com.example.szakdolg.util.KeyStoreUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +48,6 @@ public class MessageBoardAdapter
    private UserDatabaseUtil userDatabaseUtil;
    private MessageDatabaseUtil messageDatabaseUtil;
    private ConversationDatabaseUtil conversationDatabaseUtil;
-
    ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
 
    public MessageBoardAdapter(
@@ -56,70 +64,32 @@ public class MessageBoardAdapter
       new ConversationDatabaseUtil(mContext, currentUser);
    }
 
-   /*
-	public void setImageView(String uID, Context context, ImageView image) {
-		Uri picUri = null;
-		Log.d(TAG, "getPicURl: " + uID);
-		try {
-			picUri = FileHandling.getUri(uID, context);
-		} catch (Exception e) {
-			Log.d(TAG, "setImageView: " + e);
-		}
-		if (picUri == null) {
-			Log.d(TAG, "setImageView: couldn't find the pic");
-			try {
-				storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
-					@Override
-					public void onComplete(@NonNull Task<StorageMetadata> task) {
-						if (task.isSuccessful()) {
+	public void setImageView(Long userId, Context context, ImageView image) {
+       ImageService imageService = new ImageService(context, currentUser);
+       ImageEntity imageEntity= imageService.getImageByUserId(userId);
+       if(imageEntity!=null) {
+          Log.d(TAG, "getPicURl: " + imageEntity.getUuid());
+          try {
+             Uri picUri = FileUtil.getUri(imageEntity.getUuid(), context);
+             if (picUri == null) {
+                Log.d(TAG, "setImageView: couldn't find the pic");
 
-							storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-								@Override
-								public void onSuccess(Uri uri) {
-									Log.d(TAG, "getPicURl: " + uri);
-									Glide.with(context)
-											.asBitmap()
-											.load(uri)
-											.into(new CustomTarget<Bitmap>() {
-												@Override
-												public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-													try {
-														FileHandling.saveImageFile(uID, resource, context);
-													} catch (IOException e) {
-														e.printStackTrace();
-													}
-												}
+             } else {
+                Log.d(TAG, "setImageView: " + picUri);
+                Glide.with(context)
+                        .load(picUri)
+                        .placeholder(R.drawable.ic_blank_profile) // Default image while loading
+                        .error(R.drawable.ic_blank_profile) // Default image on error
+                        .into(image);
+             }
+          } catch (Exception e) {
+             Log.d(TAG, "setImageView: " + e);
+          }
 
-												@Override
-												public void onLoadCleared(@Nullable Drawable placeholder) {
-												}
-											});
-
-									Glide.with(context)
-											.asBitmap()
-											.load(uri)
-											.into(image);
-								}
-							}).addOnFailureListener(new OnFailureListener() {
-								@Override
-								public void onFailure(@NonNull Exception exception) {
-									image.setImageResource(R.drawable.ic_blank_profile);
-									Log.d(TAG, "onFailure: " + exception);
-								}
-							});
-						}
-					}
-				});
-
-			} catch (Exception e) {
-				Log.d(TAG, "setImageView: " + e);
-			}
-
-		} else {
-			Log.d(TAG, "setImageView: " + picUri);
-			image.setImageURI(FileHandling.getUri(uID, context));
-		}
-	}*/
+       }else {
+          image.setImageResource(R.drawable.ic_blank_profile);
+       }
+	}
 
    @NonNull
    @Override
@@ -165,7 +135,9 @@ public class MessageBoardAdapter
          }
          if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
             String decryptedContentString = null;
+
             try {
+
                if (isSenderLoggedUser(messageEntry)) {
                   decryptedContentString =
                   EncryptionHelper.decrypt(
@@ -190,7 +162,7 @@ public class MessageBoardAdapter
          }
          holder.txtName.setText(participant.getDisplayName());
 
-         // setImageView(messageB.get(position).getContactId(), mContext, holder.image);
+         setImageView(participant.getUserId(), context, holder.image);
          holder.parent.setOnClickListener(
             new View.OnClickListener() {
                @Override
@@ -211,12 +183,6 @@ public class MessageBoardAdapter
    public int getItemCount() {
       return conversationList.size();
    }
-
-   /*
-public void setMessageB(ArrayList<MessageBoard> messageB) {
-	this.messageB = messageB;
-	notifyDataSetChanged();
-}*/
 
    public void setConversationList(List<Conversation> conversationList) {
       this.conversationList = conversationList;

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
-import com.example.szakdolg.activity.profilepicture.activity.ProfilePictureActivity;
+import com.example.szakdolg.activity.profilepicture.ProfilePictureActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.model.user.constans.UserConstans;

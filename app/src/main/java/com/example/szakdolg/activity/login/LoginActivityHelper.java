@@ -3,7 +3,7 @@ package com.example.szakdolg.activity.login;
 import android.content.Context;
 import android.content.Intent;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.main.activity.MainActivity;
+import com.example.szakdolg.activity.main.activity.MainActivity;
 import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.model.user.service.UserService;

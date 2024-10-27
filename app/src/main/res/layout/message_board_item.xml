@@ -12,28 +12,31 @@
         android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="7dp">
 
             <!-- Left Image Section -->
+
+            <!-- Middle Section for Name and Message -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/mesBrdImage"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/ic_blank_profile"
+                android:src="@drawable/ic_menu_profile"
+                android:visibility="visible"
                 app:shapeAppearanceOverlay="@style/CircularImage" />
 
-            <!-- Middle Section for Name and Message -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="10dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/mesBrdName"
@@ -46,9 +49,9 @@
                     android:id="@+id/mesBrdMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
                     android:maxLines="2"
-                    android:text="Last message here"
-                    android:layout_marginTop="2dp" />
+                    android:text="Last message here" />
             </LinearLayout>
 
             <!-- Right Section for Time -->

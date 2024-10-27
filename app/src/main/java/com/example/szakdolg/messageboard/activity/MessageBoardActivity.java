@@ -93,10 +93,10 @@ public class MessageBoardActivity extends AppCompatActivity {
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
 
       messageBoardAdapter =
-      new MessageBoardAdapter(this, userToken, _currentUser);
+              new MessageBoardAdapter(this, userToken, _currentUser);
 
       ConversationDatabaseUtil conversationDatabaseUtil =
-         new ConversationDatabaseUtil(this, _currentUser);
+              new ConversationDatabaseUtil(this, _currentUser);
 
       conversationList = conversationDatabaseUtil.getAllConversations();
 
@@ -171,7 +171,7 @@ public class MessageBoardActivity extends AppCompatActivity {
    }
 
    private void _initView() {
-      contactsButton = findViewById(R.id.btnMesBrdNew);
+      contactsButton = findViewById(R.id.newMessageButton);
    }
 
    private void _startRepeatingTask() {

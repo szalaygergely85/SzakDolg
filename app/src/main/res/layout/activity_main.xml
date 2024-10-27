@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".main.activity.MainActivity"
+    tools:context=".activity.main.activity.MainActivity"
     tools:openDrawer="start">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -30,7 +30,7 @@
         tools:layout_editor_absoluteY="1dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnMesBrdNew"
+        android:id="@+id/newMessageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

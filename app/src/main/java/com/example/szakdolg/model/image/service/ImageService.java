@@ -16,6 +16,7 @@ import com.example.szakdolg.model.image.api.ImageApiHelper;
 import com.example.szakdolg.model.image.constans.ImageConstans;
 import com.example.szakdolg.model.image.entity.ImageEntity;
 import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.model.user.service.UserService;
 import com.example.szakdolg.util.UUIDUtil;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,11 +26,15 @@ public class ImageService {
 
    private Context context;
 
-   private User user;
+   private User currentUser;
 
-   public ImageService(Context context, User user) {
+   private ImageDatabaseUtil imageDatabaseUtil;
+
+   public ImageService(Context context, User currentUser) {
       this.context = context;
-      this.user = user;
+      this.currentUser = currentUser;
+      imageDatabaseUtil =
+              new ImageDatabaseUtil(context, currentUser);
    }
 
    public void addImage(ImageEntity imageEntity) {
@@ -69,8 +74,7 @@ public class ImageService {
                      imageEntity.setSize(resizedBitmap.getByteCount());
 
                      // Add to the database
-                     ImageDatabaseUtil imageDatabaseUtil =
-                        new ImageDatabaseUtil(context, user);
+
                      imageDatabaseUtil.insertImageEntity(imageEntity);
 
                      //Upload
@@ -113,6 +117,13 @@ public class ImageService {
          imageEntity.setFileName(imageEntity.getUuid());
       }
       addImage(imageEntity);
+      return imageEntity;
+   }
+
+   public ImageEntity getImageByUserId(Long userId){
+      UserService userService = new UserService(context);
+      User user = userService.getUserByUserId(userId, currentUser);
+      ImageEntity imageEntity= imageDatabaseUtil.getImageEntityByUuid(user.getProfilePictureUuid());
       return imageEntity;
    }
 

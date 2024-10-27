@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity.profilepicture.helper;
+package com.example.szakdolg.activity.profilepicture;
 
 import android.content.ContentResolver;
 import android.content.Context;

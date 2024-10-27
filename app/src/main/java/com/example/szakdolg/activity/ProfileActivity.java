@@ -15,7 +15,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.login.LoginActivity;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.main.activity.MainActivity;
+import com.example.szakdolg.activity.main.activity.MainActivity;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;

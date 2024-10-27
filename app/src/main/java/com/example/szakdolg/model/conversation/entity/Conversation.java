@@ -1,15 +1,19 @@
 package com.example.szakdolg.model.conversation.entity;
 
+import com.example.szakdolg.model.user.entity.User;
+
+import java.util.Objects;
+
 public class Conversation {
 
-   private long conversationId;
+   private Long conversationId;
    private String conversationName;
    private long timeStamp;
    private long creatorUserId;
    private int numberOfParticipants;
 
    public Conversation(
-      long conversationId,
+      Long conversationId,
       String conversationName,
       long timeStamp,
       long creatorUserId,
@@ -22,6 +26,18 @@ public class Conversation {
       this.numberOfParticipants = numberOfParticipants;
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true; // Check for reference equality
+      if (obj == null || getClass() != obj.getClass()) return false; // Check for null or different class
+      Conversation other = (Conversation) obj;
+      return conversationId.equals(other.conversationId); // Compare only by ID
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(conversationId); // Hash based on ID
+   }
    public long getConversationId() {
       return conversationId;
    }
