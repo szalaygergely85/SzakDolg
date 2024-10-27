@@ -19,6 +19,7 @@ import com.example.szakdolg.model.image.entity.ImageEntity;
 import com.example.szakdolg.model.image.constans.ImageConstans;
 import com.example.szakdolg.model.user.model.User;
 import com.example.szakdolg.util.UUIDUtil;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,29 +48,16 @@ public class ImageService {
                         if (imageEntity.getTags() != null && imageEntity.getTags().equals(ImageConstans.TAG_PROFILE)){
                             maxSize = 800;
                         }
-                        int width = bitmap.getWidth();
-                        int height = bitmap.getHeight();
-                        // Calculate the new dimensions while maintaining the aspect ratio
-                        float aspectRatio = (float) width / height;
-
-                        int newWidth, newHeight;
-
-                        if (width > height) {
-                            newWidth = maxSize;
-                            newHeight = Math.round(maxSize / aspectRatio);
-                        } else {
-                            newHeight = maxSize;
-                            newWidth = Math.round(maxSize * aspectRatio);
-                        }
-
-                        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+                        Bitmap resizedBitmap = resizeImage(bitmap, maxSize);
 
                         // Save locally
                         File savedFile =saveImageLocally(resizedBitmap, imageEntity.getFileName());
 
+                        Uri fileUri = Uri.fromFile(savedFile);
+
                         if (savedFile.exists()) {
-                            imageEntity.setHeight(newHeight);
-                            imageEntity.setWidth(newWidth);
+                            imageEntity.setHeight(resizedBitmap.getHeight());
+                            imageEntity.setWidth(resizedBitmap.getWidth());
                             imageEntity.setSize(resizedBitmap.getByteCount());
 
                             // Add to the database
@@ -81,8 +69,8 @@ public class ImageService {
                             ImageApiHelper imageApiHelper = new ImageApiHelper();
                             imageApiHelper.uploadImage(savedFile, imageEntity);
 
+
                         } else {
-                            // Handle the case where the file was not saved successfully
                             Log.e(AppConstants.LOG_TAG, "File not found: " + savedFile.getAbsolutePath());
                         }
 
@@ -125,5 +113,23 @@ public class ImageService {
         }
         return file;
 
+    }
+
+    public Bitmap resizeImage(Bitmap original, int maxSize){
+        int width = original.getWidth();
+        int height = original.getHeight();
+
+        float aspectRatio = (float) width / height;
+        int newWidth, newHeight;
+
+        if (width > height) {
+            newWidth = maxSize;
+            newHeight = Math.round(maxSize / aspectRatio);
+        } else {
+            newHeight = maxSize;
+            newWidth = Math.round(maxSize * aspectRatio);
+        }
+
+        return Bitmap.createScaledBitmap(original, newWidth, newHeight, true);
     }
 }

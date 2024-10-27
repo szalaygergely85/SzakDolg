@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -19,13 +20,17 @@ import com.example.szakdolg.model.user.model.User;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.example.szakdolg.R;
 
-public class ProfilePictureActivity extends AppCompatActivity {
+import java.io.IOException;
 
+public class ProfilePictureActivity extends AppCompatActivity {
+    private Button continueButton;
+    private Button skipButton;
     private ImageView _editIcon;
     private ShapeableImageView _profileImageView;
     private ProfilePictureActivityHelper _profilePictureActivityHelper;
-
     private User currentUser;
+
+    private Uri imageUri;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,9 +57,10 @@ public class ProfilePictureActivity extends AppCompatActivity {
     }
 
     private void _initView() {
-        _profileImageView = findViewById(R.id.profileImageView);
         _editIcon = findViewById(R.id.editIcon);
         _profileImageView = findViewById(R.id.profileImageView);
+        skipButton = findViewById(R.id.skipButton);
+        continueButton = findViewById(R.id.continueButton);
     }
 
     private void _setOnClickListeners() {
@@ -69,7 +75,23 @@ public class ProfilePictureActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openImageChooser();
+            }
+        });
 
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle skip button click
+                // For example, you could skip the profile picture step
+            }
+        });
+
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageUri!=null) {
+                    _profilePictureActivityHelper.addImage(imageUri);
+                }
             }
         });
     }
@@ -84,9 +106,12 @@ public class ProfilePictureActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri imageUri = result.getData().getData();
-
-                    _profilePictureActivityHelper.addImage(imageUri, _profileImageView);
+                    imageUri = result.getData().getData();
+                    try {
+                        _profilePictureActivityHelper.setImageViewer(this, imageUri, _profileImageView);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
 

@@ -31,7 +31,6 @@
         app:layout_constraintTop_toTopOf="@+id/profileImageView"
         app:layout_constraintEnd_toEndOf="@+id/profileImageView" />
 
-
     <TextView
         android:id="@+id/uploadTextView"
         android:layout_width="wrap_content"
@@ -44,19 +43,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
-
-    <TextView
-        android:id="@+id/skipTextView"
+    <Button
+        android:id="@+id/skipButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Skip"
+        android:backgroundTint="@color/primaryDarkColor"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="10dp"
-        android:textAlignment="center"
-        android:clickable="true"
-        android:focusable="true"
+        android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@+id/uploadTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/continueButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue"
+        android:backgroundTint="@color/primaryDarkColor"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/skipButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
