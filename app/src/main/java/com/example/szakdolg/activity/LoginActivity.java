@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
+import com.example.szakdolg.activity.login.LoginActivityHelper;
 import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.util.HashUtils;
 
@@ -20,13 +21,15 @@ public class LoginActivity extends AppCompatActivity {
    private Button btnLog;
 
    private TextView txtError;
-   private static final String TAG = "LoginActivity";
-   private UserApiHelper userApiHelper = new UserApiHelper();
+
+   private LoginActivityHelper loginActivityHelper;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_login);
+
+      loginActivityHelper = new LoginActivityHelper(this);
 
       _initView();
       _setOnClickListeners();
@@ -79,12 +82,8 @@ public class LoginActivity extends AppCompatActivity {
                String password = editPass.getText().toString();
 
                if (!email.isEmpty() && !password.isEmpty()) {
-                  String hashPassword = HashUtils.hashPassword(password);
-                  userApiHelper.loginUser(
-                     LoginActivity.this,
-                     hashPassword,
-                     email
-                  );
+                  loginActivityHelper.loginUser(email, password);
+
                   txtError.setVisibility(View.GONE);
                } else {
                   txtError.setVisibility(View.VISIBLE);

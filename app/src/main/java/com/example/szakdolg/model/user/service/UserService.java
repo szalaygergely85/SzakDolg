@@ -21,7 +21,6 @@ public class UserService {
 
     public User addUser(User user, User currentUser){
         User newUser = new User();
-        newUser.setId(user.getId());
         newUser.setUserId(user.getUserId());
         newUser.setDisplayName(user.getDisplayName());
         newUser.setEmail(user.getEmail());
@@ -36,6 +35,10 @@ public class UserService {
         return newUser;
     }
 
+    public User getUserByUserId(Long userId, User currentUser){
+        UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context, currentUser);
+        return userDatabaseUtil.getUserById(userId);
+    }
 
     public void registerUser(User user){
         String pass = user.getPassword();

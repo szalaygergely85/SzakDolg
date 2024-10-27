@@ -235,6 +235,42 @@ public class UserApiHelper {
       );
    }
 
+    public void getTokenByPasswordAndEmail(Context context, String hashPassword, String email, Consumer<UserToken> onSuccess) {
+        Call<UserToken> call = _userApiService.logInUser(
+                new LoginRequest(email, hashPassword)
+        );
+
+        call.enqueue(
+                new Callback<UserToken>() {
+                    @Override
+                    public void onResponse(
+                            Call<UserToken> call,
+                            Response<UserToken> response
+                    ) {
+                        Log.d(AppConstants.LOG_TAG, _TAG + response.code());
+
+                        if (response.isSuccessful()) {
+                            UserToken userToken = response.body();
+
+                            if (userToken != null) {
+                                onSuccess.accept(userToken);
+                            }
+                        } else {
+                            Log.e(
+                                    AppConstants.LOG_TAG,
+                                    _TAG + response.code() + response.message()
+                            );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserToken> call, Throwable t) {
+                        Log.e(AppConstants.LOG_TAG, _TAG + t.getMessage());
+                    }
+                }
+        );
+    }
+
    public void registerUser(Context context, User user) {
       Call<UserToken> call = _userApiService.createUser(user);
       call.enqueue(
