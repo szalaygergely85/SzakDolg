@@ -17,7 +17,7 @@ import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
 import java.util.List;

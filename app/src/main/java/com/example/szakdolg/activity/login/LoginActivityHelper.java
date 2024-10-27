@@ -5,7 +5,7 @@ import android.content.Intent;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.main.activity.MainActivity;
 import com.example.szakdolg.model.user.api.UserApiHelper;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.model.user.service.UserService;
 import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.SharedPreferencesUtil;

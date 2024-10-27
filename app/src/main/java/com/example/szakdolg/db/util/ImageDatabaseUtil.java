@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.example.szakdolg.db.helper.DatabaseHelper;
 import com.example.szakdolg.model.image.entity.ImageEntity;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
 
 public class ImageDatabaseUtil {
 

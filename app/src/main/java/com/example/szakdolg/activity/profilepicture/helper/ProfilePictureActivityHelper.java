@@ -8,33 +8,39 @@ import android.provider.MediaStore;
 import android.util.Log;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.model.image.constans.ImageConstans;
+import com.example.szakdolg.model.image.entity.ImageEntity;
 import com.example.szakdolg.model.image.service.ImageService;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.model.user.service.UserService;
 import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 
 public class ProfilePictureActivityHelper {
 
    private Context context;
-   private User user;
+   private User currentUser;
 
-   ImageService imageService;
+   private ImageService imageService;
 
-   public ProfilePictureActivityHelper(Context context, User user) {
+   public ProfilePictureActivityHelper(Context context, User currentUser) {
       this.context = context;
-      this.user = user;
-      this.imageService = new ImageService(context, user);
+      this.currentUser = currentUser;
+      this.imageService = new ImageService(context, currentUser);
    }
 
    public void addImage(Uri imageUri) {
       String mimeType = getMimeType(imageUri);
       if (mimeType != null && (mimeType.startsWith("image/"))) {
-         imageService.createAndAddImage(
+        ImageEntity imageEntity = imageService.createAndAddImage(
             imageUri,
-            user.getUserId(),
+            currentUser.getUserId(),
             mimeType,
             ImageConstans.TAG_PROFILE
          );
+         UserService userService = new UserService(context);
+         currentUser.setProfilePictureUuid(imageEntity.getUuid());
+         userService.updateUser(currentUser, currentUser);
+
       } else {
          Log.e(AppConstants.LOG_TAG, "Invalid image. Format not supported.");
       }

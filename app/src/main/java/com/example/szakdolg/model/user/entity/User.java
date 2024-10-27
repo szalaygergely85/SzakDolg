@@ -1,4 +1,4 @@
-package com.example.szakdolg.model.user.model;
+package com.example.szakdolg.model.user.entity;
 
 import java.io.Serializable;
 

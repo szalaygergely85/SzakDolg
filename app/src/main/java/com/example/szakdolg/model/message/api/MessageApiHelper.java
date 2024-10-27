@@ -8,7 +8,7 @@ import com.example.szakdolg.db.retrofit.RetrofitClient;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.api.UserApiHelper;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;

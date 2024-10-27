@@ -15,7 +15,7 @@ import com.example.szakdolg.db.util.ImageDatabaseUtil;
 import com.example.szakdolg.model.image.api.ImageApiHelper;
 import com.example.szakdolg.model.image.constans.ImageConstans;
 import com.example.szakdolg.model.image.entity.ImageEntity;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.UUIDUtil;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -91,7 +91,7 @@ public class ImageService {
          );
    }
 
-   public void createAndAddImage(
+   public ImageEntity createAndAddImage(
       Uri imageUri,
       Long userId,
       String mimeType,
@@ -113,6 +113,7 @@ public class ImageService {
          imageEntity.setFileName(imageEntity.getUuid());
       }
       addImage(imageEntity);
+      return imageEntity;
    }
 
    private File saveImageLocally(Bitmap bitmap, String name) {

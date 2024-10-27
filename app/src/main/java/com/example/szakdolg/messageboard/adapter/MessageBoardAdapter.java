@@ -20,7 +20,7 @@ import com.example.szakdolg.model.conversation.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.model.message.entity.MessageEntry;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
 import java.util.ArrayList;

@@ -13,7 +13,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
 import com.example.szakdolg.util.SharedPreferencesUtil;

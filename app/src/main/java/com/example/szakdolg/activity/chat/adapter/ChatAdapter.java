@@ -12,7 +12,7 @@ import com.example.szakdolg.activity.chat.viewholder.TextViewHolder;
 import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
-import com.example.szakdolg.model.user.model.User;
+import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
 import java.text.Format;
