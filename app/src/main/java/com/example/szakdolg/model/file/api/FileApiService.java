@@ -1,4 +1,4 @@
-package com.example.szakdolg.file.api;
+package com.example.szakdolg.model.file.api;
 
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import okhttp3.MultipartBody;

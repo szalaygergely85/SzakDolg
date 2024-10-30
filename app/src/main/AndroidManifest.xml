@@ -20,6 +20,10 @@
             android:name=".activity.profilepicture.ProfilePictureActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -39,11 +43,11 @@
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".contacts.activity.SearchContactsActivity"
+            android:name=".activity.contacts.activity.SearchContactsActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".contacts.activity.ContactsActivity"
+            android:name=".activity.contacts.activity.ContactsActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -68,10 +72,6 @@
             android:name=".activity.main.activity.MainActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

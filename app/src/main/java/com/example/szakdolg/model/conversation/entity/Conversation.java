@@ -1,7 +1,5 @@
 package com.example.szakdolg.model.conversation.entity;
 
-import com.example.szakdolg.model.user.entity.User;
-
 import java.util.Objects;
 
 public class Conversation {
@@ -38,6 +36,7 @@ public class Conversation {
    public int hashCode() {
       return Objects.hash(conversationId); // Hash based on ID
    }
+
    public long getConversationId() {
       return conversationId;
    }

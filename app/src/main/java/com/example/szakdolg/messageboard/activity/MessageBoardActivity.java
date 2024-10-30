@@ -19,9 +19,9 @@ import androidx.work.WorkManager;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.activity.chat.activity.NewChatActivity;
+import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.contacts.activity.ContactsActivity;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.messageboard.DTO.MessageBoard;
@@ -93,10 +93,10 @@ public class MessageBoardActivity extends AppCompatActivity {
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
 
       messageBoardAdapter =
-              new MessageBoardAdapter(this, userToken, _currentUser);
+      new MessageBoardAdapter(this, userToken, _currentUser);
 
       ConversationDatabaseUtil conversationDatabaseUtil =
-              new ConversationDatabaseUtil(this, _currentUser);
+         new ConversationDatabaseUtil(this, _currentUser);
 
       conversationList = conversationDatabaseUtil.getAllConversations();
 

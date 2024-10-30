@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.activity.NewChatActivity;
@@ -46,7 +45,8 @@ public class MainActivity extends BaseActivity {
    protected void onStart() {
       super.onStart();
 
-      this._mainActivityHelper = new MainActivityHelper(this, token, currentUser);
+      this._mainActivityHelper =
+      new MainActivityHelper(this, token, currentUser);
 
       _mainActivityHelper.setNavMenu(bottomNavigationView);
 
@@ -54,8 +54,6 @@ public class MainActivity extends BaseActivity {
       //_mainActivityHelper.startCacheChecking();
 
       _mainActivityHelper.setMessageBoard(messageBoardRecView);
-
-
    }
 
    @Override
@@ -108,27 +106,25 @@ public class MainActivity extends BaseActivity {
    private void _initView() {
       contactsButton = findViewById(R.id.newMessageButton);
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
-      bottomNavigationView = findViewById(
-              R.id.bottom_navigation
-      );
+      bottomNavigationView = findViewById(R.id.bottom_navigation);
    }
 
-   private void _setListeners(){
+   private void _setListeners() {
       contactsButton.setOnClickListener(
-              new View.OnClickListener() {
-                 @Override
-                 public void onClick(View view) {
-                    Intent intent = new Intent(
-                            MainActivity.this,
-                            NewChatActivity.class
-                    );
-                    intent.putExtra(
-                            SharedPreferencesConstants.CURRENT_USER,
-                            currentUser
-                    );
-                    startActivity(intent);
-                 }
-              }
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               Intent intent = new Intent(
+                  MainActivity.this,
+                  NewChatActivity.class
+               );
+               intent.putExtra(
+                  SharedPreferencesConstants.CURRENT_USER,
+                  currentUser
+               );
+               startActivity(intent);
+            }
+         }
       );
    }
 }

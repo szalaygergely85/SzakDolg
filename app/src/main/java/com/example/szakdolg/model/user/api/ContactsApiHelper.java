@@ -1,8 +1,7 @@
-package com.example.szakdolg.contacts.helper;
+package com.example.szakdolg.model.user.api;
 
 import android.content.Context;
 import com.example.szakdolg.cache.CacheAction;
-import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.user.entity.User;

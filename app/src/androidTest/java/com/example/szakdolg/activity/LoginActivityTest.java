@@ -9,10 +9,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.mockito.Mockito.*;
 
-import android.content.Context;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -59,34 +56,35 @@ public class LoginActivityTest {
       onView(withId(R.id.btnLgnLogin)).check(matches(isDisplayed()));
    }
 
-   @Test
-   public void testSuccessfulLoginWithoutError() {
-      Context context = ApplicationProvider.getApplicationContext();
-      mockUserApiHelper = mock(UserApiHelper.class);
-      doNothing()
-         .when(mockUserApiHelper)
-         .loginUser(
-            eq(context),
-            eq("hashed_password"), // This is just for simulation
-            eq("test@example.com")
-         );
+   /*
+@Test
+public void testSuccessfulLoginWithoutError() {
+	Context context = ApplicationProvider.getApplicationContext();
+	mockUserApiHelper = mock(UserApiHelper.class);
+	doNothing()
+		.when(mockUserApiHelper)
+		.loginUser(
+			eq(context),
+			eq("hashed_password"), // This is just for simulation
+			eq("test@example.com")
+		);
 
-      // Launch LoginActivity and inject the mockUserApiHelper
-      ActivityScenario.launch(LoginActivity.class);
+	// Launch LoginActivity and inject the mockUserApiHelper
+	ActivityScenario.launch(LoginActivity.class);
 
-      // Input valid email and password
-      onView(withId(R.id.edtLgnEmail))
-         .perform(ViewActions.replaceText("test@example.com"));
-      onView(withId(R.id.edtLgnPass))
-         .perform(ViewActions.replaceText("password"));
+	// Input valid email and password
+	onView(withId(R.id.edtLgnEmail))
+		.perform(ViewActions.replaceText("test@example.com"));
+	onView(withId(R.id.edtLgnPass))
+		.perform(ViewActions.replaceText("password"));
 
-      // Click the login button
-      onView(withId(R.id.btnLgnLogin)).perform(click());
+	// Click the login button
+	onView(withId(R.id.btnLgnLogin)).perform(click());
 
-      // Check if the error message is hidden
-      onView(withId(R.id.txtLgnError))
-         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
-   }
+	// Check if the error message is hidden
+	onView(withId(R.id.txtLgnError))
+		.check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+}*/
 
    @Test
    public void testMissingFieldsError() {

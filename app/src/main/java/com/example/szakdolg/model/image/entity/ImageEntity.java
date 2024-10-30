@@ -33,6 +33,26 @@ public class ImageEntity {
       this.uuid = uuid;
    }
 
+   public ImageEntity(
+      String fileName,
+      Long userId,
+      String imageUri,
+      String mimeType,
+      long dateAdded,
+      String status,
+      String tags,
+      String uuid
+   ) {
+      this.fileName = fileName;
+      this.userId = userId;
+      this.imageUri = imageUri;
+      this.mimeType = mimeType;
+      this.dateAdded = dateAdded;
+      this.status = status;
+      this.tags = tags;
+      this.uuid = uuid;
+   }
+
    public ImageEntity() {}
 
    public String getUuid() {

@@ -5,6 +5,7 @@ import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
 import com.example.szakdolg.model.image.entity.ImageEntity;
 import java.io.File;
+import java.util.function.Consumer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -49,6 +50,36 @@ public class ImageApiHelper {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                Log.e(AppConstants.LOG_TAG, call.toString());
+            }
+         }
+      );
+   }
+
+   public void getImage(String uuid, Consumer<ResponseBody> onFileDownloaded) {
+      Call<ResponseBody> getImageCall = imageApiService.downloadFile(uuid);
+      getImageCall.enqueue(
+         new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(
+               Call<ResponseBody> call,
+               Response<ResponseBody> response
+            ) {
+               if (response.isSuccessful() && response.body() != null) {
+                  Log.e(AppConstants.LOG_TAG, "server contacted and has file");
+                  onFileDownloaded.accept(response.body());
+               } else {
+                  Log.e(
+                     AppConstants.LOG_TAG,
+                     "server contact failed or empty body"
+                  );
+                  onFileDownloaded.accept(null);
+               }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+               Log.e(AppConstants.LOG_TAG, "file download failed", t);
+               onFileDownloaded.accept(null);
             }
          }
       );

@@ -3,8 +3,6 @@ package com.example.szakdolg.messageboard.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
@@ -24,14 +19,8 @@ import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
-import com.example.szakdolg.model.image.entity.ImageEntity;
-import com.example.szakdolg.model.image.service.ImageService;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
-import com.example.szakdolg.util.EncryptionHelper;
-import com.example.szakdolg.util.FileHandling;
-import com.example.szakdolg.util.FileUtil;
-import com.example.szakdolg.util.KeyStoreUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +39,8 @@ public class MessageBoardAdapter
    private ConversationDatabaseUtil conversationDatabaseUtil;
    ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
 
+   MessageBoardAdapterHelper messageBoardAdapterHelper;
+
    public MessageBoardAdapter(
       Context mContext,
       String token,
@@ -58,38 +49,13 @@ public class MessageBoardAdapter
       this.context = mContext;
       this._token = token;
       this.currentUser = currentUser;
+      this.messageBoardAdapterHelper =
+      new MessageBoardAdapterHelper(currentUser, mContext);
       this.userDatabaseUtil = new UserDatabaseUtil(mContext, currentUser);
       this.messageDatabaseUtil = new MessageDatabaseUtil(mContext, currentUser);
       this.conversationDatabaseUtil =
       new ConversationDatabaseUtil(mContext, currentUser);
    }
-
-	public void setImageView(Long userId, Context context, ImageView image) {
-       ImageService imageService = new ImageService(context, currentUser);
-       ImageEntity imageEntity= imageService.getImageByUserId(userId);
-       if(imageEntity!=null) {
-          Log.d(TAG, "getPicURl: " + imageEntity.getUuid());
-          try {
-             Uri picUri = FileUtil.getUri(imageEntity.getUuid(), context);
-             if (picUri == null) {
-                Log.d(TAG, "setImageView: couldn't find the pic");
-
-             } else {
-                Log.d(TAG, "setImageView: " + picUri);
-                Glide.with(context)
-                        .load(picUri)
-                        .placeholder(R.drawable.ic_blank_profile) // Default image while loading
-                        .error(R.drawable.ic_blank_profile) // Default image on error
-                        .into(image);
-             }
-          } catch (Exception e) {
-             Log.d(TAG, "setImageView: " + e);
-          }
-
-       }else {
-          image.setImageResource(R.drawable.ic_blank_profile);
-       }
-	}
 
    @NonNull
    @Override
@@ -137,21 +103,22 @@ public class MessageBoardAdapter
             String decryptedContentString = null;
 
             try {
-
-               if (isSenderLoggedUser(messageEntry)) {
-                  decryptedContentString =
-                  EncryptionHelper.decrypt(
-                     messageEntry.getContentSenderVersion(),
-                     KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-                  );
-               } else {
-                  decryptedContentString =
-                  EncryptionHelper.decrypt(
-                     messageEntry.getContent(),
-                     KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-                  );
-               }
-
+               /*
+			if (isSenderLoggedUser(messageEntry)) {
+				decryptedContentString =
+				EncryptionHelper.decrypt(
+					messageEntry.getContentSenderVersion(),
+					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
+				);
+			} else {
+				decryptedContentString =
+				EncryptionHelper.decrypt(
+					messageEntry.getContent(),
+					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
+				);
+			}
+*/
+               decryptedContentString = messageEntry.getContent();
                holder.txtMessage.setText(decryptedContentString);
             } catch (Exception e) {
                throw new RuntimeException(e);
@@ -162,7 +129,12 @@ public class MessageBoardAdapter
          }
          holder.txtName.setText(participant.getDisplayName());
 
-         setImageView(participant.getUserId(), context, holder.image);
+         messageBoardAdapterHelper.setImageView(
+            participant.getUserId(),
+            context,
+            holder.image
+         );
+
          holder.parent.setOnClickListener(
             new View.OnClickListener() {
                @Override

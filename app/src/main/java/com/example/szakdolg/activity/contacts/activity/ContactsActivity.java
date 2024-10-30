@@ -1,17 +1,16 @@
-package com.example.szakdolg.contacts.activity;
+package com.example.szakdolg.activity.contacts.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
+import com.example.szakdolg.activity.contacts.adapter.ContactsAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.contacts.adapter.ContactsAdapter;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.user.entity.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,7 +20,6 @@ import java.util.List;
 public class ContactsActivity extends BaseActivity {
 
    private RecyclerView contsRecView;
-
 
    List<User> contactList;
    private FloatingActionButton btnNewContact;

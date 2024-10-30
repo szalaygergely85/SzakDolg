@@ -1,11 +1,9 @@
 package com.example.szakdolg.util;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -96,40 +94,9 @@ public class FileUtil {
       return data;
    }
 
-   @Deprecated
-   public static void saveImageFile(String uID, Bitmap pic, Context c)
-      throws IOException {
-      double height = pic.getHeight();
-      double width = pic.getWidth();
-      int newWidth = (int) Math.round((width / height) * 200);
-      int newHeight = (int) Math.round((height / width) * 200);
-
-      Bitmap resized;
-      if (height > width) {
-         resized = Bitmap.createScaledBitmap(pic, newWidth, 200, true);
-      } else {
-         resized = Bitmap.createScaledBitmap(pic, 200, newHeight, true);
-      }
-      ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
-      resized.compress(Bitmap.CompressFormat.JPEG, 60, bytearrayoutputstream);
-      File path = new File(c.getFilesDir() + "/Pictures/");
-      if (!path.exists()) {
-         path.mkdir();
-      }
-      File file = new File(path + "/" + uID + ".jpg");
-      try {
-         file.createNewFile();
-         FileOutputStream fileoutputstream = new FileOutputStream(file);
-         fileoutputstream.write(bytearrayoutputstream.toByteArray());
-         fileoutputstream.close();
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
-
-   public static Uri getUri(String uID, Context c) {
+   public static Uri getUri(String name, Context c) {
       Uri uri;
-      File file = new File(c.getFilesDir() + "/Pictures/" + uID);
+      File file = new File(c.getFilesDir() + "/Pictures/" + name);
       if (file.exists()) {
          uri = Uri.fromFile(file);
       } else {
@@ -221,17 +188,18 @@ public class FileUtil {
       }
    }
 
-   public static boolean writeResponseBodyToDisk(
+   public static File writeResponseBodyToDisk(
       ResponseBody body,
       Context c,
       String fileName
    ) throws IOException {
+      File futureFile = null;
       try {
          File path = new File(c.getFilesDir() + "/Pictures/");
          if (!path.exists()) {
             path.mkdir();
          }
-         File futureFile = new File(path + File.separator + fileName);
+         futureFile = new File(path + File.separator + fileName);
          InputStream inputStream = null;
          OutputStream outputStream = null;
          try {
@@ -253,11 +221,7 @@ public class FileUtil {
                fileSizeDownloaded += read;
             }
             outputStream.flush();
-
-            return true;
-         } catch (IOException e) {
-            return false;
-         } finally {
+         } catch (IOException e) {} finally {
             if (inputStream != null) {
                inputStream.close();
             }
@@ -266,8 +230,7 @@ public class FileUtil {
                outputStream.close();
             }
          }
-      } catch (IOException e) {
-         return false;
-      }
+      } catch (IOException e) {}
+      return futureFile;
    }
 }

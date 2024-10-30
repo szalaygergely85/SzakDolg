@@ -1,4 +1,4 @@
-package com.example.szakdolg.contacts.adapter;
+package com.example.szakdolg.activity.contacts.adapter;
 
 import android.content.Context;
 import android.content.Intent;

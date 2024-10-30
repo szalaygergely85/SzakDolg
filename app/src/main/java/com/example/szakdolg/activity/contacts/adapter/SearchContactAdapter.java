@@ -1,4 +1,4 @@
-package com.example.szakdolg.contacts.adapter;
+package com.example.szakdolg.activity.contacts.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,9 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.contacts.service.ContactsApiService;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
+import com.example.szakdolg.model.user.api.ContactsApiService;
 import com.example.szakdolg.model.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;

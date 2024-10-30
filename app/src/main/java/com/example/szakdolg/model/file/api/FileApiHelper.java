@@ -1,4 +1,4 @@
-package com.example.szakdolg.file.api;
+package com.example.szakdolg.model.file.api;
 
 import android.content.Context;
 import android.util.Log;
@@ -71,12 +71,14 @@ public class FileApiHelper {
 
                   boolean writtenToDisk = false;
                   try {
-                     writtenToDisk =
-                     FileUtil.writeResponseBodyToDisk(
+                     File file = FileUtil.writeResponseBodyToDisk(
                         response.body(),
                         context,
                         imageUrl
                      );
+                     if (file.exists()) {
+                        runnable.run();
+                     }
                   } catch (IOException e) {
                      throw new RuntimeException(e);
                   }
@@ -85,9 +87,6 @@ public class FileApiHelper {
                      AppConstants.LOG_TAG,
                      "file download was a success? " + writtenToDisk
                   );
-                  if (writtenToDisk) {
-                     runnable.run();
-                  }
                } else {
                   Log.e(AppConstants.LOG_TAG, "server contact failed");
                }

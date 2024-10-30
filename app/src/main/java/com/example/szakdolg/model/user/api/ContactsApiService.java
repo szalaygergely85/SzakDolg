@@ -1,4 +1,4 @@
-package com.example.szakdolg.contacts.service;
+package com.example.szakdolg.model.user.api;
 
 import com.example.szakdolg.model.user.entity.User;
 import java.util.ArrayList;

@@ -3,11 +3,10 @@ package com.example.szakdolg.main.helper;
 import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
-
 import com.example.szakdolg.activity.main.helper.MainActivityHelper;
-import com.example.szakdolg.contacts.helper.ContactsApiHelper;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
+import com.example.szakdolg.model.user.api.ContactsApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.RandomUtil;
 import org.junit.Before;
@@ -46,7 +45,7 @@ public class MainActivityHelperTest {
       new MainActivityHelper(
          realContext,
          RandomUtil.getRandomString(5),
-              mockCurrentUser
+         mockCurrentUser
       );
    }
    /*
