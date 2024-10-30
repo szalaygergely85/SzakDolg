@@ -19,14 +19,25 @@ public class MessageApiHelper {
 
    private final String TAG = "MessageApiHelper";
 
-   private MessageApiService messageApiService = RetrofitClient
-      .getRetrofitInstance()
-      .create(MessageApiService.class);
+    private Context context;
+    private User currentUser;
+
+
+    private MessageApiService messageApiService ;
 
    private UserApiHelper userApiHelper = new UserApiHelper();
-   User loggedUser;
 
-   public void checkCachedMessages(
+    public MessageApiHelper(Context context, User currentUser) {
+        this.context = context;
+        this.currentUser = currentUser;
+        this.messageApiService = RetrofitClient
+                .getRetrofitInstance()
+                .create(MessageApiService.class);
+        this.userApiHelper = userApiHelper;
+    }
+
+
+    public void checkCachedMessages(
       String authToken,
       Context context,
       User user

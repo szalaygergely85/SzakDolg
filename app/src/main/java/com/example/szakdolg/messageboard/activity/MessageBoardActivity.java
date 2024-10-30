@@ -20,12 +20,11 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.activity.chat.activity.NewChatActivity;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
+import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.messageboard.DTO.MessageBoard;
-import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.user.entity.User;
@@ -45,10 +44,10 @@ public class MessageBoardActivity extends AppCompatActivity {
    private static final String TAG = "MessageB";
    private FloatingActionButton contactsButton;
    private RecyclerView messageBoardRecView;
-   private MessageBoardAdapter messageBoardAdapter;
+   private MainAdapter mainAdapter;
    private MaterialToolbar mToolbar;
    private User _currentUser;
-   ArrayList<MessageBoard> messageBoard = new ArrayList<>();
+   //ArrayList<MessageBoard> messageBoard = new ArrayList<>();
 
    private MessageApiHelper messageApiHelper = new MessageApiHelper();
 
@@ -92,17 +91,17 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
 
-      messageBoardAdapter =
-      new MessageBoardAdapter(this, userToken, _currentUser);
+      mainAdapter =
+      new MainAdapter(this, userToken, _currentUser);
 
       ConversationDatabaseUtil conversationDatabaseUtil =
          new ConversationDatabaseUtil(this, _currentUser);
 
       conversationList = conversationDatabaseUtil.getAllConversations();
 
-      messageBoardAdapter.setConversationList(conversationList);
+      mainAdapter.setConversationList(conversationList);
 
-      messageBoardRecView.setAdapter(messageBoardAdapter);
+      messageBoardRecView.setAdapter(mainAdapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
    }
 
@@ -185,7 +184,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                   userToken,
                   _currentUser,
                   () -> {
-                     messageBoardAdapter.notifyDataSetChanged();
+                     mainAdapter.notifyDataSetChanged();
                   }
                );
             } finally {

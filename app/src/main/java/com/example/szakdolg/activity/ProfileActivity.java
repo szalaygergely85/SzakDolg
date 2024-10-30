@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.login.LoginActivity;
-import com.example.szakdolg.activity.main.activity.MainActivity;
+import com.example.szakdolg.activity.main.MainActivity;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;

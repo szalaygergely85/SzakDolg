@@ -4,8 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import com.example.szakdolg.model.image.ImageCoordinator;
-import com.example.szakdolg.model.image.ImageUtil;
+import com.example.szakdolg.model.image.ImageCoordinatorService;
+import com.example.szakdolg.model.image.util.ImageUtil;
 import com.example.szakdolg.model.image.constans.ImageConstans;
 import com.example.szakdolg.model.image.entity.ImageEntity;
 import com.example.szakdolg.model.user.entity.User;
@@ -18,16 +18,16 @@ public class ProfilePictureActivityHelper {
    private Context context;
    private User currentUser;
 
-   private ImageCoordinator imageCoordinator;
+   private ImageCoordinatorService imageCoordinatorService;
 
    public ProfilePictureActivityHelper(Context context, User currentUser) {
       this.context = context;
       this.currentUser = currentUser;
-      this.imageCoordinator = new ImageCoordinator(context, currentUser);
+      this.imageCoordinatorService = new ImageCoordinatorService(context, currentUser);
    }
 
    public void addImage(Uri imageUri) {
-      ImageEntity imageEntity = imageCoordinator.addPicture(
+      ImageEntity imageEntity = imageCoordinatorService.addPicture(
          imageUri,
          currentUser.getUserId(),
          ImageConstans.TAG_PROFILE

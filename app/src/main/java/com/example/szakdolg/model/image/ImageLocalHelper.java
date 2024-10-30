@@ -13,6 +13,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.model.image.entity.ImageEntity;
 import com.example.szakdolg.model.image.service.ImageService;
+import com.example.szakdolg.model.image.util.ImageUtil;
 import com.example.szakdolg.model.user.entity.User;
 import java.io.File;
 

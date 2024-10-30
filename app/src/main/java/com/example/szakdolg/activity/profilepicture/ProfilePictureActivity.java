@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
-import com.example.szakdolg.activity.main.activity.MainActivity;
+import com.example.szakdolg.activity.main.MainActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 

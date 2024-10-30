@@ -1,7 +1,7 @@
 package com.example.szakdolg.model.image.service;
 
 import android.content.Context;
-import com.example.szakdolg.db.util.ImageDatabaseUtil;
+import com.example.szakdolg.model.image.db.ImageDatabaseUtil;
 import com.example.szakdolg.model.image.entity.ImageEntity;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.model.user.service.UserService;

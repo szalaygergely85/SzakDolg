@@ -1,6 +1,5 @@
 package com.example.szakdolg.model.message.api;
 
-import com.example.szakdolg.messageboard.DTO.MessageBoard;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +13,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MessageApiService {
-   @Deprecated
-   @GET("message/messageboardentries")
-   Call<ArrayList<MessageBoard>> getLatestMessages(
-      @Header("Authorization") String token
-   );
 
    @POST("message")
    Call<MessageEntry> sendMessage(
@@ -44,11 +38,7 @@ public interface MessageApiService {
       @Header("Authorization") String token
    );
 
-   @Deprecated
-   @GET("message/new-message")
-   Call<ArrayList<MessageBoard>> getConversationWithNewMessage(
-      @Header("Authorization") String token
-   );
+
 
    @PATCH("message/mark-as-downloaded")
    Call<String> markMessagesAsDownloaded(@Body List<Long> messageIds);

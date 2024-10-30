@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity.main.activity;
+package com.example.szakdolg.activity.main;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.activity.NewChatActivity;
-import com.example.szakdolg.activity.main.helper.MainActivityHelper;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

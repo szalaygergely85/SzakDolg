@@ -1,4 +1,4 @@
-package com.example.szakdolg.messageboard.adapter;
+package com.example.szakdolg.activity.main.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -19,40 +19,38 @@ import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.model.message.MessageCoordinatorService;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageBoardAdapter
-   extends RecyclerView.Adapter<MessageBoardAdapter.ViewHolder> {
-
+public class MainAdapter
+   extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    private List<Conversation> conversationList = new ArrayList<>();
    private final Context context;
    private User currentUser;
-   private static final String TAG = "MessageBoardAdapter";
-
    private String _token;
-
    private UserDatabaseUtil userDatabaseUtil;
-   private MessageDatabaseUtil messageDatabaseUtil;
+   private MessageCoordinatorService messageCoordinatorService;
+
    private ConversationDatabaseUtil conversationDatabaseUtil;
    ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
 
-   MessageBoardAdapterHelper messageBoardAdapterHelper;
+   MainAdapterHelper mainAdapterHelper;
 
-   public MessageBoardAdapter(
+   public MainAdapter(
       Context mContext,
       String token,
       User currentUser
    ) {
       this.context = mContext;
-      this._token = token;
       this.currentUser = currentUser;
-      this.messageBoardAdapterHelper =
-      new MessageBoardAdapterHelper(currentUser, mContext);
+
+      this.messageCoordinatorService = new MessageCoordinatorService(context, currentUser);
+      this.mainAdapterHelper =
+      new MainAdapterHelper(currentUser, mContext);
       this.userDatabaseUtil = new UserDatabaseUtil(mContext, currentUser);
-      this.messageDatabaseUtil = new MessageDatabaseUtil(mContext, currentUser);
       this.conversationDatabaseUtil =
       new ConversationDatabaseUtil(mContext, currentUser);
    }
@@ -65,7 +63,7 @@ public class MessageBoardAdapter
    ) {
       View view = LayoutInflater
          .from(parent.getContext())
-         .inflate(R.layout.message_board_item, parent, false);
+         .inflate(R.layout.main_item, parent, false);
       ViewHolder holder = new ViewHolder(view);
       return holder;
    }
@@ -79,7 +77,8 @@ public class MessageBoardAdapter
 
       holder.txtName.setText(conversation.getConversationName());
 
-      MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(
+      //TODO itt tartok
+      MessageEntry messageEntry = messageCoordinatorService.getLatestMessageEntry(
          conversation.getConversationId()
       );
 
@@ -129,7 +128,7 @@ public class MessageBoardAdapter
          }
          holder.txtName.setText(participant.getDisplayName());
 
-         messageBoardAdapterHelper.setImageView(
+         mainAdapterHelper.setImageView(
             participant.getUserId(),
             context,
             holder.image
@@ -165,6 +164,7 @@ public class MessageBoardAdapter
 
       private final TextView txtName;
       private final TextView txtMessage;
+      private final TextView txtTime;
       private final RelativeLayout parent;
       private final ImageView image;
 
@@ -174,6 +174,7 @@ public class MessageBoardAdapter
          txtName = itemView.findViewById(R.id.mesBrdName);
          txtMessage = itemView.findViewById(R.id.mesBrdMessage);
          parent = itemView.findViewById(R.id.parent);
+         txtTime = itemView.findViewById(R.id.mesBrdTime);
       }
    }
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activity.main.activity.MainActivity"
+    tools:context=".activity.main.MainActivity"
     tools:openDrawer="start">
 
     <com.google.android.material.appbar.MaterialToolbar

@@ -1,4 +1,4 @@
-package com.example.szakdolg.db.util;
+package com.example.szakdolg.model.image.db;
 
 import android.content.ContentValues;
 import android.content.Context;

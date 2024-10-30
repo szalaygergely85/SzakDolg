@@ -1,4 +1,4 @@
-package com.example.szakdolg.model.image;
+package com.example.szakdolg.model.image.util;
 
 import android.content.ContentResolver;
 import android.content.Context;

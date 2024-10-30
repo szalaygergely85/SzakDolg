@@ -3,28 +3,27 @@ package com.example.szakdolg.model.image;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+
+import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.model.image.api.ImageApiHelper;
 import com.example.szakdolg.model.image.constans.ImageConstans;
 import com.example.szakdolg.model.image.entity.ImageEntity;
 import com.example.szakdolg.model.image.service.ImageService;
+import com.example.szakdolg.model.image.util.ImageUtil;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.FileUtil;
 import com.example.szakdolg.util.UUIDUtil;
 import java.io.File;
 import java.io.IOException;
 
-public class ImageCoordinator {
+public class ImageCoordinatorService extends BaseService {
 
    private final ImageService imageService;
    private final ImageApiHelper imageApiHelper;
 
-   private Context context;
-   private User currentUser;
-
-   public ImageCoordinator(Context context, User currentUser) {
-      this.currentUser = currentUser;
-      this.context = context;
+   public ImageCoordinatorService(Context context, User currentUser) {
+      super(context, currentUser);
       this.imageService = new ImageService(context, currentUser);
       this.imageApiHelper = new ImageApiHelper();
    }

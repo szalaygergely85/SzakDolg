@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity.main.helper;
+package com.example.szakdolg.activity.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.messageboard.adapter.MessageBoardAdapter;
+import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.model.conversation.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.service.ConversationService;
@@ -42,7 +42,7 @@ public class MainActivityHelper {
    }
 
    public void setMessageBoard(RecyclerView messageBoardRecView) {
-      MessageBoardAdapter messageBoardAdapter = new MessageBoardAdapter(
+      MainAdapter mainAdapter = new MainAdapter(
          _context,
          token,
          currentUser
@@ -51,8 +51,8 @@ public class MainActivityHelper {
       List<Conversation> conversationList =
          conversationService.getAllConversations();
 
-      messageBoardAdapter.setConversationList(conversationList);
-      messageBoardRecView.setAdapter(messageBoardAdapter);
+      mainAdapter.setConversationList(conversationList);
+      messageBoardRecView.setAdapter(mainAdapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(_context));
    }
 
