@@ -5,9 +5,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import com.example.szakdolg.model.image.ImageCoordinatorService;
-import com.example.szakdolg.model.image.util.ImageUtil;
 import com.example.szakdolg.model.image.constans.ImageConstans;
 import com.example.szakdolg.model.image.entity.ImageEntity;
+import com.example.szakdolg.model.image.util.ImageUtil;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.model.user.service.UserService;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -23,7 +23,8 @@ public class ProfilePictureActivityHelper {
    public ProfilePictureActivityHelper(Context context, User currentUser) {
       this.context = context;
       this.currentUser = currentUser;
-      this.imageCoordinatorService = new ImageCoordinatorService(context, currentUser);
+      this.imageCoordinatorService =
+      new ImageCoordinatorService(context, currentUser);
    }
 
    public void addImage(Uri imageUri) {

@@ -16,7 +16,7 @@ import com.example.szakdolg.activity.login.LoginActivity;
 import com.example.szakdolg.activity.main.MainActivity;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.model.conversation.ConversationApiHelper;
+import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
@@ -37,9 +37,9 @@ public class ProfileActivity extends AppCompatActivity {
    private User userContact;
    private User currentUser;
 
-   private String userToken;
+   private String userToken;/*
    private ConversationApiHelper conversationApiHelper =
-      new ConversationApiHelper();
+      new ConversationApiHelper();*/
 
    private SharedPreferencesUtil sharedPreferencesUtil;
 
@@ -238,13 +238,13 @@ public class ProfileActivity extends AppCompatActivity {
                List<User> participants = new ArrayList<>();
                participants.add(userContact);
                participants.add(currentUser);
-               conversationApiHelper.openConversation(
+               /*conversationApiHelper.openConversation(
                   ProfileActivity.this,
                   null,
                   participants,
                   currentUser,
                   userToken
-               );
+               );*/
             }
          }
       );

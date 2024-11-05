@@ -13,7 +13,7 @@ import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.adapter.UserAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.model.conversation.ConversationApiHelper;
+import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.model.user.api.ContactsApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -26,9 +26,8 @@ public class NewChatActivity extends AppCompatActivity {
    private UserAdapter dropdownAdapter;
    private List<User> contacts;
 
-   private final ConversationApiHelper conversationApiHelper =
-      new ConversationApiHelper();
-   private final ContactsApiHelper contactsApiHelper = new ContactsApiHelper();
+   private ConversationApiHelper conversationApiHelper;
+   private ContactsApiHelper contactsApiHelper = new ContactsApiHelper();
    private Button btnSend;
    private MyEditText edtMess;
 
@@ -55,6 +54,9 @@ public class NewChatActivity extends AppCompatActivity {
       currentUser =
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
+
+      conversationApiHelper =
+              new ConversationApiHelper(this, currentUser);
 
       contacts = new ArrayList<>();
 

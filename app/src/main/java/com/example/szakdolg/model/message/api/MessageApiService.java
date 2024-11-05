@@ -13,7 +13,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MessageApiService {
-
    @POST("message")
    Call<MessageEntry> sendMessage(
       @Body MessageEntry message,
@@ -23,6 +22,12 @@ public interface MessageApiService {
    @GET("message/new-message")
    Call<List<MessageEntry>> getNewMessages(
       @Header("Authorization") String token
+   );
+
+   @GET("message/get-messages")
+   Call<List<MessageEntry>> getMessages(
+      @Header("Authorization") String token,
+      @Query("conversationId") Long conversationId
    );
 
    @Deprecated
@@ -37,8 +42,6 @@ public interface MessageApiService {
       @Query("count") Long count,
       @Header("Authorization") String token
    );
-
-
 
    @PATCH("message/mark-as-downloaded")
    Call<String> markMessagesAsDownloaded(@Body List<Long> messageIds);

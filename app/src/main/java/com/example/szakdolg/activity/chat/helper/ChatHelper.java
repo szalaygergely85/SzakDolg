@@ -2,9 +2,9 @@ package com.example.szakdolg.activity.chat.helper;
 
 import android.content.Context;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
-import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
+import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
@@ -28,6 +28,9 @@ public class ChatHelper {
 
    private Context context;
 
+   private MessageApiHelper messageApiHelper;
+
+
    public ChatHelper(
       Context context,
       Long conversationId,
@@ -44,9 +47,9 @@ public class ChatHelper {
       this.userDatabaseUtil = new UserDatabaseUtil(context, currentUser);
       this.conversationDatabaseUtil =
       new ConversationDatabaseUtil(context, currentUser);
+      this.messageApiHelper = new MessageApiHelper(context, currentUser);
    }
 
-   MessageApiHelper messageApiHelper = new MessageApiHelper();
 
    public void sendMessage(
       int messageType,

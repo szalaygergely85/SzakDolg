@@ -27,7 +27,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    private final Context mContext;
    private List<MessageEntry> messageEntries = new ArrayList<>();
 
-   private MessageApiHelper messageApiHelper = new MessageApiHelper();
+   private MessageApiHelper messageApiHelper;
    private final User currentUser;
 
    long time;
@@ -35,6 +35,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    public ChatAdapter(Context mContext, User user) {
       this.mContext = mContext;
       this.currentUser = user;
+      this.messageApiHelper = new MessageApiHelper(mContext, user);
    }
 
    @Override

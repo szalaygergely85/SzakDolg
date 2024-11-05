@@ -1,7 +1,7 @@
 package com.example.szakdolg.model.conversation.service;
 
 import android.content.Context;
-import com.example.szakdolg.db.util.ConversationDatabaseUtil;
+import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.user.entity.User;
 import java.util.List;
@@ -32,5 +32,9 @@ public class ConversationService {
 
    public List<Conversation> getAllConversations() {
       return conversationDatabaseUtil.getAllConversations();
+   }
+
+   public Conversation getConversation(Long conversationId) {
+      return conversationDatabaseUtil.getConversationById(conversationId);
    }
 }

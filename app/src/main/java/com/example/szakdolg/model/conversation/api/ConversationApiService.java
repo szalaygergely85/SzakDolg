@@ -1,4 +1,4 @@
-package com.example.szakdolg.model.conversation;
+package com.example.szakdolg.model.conversation.api;
 
 import com.example.szakdolg.DTO.ConversationContent;
 import com.example.szakdolg.model.conversation.entity.Conversation;

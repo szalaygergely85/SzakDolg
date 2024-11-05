@@ -11,6 +11,7 @@ import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,25 +20,22 @@ public class MessageApiHelper {
 
    private final String TAG = "MessageApiHelper";
 
-    private Context context;
-    private User currentUser;
+   private Context context;
+   private User currentUser;
 
-
-    private MessageApiService messageApiService ;
+   private MessageApiService messageApiService;
 
    private UserApiHelper userApiHelper = new UserApiHelper();
 
-    public MessageApiHelper(Context context, User currentUser) {
-        this.context = context;
-        this.currentUser = currentUser;
-        this.messageApiService = RetrofitClient
-                .getRetrofitInstance()
-                .create(MessageApiService.class);
-        this.userApiHelper = userApiHelper;
-    }
+   public MessageApiHelper(Context context, User currentUser) {
+      this.context = context;
+      this.currentUser = currentUser;
+      this.messageApiService =
+      RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
+      this.userApiHelper = userApiHelper;
+   }
 
-
-    public void checkCachedMessages(
+   public void checkCachedMessages(
       String authToken,
       Context context,
       User user
@@ -75,6 +73,39 @@ public class MessageApiHelper {
                Call<ArrayList<MessageEntry>> call,
                Throwable t
             ) {}
+         }
+      );
+   }
+
+   public void getMessages(
+      Long conversationId,
+      Consumer<List<MessageEntry>> onSuccess
+   ) {
+      Call<List<MessageEntry>> call = messageApiService.getMessages(
+         currentUser.getAuthToken(),
+         conversationId
+      );
+      call.enqueue(
+         new Callback<List<MessageEntry>>() {
+            @Override
+            public void onResponse(
+               Call<List<MessageEntry>> call,
+               Response<List<MessageEntry>> response
+            ) {
+               if (response.isSuccessful()) {
+                  List<MessageEntry> messages = response.body();
+                  if (messages != null) {
+                     onSuccess.accept(messages);
+                  }
+               } else {
+                  // Handle the error
+               }
+            }
+
+            @Override
+            public void onFailure(Call<List<MessageEntry>> call, Throwable t) {
+               // Handle the failure
+            }
          }
       );
    }

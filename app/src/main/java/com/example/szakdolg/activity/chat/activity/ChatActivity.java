@@ -18,10 +18,10 @@ import com.example.szakdolg.activity.chat.helper.ChatHelper;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.ConversationApiHelper;
+import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
+import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.model.file.api.FileApiHelper;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
@@ -46,11 +46,10 @@ public class ChatActivity extends AppCompatActivity {
    private User currentUser;
    private User otherUser;
 
-   private List<User> otherUsers;
-   private MessageApiHelper messageApiHelper = new MessageApiHelper();
+
+   private MessageApiHelper messageApiHelper;
    private FileApiHelper fileApiHelper = new FileApiHelper();
-   private ConversationApiHelper conversationApiHelper =
-      new ConversationApiHelper();
+   private ConversationApiHelper conversationApiHelper;
    private ActionBar actionBar;
 
    private Handler handler = new Handler();
@@ -79,6 +78,10 @@ public class ChatActivity extends AppCompatActivity {
       _startRepeatingTask();
 
       _setListeners();
+      conversationApiHelper =
+              new ConversationApiHelper(this, currentUser);
+
+      messageApiHelper = new MessageApiHelper(this, currentUser);
 
       adapter = new ChatAdapter(this, currentUser);
 

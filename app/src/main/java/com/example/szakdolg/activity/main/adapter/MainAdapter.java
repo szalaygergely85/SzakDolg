@@ -12,21 +12,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.MessageTypeConstants;
-import com.example.szakdolg.db.util.ConversationDatabaseUtil;
-import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.ConversationApiHelper;
+import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
+import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.model.message.MessageCoordinatorService;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainAdapter
-   extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
+
    private List<Conversation> conversationList = new ArrayList<>();
    private final Context context;
    private User currentUser;
@@ -35,24 +32,21 @@ public class MainAdapter
    private MessageCoordinatorService messageCoordinatorService;
 
    private ConversationDatabaseUtil conversationDatabaseUtil;
-   ConversationApiHelper conversationApiHelper = new ConversationApiHelper();
+   ConversationApiHelper conversationApiHelper;
 
    MainAdapterHelper mainAdapterHelper;
 
-   public MainAdapter(
-      Context mContext,
-      String token,
-      User currentUser
-   ) {
+   public MainAdapter(Context mContext, String token, User currentUser) {
       this.context = mContext;
       this.currentUser = currentUser;
 
-      this.messageCoordinatorService = new MessageCoordinatorService(context, currentUser);
-      this.mainAdapterHelper =
-      new MainAdapterHelper(currentUser, mContext);
+      this.messageCoordinatorService =
+      new MessageCoordinatorService(context, currentUser);
+      this.mainAdapterHelper = new MainAdapterHelper(currentUser, mContext);
       this.userDatabaseUtil = new UserDatabaseUtil(mContext, currentUser);
       this.conversationDatabaseUtil =
       new ConversationDatabaseUtil(mContext, currentUser);
+      this.conversationApiHelper = new ConversationApiHelper(mContext, currentUser);
    }
 
    @NonNull
@@ -76,78 +70,52 @@ public class MainAdapter
       Conversation conversation = conversationList.get(position);
 
       holder.txtName.setText(conversation.getConversationName());
+      Long conversationId = conversation.getConversationId();
 
-      //TODO itt tartok
-      MessageEntry messageEntry = messageCoordinatorService.getLatestMessageEntry(
-         conversation.getConversationId()
+      MessageEntry messageEntry =
+         messageCoordinatorService.getLatestMessageEntry(conversationId);
+
+      if (messageEntry == null || messageEntry.getContent() == null) {
+         return;
+      }
+
+      List<User> participants = mainAdapterHelper.getParticipantUser(
+         conversationId
       );
 
-      if (messageEntry.getContent() != null) {
-         List<ConversationParticipant> participants =
-            conversationDatabaseUtil.getParticipantsByConversationId(
-               conversation.getConversationId()
-            );
-         User participant = userDatabaseUtil.getUserById(
-            participants.get(0).getUserId()
-         );
+      holder.txtName.setText(
+         mainAdapterHelper.getConversationTitle(conversationId, participants)
+      );
 
-         if (messageEntry.isRead() || isSenderLoggedUser(messageEntry)) {
-            holder.txtMessage.setTypeface(null, Typeface.NORMAL);
-            holder.txtName.setTypeface(null, Typeface.NORMAL);
-         } else {
-            holder.txtMessage.setTypeface(null, Typeface.BOLD);
-            holder.txtName.setTypeface(null, Typeface.BOLD);
-         }
-         if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
-            String decryptedContentString = null;
+      //TODO finished till this
 
-            try {
-               /*
-			if (isSenderLoggedUser(messageEntry)) {
-				decryptedContentString =
-				EncryptionHelper.decrypt(
-					messageEntry.getContentSenderVersion(),
-					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-				);
-			} else {
-				decryptedContentString =
-				EncryptionHelper.decrypt(
-					messageEntry.getContent(),
-					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-				);
-			}
-*/
-               decryptedContentString = messageEntry.getContent();
-               holder.txtMessage.setText(decryptedContentString);
-            } catch (Exception e) {
-               throw new RuntimeException(e);
-            }
-         }
-         if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
-            holder.txtMessage.setText("Image received from:");
-         }
-         holder.txtName.setText(participant.getDisplayName());
-
-         mainAdapterHelper.setImageView(
-            participant.getUserId(),
-            context,
-            holder.image
-         );
-
-         holder.parent.setOnClickListener(
-            new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                  conversationApiHelper.openConversation(
-                     conversation.getConversationId(),
-                     context,
-                     currentUser,
-                     _token
-                  );
-               }
-            }
-         );
+      if (messageEntry.isRead() || isSenderLoggedUser(messageEntry)) {
+         holder.txtMessage.setTypeface(null, Typeface.NORMAL);
+      } else {
+         holder.txtMessage.setTypeface(null, Typeface.BOLD);
       }
+
+      holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry));
+/*
+      mainAdapterHelper.setImageView(
+         participant.getUserId(),
+         context,
+         holder.image
+      );*/
+
+      holder.parent.setOnClickListener(
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               conversationApiHelper.openConversation(
+                  conversation.getConversationId(),
+                  context,
+                  currentUser,
+                  _token
+               );
+            }
+         }
+      );
    }
 
    @Override

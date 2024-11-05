@@ -1,16 +1,17 @@
-package com.example.szakdolg.model.conversation;
+package com.example.szakdolg.model.conversation.api;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import com.example.szakdolg.DTO.ConversationContent;
+import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
-import com.example.szakdolg.db.util.ConversationDatabaseUtil;
+import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
@@ -23,17 +24,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ConversationApiHelper {
+public class ConversationApiHelper extends BaseService {
 
    private final String TAG = "ConversationApiHelper";
 
-   private MessageApiHelper messageApiHelper = new MessageApiHelper();
+   private MessageApiHelper messageApiHelper;
 
    private ConversationApiService conversationApiService = RetrofitClient
       .getRetrofitInstance()
       .create(ConversationApiService.class);
 
-   public void addNewConversationAndSendMessage(
+    public ConversationApiHelper(Context context, User currentUser) {
+        super(context, currentUser);
+        this.messageApiHelper = new MessageApiHelper(context, currentUser);;
+    }
+
+    public void addNewConversationAndSendMessage(
       List<Long> userIds,
       String message,
       String token,

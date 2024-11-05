@@ -23,10 +23,9 @@ import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.db.util.ConversationDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
+import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -49,7 +48,7 @@ public class MessageBoardActivity extends AppCompatActivity {
    private User _currentUser;
    //ArrayList<MessageBoard> messageBoard = new ArrayList<>();
 
-   private MessageApiHelper messageApiHelper = new MessageApiHelper();
+   /*private MessageApiHelper messageApiHelper = new MessageApiHelper();*/
 
    private String userToken;
 
@@ -91,8 +90,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
 
-      mainAdapter =
-      new MainAdapter(this, userToken, _currentUser);
+      mainAdapter = new MainAdapter(this, userToken, _currentUser);
 
       ConversationDatabaseUtil conversationDatabaseUtil =
          new ConversationDatabaseUtil(this, _currentUser);
@@ -178,7 +176,7 @@ public class MessageBoardActivity extends AppCompatActivity {
       new Runnable() {
          @Override
          public void run() {
-            try {
+            try {/*
                messageApiHelper.getNewMessages(
                   MessageBoardActivity.this,
                   userToken,
@@ -186,7 +184,7 @@ public class MessageBoardActivity extends AppCompatActivity {
                   () -> {
                      mainAdapter.notifyDataSetChanged();
                   }
-               );
+               );*/
             } finally {
                handler.postDelayed(runnable, 15000);
             }

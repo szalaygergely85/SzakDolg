@@ -10,6 +10,8 @@ public class Conversation {
    private long creatorUserId;
    private int numberOfParticipants;
 
+   public Conversation() {}
+
    public Conversation(
       Long conversationId,
       String conversationName,
@@ -55,5 +57,25 @@ public class Conversation {
 
    public int getNumberOfParticipants() {
       return numberOfParticipants;
+   }
+
+   public void setConversationId(Long conversationId) {
+      this.conversationId = conversationId;
+   }
+
+   public void setConversationName(String conversationName) {
+      this.conversationName = conversationName;
+   }
+
+   public void setTimeStamp(long timeStamp) {
+      this.timeStamp = timeStamp;
+   }
+
+   public void setCreatorUserId(long creatorUserId) {
+      this.creatorUserId = creatorUserId;
+   }
+
+   public void setNumberOfParticipants(int numberOfParticipants) {
+      this.numberOfParticipants = numberOfParticipants;
    }
 }

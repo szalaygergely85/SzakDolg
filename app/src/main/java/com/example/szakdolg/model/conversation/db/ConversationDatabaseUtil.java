@@ -1,4 +1,4 @@
-package com.example.szakdolg.db.util;
+package com.example.szakdolg.model.conversation.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -80,6 +80,53 @@ public class ConversationDatabaseUtil {
       }
       cursor.close();
       return conversations;
+   }
+
+   public Conversation getConversationById(Long conversationId) {
+      SQLiteDatabase db = dbHelper.getReadableDatabase();
+      String[] columns = {
+         "conversationId",
+         "conversationName",
+         "timeStamp",
+         "creatorUserId",
+         "numberOfParticipants",
+      };
+      String selection = "conversationId = ?";
+      String[] selectionArgs = { String.valueOf(conversationId) };
+
+      Cursor cursor = db.query(
+         dbHelper.TABLE_CONVERSATIONS, // Table name
+         columns, // Columns to return
+         selection, // WHERE clause
+         selectionArgs, // WHERE clause arguments
+         null, // GROUP BY
+         null, // HAVING
+         null // ORDER BY
+      );
+
+      Conversation conversation = null;
+      if (cursor != null && cursor.moveToFirst()) {
+         conversation = new Conversation();
+         conversation.setConversationId(
+            cursor.getLong(cursor.getColumnIndexOrThrow("conversationId"))
+         );
+         conversation.setConversationName(
+            cursor.getString(cursor.getColumnIndexOrThrow("conversationName"))
+         );
+         conversation.setTimeStamp(
+            cursor.getLong(cursor.getColumnIndexOrThrow("timeStamp"))
+         );
+         conversation.setCreatorUserId(
+            cursor.getLong(cursor.getColumnIndexOrThrow("creatorUserId"))
+         );
+         conversation.setNumberOfParticipants(
+            cursor.getInt(cursor.getColumnIndexOrThrow("numberOfParticipants"))
+         );
+         cursor.close();
+      }
+
+      db.close();
+      return conversation;
    }
 
    public List<ConversationParticipant> getParticipantsByConversationId(

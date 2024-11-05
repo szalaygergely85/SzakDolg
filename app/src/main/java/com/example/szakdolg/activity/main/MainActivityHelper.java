@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
-import com.example.szakdolg.model.conversation.ConversationApiHelper;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
+import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.service.ConversationService;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
@@ -25,11 +25,12 @@ import java.util.List;
 public class MainActivityHelper {
 
    private Context _context;
-   private UserApiHelper _userApiHelper = new UserApiHelper();
-   private MessageApiHelper _messageApiHelper = new MessageApiHelper();
+
+   //private MessageApiHelper _messageApiHelper = new MessageApiHelper();
    private ContactsApiHelper _contactsApiHelper = new ContactsApiHelper();
+   /*
    private ConversationApiHelper _conversationApiHelper =
-      new ConversationApiHelper();
+      new ConversationApiHelper();*/
    private String token;
    private User currentUser;
    private ConversationService conversationService;
@@ -42,11 +43,7 @@ public class MainActivityHelper {
    }
 
    public void setMessageBoard(RecyclerView messageBoardRecView) {
-      MainAdapter mainAdapter = new MainAdapter(
-         _context,
-         token,
-         currentUser
-      );
+      MainAdapter mainAdapter = new MainAdapter(_context, token, currentUser);
 
       List<Conversation> conversationList =
          conversationService.getAllConversations();
@@ -67,26 +64,26 @@ public class MainActivityHelper {
             new Runnable() {
                @Override
                public void run() {
-                  _messageApiHelper.checkCachedMessages(
+                /*  _messageApiHelper.checkCachedMessages(
                      token,
                      _context,
                      currentUser
-                  );
+                  );*/
                   _contactsApiHelper.checkCachedContacts(
                      token,
                      _context,
                      currentUser
                   );
-                  _conversationApiHelper.checkCachedConversation(
+                 /* _conversationApiHelper.checkCachedConversation(
                      token,
                      _context,
                      currentUser
-                  );
-                  _conversationApiHelper.checkCachedConversationParticipant(
+                  );*/
+                 /* _conversationApiHelper.checkCachedConversationParticipant(
                      token,
                      _context,
                      currentUser
-                  );
+                  );*/
                }
             }
          )

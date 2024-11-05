@@ -3,7 +3,6 @@ package com.example.szakdolg.model.image;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
-
 import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.model.image.api.ImageApiHelper;
