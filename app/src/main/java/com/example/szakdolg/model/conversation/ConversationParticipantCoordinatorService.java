@@ -23,7 +23,11 @@ public class ConversationParticipantCoordinatorService extends BaseService {
     public List<ConversationParticipant> getOtherParticipants(Long conversationId) {
         List<ConversationParticipant> participants = conversationParticipantService.getOtherParticipants(conversationId);
         if(participants.size()<1){
-            conversationParticipantApiHelper.getParticipants(conversationId);
+            conversationParticipantApiHelper.getParticipants(conversationId, participantsRemote -> {
+                if(participantsRemote.size()>0){
+                    conversationParticipantService.addParticipants(participantsRemote);
+                }
+            });
             return null;
         }else {
             return participants;

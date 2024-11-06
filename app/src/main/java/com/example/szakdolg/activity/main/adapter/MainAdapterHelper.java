@@ -77,7 +77,7 @@ public class MainAdapterHelper {
       Long conversationId,
       List<User> participantUsers
    ) {
-      Conversation conversation = conversationService.getConversation(
+      Conversation conversation = conversationCoordinatorService.getConversation(
          conversationId
       );
       String conversationTitle = conversation.getConversationName();

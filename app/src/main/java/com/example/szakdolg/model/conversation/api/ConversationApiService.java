@@ -45,4 +45,12 @@ public interface ConversationApiService {
       @Query("count") int count,
       @Header("Authorization") String token
    );
+
+   @GET("conversation/{id}")
+   Call<
+           Conversation
+           > getConversation(
+           @Path("id") long id,
+           @Header("Authorization") String token
+   );
 }

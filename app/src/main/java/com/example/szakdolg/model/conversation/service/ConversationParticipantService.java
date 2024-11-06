@@ -33,4 +33,12 @@ public class ConversationParticipantService extends BaseService {
       }
       return others;
    }
+
+    public void addParticipants(List<ConversationParticipant> participants) {
+      if (participants!=null){
+         for (ConversationParticipant paticipant : participants){
+            conversationParticipantDatabaseUtil.insertConversationParticipant(paticipant);
+         }
+      }
+    }
 }
