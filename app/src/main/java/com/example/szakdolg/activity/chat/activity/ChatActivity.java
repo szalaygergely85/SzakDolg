@@ -20,8 +20,8 @@ import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
+import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.model.file.api.FileApiHelper;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
@@ -45,7 +45,6 @@ public class ChatActivity extends AppCompatActivity {
    private MyEditText edtMess;
    private User currentUser;
    private User otherUser;
-
 
    private MessageApiHelper messageApiHelper;
    private FileApiHelper fileApiHelper = new FileApiHelper();
@@ -78,8 +77,7 @@ public class ChatActivity extends AppCompatActivity {
       _startRepeatingTask();
 
       _setListeners();
-      conversationApiHelper =
-              new ConversationApiHelper(this, currentUser);
+      conversationApiHelper = new ConversationApiHelper(this, currentUser);
 
       messageApiHelper = new MessageApiHelper(this, currentUser);
 

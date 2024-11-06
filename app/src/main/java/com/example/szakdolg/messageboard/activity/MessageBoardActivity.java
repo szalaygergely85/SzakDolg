@@ -176,15 +176,16 @@ public class MessageBoardActivity extends AppCompatActivity {
       new Runnable() {
          @Override
          public void run() {
-            try {/*
-               messageApiHelper.getNewMessages(
-                  MessageBoardActivity.this,
-                  userToken,
-                  _currentUser,
-                  () -> {
-                     mainAdapter.notifyDataSetChanged();
-                  }
-               );*/
+            try {
+               /*
+			messageApiHelper.getNewMessages(
+				MessageBoardActivity.this,
+				userToken,
+				_currentUser,
+				() -> {
+					mainAdapter.notifyDataSetChanged();
+				}
+			);*/
             } finally {
                handler.postDelayed(runnable, 15000);
             }

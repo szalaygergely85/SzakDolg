@@ -22,7 +22,6 @@ import com.example.szakdolg.model.user.util.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
 import java.util.List;
 import java.util.function.Consumer;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,43 +36,45 @@ public class ConversationApiHelper extends BaseService {
       .getRetrofitInstance()
       .create(ConversationApiService.class);
 
-    public ConversationApiHelper(Context context, User currentUser) {
-        super(context, currentUser);
-        this.messageApiHelper = new MessageApiHelper(context, currentUser);;
-    }
+   public ConversationApiHelper(Context context, User currentUser) {
+      super(context, currentUser);
+      this.messageApiHelper = new MessageApiHelper(context, currentUser);
+   }
 
-    public void getConversation(Long conversationId, Consumer<Conversation> onSuccess) {
+   public void getConversation(
+      Long conversationId,
+      Consumer<Conversation> onSuccess
+   ) {
+      Call<Conversation> call = conversationApiService.getConversation(
+         conversationId,
+         currentUser.getAuthToken()
+      );
+      call.enqueue(
+         new Callback<Conversation>() {
+            @Override
+            public void onResponse(
+               Call<Conversation> call,
+               Response<Conversation> response
+            ) {
+               if (response.isSuccessful()) {
+                  if (response.body() != null) {
+                     Conversation conversation = response.body();
+                     if (conversation != null) {
+                        onSuccess.accept(conversation);
+                     }
+                  }
+               }
+            }
 
-        Call<Conversation> call = conversationApiService.getConversation(conversationId, currentUser.getAuthToken());
-        call.enqueue(
-                new Callback<Conversation>() {
-                    @Override
-                    public void onResponse(
-                            Call<Conversation> call,
-                            Response<Conversation> response
-                    ) {
-                        if (response.isSuccessful()) {
-                            if (response.body()!=null) {
-                                Conversation conversation= response.body();
-                                if (conversation!=null){
-                                    onSuccess.accept(conversation);
-                                }
-                            }
-                        }
-                    }
+            @Override
+            public void onFailure(Call<Conversation> call, Throwable t) {
+               Log.e(AppConstants.LOG_TAG, t.getMessage());
+            }
+         }
+      );
+   }
 
-                    @Override
-                    public void onFailure(
-                            Call<Conversation> call,
-                            Throwable t
-                    ) {
-                        Log.e(AppConstants.LOG_TAG, t.getMessage());
-                    }
-                }
-        );
-    }
-
-    public void addNewConversationAndSendMessage(
+   public void addNewConversationAndSendMessage(
       List<Long> userIds,
       String message,
       String token,

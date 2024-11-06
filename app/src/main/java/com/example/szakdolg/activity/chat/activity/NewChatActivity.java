@@ -55,8 +55,7 @@ public class NewChatActivity extends AppCompatActivity {
       (User) this.getIntent()
          .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
 
-      conversationApiHelper =
-              new ConversationApiHelper(this, currentUser);
+      conversationApiHelper = new ConversationApiHelper(this, currentUser);
 
       contacts = new ArrayList<>();
 

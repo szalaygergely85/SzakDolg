@@ -13,8 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
+import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.message.MessageCoordinatorService;
 import com.example.szakdolg.model.message.entity.MessageEntry;
@@ -46,7 +46,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       this.userDatabaseUtil = new UserDatabaseUtil(mContext, currentUser);
       this.conversationDatabaseUtil =
       new ConversationDatabaseUtil(mContext, currentUser);
-      this.conversationApiHelper = new ConversationApiHelper(mContext, currentUser);
+      this.conversationApiHelper =
+      new ConversationApiHelper(mContext, currentUser);
    }
 
    @NonNull
@@ -87,8 +88,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
          mainAdapterHelper.getConversationTitle(conversationId, participants)
       );
 
-      //TODO finished till this
-
       if (messageEntry.isRead() || isSenderLoggedUser(messageEntry)) {
          holder.txtMessage.setTypeface(null, Typeface.NORMAL);
       } else {
@@ -96,12 +95,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       }
 
       holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry));
-/*
-      mainAdapterHelper.setImageView(
-         participant.getUserId(),
-         context,
-         holder.image
-      );*/
+
+      holder.txtTime.setText(
+         mainAdapterHelper.getTime(messageEntry.getTimestamp())
+      );
+
+      mainAdapterHelper.setImageView(participants, holder.image);
 
       holder.parent.setOnClickListener(
          new View.OnClickListener() {

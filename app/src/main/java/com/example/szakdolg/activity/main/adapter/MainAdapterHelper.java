@@ -14,8 +14,12 @@ import com.example.szakdolg.model.image.ImageCoordinatorService;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.model.user.service.UserService;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainAdapterHelper {
 
@@ -33,30 +37,43 @@ public class MainAdapterHelper {
       this.currentUser = currentUser;
       this.context = context;
       this.userService = new UserService(context);
-      this.conversationCoordinatorService = new ConversationCoordinatorService(context, currentUser);
-      this.imageCoordinatorService = new ImageCoordinatorService(context, currentUser);
+      this.conversationCoordinatorService =
+      new ConversationCoordinatorService(context, currentUser);
+      this.imageCoordinatorService =
+      new ImageCoordinatorService(context, currentUser);
       this.conversationParticipantCoordinatorService =
       new ConversationParticipantCoordinatorService(context, currentUser);
    }
 
-   public void setImageView(Long userId, ImageView image) {
-      User user = userService.getUserByUserId(userId, currentUser);
-
-      Uri uri = imageCoordinatorService.getImage(user);
-      if (uri != null) {
+   public void setImageView(List<User> participants, ImageView image) {
+      if (participants.size() > 1) {
          Glide
             .with(context)
-            .load(uri)
-            .placeholder(R.drawable.ic_blank_profile) // Default image while loading
-            .error(R.drawable.ic_blank_profile) // Default image on error
+            .load(R.drawable.ic_group) // Load your drawable directly
             .into(image);
+      } else {
+         User user = userService.getUserByUserId(
+            participants.get(0).getUserId(),
+            currentUser
+         );
+         Uri uri = imageCoordinatorService.getImage(user);
+         if (uri != null) {
+            Glide
+               .with(context)
+               .load(uri)
+               .placeholder(R.drawable.ic_blank_profile) // Default image while loading
+               .error(R.drawable.ic_blank_profile) // Default image on error
+               .into(image);
+         }
       }
    }
 
    public List<User> getParticipantUser(Long conversationId) {
       //TODO itt kezdtem el....
       List<ConversationParticipant> participants =
-              conversationParticipantCoordinatorService.getOtherParticipants(conversationId);
+         conversationParticipantCoordinatorService.getOtherParticipants(
+            conversationId
+         );
       List<User> participantUsers = new ArrayList<>();
       for (ConversationParticipant participant : participants) {
          User user = userService.getUserByUserId(
@@ -77,9 +94,8 @@ public class MainAdapterHelper {
       Long conversationId,
       List<User> participantUsers
    ) {
-      Conversation conversation = conversationCoordinatorService.getConversation(
-         conversationId
-      );
+      Conversation conversation =
+         conversationCoordinatorService.getConversation(conversationId);
       String conversationTitle = conversation.getConversationName();
       if (conversationTitle != null) {
          return conversationTitle;
@@ -97,7 +113,6 @@ public class MainAdapterHelper {
    }
 
    public String getContent(MessageEntry messageEntry) {
-
       if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
          String decryptedContentString = null;
 
@@ -128,5 +143,53 @@ public class MainAdapterHelper {
          return "Image received";
       }
       return null;
+   }
+
+   public String getTime(Long timestamp) {
+      // Convert timestamp to Date
+      Date date = new Date(timestamp);
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(date);
+
+      // Get current time for comparison
+      Calendar now = Calendar.getInstance();
+
+      // Formatter for today (hours and minutes)
+      SimpleDateFormat todayFormat = new SimpleDateFormat(
+         "HH:mm",
+         Locale.getDefault()
+      );
+
+      // Formatter for day of the week (e.g., "Monday")
+      SimpleDateFormat dayFormat = new SimpleDateFormat(
+         "EEEE",
+         Locale.getDefault()
+      );
+
+      // Formatter for full date (e.g., "MMM dd, yyyy")
+      SimpleDateFormat dateFormat = new SimpleDateFormat(
+         "MMM dd, yyyy",
+         Locale.getDefault()
+      );
+
+      // Check if it's today
+      if (
+         now.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
+         now.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)
+      ) {
+         // Return hours and minutes if it's today
+         return todayFormat.format(date);
+      }
+      // Check if it's within the last week
+      else if (
+         now.getTimeInMillis() - calendar.getTimeInMillis() <
+         7 * 24 * 60 * 60 * 1000
+      ) {
+         // Return day of the week if it's within the last 7 days
+         return dayFormat.format(date);
+      } else {
+         // Otherwise, return full date
+         return dateFormat.format(date);
+      }
    }
 }

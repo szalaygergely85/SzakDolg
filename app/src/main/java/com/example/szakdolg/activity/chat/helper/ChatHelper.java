@@ -30,7 +30,6 @@ public class ChatHelper {
 
    private MessageApiHelper messageApiHelper;
 
-
    public ChatHelper(
       Context context,
       Long conversationId,
@@ -49,7 +48,6 @@ public class ChatHelper {
       new ConversationDatabaseUtil(context, currentUser);
       this.messageApiHelper = new MessageApiHelper(context, currentUser);
    }
-
 
    public void sendMessage(
       int messageType,

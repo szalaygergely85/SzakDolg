@@ -10,12 +10,9 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.service.ConversationService;
-import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.user.api.ContactsApiHelper;
-import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -29,8 +26,8 @@ public class MainActivityHelper {
    //private MessageApiHelper _messageApiHelper = new MessageApiHelper();
    private ContactsApiHelper _contactsApiHelper = new ContactsApiHelper();
    /*
-   private ConversationApiHelper _conversationApiHelper =
-      new ConversationApiHelper();*/
+private ConversationApiHelper _conversationApiHelper =
+	new ConversationApiHelper();*/
    private String token;
    private User currentUser;
    private ConversationService conversationService;
@@ -64,26 +61,26 @@ public class MainActivityHelper {
             new Runnable() {
                @Override
                public void run() {
-                /*  _messageApiHelper.checkCachedMessages(
-                     token,
-                     _context,
-                     currentUser
-                  );*/
+                  /*  _messageApiHelper.checkCachedMessages(
+					token,
+					_context,
+					currentUser
+				);*/
                   _contactsApiHelper.checkCachedContacts(
                      token,
                      _context,
                      currentUser
                   );
-                 /* _conversationApiHelper.checkCachedConversation(
-                     token,
-                     _context,
-                     currentUser
-                  );*/
-                 /* _conversationApiHelper.checkCachedConversationParticipant(
-                     token,
-                     _context,
-                     currentUser
-                  );*/
+                  /* _conversationApiHelper.checkCachedConversation(
+					token,
+					_context,
+					currentUser
+				);*/
+                  /* _conversationApiHelper.checkCachedConversationParticipant(
+					token,
+					_context,
+					currentUser
+				);*/
                }
             }
          )
