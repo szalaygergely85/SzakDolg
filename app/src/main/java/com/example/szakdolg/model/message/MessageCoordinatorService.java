@@ -5,7 +5,6 @@ import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
-
 import java.util.List;
 
 public class MessageCoordinatorService extends BaseService {
@@ -19,18 +18,19 @@ public class MessageCoordinatorService extends BaseService {
       this.messageService = new MessageService(context, currentUser);
       this.messageApiHelper = new MessageApiHelper(context, currentUser);
    }
+
    public List<MessageEntry> getMessagesByConversationId(Long conversationId) {
       List<MessageEntry> messages = messageService.getMessagesByConversationId(
-              conversationId
+         conversationId
       );
       if (messages != null) {
          return messages;
       } else {
          messageApiHelper.getMessages(
-                 conversationId,
-                 messageEntries -> {
-                    messageService.addMessages(messageEntries);
-                 }
+            conversationId,
+            messageEntries -> {
+               messageService.addMessages(messageEntries);
+            }
          );
          return null;
       }

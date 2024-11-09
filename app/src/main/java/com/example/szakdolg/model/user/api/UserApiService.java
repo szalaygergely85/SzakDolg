@@ -12,9 +12,11 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface UserApiService {
-
    @GET("user/id/{userId}")
-   Call<User> getUserByID( @Path("userId") Long userId, @Header("Authorization") String token);
+   Call<User> getUserByID(
+      @Path("userId") Long userId,
+      @Header("Authorization") String token
+   );
 
    @GET("user/token/{token}")
    Call<User> getUserByID(@Path("token") String token);

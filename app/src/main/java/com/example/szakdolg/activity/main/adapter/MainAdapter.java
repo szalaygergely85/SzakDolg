@@ -109,13 +109,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               Intent intent = new Intent(
-                       context,
-                       ChatActivity.class
-               );
-               intent.putExtra(
-                       IntentConstants.CONVERSATION_ID, conversationId
-               );
+               Intent intent = new Intent(context, ChatActivity.class);
+               intent.putExtra(IntentConstants.CONVERSATION_ID, conversationId);
                context.startActivity(intent);
 
                conversationApiHelper.openConversation(

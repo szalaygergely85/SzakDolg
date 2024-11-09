@@ -24,6 +24,7 @@ import com.example.szakdolg.util.UUIDUtil;
 import java.io.File;
 
 public class ChatActivity extends BaseActivity {
+
    private ChatAdapter adapter;
    private Long conversationId;
    private RecyclerView chatRecView;
@@ -42,7 +43,7 @@ public class ChatActivity extends BaseActivity {
 
    private Toolbar mToolbar;
 
-   private  ConversationCoordinatorService conversationCoordinatorService;
+   private ConversationCoordinatorService conversationCoordinatorService;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +62,17 @@ public class ChatActivity extends BaseActivity {
 
       adapter = new ChatAdapter(this, currentUser);
 
-      conversationCoordinatorService = new ConversationCoordinatorService(this, currentUser);
+      conversationCoordinatorService =
+      new ConversationCoordinatorService(this, currentUser);
 
       chatActivityHelper =
-      new ChatActivityHelper(this, conversationCoordinatorService.getConversation(conversationId), currentUser, token, adapter);
+      new ChatActivityHelper(
+         this,
+         conversationCoordinatorService.getConversation(conversationId),
+         currentUser,
+         token,
+         adapter
+      );
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
@@ -136,19 +144,19 @@ public class ChatActivity extends BaseActivity {
    }
 
    private void _setListeners() {/*
-      edtMess.setKeyBoardInputCallbackListener(
-         new MyEditText.KeyBoardInputCallbackListener() {
-            @Override
-            public void onCommitContent(
-               InputContentInfoCompat inputContentInfo,
-               int flags,
-               Bundle opts
-            ) {
-               _sendFile(inputContentInfo.getLinkUri());
-            }
-         }
-      );
-      */
+	edtMess.setKeyBoardInputCallbackListener(
+		new MyEditText.KeyBoardInputCallbackListener() {
+			@Override
+			public void onCommitContent(
+			InputContentInfoCompat inputContentInfo,
+			int flags,
+			Bundle opts
+			) {
+			_sendFile(inputContentInfo.getLinkUri());
+			}
+		}
+	);
+	*/
       btnSend.setOnClickListener(
          new View.OnClickListener() {
             @Override
@@ -156,12 +164,13 @@ public class ChatActivity extends BaseActivity {
                String content = edtMess.getText().toString();
                if (!content.isEmpty()) {
                   try {
-
                      //TODO itt tartok!
-                     chatActivityHelper.sendMessage(content, MessageTypeConstants.MESSAGE);
+                     chatActivityHelper.sendMessage(
+                        content,
+                        MessageTypeConstants.MESSAGE
+                     );
 
-                        edtMess.getText().clear();
-
+                     edtMess.getText().clear();
                   } catch (Exception e) {
                      throw new RuntimeException(e);
                   }

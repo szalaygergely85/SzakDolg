@@ -122,7 +122,9 @@ public class MessageApiHelper {
          user
       );
       adapter.setMessageEntries(
-         messageDatabaseUtil.getAllMessageEntriesByConversationId(conversationId)
+         messageDatabaseUtil.getAllMessageEntriesByConversationId(
+            conversationId
+         )
       );
    }
 
@@ -273,39 +275,40 @@ public class MessageApiHelper {
       );
    }
 
-    public void addMessage(MessageEntry messageEntry, Consumer<MessageEntry> onSuccess) {
-        Call<MessageEntry> call = messageApiService.addMessage(
-                messageEntry,
-                currentUser.getAuthToken()
+   public void addMessage(
+      MessageEntry messageEntry,
+      Consumer<MessageEntry> onSuccess
+   ) {
+      Call<MessageEntry> call = messageApiService.addMessage(
+         messageEntry,
+         currentUser.getAuthToken()
+      );
+      call.enqueue(
+         new Callback<MessageEntry>() {
+            @Override
+            public void onResponse(
+               Call<MessageEntry> call,
+               Response<MessageEntry> response
+            ) {
+               Log.e(TAG, "" + response.code());
 
-        );
-        call.enqueue(
-                new Callback<MessageEntry>() {
-                    @Override
-                    public void onResponse(
-                            Call<MessageEntry> call,
-                            Response<MessageEntry> response
-                    ) {
-                        Log.e(TAG, "" + response.code());
+               if (response.isSuccessful()) {
+                  if (response.body() != null) {
+                     MessageEntry message = response.body();
+                     if (message != null) {
+                        onSuccess.accept(message);
+                     }
+                  }
+               } else {
+                  Log.e(AppConstants.LOG_TAG, "" + response.code());
+               }
+            }
 
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                MessageEntry message = response.body();
-                                if (message!=null){
-                                    onSuccess.accept(message);
-                                }
-                            }
-                        } else {
-                            Log.e(AppConstants.LOG_TAG, "" + response.code());
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<MessageEntry> call, Throwable t) {
-                        Log.e(AppConstants.LOG_TAG, "" + t.getMessage());
-                    }
-                }
-        );
-    }
+            @Override
+            public void onFailure(Call<MessageEntry> call, Throwable t) {
+               Log.e(AppConstants.LOG_TAG, "" + t.getMessage());
+            }
+         }
+      );
+   }
 }

@@ -181,14 +181,14 @@ public class MessageEntry implements Serializable {
          ", timestamp=" +
          timestamp +
          ", content='" +
-                 contentEncrypted +
+         contentEncrypted +
          '\'' +
          ", isRead=" +
          isRead +
          ", type=" +
          type +
          ", contentSenderVersion='" +
-                 content +
+         content +
          '\'' +
          '}'
       );

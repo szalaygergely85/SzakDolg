@@ -66,7 +66,7 @@ public class MessageDatabaseUtil {
                convId,
                senderId,
                timestamp,
-                    contentEncrypted,
+               contentEncrypted,
                isRead,
                type,
                content
@@ -105,7 +105,9 @@ public class MessageDatabaseUtil {
                cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
             );
             message.setContentEncrypted(
-               cursor.getString(cursor.getColumnIndexOrThrow("contentEncrypted"))
+               cursor.getString(
+                  cursor.getColumnIndexOrThrow("contentEncrypted")
+               )
             );
             message.setRead(
                cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
@@ -114,9 +116,7 @@ public class MessageDatabaseUtil {
                cursor.getInt(cursor.getColumnIndexOrThrow("type"))
             );
             message.setContent(
-               cursor.getString(
-                  cursor.getColumnIndexOrThrow("content")
-               )
+               cursor.getString(cursor.getColumnIndexOrThrow("content"))
             );
             messages.add(message);
          }
@@ -130,30 +130,52 @@ public class MessageDatabaseUtil {
       return messages;
    }
 
-   public List<MessageEntry> getAllMessageEntriesByConversationId(Long conversationId) {
+   public List<MessageEntry> getAllMessageEntriesByConversationId(
+      Long conversationId
+   ) {
       List<MessageEntry> messages = new ArrayList<>();
 
       // Try-with-resources ensures that resources are closed automatically
-      try (SQLiteDatabase db = dbHelper.getReadableDatabase();
-           Cursor cursor = db.query(
-                   "MessageEntry",
-                   null,
-                   "conversationId = ?",
-                   new String[]{String.valueOf(conversationId)},
-                   null,
-                   null,
-                   null)) {
-
+      try (
+         SQLiteDatabase db = dbHelper.getReadableDatabase();
+         Cursor cursor = db.query(
+            "MessageEntry",
+            null,
+            "conversationId = ?",
+            new String[] { String.valueOf(conversationId) },
+            null,
+            null,
+            null
+         )
+      ) {
          while (cursor != null && cursor.moveToNext()) {
             MessageEntry message = new MessageEntry();
-            message.setMessageId(cursor.getLong(cursor.getColumnIndexOrThrow("messageId")));
-            message.setConversationId(cursor.getLong(cursor.getColumnIndexOrThrow("conversationId")));
-            message.setSenderId(cursor.getLong(cursor.getColumnIndexOrThrow("senderId")));
-            message.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
-            message.setContentEncrypted(cursor.getString(cursor.getColumnIndexOrThrow("contentEncrypted")));
-            message.setRead(cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1);
-            message.setType(cursor.getInt(cursor.getColumnIndexOrThrow("type")));
-            message.setContent(cursor.getString(cursor.getColumnIndexOrThrow("content")));
+            message.setMessageId(
+               cursor.getLong(cursor.getColumnIndexOrThrow("messageId"))
+            );
+            message.setConversationId(
+               cursor.getLong(cursor.getColumnIndexOrThrow("conversationId"))
+            );
+            message.setSenderId(
+               cursor.getLong(cursor.getColumnIndexOrThrow("senderId"))
+            );
+            message.setTimestamp(
+               cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
+            );
+            message.setContentEncrypted(
+               cursor.getString(
+                  cursor.getColumnIndexOrThrow("contentEncrypted")
+               )
+            );
+            message.setRead(
+               cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
+            );
+            message.setType(
+               cursor.getInt(cursor.getColumnIndexOrThrow("type"))
+            );
+            message.setContent(
+               cursor.getString(cursor.getColumnIndexOrThrow("content"))
+            );
 
             messages.add(message);
          }

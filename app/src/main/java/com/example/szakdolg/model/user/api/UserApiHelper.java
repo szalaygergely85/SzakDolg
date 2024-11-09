@@ -66,33 +66,32 @@ public class UserApiHelper {
       );
    }
 
-
    public void getUserByUserID(
-           Long userId,
-           String token,
-            Consumer<User> onSuccess
+      Long userId,
+      String token,
+      Consumer<User> onSuccess
    ) {
       Call<User> call = _userApiService.getUserByID(userId, token);
       call.enqueue(
-              new Callback<User>() {
-                 @Override
-                 public void onResponse(Call<User> call, Response<User> response) {
-                    Log.e(_TAG, "" + response.code());
-                    if (response.isSuccessful()) {
-                       User user = response.body();
-                       if (user != null) {
-                          onSuccess.accept(user);
-                       }
-                    } else {
-                       Log.e(_TAG, +response.code() + " " + response.errorBody());
-                    }
-                 }
+         new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+               Log.e(_TAG, "" + response.code());
+               if (response.isSuccessful()) {
+                  User user = response.body();
+                  if (user != null) {
+                     onSuccess.accept(user);
+                  }
+               } else {
+                  Log.e(_TAG, +response.code() + " " + response.errorBody());
+               }
+            }
 
-                 @Override
-                 public void onFailure(Call<User> call, Throwable t) {
-                    Log.e(_TAG, "" + t.getMessage());
-                 }
-              }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+               Log.e(_TAG, "" + t.getMessage());
+            }
+         }
       );
    }
 
@@ -204,42 +203,43 @@ public class UserApiHelper {
          }
       );
    }
-/*
-   @Deprecated
-   public void getAndSavePrivateKey(User user, String token, Context context) {
-      Call<ResponseBody> call = _userApiService.getKeyByToken(token);
-      call.enqueue(
-         new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(
-               Call<ResponseBody> call,
-               Response<ResponseBody> response
-            ) {
-               if (response.isSuccessful()) {
-                  Log.e(_TAG, "server contacted and has file");
 
-                  boolean writtenToDisk = false;
-                  try {
-                     writtenToDisk =
-                     _writeResponseBodyToDisk(response.body(), context, "key");
-                  } catch (IOException e) {
-                     throw new RuntimeException(e);
-                  }
+   /*
+@Deprecated
+public void getAndSavePrivateKey(User user, String token, Context context) {
+	Call<ResponseBody> call = _userApiService.getKeyByToken(token);
+	call.enqueue(
+		new Callback<ResponseBody>() {
+			@Override
+			public void onResponse(
+			Call<ResponseBody> call,
+			Response<ResponseBody> response
+			) {
+			if (response.isSuccessful()) {
+				Log.e(_TAG, "server contacted and has file");
 
-                  Log.e(_TAG, "file download was a success? " + writtenToDisk);
-                  if (writtenToDisk) {
-                     getAndSaveAESKey(user, token, context);
-                  }
-               } else {
-                  Log.e(_TAG, "server contact failed");
-               }
-            }
+				boolean writtenToDisk = false;
+				try {
+					writtenToDisk =
+					_writeResponseBodyToDisk(response.body(), context, "key");
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {}
-         }
-      );
-   }
+				Log.e(_TAG, "file download was a success? " + writtenToDisk);
+				if (writtenToDisk) {
+					getAndSaveAESKey(user, token, context);
+				}
+			} else {
+				Log.e(_TAG, "server contact failed");
+			}
+			}
+
+			@Override
+			public void onFailure(Call<ResponseBody> call, Throwable t) {}
+		}
+	);
+}
 */
    @Deprecated
    public void getAndSavePublicKey(User user, String token, Runnable runnable) {

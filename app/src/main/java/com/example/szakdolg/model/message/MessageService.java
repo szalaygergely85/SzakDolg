@@ -37,9 +37,10 @@ public class MessageService extends BaseService {
    }
 
    public List<MessageEntry> getMessagesByConversationId(Long conversationId) {
-      List<MessageEntry>  messageEntries = messageDatabaseUtil.getAllMessageEntriesByConversationId(
-              conversationId
-      );
+      List<MessageEntry> messageEntries =
+         messageDatabaseUtil.getAllMessageEntriesByConversationId(
+            conversationId
+         );
       return messageEntries;
    }
 
@@ -47,6 +48,4 @@ public class MessageService extends BaseService {
       List<Long> idList = messageDatabaseUtil.getAllMessageIds();
       return idList.contains(messageId);
    }
-
-
 }

@@ -1,19 +1,16 @@
 package com.example.szakdolg.activity.chat.helper;
 
 import android.content.Context;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
-import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.message.MessageDatabaseUtil;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
+import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.model.message.MessageCoordinatorService;
+import com.example.szakdolg.model.message.MessageDatabaseUtil;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
@@ -63,77 +60,77 @@ public class ChatActivityHelper {
       this.conversationDatabaseUtil =
       new ConversationDatabaseUtil(context, currentUser);
       this.messageApiHelper = new MessageApiHelper(context, currentUser);
-      this.conversationParticipantCoordinatorService = new ConversationParticipantCoordinatorService(context, currentUser);
-      this.userCoordinatorService = new UserCoordinatorService(context, currentUser);
-      this.messageCoordinatorService = new MessageCoordinatorService(context, currentUser);
-
+      this.conversationParticipantCoordinatorService =
+      new ConversationParticipantCoordinatorService(context, currentUser);
+      this.userCoordinatorService =
+      new UserCoordinatorService(context, currentUser);
+      this.messageCoordinatorService =
+      new MessageCoordinatorService(context, currentUser);
    }
 
-private List<User> getUsers(){
-   List<ConversationParticipant> participants = conversationParticipantCoordinatorService.getOtherParticipants(conversation.getConversationId());
-   List<User> users = new ArrayList<>();
-   for(ConversationParticipant participant : participants){
-      User user = userCoordinatorService.getUserByUserId(participant.getUserId(), currentUser);
-      if (user!=null){
-         users.add(user);
+   private List<User> getUsers() {
+      List<ConversationParticipant> participants =
+         conversationParticipantCoordinatorService.getOtherParticipants(
+            conversation.getConversationId()
+         );
+      List<User> users = new ArrayList<>();
+      for (ConversationParticipant participant : participants) {
+         User user = userCoordinatorService.getUserByUserId(
+            participant.getUserId(),
+            currentUser
+         );
+         if (user != null) {
+            users.add(user);
+         }
       }
+      return users;
    }
-   return users;
-}
 
    public void setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {
-
       adapter.setUsers(getUsers());
-      adapter.setMessageEntries(messageCoordinatorService.getMessagesByConversationId(conversation.getConversationId()));
+      adapter.setMessageEntries(
+         messageCoordinatorService.getMessagesByConversationId(
+            conversation.getConversationId()
+         )
+      );
 
       chatRecView.setAdapter(adapter);
       chatRecView.setLayoutManager(new LinearLayoutManager(context));
    }
 
-   public void sendMessage(
-           String content,
-      int messageType
-   ) {
+   public void sendMessage(String content, int messageType) {
       List<User> users = getUsers();
-      if(conversation.getNumberOfParticipants()>2){
+      if (conversation.getNumberOfParticipants() > 2) {
          //TODO GROUP Conversation
-      }else{
+      } else {
          User user = users.get(0);
 
-         String encryptedContentString =
-                 EncryptionHelper.encrypt(
-                         content,
-                         CacheUtil.getPublicKeyFromCache(
-                                 context,
-                                 user.getEmail()
-                         )
-                 );
+         String encryptedContentString = EncryptionHelper.encrypt(
+            content,
+            CacheUtil.getPublicKeyFromCache(context, user.getEmail())
+         );
 
          MessageEntry messageEntry = new MessageEntry(
-                 conversation.getConversationId(),
-        currentUser.getUserId(),
-         System.currentTimeMillis(),
-                 encryptedContentString,
-                 messageType,
-                 content,
-                 UUIDUtil.UUIDGenerator()
+            conversation.getConversationId(),
+            currentUser.getUserId(),
+            System.currentTimeMillis(),
+            encryptedContentString,
+            messageType,
+            content,
+            UUIDUtil.UUIDGenerator()
          );
 
          messageCoordinatorService.addMessage(messageEntry);
-
-
       }
-
-
-/*
-      messageApiHelper.sendMessage(
-         context,
-         conversationId,
-         messageEntry,
-         chatAdapter,
-         authToken,
-         currentUser
-      );*/
+      /*
+	messageApiHelper.sendMessage(
+		context,
+		conversationId,
+		messageEntry,
+		chatAdapter,
+		authToken,
+		currentUser
+	);*/
    }
 
    public List<MessageEntry> getMessages(Long conversationId) {
