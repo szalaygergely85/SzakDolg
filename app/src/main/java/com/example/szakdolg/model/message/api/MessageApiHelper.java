@@ -4,8 +4,9 @@ import android.content.Context;
 import android.util.Log;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
 import com.example.szakdolg.cache.CacheAction;
+import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.db.retrofit.RetrofitClient;
-import com.example.szakdolg.db.util.MessageDatabaseUtil;
+import com.example.szakdolg.model.message.MessageDatabaseUtil;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.api.UserApiHelper;
 import com.example.szakdolg.model.user.entity.User;
@@ -121,7 +122,7 @@ public class MessageApiHelper {
          user
       );
       adapter.setMessageEntries(
-         messageDatabaseUtil.getAllMessageEntriesOfConversation(conversationId)
+         messageDatabaseUtil.getAllMessageEntriesByConversationId(conversationId)
       );
    }
 
@@ -130,7 +131,7 @@ public class MessageApiHelper {
       MessageEntry messageEntry,
       String userToken
    ) {
-      Call<MessageEntry> call = messageApiService.sendMessage(
+      Call<MessageEntry> call = messageApiService.addMessage(
          messageEntry,
          userToken
       );
@@ -168,7 +169,7 @@ public class MessageApiHelper {
       String userToken,
       User user
    ) {
-      Call<MessageEntry> call = messageApiService.sendMessage(
+      Call<MessageEntry> call = messageApiService.addMessage(
          messageEntry,
          userToken
       );
@@ -271,4 +272,40 @@ public class MessageApiHelper {
          }
       );
    }
+
+    public void addMessage(MessageEntry messageEntry, Consumer<MessageEntry> onSuccess) {
+        Call<MessageEntry> call = messageApiService.addMessage(
+                messageEntry,
+                currentUser.getAuthToken()
+
+        );
+        call.enqueue(
+                new Callback<MessageEntry>() {
+                    @Override
+                    public void onResponse(
+                            Call<MessageEntry> call,
+                            Response<MessageEntry> response
+                    ) {
+                        Log.e(TAG, "" + response.code());
+
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                MessageEntry message = response.body();
+                                if (message!=null){
+                                    onSuccess.accept(message);
+                                }
+                            }
+                        } else {
+                            Log.e(AppConstants.LOG_TAG, "" + response.code());
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MessageEntry> call, Throwable t) {
+                        Log.e(AppConstants.LOG_TAG, "" + t.getMessage());
+                    }
+                }
+        );
+    }
 }

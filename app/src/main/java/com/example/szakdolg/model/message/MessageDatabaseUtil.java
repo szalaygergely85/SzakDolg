@@ -1,4 +1,4 @@
-package com.example.szakdolg.db.util;
+package com.example.szakdolg.model.message;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,10 +26,10 @@ public class MessageDatabaseUtil {
          values.put("conversationId", message.getConversationId());
          values.put("senderId", message.getSenderId());
          values.put("timestamp", message.getTimestamp());
-         values.put("content", message.getContent());
+         values.put("contentEncrypted", message.getContentEncrypted());
          values.put("isRead", message.isRead());
          values.put("type", message.getType());
-         values.put("contentSenderVersion", message.getContentSenderVersion());
+         values.put("content", message.getContent());
          db.insert("MessageEntry", null, values);
       } finally {
          db.close();
@@ -54,10 +54,10 @@ public class MessageDatabaseUtil {
             Long convId = cursor.getLong(1); // Assuming conversationId is the second column
             Long senderId = cursor.getLong(2); // Assuming senderId is the third column
             Long timestamp = cursor.getLong(3); // Assuming timestamp is the fourth column
-            String content = cursor.getString(4); // Assuming content is the fifth column
+            String contentEncrypted = cursor.getString(4); // Assuming content is the fifth column
             boolean isRead = cursor.getInt(5) > 0; // Assuming isRead is the sixth column
             int type = cursor.getInt(6); // Assuming type is the seventh column
-            String contentSenderVersion = cursor.getString(7); // Assuming contentSenderVersion is the eighth column
+            String content = cursor.getString(7); // Assuming contentSenderVersion is the eighth column
 
             // Create a new MessageEntry object
             latestMessage =
@@ -66,10 +66,10 @@ public class MessageDatabaseUtil {
                convId,
                senderId,
                timestamp,
-               content,
+                    contentEncrypted,
                isRead,
                type,
-               contentSenderVersion
+               content
             );
          }
       } finally {
@@ -104,8 +104,8 @@ public class MessageDatabaseUtil {
             message.setTimestamp(
                cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
             );
-            message.setContent(
-               cursor.getString(cursor.getColumnIndexOrThrow("content"))
+            message.setContentEncrypted(
+               cursor.getString(cursor.getColumnIndexOrThrow("contentEncrypted"))
             );
             message.setRead(
                cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
@@ -113,9 +113,9 @@ public class MessageDatabaseUtil {
             message.setType(
                cursor.getInt(cursor.getColumnIndexOrThrow("type"))
             );
-            message.setContentSenderVersion(
+            message.setContent(
                cursor.getString(
-                  cursor.getColumnIndexOrThrow("contentSenderVersion")
+                  cursor.getColumnIndexOrThrow("content")
                )
             );
             messages.add(message);
@@ -130,61 +130,35 @@ public class MessageDatabaseUtil {
       return messages;
    }
 
-   public List<MessageEntry> getAllMessageEntriesOfConversation(
-      Long conversationId
-   ) {
+   public List<MessageEntry> getAllMessageEntriesByConversationId(Long conversationId) {
       List<MessageEntry> messages = new ArrayList<>();
-      SQLiteDatabase db = dbHelper.getReadableDatabase();
-      Cursor cursor = null;
 
-      try {
-         cursor =
-         db.query(
-            "MessageEntry",
-            null,
-            "conversationId = ?",
-            new String[] { String.valueOf(conversationId) },
-            null,
-            null,
-            null
-         );
+      // Try-with-resources ensures that resources are closed automatically
+      try (SQLiteDatabase db = dbHelper.getReadableDatabase();
+           Cursor cursor = db.query(
+                   "MessageEntry",
+                   null,
+                   "conversationId = ?",
+                   new String[]{String.valueOf(conversationId)},
+                   null,
+                   null,
+                   null)) {
 
-         while (cursor.moveToNext()) {
+         while (cursor != null && cursor.moveToNext()) {
             MessageEntry message = new MessageEntry();
-            message.setMessageId(
-               cursor.getLong(cursor.getColumnIndexOrThrow("messageId"))
-            );
-            message.setConversationId(
-               cursor.getLong(cursor.getColumnIndexOrThrow("conversationId"))
-            );
-            message.setSenderId(
-               cursor.getLong(cursor.getColumnIndexOrThrow("senderId"))
-            );
-            message.setTimestamp(
-               cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
-            );
-            message.setContent(
-               cursor.getString(cursor.getColumnIndexOrThrow("content"))
-            );
-            message.setRead(
-               cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
-            );
-            message.setType(
-               cursor.getInt(cursor.getColumnIndexOrThrow("type"))
-            );
-            message.setContentSenderVersion(
-               cursor.getString(
-                  cursor.getColumnIndexOrThrow("contentSenderVersion")
-               )
-            );
+            message.setMessageId(cursor.getLong(cursor.getColumnIndexOrThrow("messageId")));
+            message.setConversationId(cursor.getLong(cursor.getColumnIndexOrThrow("conversationId")));
+            message.setSenderId(cursor.getLong(cursor.getColumnIndexOrThrow("senderId")));
+            message.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
+            message.setContentEncrypted(cursor.getString(cursor.getColumnIndexOrThrow("contentEncrypted")));
+            message.setRead(cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1);
+            message.setType(cursor.getInt(cursor.getColumnIndexOrThrow("type")));
+            message.setContent(cursor.getString(cursor.getColumnIndexOrThrow("content")));
 
             messages.add(message);
          }
-      } finally {
-         if (cursor != null) {
-            cursor.close();
-         }
-         db.close();
+      } catch (Exception e) {
+         e.printStackTrace();
       }
 
       return messages;
@@ -241,10 +215,10 @@ public class MessageDatabaseUtil {
          values.put("conversationId", message.getConversationId());
          values.put("senderId", message.getSenderId());
          values.put("timestamp", message.getTimestamp());
-         values.put("content", message.getContent());
+         values.put("contentEncrypted", message.getContentEncrypted());
          values.put("isRead", message.isRead());
          values.put("type", message.getType());
-         values.put("contentSenderVersion", message.getContentSenderVersion());
+         values.put("content", message.getContent());
 
          db.update(
             "MessageEntry",

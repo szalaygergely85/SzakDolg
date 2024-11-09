@@ -40,7 +40,7 @@ private ConversationApiHelper _conversationApiHelper =
    }
 
    public void setMessageBoard(RecyclerView messageBoardRecView) {
-      MainAdapter mainAdapter = new MainAdapter(_context, token, currentUser);
+      MainAdapter mainAdapter = new MainAdapter(_context, currentUser);
 
       List<Conversation> conversationList =
          conversationService.getAllConversations();

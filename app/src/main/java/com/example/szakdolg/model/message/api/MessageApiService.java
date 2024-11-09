@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 
 public interface MessageApiService {
    @POST("message")
-   Call<MessageEntry> sendMessage(
+   Call<MessageEntry> addMessage(
       @Body MessageEntry message,
       @Header("Authorization") String token
    );

@@ -84,13 +84,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (isSenderLoggedUser(messageEntry)) {
                decryptedContentString =
                EncryptionHelper.decrypt(
-                  messageEntry.getContentSenderVersion(),
+                  messageEntry.getContent(),
                   KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
                );
             } else {
                decryptedContentString =
                EncryptionHelper.decrypt(
-                  messageEntry.getContent(),
+                  messageEntry.getContentEncrypted(),
                   KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
                );
             }
@@ -106,7 +106,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             );
       } else if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
          ((ImageViewHolder) holder).bind(
-               messageEntry.getContent(),
+               messageEntry.getContentEncrypted(),
                mContext,
                () ->
                   messageApiHelper.reloadMessages(

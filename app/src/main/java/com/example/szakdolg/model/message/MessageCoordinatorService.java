@@ -6,6 +6,8 @@ import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
 
+import java.util.List;
+
 public class MessageCoordinatorService extends BaseService {
 
    private MessageService messageService;
@@ -16,6 +18,22 @@ public class MessageCoordinatorService extends BaseService {
       super(context, currentUser);
       this.messageService = new MessageService(context, currentUser);
       this.messageApiHelper = new MessageApiHelper(context, currentUser);
+   }
+   public List<MessageEntry> getMessagesByConversationId(Long conversationId) {
+      List<MessageEntry> messages = messageService.getMessagesByConversationId(
+              conversationId
+      );
+      if (messages != null) {
+         return messages;
+      } else {
+         messageApiHelper.getMessages(
+                 conversationId,
+                 messageEntries -> {
+                    messageService.addMessages(messageEntries);
+                 }
+         );
+         return null;
+      }
    }
 
    public MessageEntry getLatestMessageEntry(Long conversationId) {
@@ -33,5 +51,10 @@ public class MessageCoordinatorService extends BaseService {
          );
          return null;
       }
+   }
+
+   public void addMessage(MessageEntry messageEntry) {
+      messageService.addMessage(messageEntry);
+      messageApiHelper.addMessage(messageEntry, null);
    }
 }

@@ -6,64 +6,43 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.inputmethod.InputContentInfoCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
+import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
-import com.example.szakdolg.activity.chat.helper.ChatHelper;
+import com.example.szakdolg.activity.chat.helper.ChatActivityHelper;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.MessageTypeConstants;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.db.util.MessageDatabaseUtil;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
-import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
+import com.example.szakdolg.model.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.model.file.api.FileApiHelper;
 import com.example.szakdolg.model.message.api.MessageApiHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
-import com.example.szakdolg.model.user.entity.User;
-import com.example.szakdolg.model.user.util.UserUtil;
-import com.example.szakdolg.util.CacheUtil;
-import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.FileUtil;
-import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.example.szakdolg.util.UUIDUtil;
 import java.io.File;
-import java.util.List;
 
-public class ChatActivity extends AppCompatActivity {
-
-   private static final String TAG = "ChatActivity";
+public class ChatActivity extends BaseActivity {
    private ChatAdapter adapter;
    private Long conversationId;
    private RecyclerView chatRecView;
    private Button btnSend;
    private MyEditText edtMess;
-   private User currentUser;
-   private User otherUser;
 
    private MessageApiHelper messageApiHelper;
    private FileApiHelper fileApiHelper = new FileApiHelper();
-   private ConversationApiHelper conversationApiHelper;
+
    private ActionBar actionBar;
 
    private Handler handler = new Handler();
    private Runnable runnable;
 
-   private String _token;
+   private ChatActivityHelper chatActivityHelper;
 
-   private ChatHelper chatHelper;
+   private Toolbar mToolbar;
 
-   private ConversationDatabaseUtil conversationDatabaseUtil;
-
-   private UserDatabaseUtil userDatabaseUtil;
-   private MessageDatabaseUtil messageDatabaseUtil;
-
-   private SharedPreferencesUtil sharedPreferencesUtil;
+   private  ConversationCoordinatorService conversationCoordinatorService;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -74,30 +53,21 @@ public class ChatActivity extends AppCompatActivity {
 
       _getSharedPrefAndIntentExtras();
 
-      _startRepeatingTask();
+      //_startRepeatingTask();
 
       _setListeners();
-      conversationApiHelper = new ConversationApiHelper(this, currentUser);
 
       messageApiHelper = new MessageApiHelper(this, currentUser);
 
       adapter = new ChatAdapter(this, currentUser);
 
-      chatHelper =
-      new ChatHelper(this, conversationId, currentUser, _token, adapter);
+      conversationCoordinatorService = new ConversationCoordinatorService(this, currentUser);
 
-      List<User> otherUsers = chatHelper.getUsers(conversationId);
+      chatActivityHelper =
+      new ChatActivityHelper(this, conversationCoordinatorService.getConversation(conversationId), currentUser, token, adapter);
 
-      adapter.setMessageEntries(chatHelper.getMessages(conversationId));
+      chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
-      adapter.setUsers(
-         UserUtil.removeCurrentUserFromList(otherUsers, currentUser.getUserId())
-      );
-
-      chatRecView.setAdapter(adapter);
-      chatRecView.setLayoutManager(new LinearLayoutManager(this));
-
-      Toolbar mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
       mToolbar.setTitle(" ");
       setSupportActionBar(mToolbar);
 
@@ -108,15 +78,6 @@ public class ChatActivity extends AppCompatActivity {
    }
 
    private void _getSharedPrefAndIntentExtras() {
-      _token =
-      SharedPreferencesUtil.getStringPreference(
-         this,
-         SharedPreferencesConstants.USERTOKEN
-      );
-      currentUser =
-      (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
-
       conversationId =
       this.getIntent().getLongExtra(IntentConstants.CONVERSATION_ID, 0);
    }
@@ -143,6 +104,7 @@ public class ChatActivity extends AppCompatActivity {
       chatRecView = findViewById(R.id.recViewChat);
       btnSend = findViewById(R.id.btnChatSend);
       edtMess = findViewById(R.id.edtChatMes);
+      mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
    }
 
    private void _startRepeatingTask() {
@@ -153,7 +115,7 @@ public class ChatActivity extends AppCompatActivity {
             try {
                messageApiHelper.getNewMessages(
                   ChatActivity.this,
-                  _token,
+                  token,
                   currentUser,
                   () -> {
                      messageApiHelper.reloadMessages(
@@ -173,7 +135,7 @@ public class ChatActivity extends AppCompatActivity {
       runnable.run();
    }
 
-   private void _setListeners() {
+   private void _setListeners() {/*
       edtMess.setKeyBoardInputCallbackListener(
          new MyEditText.KeyBoardInputCallbackListener() {
             @Override
@@ -186,7 +148,7 @@ public class ChatActivity extends AppCompatActivity {
             }
          }
       );
-
+      */
       btnSend.setOnClickListener(
          new View.OnClickListener() {
             @Override
@@ -194,30 +156,12 @@ public class ChatActivity extends AppCompatActivity {
                String content = edtMess.getText().toString();
                if (!content.isEmpty()) {
                   try {
-                     if (otherUser != null && currentUser != null) {
-                        String encryptedContentString =
-                           EncryptionHelper.encrypt(
-                              content,
-                              CacheUtil.getPublicKeyFromCache(
-                                 ChatActivity.this,
-                                 otherUser.getEmail()
-                              )
-                           );
 
-                        String encryptedContentSenderVersion =
-                           EncryptionHelper.encrypt(
-                              content,
-                              currentUser.getPublicKey()
-                           );
-
-                        chatHelper.sendMessage(
-                           MessageTypeConstants.MESSAGE,
-                           encryptedContentSenderVersion,
-                           encryptedContentString
-                        );
+                     //TODO itt tartok!
+                     chatActivityHelper.sendMessage(content, MessageTypeConstants.MESSAGE);
 
                         edtMess.getText().clear();
-                     }
+
                   } catch (Exception e) {
                      throw new RuntimeException(e);
                   }

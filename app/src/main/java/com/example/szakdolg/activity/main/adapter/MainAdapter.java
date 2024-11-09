@@ -2,6 +2,7 @@ package com.example.szakdolg.activity.main.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
+import com.example.szakdolg.activity.chat.activity.ChatActivity;
+import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
@@ -36,7 +39,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
    MainAdapterHelper mainAdapterHelper;
 
-   public MainAdapter(Context mContext, String token, User currentUser) {
+   public MainAdapter(Context mContext, User currentUser) {
       this.context = mContext;
       this.currentUser = currentUser;
 
@@ -76,7 +79,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       MessageEntry messageEntry =
          messageCoordinatorService.getLatestMessageEntry(conversationId);
 
-      if (messageEntry == null || messageEntry.getContent() == null) {
+      if (messageEntry == null || messageEntry.getContentEncrypted() == null) {
          return;
       }
 
@@ -106,6 +109,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+               Intent intent = new Intent(
+                       context,
+                       ChatActivity.class
+               );
+               intent.putExtra(
+                       IntentConstants.CONVERSATION_ID, conversationId
+               );
+               context.startActivity(intent);
+
                conversationApiHelper.openConversation(
                   conversation.getConversationId(),
                   context,

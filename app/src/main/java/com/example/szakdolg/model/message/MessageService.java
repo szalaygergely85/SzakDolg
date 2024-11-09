@@ -2,7 +2,6 @@ package com.example.szakdolg.model.message;
 
 import android.content.Context;
 import com.example.szakdolg.activity.base.BaseService;
-import com.example.szakdolg.db.util.MessageDatabaseUtil;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
 import java.util.List;
@@ -37,8 +36,17 @@ public class MessageService extends BaseService {
       return messageEntry;
    }
 
+   public List<MessageEntry> getMessagesByConversationId(Long conversationId) {
+      List<MessageEntry>  messageEntries = messageDatabaseUtil.getAllMessageEntriesByConversationId(
+              conversationId
+      );
+      return messageEntries;
+   }
+
    private boolean _isMessageExists(Long messageId) {
       List<Long> idList = messageDatabaseUtil.getAllMessageIds();
       return idList.contains(messageId);
    }
+
+
 }

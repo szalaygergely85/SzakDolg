@@ -66,12 +66,42 @@ public class UserApiHelper {
       );
    }
 
+
+   public void getUserByUserID(
+           Long userId,
+           String token,
+            Consumer<User> onSuccess
+   ) {
+      Call<User> call = _userApiService.getUserByID(userId, token);
+      call.enqueue(
+              new Callback<User>() {
+                 @Override
+                 public void onResponse(Call<User> call, Response<User> response) {
+                    Log.e(_TAG, "" + response.code());
+                    if (response.isSuccessful()) {
+                       User user = response.body();
+                       if (user != null) {
+                          onSuccess.accept(user);
+                       }
+                    } else {
+                       Log.e(_TAG, +response.code() + " " + response.errorBody());
+                    }
+                 }
+
+                 @Override
+                 public void onFailure(Call<User> call, Throwable t) {
+                    Log.e(_TAG, "" + t.getMessage());
+                 }
+              }
+      );
+   }
+
    public void getUserByToken(
       Context context,
       Consumer<User> onSuccess,
       String token
    ) {
-      Call<User> call = _userApiService.getUser(token);
+      Call<User> call = _userApiService.getUserByID(token);
       call.enqueue(
          new Callback<User>() {
             @Override
@@ -174,7 +204,7 @@ public class UserApiHelper {
          }
       );
    }
-
+/*
    @Deprecated
    public void getAndSavePrivateKey(User user, String token, Context context) {
       Call<ResponseBody> call = _userApiService.getKeyByToken(token);
@@ -210,7 +240,7 @@ public class UserApiHelper {
          }
       );
    }
-
+*/
    @Deprecated
    public void getAndSavePublicKey(User user, String token, Runnable runnable) {
       Call<String> messagesCall = _userApiService.getPublicKeyByUserId(

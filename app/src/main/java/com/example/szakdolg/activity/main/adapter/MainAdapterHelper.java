@@ -133,7 +133,7 @@ public class MainAdapterHelper {
 			}
 */
 
-            decryptedContentString = messageEntry.getContent();
+            decryptedContentString = messageEntry.getContentEncrypted();
             return decryptedContentString;
          } catch (Exception e) {
             throw new RuntimeException(e);

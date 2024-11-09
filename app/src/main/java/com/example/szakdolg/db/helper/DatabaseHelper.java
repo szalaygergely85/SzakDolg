@@ -60,10 +60,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "conversationId INTEGER NOT NULL, " +
       "senderId INTEGER NOT NULL, " +
       "timestamp INTEGER NOT NULL, " +
-      "content TEXT NOT NULL, " +
+      "contentEncrypted TEXT NOT NULL, " +
       "isRead BOOLEAN NOT NULL, " +
       "type INTEGER NOT NULL, " +
-      "contentSenderVersion TEXT," +
+      "content TEXT," +
       "uUId TEXT" +
       ");";
 

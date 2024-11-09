@@ -12,13 +12,13 @@ public class MessageEntry implements Serializable {
 
    private Long timestamp;
 
-   private String content;
+   private String contentEncrypted;
 
    private boolean isRead;
 
    private int type;
 
-   private String contentSenderVersion;
+   private String content;
 
    public MessageEntry() {}
 
@@ -54,12 +54,12 @@ public class MessageEntry implements Serializable {
       this.timestamp = timestamp;
    }
 
-   public String getContent() {
-      return content;
+   public String getContentEncrypted() {
+      return contentEncrypted;
    }
 
-   public void setContent(String content) {
-      this.content = content;
+   public void setContentEncrypted(String contentEncrypted) {
+      this.contentEncrypted = contentEncrypted;
    }
 
    public boolean isRead() {
@@ -83,13 +83,13 @@ public class MessageEntry implements Serializable {
       long conversationId,
       long senderId,
       long timestamp,
-      String content,
+      String contentEncrypted,
       String uUId
    ) {
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
-      this.content = content;
+      this.contentEncrypted = contentEncrypted;
    }
 
    @Deprecated
@@ -98,14 +98,14 @@ public class MessageEntry implements Serializable {
       long conversationId,
       long senderId,
       long timestamp,
-      String content,
+      String contentEncrypted,
       String uUId
    ) {
       this.messageId = messageId;
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
-      this.content = content;
+      this.contentEncrypted = contentEncrypted;
    }
 
    public MessageEntry(
@@ -113,59 +113,59 @@ public class MessageEntry implements Serializable {
       Long conversationId,
       Long senderId,
       Long timestamp,
-      String content,
+      String contentEncrypted,
       boolean isRead,
       int type,
-      String contentSenderVersion
+      String content
    ) {
       this.messageId = messageId;
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
-      this.content = content;
+      this.contentEncrypted = contentEncrypted;
       this.isRead = isRead;
       this.type = type;
-      this.contentSenderVersion = contentSenderVersion;
+      this.content = content;
    }
 
    public MessageEntry(
       long conversationId,
       long senderId,
       long timestamp,
-      String content,
+      String contentEncrypted,
       int type,
-      String contentSenderVersion,
+      String content,
       String uUId
    ) {
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
-      this.content = content;
+      this.contentEncrypted = contentEncrypted;
       this.type = type;
-      this.contentSenderVersion = contentSenderVersion;
+      this.content = content;
    }
 
    public MessageEntry(
       long conversationId,
       long senderId,
-      String content,
+      String contentEncrypted,
       int type,
-      String contentSenderVersion
+      String content
    ) {
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = System.currentTimeMillis();
-      this.content = content;
+      this.contentEncrypted = contentEncrypted;
       this.type = type;
-      this.contentSenderVersion = contentSenderVersion;
+      this.content = content;
    }
 
-   public String getContentSenderVersion() {
-      return contentSenderVersion;
+   public String getContent() {
+      return content;
    }
 
-   public void setContentSenderVersion(String contentSenderVersion) {
-      this.contentSenderVersion = contentSenderVersion;
+   public void setContent(String content) {
+      this.content = content;
    }
 
    @Override
@@ -181,14 +181,14 @@ public class MessageEntry implements Serializable {
          ", timestamp=" +
          timestamp +
          ", content='" +
-         content +
+                 contentEncrypted +
          '\'' +
          ", isRead=" +
          isRead +
          ", type=" +
          type +
          ", contentSenderVersion='" +
-         contentSenderVersion +
+                 content +
          '\'' +
          '}'
       );
