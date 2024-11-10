@@ -105,6 +105,7 @@ public class ChatActivityHelper {
       } else {
          User user = users.get(0);
 
+         //TODO better key system needed.....
          String encryptedContentString = EncryptionHelper.encrypt(
             content,
             CacheUtil.getPublicKeyFromCache(context, user.getEmail())

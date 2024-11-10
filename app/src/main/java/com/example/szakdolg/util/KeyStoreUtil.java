@@ -73,7 +73,7 @@ public class KeyStoreUtil {
 
    public static String getPrivateKeyFromFile(Context context, User user) {
       File cacheDir = context.getCacheDir();
-      File privateKeyFile = new File(cacheDir, user.getEmail() + ".dat");
+      File privateKeyFile = new File(cacheDir, user.getUserId() + ".dat");
 
       String privateKey = FileUtil.readStringFromFile(privateKeyFile);
 

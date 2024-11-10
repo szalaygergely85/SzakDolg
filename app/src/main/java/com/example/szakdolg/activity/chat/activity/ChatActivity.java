@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
@@ -57,8 +58,6 @@ public class ChatActivity extends BaseActivity {
       //_startRepeatingTask();
 
       _setListeners();
-
-      messageApiHelper = new MessageApiHelper(this, currentUser);
 
       adapter = new ChatAdapter(this, currentUser);
 
@@ -115,48 +114,49 @@ public class ChatActivity extends BaseActivity {
       mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
    }
 
-   private void _startRepeatingTask() {
-      runnable =
-      new Runnable() {
-         @Override
-         public void run() {
-            try {
-               messageApiHelper.getNewMessages(
-                  ChatActivity.this,
-                  token,
-                  currentUser,
-                  () -> {
-                     messageApiHelper.reloadMessages(
-                        ChatActivity.this,
-                        conversationId,
-                        adapter,
-                        currentUser
-                     );
-                  }
-               );
-            } finally {
-               handler.postDelayed(runnable, 15000);
-            }
-         }
-      };
-
-      runnable.run();
-   }
-
-   private void _setListeners() {/*
-	edtMess.setKeyBoardInputCallbackListener(
-		new MyEditText.KeyBoardInputCallbackListener() {
-			@Override
-			public void onCommitContent(
-			InputContentInfoCompat inputContentInfo,
-			int flags,
-			Bundle opts
-			) {
-			_sendFile(inputContentInfo.getLinkUri());
+   /*
+private void _startRepeatingTask() {
+	runnable =
+	new Runnable() {
+		@Override
+		public void run() {
+			try {
+			messageApiHelper.getNewMessages(
+				ChatActivity.this,
+				token,
+				currentUser,
+				() -> {
+					messageApiHelper.reloadMessages(
+						ChatActivity.this,
+						conversationId,
+						adapter,
+						currentUser
+					);
+				}
+			);
+			} finally {
+			handler.postDelayed(runnable, 15000);
 			}
 		}
-	);
-	*/
+	};
+
+	runnable.run();
+}
+*/
+   private void _setListeners() {
+      edtMess.setKeyBoardInputCallbackListener(
+         new MyEditText.KeyBoardInputCallbackListener() {
+            @Override
+            public void onCommitContent(
+               InputContentInfoCompat inputContentInfo,
+               int flags,
+               Bundle opts
+            ) {
+               _sendFile(inputContentInfo.getLinkUri());
+            }
+         }
+      );
+
       btnSend.setOnClickListener(
          new View.OnClickListener() {
             @Override
@@ -164,7 +164,6 @@ public class ChatActivity extends BaseActivity {
                String content = edtMess.getText().toString();
                if (!content.isEmpty()) {
                   try {
-                     //TODO itt tartok!
                      chatActivityHelper.sendMessage(
                         content,
                         MessageTypeConstants.MESSAGE
