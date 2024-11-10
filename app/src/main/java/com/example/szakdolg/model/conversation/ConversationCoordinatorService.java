@@ -6,6 +6,7 @@ import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.model.conversation.entity.Conversation;
 import com.example.szakdolg.model.conversation.service.ConversationService;
 import com.example.szakdolg.model.user.entity.User;
+import java.util.List;
 
 public class ConversationCoordinatorService extends BaseService {
 
@@ -35,6 +36,22 @@ public class ConversationCoordinatorService extends BaseService {
          return null;
       } else {
          return conversation;
+      }
+   }
+
+   public List<Conversation> getAllConversations(Runnable onSuccess) {
+      List<Conversation> conversations =
+         conversationService.getAllConversations();
+      if (conversations.size() > 0) {
+         return conversations;
+      } else {
+         conversationApiHelper.getAllConversation(conversationsRemote -> {
+            conversationService.addConversations(conversationsRemote);
+            if (onSuccess != null) {
+               onSuccess.run();
+            }
+         });
+         return null;
       }
    }
 }

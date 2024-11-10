@@ -10,8 +10,8 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
+import com.example.szakdolg.model.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.conversation.service.ConversationService;
 import com.example.szakdolg.model.user.api.ContactsApiHelper;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -22,30 +22,27 @@ import java.util.List;
 public class MainActivityHelper {
 
    private Context _context;
-
-   //private MessageApiHelper _messageApiHelper = new MessageApiHelper();
    private ContactsApiHelper _contactsApiHelper = new ContactsApiHelper();
-   /*
-private ConversationApiHelper _conversationApiHelper =
-	new ConversationApiHelper();*/
    private String token;
    private User currentUser;
-   private ConversationService conversationService;
+   private ConversationCoordinatorService conversationCoordinatorService;
 
    public MainActivityHelper(Context _context, String token, User currentUser) {
       this._context = _context;
       this.token = token;
       this.currentUser = currentUser;
-      this.conversationService = new ConversationService(_context, currentUser);
+      this.conversationCoordinatorService =
+      new ConversationCoordinatorService(_context, currentUser);
    }
 
    public void setMessageBoard(RecyclerView messageBoardRecView) {
       MainAdapter mainAdapter = new MainAdapter(_context, currentUser);
 
       List<Conversation> conversationList =
-         conversationService.getAllConversations();
-
-      mainAdapter.setConversationList(conversationList);
+         conversationCoordinatorService.getAllConversations(null);
+      if (conversationList != null) {
+         mainAdapter.setConversationList(conversationList);
+      }
       messageBoardRecView.setAdapter(mainAdapter);
       messageBoardRecView.setLayoutManager(new LinearLayoutManager(_context));
    }

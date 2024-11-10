@@ -30,6 +30,7 @@ public class MessageDatabaseUtil {
          values.put("isRead", message.isRead());
          values.put("type", message.getType());
          values.put("content", message.getContent());
+         values.put("uUId", message.getUuid());
          db.insert("MessageEntry", null, values);
       } finally {
          db.close();
@@ -50,14 +51,15 @@ public class MessageDatabaseUtil {
 
          if (cursor != null && cursor.moveToFirst()) {
             // Extract the message details from the cursor using column indices
-            Long messageId = cursor.getLong(0); // Assuming messageId is the first column
-            Long convId = cursor.getLong(1); // Assuming conversationId is the second column
-            Long senderId = cursor.getLong(2); // Assuming senderId is the third column
-            Long timestamp = cursor.getLong(3); // Assuming timestamp is the fourth column
-            String contentEncrypted = cursor.getString(4); // Assuming content is the fifth column
-            boolean isRead = cursor.getInt(5) > 0; // Assuming isRead is the sixth column
-            int type = cursor.getInt(6); // Assuming type is the seventh column
-            String content = cursor.getString(7); // Assuming contentSenderVersion is the eighth column
+            Long messageId = cursor.getLong(1); // Assuming messageId is the first column
+            Long convId = cursor.getLong(2); // Assuming conversationId is the second column
+            Long senderId = cursor.getLong(3); // Assuming senderId is the third column
+            Long timestamp = cursor.getLong(4); // Assuming timestamp is the fourth column
+            String contentEncrypted = cursor.getString(5); // Assuming content is the fifth column
+            boolean isRead = cursor.getInt(6) > 0; // Assuming isRead is the sixth column
+            int type = cursor.getInt(7); // Assuming type is the seventh column
+            String content = cursor.getString(8); // Assuming contentSenderVersion is the eighth column
+            String uuid = cursor.getString(9);
 
             // Create a new MessageEntry object
             latestMessage =
@@ -69,7 +71,8 @@ public class MessageDatabaseUtil {
                contentEncrypted,
                isRead,
                type,
-               content
+               content,
+               uuid
             );
          }
       } finally {

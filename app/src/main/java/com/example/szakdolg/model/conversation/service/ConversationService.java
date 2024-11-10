@@ -37,4 +37,10 @@ public class ConversationService {
    public Conversation getConversation(Long conversationId) {
       return conversationDatabaseUtil.getConversationById(conversationId);
    }
+
+   public void addConversations(List<Conversation> conversationsRemote) {
+      for (Conversation conversation : conversationsRemote) {
+         addConversation(conversation);
+      }
+   }
 }

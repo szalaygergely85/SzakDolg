@@ -20,7 +20,7 @@ public class MessageEntry implements Serializable {
 
    private String content;
 
-   public MessageEntry() {}
+   private String uuid;
 
    public Long getMessageId() {
       return messageId;
@@ -34,7 +34,7 @@ public class MessageEntry implements Serializable {
       return conversationId;
    }
 
-   public void setConversationId(long conversationId) {
+   public void setConversationId(Long conversationId) {
       this.conversationId = conversationId;
    }
 
@@ -42,7 +42,7 @@ public class MessageEntry implements Serializable {
       return senderId;
    }
 
-   public void setSenderId(long senderId) {
+   public void setSenderId(Long senderId) {
       this.senderId = senderId;
    }
 
@@ -50,7 +50,7 @@ public class MessageEntry implements Serializable {
       return timestamp;
    }
 
-   public void setTimestamp(long timestamp) {
+   public void setTimestamp(Long timestamp) {
       this.timestamp = timestamp;
    }
 
@@ -70,94 +70,12 @@ public class MessageEntry implements Serializable {
       isRead = read;
    }
 
-   public Integer getType() {
+   public int getType() {
       return type;
    }
 
-   public void setType(Integer type) {
+   public void setType(int type) {
       this.type = type;
-   }
-
-   @Deprecated
-   public MessageEntry(
-      long conversationId,
-      long senderId,
-      long timestamp,
-      String contentEncrypted,
-      String uUId
-   ) {
-      this.conversationId = conversationId;
-      this.senderId = senderId;
-      this.timestamp = timestamp;
-      this.contentEncrypted = contentEncrypted;
-   }
-
-   @Deprecated
-   public MessageEntry(
-      Long messageId,
-      long conversationId,
-      long senderId,
-      long timestamp,
-      String contentEncrypted,
-      String uUId
-   ) {
-      this.messageId = messageId;
-      this.conversationId = conversationId;
-      this.senderId = senderId;
-      this.timestamp = timestamp;
-      this.contentEncrypted = contentEncrypted;
-   }
-
-   public MessageEntry(
-      Long messageId,
-      Long conversationId,
-      Long senderId,
-      Long timestamp,
-      String contentEncrypted,
-      boolean isRead,
-      int type,
-      String content
-   ) {
-      this.messageId = messageId;
-      this.conversationId = conversationId;
-      this.senderId = senderId;
-      this.timestamp = timestamp;
-      this.contentEncrypted = contentEncrypted;
-      this.isRead = isRead;
-      this.type = type;
-      this.content = content;
-   }
-
-   public MessageEntry(
-      long conversationId,
-      long senderId,
-      long timestamp,
-      String contentEncrypted,
-      int type,
-      String content,
-      String uUId
-   ) {
-      this.conversationId = conversationId;
-      this.senderId = senderId;
-      this.timestamp = timestamp;
-      this.contentEncrypted = contentEncrypted;
-      this.type = type;
-      this.content = content;
-   }
-
-   public MessageEntry(
-      long conversationId,
-      long senderId,
-      String contentEncrypted,
-      int type,
-      String content
-   ) {
-      this.conversationId = conversationId;
-      this.senderId = senderId;
-      this.timestamp = System.currentTimeMillis();
-      this.contentEncrypted = contentEncrypted;
-      this.type = type;
-      this.content = content;
    }
 
    public String getContent() {
@@ -168,29 +86,35 @@ public class MessageEntry implements Serializable {
       this.content = content;
    }
 
-   @Override
-   public String toString() {
-      return (
-         "MessageEntry{" +
-         "messageId=" +
-         messageId +
-         ", conversationId=" +
-         conversationId +
-         ", senderId=" +
-         senderId +
-         ", timestamp=" +
-         timestamp +
-         ", content='" +
-         contentEncrypted +
-         '\'' +
-         ", isRead=" +
-         isRead +
-         ", type=" +
-         type +
-         ", contentSenderVersion='" +
-         content +
-         '\'' +
-         '}'
-      );
+   public String getUuid() {
+      return uuid;
+   }
+
+   public void setUuid(String uuid) {
+      this.uuid = uuid;
+   }
+
+   public MessageEntry() {}
+
+   public MessageEntry(
+      Long messageId,
+      Long conversationId,
+      Long senderId,
+      Long timestamp,
+      String contentEncrypted,
+      boolean isRead,
+      int type,
+      String content,
+      String uuid
+   ) {
+      this.messageId = messageId;
+      this.conversationId = conversationId;
+      this.senderId = senderId;
+      this.timestamp = timestamp;
+      this.contentEncrypted = contentEncrypted;
+      this.isRead = isRead;
+      this.type = type;
+      this.content = content;
+      this.uuid = uuid;
    }
 }

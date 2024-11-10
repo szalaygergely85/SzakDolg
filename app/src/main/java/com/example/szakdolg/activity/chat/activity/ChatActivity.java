@@ -197,12 +197,14 @@ public class ChatActivity extends BaseActivity {
          );
 
          MessageEntry messageEntry = new MessageEntry(
+            null,
             conversationId,
             currentUser.getUserId(),
             System.currentTimeMillis(),
-            uUId + "." + FileUtil.getFileExtensionFromUri(uri),
-            MessageTypeConstants.IMAGE,
             null,
+            false,
+            MessageTypeConstants.IMAGE,
+            uUId + "." + FileUtil.getFileExtensionFromUri(uri),
             UUIDUtil.UUIDGenerator()
          );
          FileUtil.saveFileFromUri(

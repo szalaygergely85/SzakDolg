@@ -80,12 +80,18 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
          messageCoordinatorService.getLatestMessageEntry(conversationId);
 
       if (messageEntry == null || messageEntry.getContentEncrypted() == null) {
+         holder.itemView.setVisibility(View.GONE);
          return;
       }
 
       List<User> participants = mainAdapterHelper.getParticipantUser(
          conversationId
       );
+
+      if (participants == null) {
+         holder.itemView.setVisibility(View.GONE);
+         return;
+      }
 
       holder.txtName.setText(
          mainAdapterHelper.getConversationTitle(conversationId, participants)

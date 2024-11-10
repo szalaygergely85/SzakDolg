@@ -56,15 +56,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "CREATE TABLE " +
       TABLE_MESSAGE_ENTRY +
       " (" +
-      "messageId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "messageId INTEGER , " +
       "conversationId INTEGER NOT NULL, " +
       "senderId INTEGER NOT NULL, " +
       "timestamp INTEGER NOT NULL, " +
-      "contentEncrypted TEXT NOT NULL, " +
+      "contentEncrypted TEXT, " +
       "isRead BOOLEAN NOT NULL, " +
       "type INTEGER NOT NULL, " +
       "content TEXT," +
-      "uUId TEXT" +
+      "uUId TEXT NOT NULL" +
       ");";
 
    private static final String CREATE_TABLE_USER_ENTRY =

@@ -20,6 +20,7 @@ import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
 import com.example.szakdolg.model.user.util.UserUtil;
 import com.example.szakdolg.util.CacheUtil;
+import com.example.szakdolg.util.UUIDUtil;
 import java.util.List;
 import java.util.function.Consumer;
 import retrofit2.Call;
@@ -56,6 +57,7 @@ public class ConversationApiHelper extends BaseService {
                Call<Conversation> call,
                Response<Conversation> response
             ) {
+               Log.d(AppConstants.LOG_TAG, call.request().toString());
                if (response.isSuccessful()) {
                   if (response.body() != null) {
                      Conversation conversation = response.body();
@@ -96,11 +98,15 @@ public class ConversationApiHelper extends BaseService {
                      messageApiHelper.sendMessageAndOpenChat(
                         conversationId,
                         new MessageEntry(
+                           null,
                            conversationId,
                            currentUser.getUserId(),
+                           System.currentTimeMillis(),
                            message,
+                           false,
                            MessageTypeConstants.MESSAGE,
-                           message
+                           message,
+                           UUIDUtil.UUIDGenerator()
                         ),
                         token
                      );
@@ -301,6 +307,36 @@ public class ConversationApiHelper extends BaseService {
                Call<List<ConversationParticipant>> call,
                Throwable t
             ) {}
+         }
+      );
+   }
+
+   public void getAllConversation(Consumer<List<Conversation>> onSuccess) {
+      Call<List<Conversation>> call = conversationApiService.getAllConversation(
+         currentUser.getAuthToken()
+      );
+      call.enqueue(
+         new Callback<List<Conversation>>() {
+            @Override
+            public void onResponse(
+               Call<List<Conversation>> call,
+               Response<List<Conversation>> response
+            ) {
+               Log.d(AppConstants.LOG_TAG, call.request().toString());
+               if (response.isSuccessful()) {
+                  if (response.body() != null) {
+                     List<Conversation> conversations = response.body();
+                     if (conversations != null) {
+                        onSuccess.accept(conversations);
+                     }
+                  }
+               }
+            }
+
+            @Override
+            public void onFailure(Call<List<Conversation>> call, Throwable t) {
+               Log.e(AppConstants.LOG_TAG, t.getMessage());
+            }
          }
       );
    }

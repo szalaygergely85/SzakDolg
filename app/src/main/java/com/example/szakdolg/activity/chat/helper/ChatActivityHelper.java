@@ -111,10 +111,12 @@ public class ChatActivityHelper {
          );
 
          MessageEntry messageEntry = new MessageEntry(
+            null,
             conversation.getConversationId(),
             currentUser.getUserId(),
             System.currentTimeMillis(),
             encryptedContentString,
+            false,
             messageType,
             content,
             UUIDUtil.UUIDGenerator()

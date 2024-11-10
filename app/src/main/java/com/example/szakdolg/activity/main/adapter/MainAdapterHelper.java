@@ -13,7 +13,7 @@ import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.model.image.ImageCoordinatorService;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
-import com.example.szakdolg.model.user.service.UserService;
+import com.example.szakdolg.model.user.service.UserCoordinatorService;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +25,7 @@ public class MainAdapterHelper {
 
    private User currentUser;
    private Context context;
-   private UserService userService;
+   private UserCoordinatorService userCoordinatorService;
 
    private ConversationCoordinatorService conversationCoordinatorService;
 
@@ -36,7 +36,8 @@ public class MainAdapterHelper {
    public MainAdapterHelper(User currentUser, Context context) {
       this.currentUser = currentUser;
       this.context = context;
-      this.userService = new UserService(context);
+      this.userCoordinatorService =
+      new UserCoordinatorService(context, currentUser);
       this.conversationCoordinatorService =
       new ConversationCoordinatorService(context, currentUser);
       this.imageCoordinatorService =
@@ -52,7 +53,7 @@ public class MainAdapterHelper {
             .load(R.drawable.ic_group) // Load your drawable directly
             .into(image);
       } else {
-         User user = userService.getUserByUserId(
+         User user = userCoordinatorService.getUserByUserId(
             participants.get(0).getUserId(),
             currentUser
          );
@@ -69,25 +70,28 @@ public class MainAdapterHelper {
    }
 
    public List<User> getParticipantUser(Long conversationId) {
-      //TODO itt kezdtem el....
       List<ConversationParticipant> participants =
          conversationParticipantCoordinatorService.getOtherParticipants(
             conversationId
          );
       List<User> participantUsers = new ArrayList<>();
-      for (ConversationParticipant participant : participants) {
-         User user = userService.getUserByUserId(
-            participant.getUserId(),
-            currentUser
-         );
-         if (user != null) {
-            participantUsers.add(user);
-         } else {
-            return null;
+      if (participants != null) {
+         for (ConversationParticipant participant : participants) {
+            User user = userCoordinatorService.getUserByUserId(
+               participant.getUserId(),
+               currentUser
+            );
+            if (user != null) {
+               participantUsers.add(user);
+            } else {
+               return null;
+            }
          }
-      }
 
-      return participantUsers;
+         return participantUsers;
+      } else {
+         return null;
+      }
    }
 
    public String getConversationTitle(
@@ -100,14 +104,18 @@ public class MainAdapterHelper {
       if (conversationTitle != null) {
          return conversationTitle;
       } else {
-         if (participantUsers.size() == 1) {
-            return participantUsers.get(0).getDisplayName();
-         } else {
-            String title = null;
-            for (User user : participantUsers) {
-               title += user.getDisplayName() + ", ";
+         if (participantUsers != null) {
+            if (participantUsers.size() == 1) {
+               return participantUsers.get(0).getDisplayName();
+            } else {
+               String title = null;
+               for (User user : participantUsers) {
+                  title += user.getDisplayName() + ", ";
+               }
+               return title;
             }
-            return title;
+         } else {
+            return null;
          }
       }
    }

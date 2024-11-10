@@ -33,7 +33,7 @@ public class ConversationParticipantCoordinatorService extends BaseService {
          conversationParticipantApiHelper.getParticipants(
             conversationId,
             participantsRemote -> {
-               if (participantsRemote.size() > 0) {
+               if (participantsRemote != null) {
                   conversationParticipantService.addParticipants(
                      participantsRemote
                   );

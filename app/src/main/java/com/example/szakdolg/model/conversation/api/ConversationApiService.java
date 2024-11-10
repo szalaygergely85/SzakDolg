@@ -51,4 +51,9 @@ public interface ConversationApiService {
       @Path("id") long id,
       @Header("Authorization") String token
    );
+
+   @GET("conversation/get-conversations")
+   Call<List<Conversation>> getAllConversation(
+      @Header("Authorization") String token
+   );
 }
