@@ -27,7 +27,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
    private MessageApiHelper messageApiHelper;
    private final User currentUser;
-
+private ChatAdapterHelper chatAdapterHelper;
    long time;
 
    public ChatAdapter(Context mContext, User user) {
@@ -66,16 +66,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       @NonNull RecyclerView.ViewHolder holder,
       int position
    ) {
+      chatAdapterHelper = new ChatAdapterHelper(messageEntries);
+
       MessageEntry messageEntry = messageEntries.get(
          holder.getAdapterPosition()
       );
 
-      time = (messageEntry.getTimestamp());
 
-         Date date = new Date(time);
-
-         Format format = new SimpleDateFormat("HH:mm");
-         String timeForm = format.format(date);
          if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
             String decryptedContentString = null;/*
 		try {
@@ -96,12 +93,18 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		}
 */
             decryptedContentString = messageEntry.getContent();
+            Long timeStamp = messageEntry.getTimestamp();
+
+            String timeForm = chatAdapterHelper.getTime(timeStamp);
+            boolean isNewDay = chatAdapterHelper.isNewDay(position);
+            boolean shouldShowTime = chatAdapterHelper.shouldShowTime(position);
+            boolean shouldShowProfilePicture = chatAdapterHelper.shouldShowProfilePicture(position);
 
             ((TextViewHolder) holder).bind(
                   decryptedContentString,
                   timeForm,
                   messageEntry.getSenderId(),
-                  currentUser, isNewDay(messageEntries, position), time, shouldShowTime(position), shouldShowProfilePicture(position)
+                  currentUser, isNewDay, timeStamp, shouldShowTime, shouldShowProfilePicture
                );
          } else if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
             ((ImageViewHolder) holder).bind(
@@ -136,41 +139,5 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       return currentUser.getUserId().equals(messageEntry.getSenderId());
    }
 
-   private boolean isNewDay(List<MessageEntry> messageEntries, int position) {
-      if (position > 0) {
-         // Get the timestamps of the current and previous messages
-         long currentTimestamp = messageEntries.get(position).getTimestamp();
-         long previousTimestamp = messageEntries.get(position - 1).getTimestamp();
 
-         // Convert timestamps to Date objects
-         Date currentDate = new Date(currentTimestamp);
-         Date previousDate = new Date(previousTimestamp);
-
-         // Format to get only the date (year, month, and day)
-         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-         String currentDateStr = dateFormat.format(currentDate);
-         String previousDateStr = dateFormat.format(previousDate);
-
-         // If the dates are different, return true (new day)
-         return !currentDateStr.equals(previousDateStr);
-      } else {
-         // If it's the first message, it's a new day
-         return true;
-      }
-   }
-
-   private boolean shouldShowTime(int position) {
-      if (position == 0) return true; // Always show time for the first message
-      long currentTime = messageEntries.get(position).getTimestamp();
-      long previousTime = messageEntries.get(position - 1).getTimestamp();
-      return (currentTime - previousTime) > (10 * 60 * 1000); // 10 minutes in milliseconds
-   }
-
-   private boolean shouldShowProfilePicture(int position) {
-      if (position == 0) return true; // Always show picture for the first message
-      Long currentSender = messageEntries.get(position).getSenderId();
-      Long previousSender = messageEntries.get(position - 1).getSenderId();
-      return !currentSender.equals(previousSender);
-   }
 }

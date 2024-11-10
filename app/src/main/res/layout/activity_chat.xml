@@ -26,7 +26,7 @@
         android:layout_above="@id/relLayChatSendBar"
         android:layout_below="@id/chatToolbar"
         android:layout_alignParentBottom="false"
-        android:padding="5dp" />
+        android:padding="5dp"/>
 
     <RelativeLayout
         android:id="@+id/relLayChatSendBar"

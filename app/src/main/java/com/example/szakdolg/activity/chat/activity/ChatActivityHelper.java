@@ -1,4 +1,4 @@
-package com.example.szakdolg.activity.chat.helper;
+package com.example.szakdolg.activity.chat.activity;
 
 import android.content.Context;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -125,14 +125,13 @@ public class ChatActivityHelper {
 
          messageCoordinatorService.addMessage(messageEntry);
       }
-      /*
-	messageApiHelper.sendMessage(
-		context,
-		conversationId,
-		messageEntry,
-		chatAdapter,
-		authToken,
-		currentUser
-	);*/
+
+   }
+
+   public void reloadMessages(
+           ChatAdapter adapter
+   ) {
+      adapter.setMessageEntries(
+              messageCoordinatorService.getMessagesByConversationId(conversation.getConversationId()));
    }
 }

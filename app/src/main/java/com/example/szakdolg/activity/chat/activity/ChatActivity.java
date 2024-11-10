@@ -13,7 +13,6 @@ import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
-import com.example.szakdolg.activity.chat.helper.ChatActivityHelper;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.MessageTypeConstants;
 import com.example.szakdolg.model.conversation.ConversationCoordinatorService;
@@ -74,6 +73,7 @@ public class ChatActivity extends BaseActivity {
       );
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
+      chatRecView.scrollToPosition(adapter.getItemCount() - 1);
 
       mToolbar.setTitle(" ");
       setSupportActionBar(mToolbar);
@@ -168,8 +168,8 @@ private void _startRepeatingTask() {
                         content,
                         MessageTypeConstants.MESSAGE
                      );
-
                      edtMess.getText().clear();
+                     chatActivityHelper.reloadMessages(adapter);
                   } catch (Exception e) {
                      throw new RuntimeException(e);
                   }
