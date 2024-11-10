@@ -135,24 +135,4 @@ public class ChatActivityHelper {
 		currentUser
 	);*/
    }
-
-   public List<MessageEntry> getMessages(Long conversationId) {
-      return messageDatabaseUtil.getAllMessageEntriesByConversationId(
-         conversationId
-      );
-   }
-
-   public List<User> getUsers(Long conversationId) {
-      List<ConversationParticipant> participants =
-         conversationDatabaseUtil.getParticipantsByConversationId(
-            conversationId
-         );
-      List<User> users = new ArrayList<>();
-
-      for (ConversationParticipant participant : participants) {
-         users.add(userDatabaseUtil.getUserById(participant.getUserId()));
-      }
-
-      return users;
-   }
 }

@@ -2,29 +2,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:orientation="vertical"
     android:padding="5dp">
 
+    <include
+        android:id="@+id/dateSeparatorContainer"
+        layout="@layout/chat_date_separator"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
 
     <RelativeLayout
         android:id="@+id/chatRelIn"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <ImageView
+            android:id="@+id/profilePicIn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_blank_profile"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/circular_background"
+            android:contentDescription="Profile Picture"
+            android:scaleType="centerCrop" />
+
 
         <TextView
             android:id="@+id/chatText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
+            android:layout_toEndOf="@id/profilePicIn"
             android:background="@drawable/shape_bg_incoming_bubble"
             android:paddingVertical="10dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="15dp"
             android:text="This is a message to me"
-            android:textSize="17sp" />
+            android:textSize="17sp"
+            android:maxWidth="250dp" />
 
+        <!-- Time for incoming message -->
         <TextView
             android:id="@+id/chatTextTimeIn"
             android:layout_width="wrap_content"
@@ -34,15 +62,18 @@
             android:layout_marginRight="10dp"
             android:text="10.21" />
 
+
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/chatRelOut"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="15dp"
-        android:gravity="right"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
         <TextView
             android:id="@+id/chatTextFrMe"
@@ -52,9 +83,10 @@
             android:background="@drawable/shape_bg_outgoing_bubble"
             android:paddingVertical="10dp"
             android:paddingLeft="10dp"
-            android:paddingRight="30dp"
+            android:paddingRight="10dp"
             android:text="Message from me"
-            android:textSize="17sp" />
+            android:textSize="17sp"
+            android:maxWidth="250dp"/>
 
         <TextView
             android:id="@+id/chatTextTimeOut"
