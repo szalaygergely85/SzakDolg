@@ -55,6 +55,9 @@ public class MessageCoordinatorService extends BaseService {
 
    public void addMessage(MessageEntry messageEntry) {
       messageService.addMessage(messageEntry);
-      messageApiHelper.addMessage(messageEntry, null);
+      messageApiHelper.addMessage(messageEntry, entry -> {
+         entry.setUploaded(true);
+         messageService.updateMessage(entry);
+      });
    }
 }

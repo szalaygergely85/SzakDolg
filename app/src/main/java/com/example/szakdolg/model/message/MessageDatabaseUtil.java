@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 import com.example.szakdolg.db.helper.DatabaseHelper;
 import com.example.szakdolg.model.message.entity.MessageEntry;
 import com.example.szakdolg.model.user.entity.User;
@@ -30,7 +32,7 @@ public class MessageDatabaseUtil {
          values.put("isRead", message.isRead());
          values.put("type", message.getType());
          values.put("content", message.getContent());
-         values.put("uUId", message.getUuid());
+         values.put("uUId", message.getUuId());
          db.insert("MessageEntry", null, values);
       } finally {
          db.close();
@@ -60,6 +62,7 @@ public class MessageDatabaseUtil {
             int type = cursor.getInt(7); // Assuming type is the seventh column
             String content = cursor.getString(8); // Assuming contentSenderVersion is the eighth column
             String uuid = cursor.getString(9);
+            boolean isUploaded = cursor.getInt(10) > 0;
 
             // Create a new MessageEntry object
             latestMessage =
@@ -72,7 +75,8 @@ public class MessageDatabaseUtil {
                isRead,
                type,
                content,
-               uuid
+               uuid,
+                    isUploaded
             );
          }
       } finally {
@@ -133,57 +137,42 @@ public class MessageDatabaseUtil {
       return messages;
    }
 
-   public List<MessageEntry> getAllMessageEntriesByConversationId(
-      Long conversationId
-   ) {
+   public List<MessageEntry> getAllMessageEntriesByConversationId(Long conversationId) {
       List<MessageEntry> messages = new ArrayList<>();
 
       // Try-with-resources ensures that resources are closed automatically
       try (
-         SQLiteDatabase db = dbHelper.getReadableDatabase();
-         Cursor cursor = db.query(
-            "MessageEntry",
-            null,
-            "conversationId = ?",
-            new String[] { String.valueOf(conversationId) },
-            null,
-            null,
-            null
-         )
+              SQLiteDatabase db = dbHelper.getReadableDatabase();
+              Cursor cursor = db.query(
+                      "MessageEntry", // Table name
+                      null,           // Columns (null fetches all columns)
+                      "conversationId = ?", // WHERE clause
+                      new String[]{String.valueOf(conversationId)}, // WHERE arguments
+                      null,           // GROUP BY
+                      null,           // HAVING
+                      null            // ORDER BY
+              )
       ) {
-         while (cursor != null && cursor.moveToNext()) {
-            MessageEntry message = new MessageEntry();
-            message.setMessageId(
-               cursor.getLong(cursor.getColumnIndexOrThrow("messageId"))
-            );
-            message.setConversationId(
-               cursor.getLong(cursor.getColumnIndexOrThrow("conversationId"))
-            );
-            message.setSenderId(
-               cursor.getLong(cursor.getColumnIndexOrThrow("senderId"))
-            );
-            message.setTimestamp(
-               cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
-            );
-            message.setContentEncrypted(
-               cursor.getString(
-                  cursor.getColumnIndexOrThrow("contentEncrypted")
-               )
-            );
-            message.setRead(
-               cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
-            );
-            message.setType(
-               cursor.getInt(cursor.getColumnIndexOrThrow("type"))
-            );
-            message.setContent(
-               cursor.getString(cursor.getColumnIndexOrThrow("content"))
-            );
+         if (cursor != null) {
+            while (cursor.moveToNext()) {
+               MessageEntry message = new MessageEntry();
 
-            messages.add(message);
+               // Assign values from the cursor to the message object
+               message.setMessageId(cursor.getLong(cursor.getColumnIndexOrThrow("messageId")));
+               message.setConversationId(cursor.getLong(cursor.getColumnIndexOrThrow("conversationId")));
+               message.setSenderId(cursor.getLong(cursor.getColumnIndexOrThrow("senderId")));
+               message.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
+               message.setContentEncrypted(cursor.getString(cursor.getColumnIndexOrThrow("contentEncrypted")));
+               message.setRead(cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1); // SQLite BOOLEAN mapped as INTEGER
+               message.setType(cursor.getInt(cursor.getColumnIndexOrThrow("type")));
+               message.setContent(cursor.getString(cursor.getColumnIndexOrThrow("content")));
+               message.setUploaded(cursor.getInt(cursor.getColumnIndexOrThrow("isUploaded")) == 1);
+
+               messages.add(message);
+            }
          }
       } catch (Exception e) {
-         e.printStackTrace();
+         e.printStackTrace(); // Logging exceptions; consider using a logger
       }
 
       return messages;
@@ -234,6 +223,7 @@ public class MessageDatabaseUtil {
 
    public void updateMessageEntry(MessageEntry message) {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
+
       try {
          ContentValues values = new ContentValues();
          values.put("messageId", message.getMessageId());
@@ -241,18 +231,27 @@ public class MessageDatabaseUtil {
          values.put("senderId", message.getSenderId());
          values.put("timestamp", message.getTimestamp());
          values.put("contentEncrypted", message.getContentEncrypted());
-         values.put("isRead", message.isRead());
+         values.put("isRead", message.isRead() ? 1 : 0); // Convert boolean to SQLite-compatible integer
          values.put("type", message.getType());
          values.put("content", message.getContent());
+         values.put("isUploaded", message.isUploaded() ? 1 : 0); // Handle isUploaded column
 
-         db.update(
-            "MessageEntry",
-            values,
-            "messageId = ?",
-            new String[] { String.valueOf(message.getMessageId()) }
+         // Perform update using uUId as the unique identifier
+         int rowsUpdated = db.update(
+                 "MessageEntry",
+                 values,
+                 "uUId = ?", // WHERE clause
+                 new String[]{message.getUuId()} // WHERE arguments
          );
+
+         if (rowsUpdated == 0) {
+            // Handle the case where no rows were updated (optional)
+            Log.w("Database", "No rows updated for uUId: " + message.getUuId());
+         }
+      } catch (Exception e) {
+         Log.e("DatabaseError", "Failed to update message entry", e);
       } finally {
-         db.close();
+         db.close(); // Ensure the database is closed to avoid leaks
       }
    }
 
@@ -267,5 +266,43 @@ public class MessageDatabaseUtil {
       } finally {
          db.close();
       }
+   }
+   public MessageEntry getMessageByUuid(String uuid) {
+      MessageEntry message = null;
+
+      SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+      try (
+              Cursor cursor = db.query(
+                      "MessageEntry", // Table name
+                      null,           // Columns (null fetches all columns)
+                      "uUId = ?",     // WHERE clause
+                      new String[]{uuid}, // WHERE arguments
+                      null,           // GROUP BY
+                      null,           // HAVING
+                      null            // ORDER BY
+              )
+      ) {
+         if (cursor != null && cursor.moveToFirst()) {
+            // Create and populate the MessageEntry object
+            message = new MessageEntry();
+            message.setMessageId(cursor.getLong(cursor.getColumnIndexOrThrow("messageId")));
+            message.setConversationId(cursor.getLong(cursor.getColumnIndexOrThrow("conversationId")));
+            message.setSenderId(cursor.getLong(cursor.getColumnIndexOrThrow("senderId")));
+            message.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
+            message.setContentEncrypted(cursor.getString(cursor.getColumnIndexOrThrow("contentEncrypted")));
+            message.setRead(cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1); // SQLite BOOLEAN
+            message.setType(cursor.getInt(cursor.getColumnIndexOrThrow("type")));
+            message.setContent(cursor.getString(cursor.getColumnIndexOrThrow("content")));
+            message.setUploaded(cursor.getInt(cursor.getColumnIndexOrThrow("isUploaded")) == 1); // SQLite BOOLEAN
+            message.setUuId(cursor.getString(cursor.getColumnIndexOrThrow("uUId")));
+         }
+      } catch (Exception e) {
+         Log.e("DatabaseError", "Failed to retrieve message by uUId: " + uuid, e);
+      } finally {
+         db.close(); // Ensure the database is closed to avoid leaks
+      }
+
+      return message;
    }
 }

@@ -65,7 +65,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "isRead BOOLEAN NOT NULL, " +
       "type INTEGER NOT NULL, " +
       "content TEXT," +
-      "uUId TEXT NOT NULL" +
+      "uUId TEXT NOT NULL," +
+              "isUploaded BOOLEAN DEFAULT false" +
       ");";
 
    private static final String CREATE_TABLE_USER_ENTRY =

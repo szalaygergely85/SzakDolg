@@ -295,7 +295,7 @@ public class MessageApiHelper {
                if (response.isSuccessful()) {
                   if (response.body() != null) {
                      MessageEntry message = response.body();
-                     if (message != null) {
+                     if (message != null && onSuccess != null) {
                         onSuccess.accept(message);
                      }
                   }

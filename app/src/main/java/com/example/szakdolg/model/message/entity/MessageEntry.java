@@ -22,6 +22,9 @@ public class MessageEntry implements Serializable {
 
    private String uuid;
 
+   private boolean isUploaded;
+
+
    public Long getMessageId() {
       return messageId;
    }
@@ -86,12 +89,20 @@ public class MessageEntry implements Serializable {
       this.content = content;
    }
 
-   public String getUuid() {
+   public String getUuId() {
       return uuid;
    }
 
-   public void setUuid(String uuid) {
+   public void setUuId(String uuid) {
       this.uuid = uuid;
+   }
+
+   public boolean isUploaded() {
+      return isUploaded;
+   }
+
+   public void setUploaded(boolean uploaded) {
+      isUploaded = uploaded;
    }
 
    public MessageEntry() {}
@@ -116,5 +127,28 @@ public class MessageEntry implements Serializable {
       this.type = type;
       this.content = content;
       this.uuid = uuid;
+   }
+   public MessageEntry(
+           Long messageId,
+           Long conversationId,
+           Long senderId,
+           Long timestamp,
+           String contentEncrypted,
+           boolean isRead,
+           int type,
+           String content,
+           String uuid,
+           boolean isUploaded
+   ) {
+      this.messageId = messageId;
+      this.conversationId = conversationId;
+      this.senderId = senderId;
+      this.timestamp = timestamp;
+      this.contentEncrypted = contentEncrypted;
+      this.isRead = isRead;
+      this.type = type;
+      this.content = content;
+      this.uuid = uuid;
+      this.isUploaded = isUploaded;
    }
 }
