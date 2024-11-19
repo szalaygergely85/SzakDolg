@@ -6,14 +6,14 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.MessageTypeConstants;
-import com.example.szakdolg.model.conversation.ConversationCoordinatorService;
-import com.example.szakdolg.model.conversation.ConversationParticipantCoordinatorService;
-import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
-import com.example.szakdolg.model.image.ImageCoordinatorService;
-import com.example.szakdolg.model.message.entity.MessageEntry;
-import com.example.szakdolg.model.user.entity.User;
-import com.example.szakdolg.model.user.service.UserCoordinatorService;
+import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
+import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
+import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.models.image.ImageCoordinatorService;
+import com.example.szakdolg.models.message.entity.MessageEntry;
+import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.service.UserCoordinatorService;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -126,19 +126,19 @@ public class MainAdapterHelper {
 
          try {
             /*
-			if (isSenderLoggedUser(messageEntry)) {
-				decryptedContentString =
-				EncryptionHelper.decrypt(
-					messageEntry.getContentSenderVersion(),
-					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-				);
-			} else {
-				decryptedContentString =
-				EncryptionHelper.decrypt(
-					messageEntry.getContent(),
-					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-				);
-			}
+            if (isSenderLoggedUser(messageEntry)) {
+                decryptedContentString =
+                EncryptionHelper.decrypt(
+                    messageEntry.getContentSenderVersion(),
+                    KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
+                );
+            } else {
+                decryptedContentString =
+                EncryptionHelper.decrypt(
+                    messageEntry.getContent(),
+                    KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
+                );
+            }
 */
 
             decryptedContentString = messageEntry.getContentEncrypted();

@@ -16,7 +16,7 @@ import com.example.szakdolg.activity.login.LoginActivity;
 import com.example.szakdolg.activity.main.MainActivity;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,67 +38,67 @@ public class ProfileActivity extends AppCompatActivity {
 
    private String userToken;/*
 private ConversationApiHelper conversationApiHelper =
-	new ConversationApiHelper();*/
+    new ConversationApiHelper();*/
 
    private SharedPreferencesUtil sharedPreferencesUtil;
 
    /*
-	public void setImageView(String uID, Context context) {
+    public void setImageView(String uID, Context context) {
 
-		Log.d(TAG, "getPicURl: " + uID);
+        Log.d(TAG, "getPicURl: " + uID);
 
-		Uri picUri = FileHandling.getUri(uID, context);
-		if (picUri == null) {
-			try {
-				storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
-					@Override
-					public void onComplete(@NonNull Task<StorageMetadata> task) {
-						if (task.isSuccessful()) {
-							storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-								@Override
-								public void onSuccess(Uri uri) {
-									Log.d(TAG, "getPicURl: " + uri);
-									Glide.with(context)
-											.asBitmap()
-											.load(uri)
-											.into(new CustomTarget<Bitmap>() {
-												@Override
-												public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-													try {
-														FileHandling.saveImageFile(uID, resource, ProfileActivity.this);
-													} catch (IOException e) {
-														e.printStackTrace();
-													}
-												}
+        Uri picUri = FileHandling.getUri(uID, context);
+        if (picUri == null) {
+            try {
+                storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
+                    @Override
+                    public void onComplete(@NonNull Task<StorageMetadata> task) {
+                        if (task.isSuccessful()) {
+                            storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.d(TAG, "getPicURl: " + uri);
+                                    Glide.with(context)
+                                            .asBitmap()
+                                            .load(uri)
+                                            .into(new CustomTarget<Bitmap>() {
+                                                @Override
+                                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                                    try {
+                                                        FileHandling.saveImageFile(uID, resource, ProfileActivity.this);
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
 
-												@Override
-												public void onLoadCleared(@Nullable Drawable placeholder) {
-												}
-											});
-									Glide.with(context)
-											.asBitmap()
-											.load(uri)
-											.into(imageView);
-								}
-							}).addOnFailureListener(new OnFailureListener() {
-								@Override
-								public void onFailure(@NonNull Exception exception) {
-									Log.d(TAG, "onFailure: " + exception);
-								}
-							});
-						}
-					}
-				});
+                                                @Override
+                                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                                }
+                                            });
+                                    Glide.with(context)
+                                            .asBitmap()
+                                            .load(uri)
+                                            .into(imageView);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    Log.d(TAG, "onFailure: " + exception);
+                                }
+                            });
+                        }
+                    }
+                });
 
-			} catch (Exception e) {
-				Log.d(TAG, "setImageView: " + e);
-			}
+            } catch (Exception e) {
+                Log.d(TAG, "setImageView: " + e);
+            }
 
-		} else {
-			Log.d(TAG, "setImageView: " + picUri);
-			imageView.setImageURI(FileHandling.getUri(uID, context));
-		}
-	}
+        } else {
+            Log.d(TAG, "setImageView: " + picUri);
+            imageView.setImageURI(FileHandling.getUri(uID, context));
+        }
+    }
 */
 
    private void initView() {
@@ -238,12 +238,12 @@ private ConversationApiHelper conversationApiHelper =
                participants.add(userContact);
                participants.add(currentUser);
                /*conversationApiHelper.openConversation(
-				ProfileActivity.this,
-				null,
-				participants,
-				currentUser,
-				userToken
-			);*/
+                ProfileActivity.this,
+                null,
+                participants,
+                currentUser,
+                userToken
+            );*/
             }
          }
       );

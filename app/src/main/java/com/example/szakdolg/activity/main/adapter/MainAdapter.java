@@ -16,12 +16,12 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
-import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
-import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.message.MessageCoordinatorService;
-import com.example.szakdolg.model.message.entity.MessageEntry;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
+import com.example.szakdolg.models.conversation.db.ConversationDatabaseUtil;
+import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.message.MessageCoordinatorService;
+import com.example.szakdolg.models.message.entity.MessageEntry;
+import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -2,12 +2,12 @@ package com.example.szakdolg.cache;
 
 import android.content.Context;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
-import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
-import com.example.szakdolg.model.message.MessageDatabaseUtil;
-import com.example.szakdolg.model.message.entity.MessageEntry;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.conversation.db.ConversationDatabaseUtil;
+import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.models.message.MessageDatabaseUtil;
+import com.example.szakdolg.models.message.entity.MessageEntry;
+import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 

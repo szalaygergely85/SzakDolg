@@ -7,8 +7,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
-import com.example.szakdolg.model.user.entity.User;
-
+import com.example.szakdolg.models.user.entity.User;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,34 +39,36 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
    }
 
    public void bind(
-           String decryptedContentString,
-           String timeForm,
-           Long senderId,
-           User currentUser,
-           boolean showDateSeparator,
-           long time,
-           boolean shouldShowTime, boolean shouldShowProfilePicture) {
+      String decryptedContentString,
+      String timeForm,
+      Long senderId,
+      User currentUser,
+      boolean showDateSeparator,
+      long time,
+      boolean shouldShowTime,
+      boolean shouldShowProfilePicture
+   ) {
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       String dateString = dateFormat.format(new Date(time));
       txtTimeOut.setText(timeForm);
       txtTimeIn.setText(timeForm);
 
-      if (shouldShowProfilePicture){
+      if (shouldShowProfilePicture) {
          imageView.setVisibility(View.VISIBLE);
-
-      }else{
+      } else {
          imageView.setVisibility(View.GONE);
-         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) txtText.getLayoutParams();
+         RelativeLayout.LayoutParams params =
+            (RelativeLayout.LayoutParams) txtText.getLayoutParams();
 
          params.setMarginStart(50);
 
          txtText.setLayoutParams(params);
       }
 
-      if (shouldShowTime){
+      if (shouldShowTime) {
          txtTimeOut.setVisibility(View.VISIBLE);
          txtTimeIn.setVisibility(View.VISIBLE);
-      }else{
+      } else {
          txtTimeOut.setVisibility(View.GONE);
          txtTimeIn.setVisibility(View.GONE);
       }
@@ -84,7 +85,7 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
 
       if (showDateSeparator) {
          dateSeparator.setVisibility(View.VISIBLE); // Show the separator
-         dateTextView.setText(dateString);  // Set the date string
+         dateTextView.setText(dateString); // Set the date string
       } else {
          dateSeparator.setVisibility(View.GONE); // Hide the separator
       }

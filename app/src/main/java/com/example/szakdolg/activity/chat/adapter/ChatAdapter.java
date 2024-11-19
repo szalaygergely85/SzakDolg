@@ -10,30 +10,28 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.viewholder.ImageViewHolder;
 import com.example.szakdolg.activity.chat.viewholder.TextViewHolder;
 import com.example.szakdolg.constans.MessageTypeConstants;
-import com.example.szakdolg.model.message.api.MessageApiHelper;
-import com.example.szakdolg.model.message.entity.MessageEntry;
-import com.example.szakdolg.model.user.entity.User;
-import java.text.Format;
-import java.text.SimpleDateFormat;
+import com.example.szakdolg.models.message.api.MessageApiHelper;
+import com.example.szakdolg.models.message.entity.MessageEntry;
+import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-   private static final String TAG = "ChatAdapter";
    private final Context mContext;
    private List<MessageEntry> messageEntries = new ArrayList<>();
 
    private MessageApiHelper messageApiHelper;
    private final User currentUser;
-private ChatAdapterHelper chatAdapterHelper;
-   long time;
 
-   public ChatAdapter(Context mContext, User user) {
+   private RecyclerView chatRecView;
+   private ChatAdapterHelper chatAdapterHelper;
+
+   public ChatAdapter(Context mContext, User user, RecyclerView chatRecView) {
       this.mContext = mContext;
       this.currentUser = user;
       this.messageApiHelper = new MessageApiHelper(mContext, user);
+      this.chatRecView = chatRecView;
    }
 
    @Override
@@ -72,53 +70,57 @@ private ChatAdapterHelper chatAdapterHelper;
          holder.getAdapterPosition()
       );
 
+      if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
+         String decryptedContentString = null;/*
+        try {
+            if (isSenderLoggedUser(messageEntry)) {
 
-         if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
-            String decryptedContentString = null;/*
-		try {
-			if (isSenderLoggedUser(messageEntry)) {
+            decryptedContentString =
 
-			decryptedContentString =
-
-					messageEntry.getContent();
-			} else {
-			decryptedContentString =
-			EncryptionHelper.decrypt(
-				messageEntry.getContentEncrypted(),
-				KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
-			);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+                    messageEntry.getContent();
+            } else {
+            decryptedContentString =
+            EncryptionHelper.decrypt(
+                messageEntry.getContentEncrypted(),
+                KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
+            );
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 */
-            decryptedContentString = messageEntry.getContent();
-            Long timeStamp = messageEntry.getTimestamp();
+         decryptedContentString = messageEntry.getContent();
+         Long timeStamp = messageEntry.getTimestamp();
 
-            String timeForm = chatAdapterHelper.getTime(timeStamp);
-            boolean isNewDay = chatAdapterHelper.isNewDay(position);
-            boolean shouldShowTime = chatAdapterHelper.shouldShowTime(position);
-            boolean shouldShowProfilePicture = chatAdapterHelper.shouldShowProfilePicture(position);
+         String timeForm = chatAdapterHelper.getTime(timeStamp);
+         boolean isNewDay = chatAdapterHelper.isNewDay(position);
+         boolean shouldShowTime = chatAdapterHelper.shouldShowTime(position);
+         boolean shouldShowProfilePicture =
+            chatAdapterHelper.shouldShowProfilePicture(position);
 
-            ((TextViewHolder) holder).bind(
-                  decryptedContentString,
-                  timeForm,
-                  messageEntry.getSenderId(),
-                  currentUser, isNewDay, timeStamp, shouldShowTime, shouldShowProfilePicture
-               );
-         } else if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
-            ((ImageViewHolder) holder).bind(
-                  messageEntry.getContentEncrypted(),
-                  mContext,
-                  () ->
-                     messageApiHelper.reloadMessages(
-                        mContext,
-                        messageEntry.getConversationId(),
-                        this,
-                        null
-                     )
-               );
-         }
+         ((TextViewHolder) holder).bind(
+               decryptedContentString,
+               timeForm,
+               messageEntry.getSenderId(),
+               currentUser,
+               isNewDay,
+               timeStamp,
+               shouldShowTime,
+               shouldShowProfilePicture
+            );
+      } else if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
+         ((ImageViewHolder) holder).bind(
+               messageEntry.getContentEncrypted(),
+               mContext,
+               () ->
+                  messageApiHelper.reloadMessages(
+                     mContext,
+                     messageEntry.getConversationId(),
+                     this,
+                     null
+                  )
+            );
+      }
    }
 
    @Override
@@ -129,15 +131,10 @@ private ChatAdapterHelper chatAdapterHelper;
    public void setMessageEntries(List<MessageEntry> messageEntries) {
       this.messageEntries = messageEntries;
       notifyDataSetChanged();
+      chatRecView.scrollToPosition(getItemCount() - 1);
    }
 
    public void setUsers(List<User> users) {
       notifyDataSetChanged();
    }
-
-   private boolean isSenderLoggedUser(MessageEntry messageEntry) {
-      return currentUser.getUserId().equals(messageEntry.getSenderId());
-   }
-
-
 }

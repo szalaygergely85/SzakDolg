@@ -1,7 +1,7 @@
 package com.example.szakdolg.activity.base;
 
 import android.content.Context;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.user.entity.User;
 
 public class BaseService {
 

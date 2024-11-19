@@ -10,7 +10,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 

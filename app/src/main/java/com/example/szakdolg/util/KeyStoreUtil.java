@@ -2,7 +2,7 @@ package com.example.szakdolg.util;
 
 import android.content.Context;
 import android.util.Log;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.user.entity.User;
 import java.io.File;
 import java.security.KeyFactory;
 import java.security.KeyPair;

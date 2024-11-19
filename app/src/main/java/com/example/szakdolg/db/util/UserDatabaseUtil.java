@@ -5,8 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import com.example.szakdolg.db.helper.DatabaseHelper;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.db.DatabaseHelper;
+import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 

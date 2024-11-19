@@ -7,7 +7,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.mockito.Mockito.*;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
@@ -17,7 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.login.LoginActivity;
-import com.example.szakdolg.model.user.api.UserApiHelper;
+import com.example.szakdolg.models.user.api.UserApiHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

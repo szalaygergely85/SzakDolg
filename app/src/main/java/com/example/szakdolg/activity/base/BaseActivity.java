@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.activity.login.LoginActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 
 public class BaseActivity extends AppCompatActivity {

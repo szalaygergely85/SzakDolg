@@ -1,20 +1,19 @@
 package com.example.szakdolg.activity.chat.activity;
 
-import android.content.Context;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.model.conversation.ConversationParticipantCoordinatorService;
-import com.example.szakdolg.model.conversation.db.ConversationDatabaseUtil;
-import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.conversation.entity.ConversationParticipant;
-import com.example.szakdolg.model.message.MessageCoordinatorService;
-import com.example.szakdolg.model.message.MessageDatabaseUtil;
-import com.example.szakdolg.model.message.api.MessageApiHelper;
-import com.example.szakdolg.model.message.entity.MessageEntry;
-import com.example.szakdolg.model.user.entity.User;
-import com.example.szakdolg.model.user.service.UserCoordinatorService;
+import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
+import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
+import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.models.message.MessageCoordinatorService;
+import com.example.szakdolg.models.message.entity.MessageEntry;
+import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.service.UserCoordinatorService;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.UUIDUtil;
@@ -25,18 +24,9 @@ public class ChatActivityHelper {
 
    private Conversation conversation;
    private User currentUser;
+   private AppCompatActivity context;
 
-   private String authToken;
-   private ChatAdapter chatAdapter;
-   private ConversationDatabaseUtil conversationDatabaseUtil;
-
-   private UserDatabaseUtil userDatabaseUtil;
-
-   private MessageDatabaseUtil messageDatabaseUtil;
-
-   private Context context;
-
-   private MessageApiHelper messageApiHelper;
+   private ConversationCoordinatorService conversationCoordinatorService;
    private ConversationParticipantCoordinatorService conversationParticipantCoordinatorService;
 
    private UserCoordinatorService userCoordinatorService;
@@ -44,22 +34,16 @@ public class ChatActivityHelper {
    private MessageCoordinatorService messageCoordinatorService;
 
    public ChatActivityHelper(
-      Context context,
-      Conversation conversation,
-      User currentUser,
-      String authToken,
-      ChatAdapter chatAdapter
+      AppCompatActivity context,
+      Long conversationId,
+      User currentUser
    ) {
       this.context = context;
-      this.conversation = conversation;
+      this.conversationCoordinatorService =
+      new ConversationCoordinatorService(context, currentUser);
+      this.conversation =
+      conversationCoordinatorService.getConversation(conversationId);
       this.currentUser = currentUser;
-      this.authToken = authToken;
-      this.chatAdapter = chatAdapter;
-      this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
-      this.userDatabaseUtil = new UserDatabaseUtil(context, currentUser);
-      this.conversationDatabaseUtil =
-      new ConversationDatabaseUtil(context, currentUser);
-      this.messageApiHelper = new MessageApiHelper(context, currentUser);
       this.conversationParticipantCoordinatorService =
       new ConversationParticipantCoordinatorService(context, currentUser);
       this.userCoordinatorService =
@@ -96,6 +80,7 @@ public class ChatActivityHelper {
 
       chatRecView.setAdapter(adapter);
       chatRecView.setLayoutManager(new LinearLayoutManager(context));
+      chatRecView.scrollToPosition(adapter.getItemCount() - 1);
    }
 
    public void sendMessage(String content, int messageType) {
@@ -125,13 +110,52 @@ public class ChatActivityHelper {
 
          messageCoordinatorService.addMessage(messageEntry);
       }
-
    }
 
-   public void reloadMessages(
-           ChatAdapter adapter
-   ) {
+   public void reloadMessages(ChatAdapter adapter) {
       adapter.setMessageEntries(
-              messageCoordinatorService.getMessagesByConversationId(conversation.getConversationId()));
+         messageCoordinatorService.getMessagesByConversationId(
+            conversation.getConversationId()
+         )
+      );
    }
+
+   public void setToolbar(Toolbar mToolbar) {
+      mToolbar.setTitle(" ");
+      context.setSupportActionBar(mToolbar);
+
+      ActionBar actionBar = context.getSupportActionBar();
+      if (actionBar != null) {
+         actionBar.setDisplayHomeAsUpEnabled(true);
+      }
+   }
+   /*
+public void _startRepeatingTask() {
+    runnable =
+    new Runnable() {
+        @Override
+        public void run() {
+            try {
+            messageApiHelper.getNewMessages(
+                ChatActivity.this,
+                token,
+                currentUser,
+                () -> {
+                    messageApiHelper.reloadMessages(
+                        ChatActivity.this,
+                        conversationId,
+                        adapter,
+                        currentUser
+                    );
+                }
+            );
+            } finally {
+            handler.postDelayed(runnable, 15000);
+            }
+        }
+    };
+
+    runnable.run();
+}
+*/
 }

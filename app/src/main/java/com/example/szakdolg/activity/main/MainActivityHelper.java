@@ -10,10 +10,10 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.model.conversation.ConversationCoordinatorService;
-import com.example.szakdolg.model.conversation.entity.Conversation;
-import com.example.szakdolg.model.user.api.ContactsApiHelper;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
+import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.user.api.ContactsApiHelper;
+import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -59,25 +59,25 @@ public class MainActivityHelper {
                @Override
                public void run() {
                   /*  _messageApiHelper.checkCachedMessages(
-					token,
-					_context,
-					currentUser
-				);*/
+                    token,
+                    _context,
+                    currentUser
+                );*/
                   _contactsApiHelper.checkCachedContacts(
                      token,
                      _context,
                      currentUser
                   );
                   /* _conversationApiHelper.checkCachedConversation(
-					token,
-					_context,
-					currentUser
-				);*/
+                    token,
+                    _context,
+                    currentUser
+                );*/
                   /* _conversationApiHelper.checkCachedConversationParticipant(
-					token,
-					_context,
-					currentUser
-				);*/
+                    token,
+                    _context,
+                    currentUser
+                );*/
                }
             }
          )

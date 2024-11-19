@@ -4,12 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import com.example.szakdolg.model.image.ImageCoordinatorService;
-import com.example.szakdolg.model.image.constans.ImageConstans;
-import com.example.szakdolg.model.image.entity.ImageEntity;
-import com.example.szakdolg.model.image.util.ImageUtil;
-import com.example.szakdolg.model.user.entity.User;
-import com.example.szakdolg.model.user.service.UserService;
+import com.example.szakdolg.models.image.ImageCoordinatorService;
+import com.example.szakdolg.models.image.constans.ImageConstans;
+import com.example.szakdolg.models.image.entity.ImageEntity;
+import com.example.szakdolg.models.image.util.ImageUtil;
+import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.service.UserService;
 import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 

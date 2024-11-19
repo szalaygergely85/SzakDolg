@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,10 +14,9 @@ import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.MessageTypeConstants;
-import com.example.szakdolg.model.conversation.ConversationCoordinatorService;
-import com.example.szakdolg.model.file.api.FileApiHelper;
-import com.example.szakdolg.model.message.api.MessageApiHelper;
-import com.example.szakdolg.model.message.entity.MessageEntry;
+import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
+import com.example.szakdolg.models.file.api.FileApiHelper;
+import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.util.FileUtil;
 import com.example.szakdolg.util.UUIDUtil;
 import java.io.File;
@@ -31,13 +29,9 @@ public class ChatActivity extends BaseActivity {
    private Button btnSend;
    private MyEditText edtMess;
 
-   private MessageApiHelper messageApiHelper;
    private FileApiHelper fileApiHelper = new FileApiHelper();
 
-   private ActionBar actionBar;
-
    private Handler handler = new Handler();
-   private Runnable runnable;
 
    private ChatActivityHelper chatActivityHelper;
 
@@ -52,39 +46,23 @@ public class ChatActivity extends BaseActivity {
 
       _initView();
 
-      _getSharedPrefAndIntentExtras();
+      _getIntentExtras();
 
       //_startRepeatingTask();
 
       _setListeners();
 
-      adapter = new ChatAdapter(this, currentUser);
-
-      conversationCoordinatorService =
-      new ConversationCoordinatorService(this, currentUser);
+      adapter = new ChatAdapter(this, currentUser, chatRecView);
 
       chatActivityHelper =
-      new ChatActivityHelper(
-         this,
-         conversationCoordinatorService.getConversation(conversationId),
-         currentUser,
-         token,
-         adapter
-      );
+      new ChatActivityHelper(this, conversationId, currentUser);
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
-      chatRecView.scrollToPosition(adapter.getItemCount() - 1);
 
-      mToolbar.setTitle(" ");
-      setSupportActionBar(mToolbar);
-
-      actionBar = getSupportActionBar();
-      if (actionBar != null) {
-         actionBar.setDisplayHomeAsUpEnabled(true);
-      }
+      chatActivityHelper.setToolbar(mToolbar);
    }
 
-   private void _getSharedPrefAndIntentExtras() {
+   private void _getIntentExtras() {
       conversationId =
       this.getIntent().getLongExtra(IntentConstants.CONVERSATION_ID, 0);
    }
@@ -103,8 +81,6 @@ public class ChatActivity extends BaseActivity {
    @Override
    protected void onDestroy() {
       super.onDestroy();
-
-      _stopRepeatingTask();
    }
 
    private void _initView() {
@@ -114,35 +90,6 @@ public class ChatActivity extends BaseActivity {
       mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
    }
 
-   /*
-private void _startRepeatingTask() {
-	runnable =
-	new Runnable() {
-		@Override
-		public void run() {
-			try {
-			messageApiHelper.getNewMessages(
-				ChatActivity.this,
-				token,
-				currentUser,
-				() -> {
-					messageApiHelper.reloadMessages(
-						ChatActivity.this,
-						conversationId,
-						adapter,
-						currentUser
-					);
-				}
-			);
-			} finally {
-			handler.postDelayed(runnable, 15000);
-			}
-		}
-	};
-
-	runnable.run();
-}
-*/
    private void _setListeners() {
       edtMess.setKeyBoardInputCallbackListener(
          new MyEditText.KeyBoardInputCallbackListener() {
@@ -179,10 +126,6 @@ private void _startRepeatingTask() {
       );
    }
 
-   private void _stopRepeatingTask() {
-      handler.removeCallbacks(runnable);
-   }
-
    private void _sendFile(Uri uri) {
       new Thread(() -> {
          String uUId = UUIDUtil.UUIDGenerator();
@@ -211,12 +154,13 @@ private void _startRepeatingTask() {
             file,
             () -> fileApiHelper.uploadFile(file, messageEntry)
          );
-         messageApiHelper.reloadMessages(
+         /*
+        messageApiHelper.reloadMessages(
             ChatActivity.this,
             conversationId,
             adapter,
             currentUser
-         );
+        );*/
       })
          .start();
    }

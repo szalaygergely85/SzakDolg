@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.model.user.entity.User;
+import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,65 +33,65 @@ public class ContactsAdapter
    }
 
    /*
-	public void setImageView(String uID, Context context, ImageView image) {
-		Uri picUri = null;
-		Log.d(TAG, "getPicURl: " + uID);
-		try {
-			picUri = FileHandling.getUri(uID, context);
-		} catch (Exception e) {
-			Log.d(TAG, "setImageView: " + e);
-		}
-		if (picUri == null) {
-			Log.d(TAG, "setImageView: couldn't find the pic");
-			try {
-				storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
-					@Override
-					public void onComplete(@NonNull Task<StorageMetadata> task) {
-						if (task.isSuccessful()) {
-							storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-								@Override
-								public void onSuccess(Uri uri) {
-									Log.d(TAG, "getPicURl: " + uri);
-									Glide.with(context)
-											.asBitmap()
-											.load(uri)
-											.into(new CustomTarget<Bitmap>() {
-												@Override
-												public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-													try {
-														FileHandling.saveImageFile(uID, resource, context);
-													} catch (IOException e) {
-														e.printStackTrace();
-													}
-												}
-												@Override
-												public void onLoadCleared(@Nullable Drawable placeholder) {
-												}
-											});
-									Glide.with(context)
-											.asBitmap()
-											.load(uri)
-											.into(image);
-								}
-							}).addOnFailureListener(new OnFailureListener() {
-								@Override
-								public void onFailure(@NonNull Exception exception) {
-									// Handle any errors
-								}
-							});
-						}
-					}
-				});
+    public void setImageView(String uID, Context context, ImageView image) {
+        Uri picUri = null;
+        Log.d(TAG, "getPicURl: " + uID);
+        try {
+            picUri = FileHandling.getUri(uID, context);
+        } catch (Exception e) {
+            Log.d(TAG, "setImageView: " + e);
+        }
+        if (picUri == null) {
+            Log.d(TAG, "setImageView: couldn't find the pic");
+            try {
+                storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
+                    @Override
+                    public void onComplete(@NonNull Task<StorageMetadata> task) {
+                        if (task.isSuccessful()) {
+                            storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.d(TAG, "getPicURl: " + uri);
+                                    Glide.with(context)
+                                            .asBitmap()
+                                            .load(uri)
+                                            .into(new CustomTarget<Bitmap>() {
+                                                @Override
+                                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                                    try {
+                                                        FileHandling.saveImageFile(uID, resource, context);
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                                @Override
+                                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                                }
+                                            });
+                                    Glide.with(context)
+                                            .asBitmap()
+                                            .load(uri)
+                                            .into(image);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Handle any errors
+                                }
+                            });
+                        }
+                    }
+                });
 
-			} catch (Exception e) {
-				Log.d(TAG, "setImageView: " + e);
-			}
+            } catch (Exception e) {
+                Log.d(TAG, "setImageView: " + e);
+            }
 
-		} else {
-			Log.d(TAG, "setImageView: " + picUri);
-			image.setImageURI(FileHandling.getUri(uID, context));
-		}
-	}
+        } else {
+            Log.d(TAG, "setImageView: " + picUri);
+            image.setImageURI(FileHandling.getUri(uID, context));
+        }
+    }
 */
 
    @NonNull

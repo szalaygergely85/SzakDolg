@@ -16,7 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.register.RegisterActivity;
-import com.example.szakdolg.model.user.api.UserApiHelper;
+import com.example.szakdolg.models.user.api.UserApiHelper;
 import com.example.szakdolg.util.RandomUtil;
 import org.junit.After;
 import org.junit.Before;

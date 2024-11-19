@@ -7,35 +7,27 @@ import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
+import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.adapter.UserAdapter;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.model.conversation.api.ConversationApiHelper;
-import com.example.szakdolg.model.user.api.ContactsApiHelper;
-import com.example.szakdolg.model.user.entity.User;
-import com.example.szakdolg.util.SharedPreferencesUtil;
-import java.util.ArrayList;
+import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
+import com.example.szakdolg.models.user.api.ContactsApiHelper;
+import com.example.szakdolg.models.user.entity.User;
 import java.util.List;
 
-public class NewChatActivity extends AppCompatActivity {
+public class NewChatActivity extends BaseActivity {
 
    private MultiAutoCompleteTextView recipientInput;
    private UserAdapter dropdownAdapter;
    private List<User> contacts;
 
+   NewChatActivityHelper newChatActivityHelper;
    private ConversationApiHelper conversationApiHelper;
    private ContactsApiHelper contactsApiHelper = new ContactsApiHelper();
    private Button btnSend;
    private MyEditText edtMess;
-
-   private String _token;
-
-   private User currentUser;
-
-   private SharedPreferencesUtil sharedPreferencesUtil;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +35,14 @@ public class NewChatActivity extends AppCompatActivity {
       setContentView(R.layout.activity_new_chat);
 
       _setToolbar();
-      initView();
 
-      _token =
-      SharedPreferencesUtil.getStringPreference(
-         this,
-         SharedPreferencesConstants.USERTOKEN
-      );
+      _initView();
 
-      currentUser =
-      (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
+      newChatActivityHelper = new NewChatActivityHelper(this, currentUser);
 
       conversationApiHelper = new ConversationApiHelper(this, currentUser);
 
-      contacts = new ArrayList<>();
+      contacts = newChatActivityHelper.getContacts();
 
       dropdownAdapter =
       new UserAdapter(this, android.R.layout.simple_list_item_1, contacts);
@@ -67,40 +52,15 @@ public class NewChatActivity extends AppCompatActivity {
       );
       recipientInput.setThreshold(1);
 
-      contactsApiHelper.getContactsToMultiTextView(
-         this,
-         _token,
-         new ContactsApiHelper.ContactsCallback() {
-            @Override
-            public void onContactsFetched(List<User> newContacts) {
-               contacts.clear();
-               contacts.addAll(newContacts);
-               dropdownAdapter.updateUsers(newContacts);
-            }
-         }
-      );
-
       setListeners();
    }
 
    private void setListeners() {
       btnSend.setOnClickListener(view -> {
          String recipients = recipientInput.getText().toString();
-         List<Long> recipientIds = new ArrayList<>();
-         for (String recipient : recipients.split(", ")) {
-            Long id = Long.valueOf(extractIdFromDisplayName(recipient.trim()));
-            if (id != null) {
-               recipientIds.add(id);
-            }
-         }
-
-         recipientIds.add(currentUser.getUserId());
-         conversationApiHelper.addNewConversationAndSendMessage(
-            recipientIds,
-            edtMess.getText().toString(),
-            _token,
-            currentUser,
-            NewChatActivity.this
+         newChatActivityHelper.sendMessage(
+            recipients,
+            edtMess.getText().toString()
          );
       });
 
@@ -130,7 +90,7 @@ public class NewChatActivity extends AppCompatActivity {
       );
    }
 
-   private void initView() {
+   private void _initView() {
       recipientInput = findViewById(R.id.recipient_input);
       btnSend = findViewById(R.id.btnNewChatSend);
       edtMess = findViewById(R.id.edtNewChatMes);
