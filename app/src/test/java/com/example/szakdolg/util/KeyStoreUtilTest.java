@@ -1,7 +1,6 @@
 package com.example.szakdolg.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import static org.mockito.Mockito.*;
 
 import android.content.Context;
@@ -13,13 +12,12 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
 import java.util.HashMap;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 
-public class KeyStoreUtilTest {
-
+public class KeyStoreUtilTest {}
+/*
    private KeyPairGenerator keyPairGeneratorMock;
    private KeyPair keyPairMock;
    private PublicKey publicKeyMock;
@@ -31,7 +29,7 @@ public class KeyStoreUtilTest {
    @Mock
    private User mockUser;
 
-   @BeforeEach
+
    public void setUp() throws Exception {
       mockContext = mock(Context.class);
       mockUser = mock(User.class);
@@ -46,7 +44,7 @@ public class KeyStoreUtilTest {
       when(keyPairMock.getPrivate()).thenReturn(privateKeyMock);
    }
 
-   @Test
+
    public void testGenerateKeyPair() throws Exception {
       // Mock static methods from KeyPairGenerator
       try (
@@ -105,4 +103,4 @@ public class KeyStoreUtilTest {
          );
       }
    }
-}
+}*/

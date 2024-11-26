@@ -4,12 +4,11 @@ import android.content.Context;
 import android.util.Log;
 import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.retrofit.RetrofitClient;
 import java.util.List;
 import java.util.function.Consumer;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -67,23 +66,22 @@ public class ConversationParticipantApiHelper extends BaseService {
    public void addParticipants(
       List<ConversationParticipant> conversationParticipants
    ) {
-       Call<ResponseBody> call =
-               conversationParticipantApiService.addConversationParticipants(
-                       conversationParticipants,
-                       currentUser.getAuthToken()
-               );
-       call.enqueue(
-               new Callback<ResponseBody>() {
-                   @Override
-                   public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+      Call<ResponseBody> call =
+         conversationParticipantApiService.addConversationParticipants(
+            conversationParticipants,
+            currentUser.getAuthToken()
+         );
+      call.enqueue(
+         new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(
+               Call<ResponseBody> call,
+               Response<ResponseBody> response
+            ) {}
 
-                   }
-
-                   @Override
-                   public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                   }
-               }
-       );
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {}
+         }
+      );
    }
 }

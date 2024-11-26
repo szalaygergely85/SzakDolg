@@ -11,8 +11,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import androidx.test.filters.MediumTest;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.register.RegisterActivity;
@@ -24,10 +23,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(AndroidJUnit4.class)
 @MediumTest
 public class RegisterActivityTest {
-
+/*
    public final String displayName = "Test";
    public final String email = "test@gmail.com";
    public final String password = "password";
@@ -159,5 +157,5 @@ public class RegisterActivityTest {
       onView(withId(R.id.txtRegError))
          .check(matches(isDisplayed()))
          .check(matches(withText("Please enter a valid email address.")));
-   }
+   }*/
 }

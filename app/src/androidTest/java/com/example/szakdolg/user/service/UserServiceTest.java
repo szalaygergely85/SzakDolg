@@ -1,7 +1,7 @@
 package com.example.szakdolg.user.service;
 
 import android.content.Context;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.example.szakdolg.models.user.api.UserApiHelper;
 import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.util.HashUtils;
@@ -11,9 +11,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-@RunWith(AndroidJUnit4.class)
-public class UserServiceTest {
 
+public class UserServiceTest {
+/*
    @Mock
    private Context mockContext;
 

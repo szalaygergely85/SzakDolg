@@ -72,22 +72,22 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
       if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
          String decryptedContentString = null;/*
-        try {
-            if (isSenderLoggedUser(messageEntry)) {
+		try {
+			if (isSenderLoggedUser(messageEntry)) {
 
-            decryptedContentString =
+			decryptedContentString =
 
-                    messageEntry.getContent();
-            } else {
-            decryptedContentString =
-            EncryptionHelper.decrypt(
-                messageEntry.getContentEncrypted(),
-                KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
-            );
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+					messageEntry.getContent();
+			} else {
+			decryptedContentString =
+			EncryptionHelper.decrypt(
+				messageEntry.getContentEncrypted(),
+				KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
+			);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 */
          decryptedContentString = messageEntry.getContent();
          Long timeStamp = messageEntry.getTimestamp();

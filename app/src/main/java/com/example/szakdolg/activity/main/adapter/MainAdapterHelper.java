@@ -126,19 +126,19 @@ public class MainAdapterHelper {
 
          try {
             /*
-            if (isSenderLoggedUser(messageEntry)) {
-                decryptedContentString =
-                EncryptionHelper.decrypt(
-                    messageEntry.getContentSenderVersion(),
-                    KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-                );
-            } else {
-                decryptedContentString =
-                EncryptionHelper.decrypt(
-                    messageEntry.getContent(),
-                    KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-                );
-            }
+			if (isSenderLoggedUser(messageEntry)) {
+				decryptedContentString =
+				EncryptionHelper.decrypt(
+					messageEntry.getContentSenderVersion(),
+					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
+				);
+			} else {
+				decryptedContentString =
+				EncryptionHelper.decrypt(
+					messageEntry.getContent(),
+					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
+				);
+			}
 */
 
             decryptedContentString = messageEntry.getContentEncrypted();

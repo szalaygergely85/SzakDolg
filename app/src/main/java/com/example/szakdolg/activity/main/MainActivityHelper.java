@@ -59,25 +59,25 @@ public class MainActivityHelper {
                @Override
                public void run() {
                   /*  _messageApiHelper.checkCachedMessages(
-                    token,
-                    _context,
-                    currentUser
-                );*/
+					token,
+					_context,
+					currentUser
+				);*/
                   _contactsApiHelper.checkCachedContacts(
                      token,
                      _context,
                      currentUser
                   );
                   /* _conversationApiHelper.checkCachedConversation(
-                    token,
-                    _context,
-                    currentUser
-                );*/
+					token,
+					_context,
+					currentUser
+				);*/
                   /* _conversationApiHelper.checkCachedConversationParticipant(
-                    token,
-                    _context,
-                    currentUser
-                );*/
+					token,
+					_context,
+					currentUser
+				);*/
                }
             }
          )

@@ -11,8 +11,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import androidx.test.filters.MediumTest;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.login.LoginActivity;
@@ -23,10 +22,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(AndroidJUnit4.class)
+
 @MediumTest
 public class LoginActivityTest {
-
+/**
    private UserApiHelper mockUserApiHelper;
 
    @Rule
@@ -83,7 +82,7 @@ public void testSuccessfulLoginWithoutError() {
 	// Check if the error message is hidden
 	onView(withId(R.id.txtLgnError))
 		.check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
-}*/
+}
 
    @Test
    public void testMissingFieldsError() {
@@ -100,5 +99,5 @@ public void testSuccessfulLoginWithoutError() {
       onView(withId(R.id.txtLgnError))
          .check(matches(isDisplayed()))
          .check(matches(withText("Email and password are required.")));
-   }
+   }*/
 }

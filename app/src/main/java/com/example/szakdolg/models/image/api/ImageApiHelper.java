@@ -2,8 +2,8 @@ package com.example.szakdolg.models.image.api;
 
 import android.util.Log;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.models.image.entity.ImageEntity;
+import com.example.szakdolg.retrofit.RetrofitClient;
 import java.io.File;
 import java.util.function.Consumer;
 import okhttp3.MediaType;

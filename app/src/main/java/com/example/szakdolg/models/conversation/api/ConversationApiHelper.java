@@ -10,7 +10,6 @@ import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.MessageTypeConstants;
-import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.models.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
@@ -18,6 +17,7 @@ import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.util.UserUtil;
+import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.UUIDUtil;
 import java.util.List;
@@ -127,50 +127,50 @@ public class ConversationApiHelper extends BaseService {
 
    /*
 public void openConversation(
-    Context context,
-    Long conversationId,
-    List<User> participants,
-    User loggedUser,
-    String token
+	Context context,
+	Long conversationId,
+	List<User> participants,
+	User loggedUser,
+	String token
 ) {
-    if (conversationId == null && participants != null) {
-        Call<Long> call = conversationApiService.addConversation(
-            participants,
-            token
-        );
-        call.enqueue(
-            new Callback<Long>() {
-            @Override
-            public void onResponse(
-                Call<Long> call,
-                Response<Long> response
-            ) {
-                Log.e(TAG, "" + response.code());
-                if (response.isSuccessful()) {
-                    openConversation(
-                        response.body(),
-                        context,
-                        loggedUser,
-                        token
-                    );
-                } else {
-                    Log.e(TAG, "" + response.code());
-                    //TODO Handle the error
-                }
-            }
+	if (conversationId == null && participants != null) {
+		Call<Long> call = conversationApiService.addConversation(
+			participants,
+			token
+		);
+		call.enqueue(
+			new Callback<Long>() {
+			@Override
+			public void onResponse(
+				Call<Long> call,
+				Response<Long> response
+			) {
+				Log.e(TAG, "" + response.code());
+				if (response.isSuccessful()) {
+					openConversation(
+						response.body(),
+						context,
+						loggedUser,
+						token
+					);
+				} else {
+					Log.e(TAG, "" + response.code());
+					//TODO Handle the error
+				}
+			}
 
-            @Override
-            public void onFailure(Call<Long> call, Throwable t) {
-                Log.e(TAG, "" + t.getMessage());
-            }
-            }
-        );
-    } else {
-        Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(IntentConstants.CONVERSATION_ID, conversationId);
-        intent.putExtra(SharedPreferencesConstants.CURRENT_USER, loggedUser);
-        context.startActivity(intent);
-    }
+			@Override
+			public void onFailure(Call<Long> call, Throwable t) {
+				Log.e(TAG, "" + t.getMessage());
+			}
+			}
+		);
+	} else {
+		Intent intent = new Intent(context, ChatActivity.class);
+		intent.putExtra(IntentConstants.CONVERSATION_ID, conversationId);
+		intent.putExtra(SharedPreferencesConstants.CURRENT_USER, loggedUser);
+		context.startActivity(intent);
+	}
 }*/
 
    public void openConversation(

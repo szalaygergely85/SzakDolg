@@ -155,12 +155,12 @@ public class ChatActivity extends BaseActivity {
             () -> fileApiHelper.uploadFile(file, messageEntry)
          );
          /*
-        messageApiHelper.reloadMessages(
-            ChatActivity.this,
-            conversationId,
-            adapter,
-            currentUser
-        );*/
+		messageApiHelper.reloadMessages(
+			ChatActivity.this,
+			conversationId,
+			adapter,
+			currentUser
+		);*/
       })
          .start();
    }

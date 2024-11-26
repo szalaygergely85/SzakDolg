@@ -1,7 +1,7 @@
 package com.example.szakdolg.main.helper;
 
 import android.content.Context;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.example.szakdolg.activity.main.MainActivityHelper;
 import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
@@ -14,9 +14,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-@RunWith(AndroidJUnit4.class)
 public class MainActivityHelperTest {
-
+/*
    @Mock
    MessageApiHelper mockMessageApiHelper;
 

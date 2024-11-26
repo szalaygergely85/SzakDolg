@@ -9,12 +9,12 @@ public class UserUtil {
    /*
 @Deprecated
 public static User removeCurrentUserFromList(List<User> users, Long id) {
-    for (User user : users) {
-        if (!user.getUserId().equals(id)) {
-            return user;
-        }
-    }
-    return null;
+	for (User user : users) {
+		if (!user.getUserId().equals(id)) {
+			return user;
+		}
+	}
+	return null;
 }
 */
    public static List<User> removeCurrentUserFromList(

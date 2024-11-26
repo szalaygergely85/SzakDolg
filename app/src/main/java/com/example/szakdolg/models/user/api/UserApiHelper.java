@@ -5,9 +5,9 @@ import android.util.Log;
 import android.widget.Toast;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.entity.UserToken;
+import com.example.szakdolg.retrofit.RetrofitClient;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -207,38 +207,38 @@ public class UserApiHelper {
    /*
 @Deprecated
 public void getAndSavePrivateKey(User user, String token, Context context) {
-    Call<ResponseBody> call = _userApiService.getKeyByToken(token);
-    call.enqueue(
-        new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(
-            Call<ResponseBody> call,
-            Response<ResponseBody> response
-            ) {
-            if (response.isSuccessful()) {
-                Log.e(_TAG, "server contacted and has file");
+	Call<ResponseBody> call = _userApiService.getKeyByToken(token);
+	call.enqueue(
+		new Callback<ResponseBody>() {
+			@Override
+			public void onResponse(
+			Call<ResponseBody> call,
+			Response<ResponseBody> response
+			) {
+			if (response.isSuccessful()) {
+				Log.e(_TAG, "server contacted and has file");
 
-                boolean writtenToDisk = false;
-                try {
-                    writtenToDisk =
-                    _writeResponseBodyToDisk(response.body(), context, "key");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+				boolean writtenToDisk = false;
+				try {
+					writtenToDisk =
+					_writeResponseBodyToDisk(response.body(), context, "key");
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 
-                Log.e(_TAG, "file download was a success? " + writtenToDisk);
-                if (writtenToDisk) {
-                    getAndSaveAESKey(user, token, context);
-                }
-            } else {
-                Log.e(_TAG, "server contact failed");
-            }
-            }
+				Log.e(_TAG, "file download was a success? " + writtenToDisk);
+				if (writtenToDisk) {
+					getAndSaveAESKey(user, token, context);
+				}
+			} else {
+				Log.e(_TAG, "server contact failed");
+			}
+			}
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {}
-        }
-    );
+			@Override
+			public void onFailure(Call<ResponseBody> call, Throwable t) {}
+		}
+	);
 }
 */
    @Deprecated

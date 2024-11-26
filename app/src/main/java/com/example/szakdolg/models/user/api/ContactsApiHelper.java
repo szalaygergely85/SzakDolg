@@ -2,9 +2,9 @@ package com.example.szakdolg.models.user.api;
 
 import android.content.Context;
 import com.example.szakdolg.cache.CacheAction;
-import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.retrofit.RetrofitClient;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;

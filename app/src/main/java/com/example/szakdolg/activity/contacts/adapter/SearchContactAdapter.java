@@ -12,10 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.models.user.api.ContactsApiService;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.retrofit.RetrofitClient;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -34,53 +34,53 @@ public class SearchContactAdapter
    private String _token;
 
    /*
-    public void setImageView(String uID, Context context, ImageView image) {
-        try {
-            storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
-                @Override
-                public void onComplete(@NonNull Task<StorageMetadata> task) {
-                    if (task.isSuccessful()) {
-                        storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Log.d(AppConstants.LOG_TAG, TAG + " " "getPicURl: " + uri);
-                                Glide.with(context)
-                                        .asBitmap()
-                                        .load(uri)
-                                        .into(new CustomTarget<Bitmap>() {
-                                            @Override
-                                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                                try {
-                                                    FileHandling.saveImageFile(uID, resource, context);
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
+	public void setImageView(String uID, Context context, ImageView image) {
+		try {
+			storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
+				@Override
+				public void onComplete(@NonNull Task<StorageMetadata> task) {
+					if (task.isSuccessful()) {
+						storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+							@Override
+							public void onSuccess(Uri uri) {
+								Log.d(AppConstants.LOG_TAG, TAG + " " "getPicURl: " + uri);
+								Glide.with(context)
+										.asBitmap()
+										.load(uri)
+										.into(new CustomTarget<Bitmap>() {
+											@Override
+											public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+												try {
+													FileHandling.saveImageFile(uID, resource, context);
+												} catch (IOException e) {
+													e.printStackTrace();
+												}
+											}
 
-                                            @Override
-                                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                                            }
-                                        });
+											@Override
+											public void onLoadCleared(@Nullable Drawable placeholder) {
+											}
+										});
 
-                                Glide.with(context)
-                                        .asBitmap()
-                                        .load(uri)
-                                        .into(image);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Log.d(AppConstants.LOG_TAG, TAG + " " "onFailure: " + exception);
-                            }
-                        });
-                    }
-                }
-            });
+								Glide.with(context)
+										.asBitmap()
+										.load(uri)
+										.into(image);
+							}
+						}).addOnFailureListener(new OnFailureListener() {
+							@Override
+							public void onFailure(@NonNull Exception exception) {
+								Log.d(AppConstants.LOG_TAG, TAG + " " "onFailure: " + exception);
+							}
+						});
+					}
+				}
+			});
 
-        } catch (Exception e) {
-            Log.d(AppConstants.LOG_TAG, TAG + " " "setImageView: " + e);
-        }
-    }
+		} catch (Exception e) {
+			Log.d(AppConstants.LOG_TAG, TAG + " " "setImageView: " + e);
+		}
+	}
 */
    public SearchContactAdapter(
       Context context,

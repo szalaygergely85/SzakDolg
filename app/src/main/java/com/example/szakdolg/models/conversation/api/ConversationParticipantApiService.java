@@ -2,7 +2,6 @@ package com.example.szakdolg.models.conversation.api;
 
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import java.util.List;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -23,6 +22,4 @@ public interface ConversationParticipantApiService {
       @Body List<ConversationParticipant> participants,
       @Header("Authorization") String token
    );
-
-
 }

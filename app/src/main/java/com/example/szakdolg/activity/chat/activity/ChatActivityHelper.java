@@ -131,31 +131,31 @@ public class ChatActivityHelper {
    }
    /*
 public void _startRepeatingTask() {
-    runnable =
-    new Runnable() {
-        @Override
-        public void run() {
-            try {
-            messageApiHelper.getNewMessages(
-                ChatActivity.this,
-                token,
-                currentUser,
-                () -> {
-                    messageApiHelper.reloadMessages(
-                        ChatActivity.this,
-                        conversationId,
-                        adapter,
-                        currentUser
-                    );
-                }
-            );
-            } finally {
-            handler.postDelayed(runnable, 15000);
-            }
-        }
-    };
+	runnable =
+	new Runnable() {
+		@Override
+		public void run() {
+			try {
+			messageApiHelper.getNewMessages(
+				ChatActivity.this,
+				token,
+				currentUser,
+				() -> {
+					messageApiHelper.reloadMessages(
+						ChatActivity.this,
+						conversationId,
+						adapter,
+						currentUser
+					);
+				}
+			);
+			} finally {
+			handler.postDelayed(runnable, 15000);
+			}
+		}
+	};
 
-    runnable.run();
+	runnable.run();
 }
 */
 }
