@@ -26,20 +26,31 @@ public class FileUtil {
       "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)";
 
    public static void writeHashMapToFile(
-      HashMap<String, String> hashMap,
-      File file
+           HashMap<String, String> hashMap,
+           File file
    ) {
       try {
-         FileOutputStream fos = new FileOutputStream(file);
-         ObjectOutputStream oos = new ObjectOutputStream(fos);
+         // Check if the file is writable
+         if (file.exists() && !file.canWrite()) {
+            System.out.println("Error: File is not writable.");
+            return;
+         }
 
-         // Write HashMap to ObjectOutputStream
-         oos.writeObject(hashMap);
+         // Check if parent directory is writable (if file doesn't exist)
+         if (!file.exists() && file.getParentFile() != null && !file.getParentFile().canWrite()) {
+            System.out.println("Error: Parent directory is not writable.");
+            return;
+         }
 
-         // Close streams
-         oos.close();
-         fos.close();
+         // Write HashMap to file
+         try (FileOutputStream fos = new FileOutputStream(file);
+              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(hashMap);
+         }
+
+         System.out.println("HashMap successfully written to file.");
       } catch (IOException e) {
+         System.err.println("An error occurred while writing to the file:");
          e.printStackTrace();
       }
    }

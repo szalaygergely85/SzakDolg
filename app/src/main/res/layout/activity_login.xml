@@ -1,97 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryLightColor"
-    tools:context=".activity.login.LoginActivity">
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/loginToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:minHeight="?attr/actionBarSize"
-        app:title="Title"
-        app:titleMarginStart="32dp" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/loginToolbar">
+    android:background="@drawable/gradient_background"
+    android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="40dp">
+            android:gravity="center_horizontal">
 
             <TextView
-                style="@style/headerTextPrimary"
-                android:text="Login"
-                android:layout_marginTop="@dimen/loginViewsMargin"/>
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Place for my Logo"
+                android:textAlignment="center"
+                android:textColor="#63ECFF"
+                android:textStyle="bold" />
 
-                <EditText
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_white_background"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:elevation="4dp"
+                android:layout_margin="16dp"
+                android:layout_marginTop="64dp"
+                android:layout_marginBottom="64dp"
+                android:clipToPadding="false"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center_horizontal" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dont_have_an_account"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/btnLgnReg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/sign_up"
+                        android:paddingLeft="6dp"
+                        android:textSize="14sp"
+                        style="@style/textURL"/>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/textInputRegLog"
+                    android:layout_marginTop="25dp"
                     android:id="@+id/edtLgnEmail"
-                    style="@style/modifiedEditText"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:hint="@string/login_email_hint"/>
+                    app:errorEnabled="true"
+                    android:hint="@string/email">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
+                </com.google.android.material.textfield.TextInputLayout>
 
-
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/edtLgnPass"
-                    style="@style/modifiedEditText"
+                    style="@style/textInputRegLog"
                     android:hint="@string/login_password_hint"
-                    android:maxLines="1"
-                    android:inputType="textPassword"/>
+                    app:errorEnabled="true"
+                    app:endIconMode="password_toggle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:inputType="textPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/txtLgnForgot"
-                style="@style/viewParent"
-                android:clickable="true"
-                android:enabled="true"
-                android:text="Forgot Password?"
-                android:textColor="@color/primaryTextColor"
-                android:layout_gravity="end"
-                android:layout_marginTop="10dp"/>
-
-
-            <TextView
-                android:id="@+id/txtLgnError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/holo_red_dark"
-                android:visibility="gone"
-                android:text="Error message"
-                android:layout_marginTop="8dp"
-            />
-
-            <Button
-                android:id="@+id/btnLgnLogin"
-                style="@style/loginButton"
-                android:text="Login"
-                android:layout_gravity="center_horizontal"
-                />
-
-
-            <TextView
-                android:id="@+id/btnLgnReg"
-                style="@style/parent"
-                android:textAlignment="center"
-                android:textStyle="bold"
-                android:textColor="@color/primaryTextColor"
-                android:text="@string/login_signup_hint"
+                style="@style/textURL"
                 android:clickable="true"
-                android:enabled="true"
-                android:layout_marginTop="@dimen/loginViewsMargin"/>
+                android:text="@string/forgot_your_password"
+                android:layout_gravity="end" />
+
+                <Button
+                    android:id="@+id/btnLgnLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/login" />
 
 
-
+    </LinearLayout>
         </LinearLayout>
-    </ScrollView>
 
-</RelativeLayout>
+</ScrollView>

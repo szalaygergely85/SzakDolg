@@ -10,8 +10,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginRight="10dp"
-        android:src="@drawable/ic_blank_profile"
-        app:shapeAppearanceOverlay="@style/CircularImage" />/>
+        android:src="@drawable/ic_blank_profile" />
 
     <TextView
         android:id="@+id/txtContItemName"

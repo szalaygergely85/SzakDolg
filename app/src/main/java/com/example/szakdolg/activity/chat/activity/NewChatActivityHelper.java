@@ -36,11 +36,11 @@ public class NewChatActivityHelper {
       this.conversationParticipantCoordinatorService =
       new ConversationParticipantCoordinatorService(context, currentUser);
       this.userCoordinatorService =
-      new UserCoordinatorService(context, currentUser);
+      new UserCoordinatorService(context);
       this.messageCoordinatorService =
       new MessageCoordinatorService(context, currentUser);
 
-      this.contacts = userCoordinatorService.getContacts();
+      this.contacts = userCoordinatorService.getContacts(currentUser);
    }
 
    public List<User> getContacts() {

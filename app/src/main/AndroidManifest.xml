@@ -19,7 +19,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.SzakDolg">
         <activity
             android:name=".activity.call.StartCall"
             android:exported="true" >
@@ -33,65 +33,54 @@
         <activity
             android:name=".activity.call.CallActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activity.call.IncomingCallActivity"
             android:exported="false" />
         <activity
             android:name=".activity.profilepicture.ProfilePictureActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="true" />
         <activity
             android:name=".activity.chat.activity.NewChatActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".activity.ChangePassActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="false"/>
         <activity
             android:name=".activity.ProfileActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="false"/>
         <activity
             android:name=".activity.ForgotPasswordActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="true"/>
         <activity
             android:name=".activity.contacts.activity.SearchContactsActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="false"/>
         <activity
             android:name=".activity.contacts.activity.ContactsActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".activity.chat.activity.ChatActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="false"/>
         <activity
             android:name=".messageboard.activity.MessageBoardActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".activity.register.RegisterActivity"
             android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.login.LoginActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.main.MainActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="true" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
     </application>
 
 </manifest>

@@ -326,7 +326,7 @@ public void openConversation(
                if (response.isSuccessful()) {
                   if (response.body() != null) {
                      List<Conversation> conversations = response.body();
-                     if (conversations != null) {
+                     if (!conversations.isEmpty()) {
                         onSuccess.accept(conversations);
                      }
                   }

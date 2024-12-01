@@ -10,17 +10,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ForgotPasswordActivity;
 import com.example.szakdolg.activity.register.RegisterActivity;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
 
+   private TextInputLayout editMailLayout;
    private EditText editMail;
+   private TextInputLayout editPassLayout;
    private EditText editPass;
    private TextView txtForgot;
    private TextView btnReg;
    private Button btnLog;
-
-   private TextView txtError;
-
    private LoginActivityHelper loginActivityHelper;
 
    @Override
@@ -40,12 +41,13 @@ public class LoginActivity extends AppCompatActivity {
    }
 
    public void _initView() {
-      editMail = findViewById(R.id.edtLgnEmail);
-      editPass = findViewById(R.id.edtLgnPass);
+      editMailLayout = findViewById(R.id.edtLgnEmail);
+      editMail = editMailLayout.getEditText();
+      editPassLayout = findViewById(R.id.edtLgnPass);
+      editPass = editPassLayout.getEditText();
       btnReg = findViewById(R.id.btnLgnReg);
       btnLog = findViewById(R.id.btnLgnLogin);
       txtForgot = findViewById(R.id.txtLgnForgot);
-      txtError = findViewById(R.id.txtLgnError);
    }
 
    private void _setOnClickListeners() {
@@ -80,16 +82,28 @@ public class LoginActivity extends AppCompatActivity {
                String email = editMail.getText().toString();
                String password = editPass.getText().toString();
 
-               if (!email.isEmpty() && !password.isEmpty()) {
-                  loginActivityHelper.loginUser(email, password);
+               boolean isValid = true;
 
-                  txtError.setVisibility(View.GONE);
+               if (email.isEmpty()) {
+                  editMailLayout.setError(getString(R.string.email_is_required));
+                  isValid = false;
                } else {
-                  txtError.setVisibility(View.VISIBLE);
-                  txtError.setText("Email and password are required.");
+                  editMailLayout.setError(null); // Clear error when valid
+               }
+
+               if (password.isEmpty()) {
+                  editPassLayout.setError(getString(R.string.password_is_required));
+                  isValid = false;
+               } else {
+                  editPassLayout.setError(null); // Clear error when valid
+               }
+
+               if (isValid) {
+                  loginActivityHelper.loginUser(email, password);
                }
             }
          }
       );
    }
 }
+

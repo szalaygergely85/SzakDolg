@@ -1,118 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/primaryLightColor"
-    tools:context=".activity.register.RegisterActivity">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:padding="16dp">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fillViewport="true">
-
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_white_background"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:elevation="4dp"
+        android:layout_margin="16dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="64dp"
+        android:clipToPadding="false"
+        android:layout_gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="40dp">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="40dp"
-                />
-
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView2"
-                android:layout_width="221dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/welcome_onboard"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/edtRegName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="@string/display_name"
-                android:inputType="textPersonName"
-                android:maxLines="1" />
-
-
-            <EditText
-                android:id="@+id/edtRegEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="@string/edt_email"
-                android:inputType="textEmailAddress"
-                android:maxLines="1" />
-
-            <EditText
-                android:id="@+id/edtRegPass1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="@string/edt_pass"
-                android:inputType="textPassword"
-                android:maxLines="1" />
-
-            <EditText
-                android:id="@+id/edtRegPass2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="@string/edt_confirmpass"
-                android:inputType="textPassword"
-                android:maxLines="1" />
-
-            <TextView
-                android:id="@+id/txtRegError"
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/holo_red_dark"
-                android:visibility="gone"
-                android:text="Error message"
-                android:layout_marginTop="8dp"
-                />
+                android:text="@string/already_have_an_account"
+                android:textSize="14sp"/>
 
-
-            <Button
-                android:id="@+id/btnRegReg"
-                android:layout_width="330dp"
+            <TextView
+                android:id="@+id/textSignIn"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:text="@string/btn_reg" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="33dp"
-                    android:text="@string/aleady_have_an_account" />
-
-                <TextView
-                    android:id="@+id/textSignIn"
-                    android:layout_width="113dp"
-                    android:layout_height="33dp"
-                    android:layout_weight="1"
-                    android:paddingLeft="6dp"
-                    android:text="@string/sign_in"
-                    android:textAlignment="textStart"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
+                android:paddingLeft="6dp"
+                android:text="@string/sign_in"
+                android:textSize="14sp"
+                style="@style/textURL"/>
         </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edtRegName"
+            style="@style/textInputRegLog"
+            android:layout_marginTop="25dp"
+            app:errorEnabled="true"
+            android:hint="@string/display_name">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edtRegEmail"
+            style="@style/textInputRegLog"
+            app:errorEnabled="true"
+            android:hint="@string/email">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edtRegPass1"
+            style="@style/textInputRegLog"
+            app:errorEnabled="true"
+            app:endIconMode="password_toggle"
+            android:hint="@string/enter_password">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edtRegPass2"
+            style="@style/textInputRegLog"
+            app:errorEnabled="true"
+            app:endIconMode="password_toggle"
+            android:hint="@string/confirm_password">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnRegReg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="@string/register" />
+
+
+
+             </LinearLayout>
+        </LinearLayout>
+</ScrollView>
