@@ -21,8 +21,11 @@
     <string name="forgot_your_password">"Forgot your password?</string>
     <string name="login">Login</string>
     <string name="login_password_hint">Password</string>
+    <string name="looks_quite_here_say_hi_to_someone">Looks quiet here! Say hi to someone!</string>
+    <string name="menu">Menu</string>
     <string name="message">Message</string>
     <string name="messages">Messages</string>
+    <string name="new_message">New Message</string>
     <string name="new_password">New Password</string>
     <string name="new_password_again">New Password Again</string>
     <string name="old_password">Old Password</string>

@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity {
       setContentView(R.layout.activity_main);
 
       _initView();
-      _setListeners();
+      //_setListeners();
    }
 
    @Override
@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity {
       this._mainActivityHelper =
       new MainActivityHelper(this, token, currentUser);
 
-      _mainActivityHelper.setNavMenu(bottomNavigationView);
+     // _mainActivityHelper.setNavMenu(bottomNavigationView);
 
       //TODO valami gond van itt....
       //_mainActivityHelper.startCacheChecking();
@@ -103,12 +103,12 @@ public class MainActivity extends BaseActivity {
    }
 
    private void _initView() {
-      contactsButton = findViewById(R.id.newMessageButton);
+     // contactsButton = findViewById(R.id.newMessageButton);
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
       bottomNavigationView = findViewById(R.id.bottom_navigation);
    }
-
-   private void _setListeners() {
+/*
+   private void _setListeners() {/*
       contactsButton.setOnClickListener(
          new View.OnClickListener() {
             @Override
@@ -125,5 +125,5 @@ public class MainActivity extends BaseActivity {
             }
          }
       );
-   }
+   }*/
 }

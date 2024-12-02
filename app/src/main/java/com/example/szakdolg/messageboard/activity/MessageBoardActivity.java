@@ -67,7 +67,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       _initView();
 
-      setNavMenu();
+     // setNavMenu();
 
       userToken =
       SharedPreferencesUtil.getStringPreference(
@@ -168,7 +168,7 @@ public class MessageBoardActivity extends AppCompatActivity {
    }
 
    private void _initView() {
-      contactsButton = findViewById(R.id.newMessageButton);
+      //contactsButton = findViewById(R.id.newMessageButton);
    }
 
    private void _startRepeatingTask() {
@@ -199,6 +199,7 @@ public class MessageBoardActivity extends AppCompatActivity {
       handler.removeCallbacks(runnable);
    }
 
+   /*
    private void setNavMenu() {
       BottomNavigationView bottomNavigationView = findViewById(
          R.id.bottom_navigation
@@ -236,7 +237,7 @@ public class MessageBoardActivity extends AppCompatActivity {
             }
          }
       );
-   }
+   }*/
 
    private void _scheduleMessageWorker() {
       Constraints constraints = new Constraints.Builder()

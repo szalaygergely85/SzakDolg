@@ -84,7 +84,7 @@ public class MainActivityHelper {
             .start();
       }
    }
-
+/*
    public void setNavMenu(BottomNavigationView bottomNavigationView) {
       bottomNavigationView.setOnItemSelectedListener(
          new NavigationBarView.OnItemSelectedListener() {
@@ -111,7 +111,7 @@ public class MainActivityHelper {
          }
       );
    }
-
+*/
    private boolean _isCacheExpired(long cacheExpireTimeMillis) {
       if (cacheExpireTimeMillis == -1) {
          return true;
