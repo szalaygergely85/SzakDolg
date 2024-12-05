@@ -63,4 +63,12 @@ public class MessageCoordinatorService extends BaseService {
          }
       );
    }
+
+    public int getCountByNotReadMsg(Long conversationId) {
+      return messageService.getCountByNotReadMsg(conversationId);
+    }
+
+   public void setMessagesAsReadByConversationId(Long conversationId) {
+      messageService.setMessagesAsReadByConversationId(conversationId);
+   }
 }

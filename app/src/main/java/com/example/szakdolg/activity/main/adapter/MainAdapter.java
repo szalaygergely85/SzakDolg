@@ -3,7 +3,6 @@ package com.example.szakdolg.activity.main.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstants;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
 import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
-import com.example.szakdolg.models.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
@@ -29,12 +26,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
    private List<Conversation> conversationList = new ArrayList<>();
    private final Context context;
-   private User currentUser;
-   private String _token;
-   private UserDatabaseUtil userDatabaseUtil;
-   private MessageCoordinatorService messageCoordinatorService;
+   private final User currentUser;
 
-   private ConversationDatabaseUtil conversationDatabaseUtil;
+   private final MessageCoordinatorService messageCoordinatorService;
+
    ConversationApiHelper conversationApiHelper;
 
    MainAdapterHelper mainAdapterHelper;
@@ -42,13 +37,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    public MainAdapter(Context mContext, User currentUser) {
       this.context = mContext;
       this.currentUser = currentUser;
-
       this.messageCoordinatorService =
       new MessageCoordinatorService(context, currentUser);
       this.mainAdapterHelper = new MainAdapterHelper(currentUser, mContext);
-      this.userDatabaseUtil = new UserDatabaseUtil(mContext, currentUser);
-      this.conversationDatabaseUtil =
-      new ConversationDatabaseUtil(mContext, currentUser);
       this.conversationApiHelper =
       new ConversationApiHelper(mContext, currentUser);
    }
@@ -61,7 +52,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    ) {
       View view = LayoutInflater
          .from(parent.getContext())
-         .inflate(R.layout.main_item, parent, false);
+         .inflate(R.layout.item_main_list, parent, false);
       ViewHolder holder = new ViewHolder(view);
       return holder;
    }
@@ -76,15 +67,28 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       holder.txtName.setText(conversation.getConversationName());
       Long conversationId = conversation.getConversationId();
 
+
+
       MessageEntry messageEntry =
          messageCoordinatorService.getLatestMessageEntry(conversationId);
 
-      if (messageEntry == null || messageEntry.getContentEncrypted() == null) {
+      if (
+         messageEntry == null ||
+         ((messageEntry.getContentEncrypted() == null) &&
+            messageEntry.getContent() == null)
+      ) {
          holder.itemView.setVisibility(View.GONE);
          return;
       }
 
-      List<User> participants = mainAdapterHelper.getParticipantUser(
+      int count = mainAdapterHelper.getCountByNotReadMsg(conversationId);
+      if (count == 0){
+         holder.txtNotRead.setVisibility(View.GONE);
+      }else {
+         holder.txtNotRead.setText(String.valueOf(count));
+      }
+
+      List<User> participants = mainAdapterHelper.getParticipantUsers(
          conversationId
       );
 
@@ -96,12 +100,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       holder.txtName.setText(
          mainAdapterHelper.getConversationTitle(conversationId, participants)
       );
-
-      if (messageEntry.isRead() || isSenderLoggedUser(messageEntry)) {
-         holder.txtMessage.setTypeface(null, Typeface.NORMAL);
-      } else {
-         holder.txtMessage.setTypeface(null, Typeface.BOLD);
-      }
 
       holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry));
 
@@ -118,13 +116,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                Intent intent = new Intent(context, ChatActivity.class);
                intent.putExtra(IntentConstants.CONVERSATION_ID, conversationId);
                context.startActivity(intent);
+               /*
+			conversationApiHelper.openConversation(
+				conversation.getConversationId(),
+				context,
+				currentUser,
 
-               conversationApiHelper.openConversation(
-                  conversation.getConversationId(),
-                  context,
-                  currentUser,
-                  _token
-               );
+			);*/
             }
          }
       );
@@ -147,6 +145,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       private final TextView txtTime;
       private final RelativeLayout parent;
       private final ImageView image;
+      private final TextView txtNotRead;
 
       public ViewHolder(@NonNull View itemView) {
          super(itemView);
@@ -154,11 +153,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
          txtName = itemView.findViewById(R.id.mesBrdName);
          txtMessage = itemView.findViewById(R.id.mesBrdMessage);
          parent = itemView.findViewById(R.id.parent);
-         txtTime = itemView.findViewById(R.id.mesBrdTime);
+         txtTime = itemView.findViewById(R.id.main_item_last_msg_time);
+         txtNotRead = itemView.findViewById(R.id.main_item_not_read);
       }
-   }
-
-   private boolean isSenderLoggedUser(MessageEntry messageEntry) {
-      return currentUser.getUserId().equals(messageEntry.getSenderId());
    }
 }

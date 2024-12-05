@@ -8,14 +8,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="primaryColor">#717171</color>
+    <color name="primaryColor">#FDFDFD</color>
     <color name="primaryLightColor">#FFFFFF</color>
-    <color name="primaryDarkColor">#102027</color>
+    <color name="primaryDarkColor">#FAFAFA</color>
     <color name="secondaryColor">#e0e0e0</color>
     <color name="secondaryLightColor">#ffffff</color>
     <color name="secondaryDarkColor">#aeaeae</color>
     <color name="primaryTextColor">#ffffff</color>
-    <color name="secondaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#48444E</color>
 
     <color name="url">#1565C0</color>>
 
@@ -30,7 +30,7 @@
 
     <!--colros for card-->
     <color name="whiteCardColor">#fff</color>
-    <color name="gray">#322D2D</color>
+    <color name="gray">#646464</color>
     <color name="gray_light">#7A7979</color>
 
 

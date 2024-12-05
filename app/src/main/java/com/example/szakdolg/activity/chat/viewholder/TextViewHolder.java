@@ -1,10 +1,14 @@
 package com.example.szakdolg.activity.chat.viewholder;
 
+import android.content.Context;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.models.user.entity.User;
@@ -20,10 +24,10 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
    private final TextView txtTimeOut;
    private final TextView txtTextFrMe;
    private final TextView dateTextView;
-   private final RelativeLayout relIn;
-   private final RelativeLayout relOut;
+   private final LinearLayout lLIn;
+   private final LinearLayout lLout;
 
-   private final LinearLayout dateSeparator;
+
 
    public TextViewHolder(View itemView) {
       super(itemView);
@@ -31,11 +35,13 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
       txtTextFrMe = itemView.findViewById(R.id.chatTextFrMe);
       txtTimeIn = itemView.findViewById(R.id.chatTextTimeIn);
       txtTimeOut = itemView.findViewById(R.id.chatTextTimeOut);
-      relIn = itemView.findViewById(R.id.chatRelIn);
-      relOut = itemView.findViewById(R.id.chatRelOut);
+      lLIn = itemView.findViewById(R.id.chatLLin);
+      lLout = itemView.findViewById(R.id.chatLLout);
       dateTextView = itemView.findViewById(R.id.dateTextView);
-      dateSeparator = itemView.findViewById(R.id.dateSeparatorContainer);
+
       imageView = itemView.findViewById(R.id.profilePicIn);
+
+
    }
 
    public void bind(
@@ -46,48 +52,54 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
       boolean showDateSeparator,
       long time,
       boolean shouldShowTime,
-      boolean shouldShowProfilePicture
+      boolean shouldShowProfilePicture,
+      Context context
    ) {
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       String dateString = dateFormat.format(new Date(time));
-      txtTimeOut.setText(timeForm);
-      txtTimeIn.setText(timeForm);
 
-      if (shouldShowProfilePicture) {
-         imageView.setVisibility(View.VISIBLE);
-      } else {
-         imageView.setVisibility(View.GONE);
-         RelativeLayout.LayoutParams params =
-            (RelativeLayout.LayoutParams) txtText.getLayoutParams();
-
-         params.setMarginStart(50);
-
-         txtText.setLayoutParams(params);
-      }
-
-      if (shouldShowTime) {
-         txtTimeOut.setVisibility(View.VISIBLE);
-         txtTimeIn.setVisibility(View.VISIBLE);
-      } else {
-         txtTimeOut.setVisibility(View.GONE);
-         txtTimeIn.setVisibility(View.GONE);
-      }
-
+      dateTextView.setVisibility(showDateSeparator? View.VISIBLE : View.GONE);
+      dateTextView.setText(dateString);
       if (senderId.equals(currentUser.getUserId())) {
-         relIn.setVisibility(View.GONE);
-         relOut.setVisibility(View.VISIBLE);
+         imageView.setVisibility(View.GONE);
+         //My Messages
+         lLIn.setVisibility(View.GONE);
+         lLout.setVisibility(View.VISIBLE);
+
+
+         txtTimeIn.setVisibility(View.GONE);
+         txtTimeOut.setVisibility(shouldShowProfilePicture ? View.VISIBLE : View.GONE);
+         txtTimeOut.setText(timeForm);
+         txtTextFrMe.setBackground(shouldShowProfilePicture
+                 ? ContextCompat.getDrawable(context, R.drawable.bg_chat_one_sided_grey)
+                 : ContextCompat.getDrawable(context, R.drawable.bg_chat_grey));
          txtTextFrMe.setText(decryptedContentString);
       } else {
-         relOut.setVisibility(View.GONE);
-         relIn.setVisibility(View.VISIBLE);
+
+         imageView.setVisibility(shouldShowProfilePicture?View.VISIBLE:View.INVISIBLE);
+
+
+         lLout.setVisibility(View.GONE);
+
+         lLIn.setVisibility(View.VISIBLE);
+
+         txtTimeOut.setVisibility(View.GONE);
+
+         txtTimeIn.setVisibility(shouldShowProfilePicture ? View.VISIBLE : View.GONE);
+         txtTimeIn.setText(timeForm);
+
+
+         
+         txtTextFrMe.setVisibility(View.GONE);
+
          txtText.setText(decryptedContentString);
+         txtText.setVisibility(View.VISIBLE);
+         txtText.setBackground(shouldShowProfilePicture
+                 ? ContextCompat.getDrawable(context, R.drawable.bg_chat_one_sided_white)
+                 : ContextCompat.getDrawable(context, R.drawable.bg_chat_white));
+
       }
 
-      if (showDateSeparator) {
-         dateSeparator.setVisibility(View.VISIBLE); // Show the separator
-         dateTextView.setText(dateString); // Set the date string
-      } else {
-         dateSeparator.setVisibility(View.GONE); // Hide the separator
-      }
+
    }
 }

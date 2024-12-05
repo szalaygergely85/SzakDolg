@@ -11,9 +11,12 @@ import com.example.szakdolg.models.conversation.ConversationParticipantCoordinat
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.image.ImageCoordinatorService;
+import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserCoordinatorService;
+import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,15 +26,17 @@ import java.util.Locale;
 
 public class MainAdapterHelper {
 
-   private User currentUser;
-   private Context context;
-   private UserCoordinatorService userCoordinatorService;
+   private final User currentUser;
+   private final Context context;
+   private final UserCoordinatorService userCoordinatorService;
 
-   private ConversationCoordinatorService conversationCoordinatorService;
+   private final ConversationCoordinatorService conversationCoordinatorService;
 
-   private ConversationParticipantCoordinatorService conversationParticipantCoordinatorService;
+   private final ConversationParticipantCoordinatorService conversationParticipantCoordinatorService;
 
-   private ImageCoordinatorService imageCoordinatorService;
+   private final ImageCoordinatorService imageCoordinatorService;
+   private final MessageCoordinatorService messageCoordinatorService;
+
 
    public MainAdapterHelper(User currentUser, Context context) {
       this.currentUser = currentUser;
@@ -43,6 +48,7 @@ public class MainAdapterHelper {
       new ImageCoordinatorService(context, currentUser);
       this.conversationParticipantCoordinatorService =
       new ConversationParticipantCoordinatorService(context, currentUser);
+      this.messageCoordinatorService = new MessageCoordinatorService(context, currentUser);
    }
 
    public void setImageView(List<User> participants, ImageView image) {
@@ -68,7 +74,7 @@ public class MainAdapterHelper {
       }
    }
 
-   public List<User> getParticipantUser(Long conversationId) {
+   public List<User> getParticipantUsers(Long conversationId) {
       List<ConversationParticipant> participants =
          conversationParticipantCoordinatorService.getOtherParticipants(
             conversationId
@@ -123,27 +129,25 @@ public class MainAdapterHelper {
       if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
          String decryptedContentString = null;
 
-         try {
-            /*
-			if (isSenderLoggedUser(messageEntry)) {
-				decryptedContentString =
-				EncryptionHelper.decrypt(
-					messageEntry.getContentSenderVersion(),
-					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-				);
-			} else {
-				decryptedContentString =
-				EncryptionHelper.decrypt(
-					messageEntry.getContent(),
-					KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-				);
-			}
-*/
-
-            decryptedContentString = messageEntry.getContentEncrypted();
-            return decryptedContentString;
-         } catch (Exception e) {
-            throw new RuntimeException(e);
+         if (messageEntry.getContent() != null) {
+            if (isSenderLoggedUser(messageEntry)) {
+               return "You " + messageEntry.getContent();
+            } else {
+               return messageEntry.getContent();
+            }
+         } else {
+            try {
+               decryptedContentString =
+               EncryptionHelper.decrypt(
+                  messageEntry.getContent(),
+                  KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
+               );
+               if (decryptedContentString != null) {
+                  return decryptedContentString;
+               }
+            } catch (Exception e) {
+               throw new RuntimeException(e);
+            }
          }
       }
       if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
@@ -198,5 +202,13 @@ public class MainAdapterHelper {
          // Otherwise, return full date
          return dateFormat.format(date);
       }
+   }
+
+   private boolean isSenderLoggedUser(MessageEntry messageEntry) {
+      return currentUser.getUserId().equals(messageEntry.getSenderId());
+   }
+
+   public int getCountByNotReadMsg(Long conversationId) {
+      return messageCoordinatorService.getCountByNotReadMsg(conversationId);
    }
 }

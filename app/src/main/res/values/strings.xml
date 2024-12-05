@@ -45,4 +45,11 @@
     <string name="signup_login_hint">Already have an account? Sign In</string>
     <string name="username">Username</string>
     <string name="welcome_onboard">Welcome Onboard!</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="account">Account</string>
+    <string name="privacy">Privacy</string>
+    <string name="notification">Notification</string>
+    <string name="voice_call">Voice Call</string>
+    <string name="video_call">Video Call</string>
+    <string name="send_a_message">Send a message</string>
 </resources>

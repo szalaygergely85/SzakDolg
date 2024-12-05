@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import com.example.szakdolg.activity.profilepicture.ProfilePictureActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
+import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.user.api.UserApiHelper;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.util.UserUtil;
 import com.example.szakdolg.util.KeyStoreUtil;
 import com.example.szakdolg.util.SharedPreferencesUtil;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,6 +71,23 @@ public class UserCoordinatorService {
          );
          return null;
       }
+   }
+
+   public List<User> getConversationParticipantUser(
+      List<ConversationParticipant> conversationParticipants,
+      User currentUser
+   ) {
+      List<User> users = new ArrayList<>();
+      for (ConversationParticipant conversationParticipant : conversationParticipants) {
+         User user = getUserByUserId(
+            conversationParticipant.getUserId(),
+            currentUser
+         );
+         if (user != null) {
+            users.add(user);
+         }
+      }
+      return users;
    }
 
    public List<User> getContacts(User currentUser) {

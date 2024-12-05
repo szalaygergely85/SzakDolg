@@ -1,6 +1,5 @@
 package com.example.szakdolg.activity.chat.activity;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -119,15 +118,30 @@ public class ChatActivityHelper {
       );
    }
 
-   public void setToolbar(Toolbar mToolbar) {
-      mToolbar.setTitle(" ");
-      context.setSupportActionBar(mToolbar);
-
-      ActionBar actionBar = context.getSupportActionBar();
-      if (actionBar != null) {
-         actionBar.setDisplayHomeAsUpEnabled(true);
+   public void setToolbarTitle(Toolbar mToolbar, Long conversationId) {
+      String conversationName = conversation.getConversationName();
+      if (conversationName!=null){
+         mToolbar.setTitle(conversation.getConversationName());
       }
+      else{
+
+         mToolbar.setTitle(_createTitleWithUsernames(getUsers()));
+      }
+
    }
+
+   private String _createTitleWithUsernames(List<User> users){
+      String title = null;
+      for (User user: users){
+         if(users.indexOf(user)==0){
+            title =user.getDisplayName();
+         }else {
+            title +=" "+user.getDisplayName();
+         }
+      }
+      return title;
+   }
+
    /*
 public void _startRepeatingTask() {
 	runnable =

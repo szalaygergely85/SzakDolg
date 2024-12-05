@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +28,7 @@ public class ChatActivity extends BaseActivity {
    private ChatAdapter adapter;
    private Long conversationId;
    private RecyclerView chatRecView;
-   private Button btnSend;
+   private ImageView imgSend;
    private MyEditText edtMess;
 
    private FileApiHelper fileApiHelper = new FileApiHelper();
@@ -59,7 +61,7 @@ public class ChatActivity extends BaseActivity {
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
-      chatActivityHelper.setToolbar(mToolbar);
+      chatActivityHelper.setToolbarTitle(mToolbar, conversationId);
    }
 
    private void _getIntentExtras() {
@@ -85,7 +87,7 @@ public class ChatActivity extends BaseActivity {
 
    private void _initView() {
       chatRecView = findViewById(R.id.recViewChat);
-      btnSend = findViewById(R.id.btnChatSend);
+      imgSend = findViewById(R.id.imgSend);
       edtMess = findViewById(R.id.edtChatMes);
       mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
    }
@@ -104,7 +106,7 @@ public class ChatActivity extends BaseActivity {
          }
       );
 
-      btnSend.setOnClickListener(
+      imgSend.setOnClickListener(
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {

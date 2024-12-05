@@ -122,11 +122,13 @@ public class ImageCoordinatorService extends BaseService {
          responseBody -> {
             boolean writtenToDisk = false;
             try {
-               File file = FileUtil.writeResponseBodyToDisk(
-                  responseBody,
-                  context,
-                  ImageUtil.getImageName(uuid, ImageConstans.TAG_PROFILE)
-               );
+               if (responseBody != null) {
+                  File file = FileUtil.writeResponseBodyToDisk(
+                     responseBody,
+                     context,
+                     ImageUtil.getImageName(uuid, ImageConstans.TAG_PROFILE)
+                  );
+               }
                //TODO add image to database
             } catch (IOException e) {
                throw new RuntimeException(e);

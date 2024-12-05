@@ -7,4 +7,6 @@ public class SharedPreferencesConstants {
    public static final String OTHER_USER = "other_user";
    public static final String USER_ID = "user_id";
    public static final String CACHE_EXPIRE = "cache_date";
+
+   public static final String DARK_MODE = "dark_mode";
 }

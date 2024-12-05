@@ -143,4 +143,12 @@ public class MessageService extends BaseService {
          Log.d("Service", "New message added with uUId: " + entry.getUuId());
       }
    }
+
+    public int getCountByNotReadMsg(Long conversationId) {
+      return messageDatabaseUtil.getUnreadMessageCountByConversationId(conversationId);
+    }
+
+    public void setMessagesAsReadByConversationId(Long conversationId) {
+       messageDatabaseUtil.setMessagesAsReadByConversationId(conversationId);
+    }
 }

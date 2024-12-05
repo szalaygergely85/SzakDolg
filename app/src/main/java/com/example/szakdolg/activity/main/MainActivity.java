@@ -3,21 +3,30 @@ package com.example.szakdolg.activity.main;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
+
+   private NavigationView navigationView;
 
    private RecyclerView messageBoardRecView;
    private static final int READ_PERMISSION_CODE = 202;
@@ -25,6 +34,7 @@ public class MainActivity extends BaseActivity {
 
    private LinearLayout emptyLayout;
    private LinearLayout withItemsLayout;
+   private DrawerLayout drawerLayout;
 
    private MaterialToolbar topAppBar;
    private MainActivityHelper _mainActivityHelper;
@@ -42,7 +52,6 @@ public class MainActivity extends BaseActivity {
       setContentView(R.layout.activity_main);
 
       _initView();
-      //_setListeners();
    }
 
    @Override
@@ -51,17 +60,61 @@ public class MainActivity extends BaseActivity {
 
       this._mainActivityHelper = new MainActivityHelper(this, currentUser);
 
+      MenuItem themeItem = navigationView
+         .getMenu()
+         .findItem(R.id.main_dark_theme);
+      SwitchCompat switchTheme = themeItem
+         .getActionView()
+         .findViewById(R.id.switch_item);
+
       _mainActivityHelper.setBottomNavMenu(bottomNavigationView);
-      _mainActivityHelper.setTopBarMenu(topAppBar);
+      _mainActivityHelper.setListeners(topAppBar, drawerLayout, navigationView);
+
+      boolean isNightMode = SharedPreferencesUtil.getBooleanPreferences(
+         this,
+         SharedPreferencesConstants.DARK_MODE
+      );
+
+      switchTheme.setChecked(isNightMode);
+
+      // Apply the theme
+      if (isNightMode) {
+         AppCompatDelegate.setDefaultNightMode(
+            AppCompatDelegate.MODE_NIGHT_YES
+         );
+      } else {
+         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+      }
+
+      switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+         SharedPreferencesUtil.setBoolean(
+            this,
+            SharedPreferencesConstants.DARK_MODE,
+            isChecked
+         );
+
+         if (isChecked) {
+            AppCompatDelegate.setDefaultNightMode(
+               AppCompatDelegate.MODE_NIGHT_YES
+            );
+         } else {
+            AppCompatDelegate.setDefaultNightMode(
+               AppCompatDelegate.MODE_NIGHT_NO
+            );
+         }
+      });
 
       MainAdapter mainAdapter = new MainAdapter(this, currentUser);
+
       List<Conversation> conversations =
          _mainActivityHelper.getConversationList();
-      if (!conversations.isEmpty()) {
 
+      if (!conversations.isEmpty()) {
          emptyLayout.setVisibility(View.GONE);
          withItemsLayout.setVisibility(View.VISIBLE);
+
          mainAdapter.setConversationList(conversations);
+
          messageBoardRecView.setAdapter(mainAdapter);
          messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
       } else {
@@ -118,9 +171,11 @@ public class MainActivity extends BaseActivity {
    }
 
    private void _initView() {
+      navigationView = findViewById(R.id.navigation_view_main);
+      drawerLayout = findViewById(R.id.drawerLayoutMain);
       topAppBar = findViewById(R.id.topAppBar);
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
-      bottomNavigationView = findViewById(R.id.bottom_navigation);
+      bottomNavigationView = findViewById(R.id.bottom_nav_main);
       emptyLayout = findViewById(R.id.llayoutEmptyMain);
       withItemsLayout = findViewById(R.id.llayoutWithItemsMain);
    }

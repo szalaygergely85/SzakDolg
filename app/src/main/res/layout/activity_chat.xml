@@ -5,56 +5,106 @@
     android:id="@+id/newChatParent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryLightColor"
-
     tools:context=".activity.chat.activity.ChatActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/chatToolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/chatBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:minHeight="?attr/actionBarSize"
-        app:title="Title"
-        app:titleMarginStart="32dp" />
+        android:elevation="8dp"
+        >
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/chatToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:menu="@menu/menu_chat_top_bar"
+            app:title="Title"
+            app:titleCentered="true" >
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chatBarLayout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/relLayChatSendBar"
-        android:layout_below="@id/chatToolbar"
+        android:layout_below="@id/chatBarLayout"
         android:layout_alignParentBottom="false"
         android:padding="5dp"/>
 
-    <RelativeLayout
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recViewChat" />
+
+    <LinearLayout
         android:id="@+id/relLayChatSendBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_alignParentBottom="true"
+        android:padding="0dp"
+        android:layout_margin="0dp">
 
-        <Button
-            android:id="@+id/btnChatSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@color/primaryDarkColor"
-            android:text="@string/send"
-            android:textColor="@color/primaryTextColor" />
+        <!-- Attachment Icon -->
+        <ImageView
+            android:id="@+id/imgAttach"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_attach_file"
+            app:tint="@color/secondaryTextColor" />
 
-        <com.example.szakdolg.MyEditText
-            android:id="@+id/edtChatMes"
-            android:layout_width="match_parent"
+        <!-- Text Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilChatInput"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_toStartOf="@id/btnChatSend"
-            android:inputType="textMultiLine|textCapSentences"
-            android:hint="Type a message"
-            android:maxLength="150"
-            android:minHeight="48dp"
-            android:textColor="@color/primaryTextColor" />
-    </RelativeLayout>
+            android:layout_marginVertical="5dp"
+            android:layout_weight="1"
+            android:hint="@string/send_a_message"
+            android:minHeight="40dp"
+            app:boxBackgroundMode="outline"
+            app:boxCollapsedPaddingTop="0dp"
+            app:boxCornerRadiusBottomEnd="24dp"
+            app:boxCornerRadiusBottomStart="24dp"
+            app:boxCornerRadiusTopEnd="24dp"
+            app:boxCornerRadiusTopStart="24dp"
+            app:boxStrokeColor="@color/gray"
+            app:hintEnabled="false">
+
+            <com.example.szakdolg.MyEditText
+                android:id="@+id/edtChatMes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="@string/send_a_message"
+                android:inputType="textMultiLine|textCapSentences"
+                android:minHeight="40dp"
+                android:textColor="@color/secondaryTextColor" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Send Icon -->
+        <ImageView
+            android:id="@+id/imgSend"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_send_message"
+            app:tint="@color/secondaryTextColor" />
+    </LinearLayout>
 </RelativeLayout>
