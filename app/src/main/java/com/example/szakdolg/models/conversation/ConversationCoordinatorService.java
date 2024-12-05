@@ -4,19 +4,25 @@ import android.content.Context;
 import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.service.UserCoordinatorService;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationCoordinatorService extends BaseService {
 
    private MessageCoordinatorService messageCoordinatorService;
+   private UserCoordinatorService userCoordinatorService;
    private ConversationService conversationService;
 
    private ConversationParticipantCoordinatorService conversationParticipantCoordinatorService;
    private ConversationApiHelper conversationApiHelper;
+
 
    public ConversationCoordinatorService(Context context, User currentUser) {
       super(context, currentUser);
@@ -26,6 +32,7 @@ public class ConversationCoordinatorService extends BaseService {
 
       this.conversationParticipantCoordinatorService =
       new ConversationParticipantCoordinatorService(context, currentUser);
+      this.userCoordinatorService= new UserCoordinatorService(context);
    }
 
    public Conversation getConversation(Long conversationId) {
@@ -47,11 +54,16 @@ public class ConversationCoordinatorService extends BaseService {
       }
    }
 
-   public List<Conversation> getAllConversations(Runnable onSuccess) {
+   public List<Conversation> getAllValidConversations(Runnable onSuccess) {
       List<Conversation> conversations =
          conversationService.getAllConversations();
       if (conversations.size() > 0) {
-         return conversations;
+         List<Conversation> validConversations = _validateConversations(conversations);
+         if (validConversations.size()>0){
+            return conversations;
+         }else {
+            return null;
+         }
       } else {
          conversationApiHelper.getAllConversation(conversationsRemote -> {
             conversationService.addConversations(conversationsRemote);
@@ -62,6 +74,21 @@ public class ConversationCoordinatorService extends BaseService {
          return null;
       }
    }
+
+   private List<Conversation> _validateConversations(List<Conversation> conversations) {
+      List<Conversation> validConversation = new ArrayList<>();
+      for(Conversation conversation: conversations){
+         if(messageCoordinatorService.getMessagesByConversationId(conversation.getConversationId()).size()>0){
+            List<ConversationParticipant> conversationParticipants = conversationParticipantCoordinatorService.getOtherParticipants(conversation.getConversationId());
+            if(userCoordinatorService.getConversationParticipantUser(conversationParticipants, currentUser).size()>0){
+                  validConversation.add(conversation);
+            }
+         }
+
+         }
+      return validConversation;
+   }
+
 
    public void addConversation(
       Conversation conversation,

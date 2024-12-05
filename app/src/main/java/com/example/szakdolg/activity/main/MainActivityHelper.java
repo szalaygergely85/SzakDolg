@@ -1,13 +1,11 @@
 package com.example.szakdolg.activity.main;
 
 import android.content.Context;
-import android.content.Intent;
-import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.szakdolg.R;
-import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
+
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
@@ -15,8 +13,7 @@ import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.user.api.ContactsApiHelper;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
+
 import java.util.List;
 
 public class MainActivityHelper {
@@ -39,7 +36,7 @@ public class MainActivityHelper {
       MainAdapter mainAdapter = new MainAdapter(_context, currentUser);
 
       List<Conversation> conversationList =
-         conversationCoordinatorService.getAllConversations(null);
+         conversationCoordinatorService.getAllValidConversations(null);
       if (conversationList != null) {
          mainAdapter.setConversationList(conversationList);
       }
