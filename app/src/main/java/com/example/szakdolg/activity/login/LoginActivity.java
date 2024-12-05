@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ForgotPasswordActivity;
 import com.example.szakdolg.activity.register.RegisterActivity;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
@@ -85,14 +84,18 @@ public class LoginActivity extends AppCompatActivity {
                boolean isValid = true;
 
                if (email.isEmpty()) {
-                  editMailLayout.setError(getString(R.string.email_is_required));
+                  editMailLayout.setError(
+                     getString(R.string.email_is_required)
+                  );
                   isValid = false;
                } else {
                   editMailLayout.setError(null); // Clear error when valid
                }
 
                if (password.isEmpty()) {
-                  editPassLayout.setError(getString(R.string.password_is_required));
+                  editPassLayout.setError(
+                     getString(R.string.password_is_required)
+                  );
                   isValid = false;
                } else {
                   editPassLayout.setError(null); // Clear error when valid
@@ -106,4 +109,3 @@ public class LoginActivity extends AppCompatActivity {
       );
    }
 }
-

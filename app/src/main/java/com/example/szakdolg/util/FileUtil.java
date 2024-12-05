@@ -26,8 +26,8 @@ public class FileUtil {
       "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)";
 
    public static void writeHashMapToFile(
-           HashMap<String, String> hashMap,
-           File file
+      HashMap<String, String> hashMap,
+      File file
    ) {
       try {
          // Check if the file is writable
@@ -37,14 +37,20 @@ public class FileUtil {
          }
 
          // Check if parent directory is writable (if file doesn't exist)
-         if (!file.exists() && file.getParentFile() != null && !file.getParentFile().canWrite()) {
+         if (
+            !file.exists() &&
+            file.getParentFile() != null &&
+            !file.getParentFile().canWrite()
+         ) {
             System.out.println("Error: Parent directory is not writable.");
             return;
          }
 
          // Write HashMap to file
-         try (FileOutputStream fos = new FileOutputStream(file);
-              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+         try (
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos)
+         ) {
             oos.writeObject(hashMap);
          }
 

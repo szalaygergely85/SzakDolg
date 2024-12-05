@@ -1,5 +1,5 @@
 package com.example.szakdolg.webrtc;
 
 public interface NewEventCallBack {
-    void onNewEventReceived(DataModel model);
+   void onNewEventReceived(DataModel model);
 }

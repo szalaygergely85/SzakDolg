@@ -36,8 +36,7 @@ public class MainAdapterHelper {
    public MainAdapterHelper(User currentUser, Context context) {
       this.currentUser = currentUser;
       this.context = context;
-      this.userCoordinatorService =
-      new UserCoordinatorService(context);
+      this.userCoordinatorService = new UserCoordinatorService(context);
       this.conversationCoordinatorService =
       new ConversationCoordinatorService(context, currentUser);
       this.imageCoordinatorService =

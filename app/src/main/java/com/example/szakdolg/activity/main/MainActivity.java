@@ -1,27 +1,32 @@
 package com.example.szakdolg.activity.main;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
-import com.example.szakdolg.activity.chat.activity.NewChatActivity;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
+import com.example.szakdolg.activity.main.adapter.MainAdapter;
+import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.List;
 
 public class MainActivity extends BaseActivity {
 
    private RecyclerView messageBoardRecView;
-   private FloatingActionButton contactsButton;
-
    private static final int READ_PERMISSION_CODE = 202;
    private static final int WRITE_PERMISSION_CODE = 203;
+
+   private LinearLayout emptyLayout;
+   private LinearLayout withItemsLayout;
+
+   private MaterialToolbar topAppBar;
    private MainActivityHelper _mainActivityHelper;
    private BottomNavigationView bottomNavigationView;
 
@@ -44,15 +49,25 @@ public class MainActivity extends BaseActivity {
    protected void onStart() {
       super.onStart();
 
-      this._mainActivityHelper =
-      new MainActivityHelper(this, token, currentUser);
+      this._mainActivityHelper = new MainActivityHelper(this, currentUser);
 
-     // _mainActivityHelper.setNavMenu(bottomNavigationView);
+      _mainActivityHelper.setBottomNavMenu(bottomNavigationView);
+      _mainActivityHelper.setTopBarMenu(topAppBar);
 
-      //TODO valami gond van itt....
-      //_mainActivityHelper.startCacheChecking();
+      MainAdapter mainAdapter = new MainAdapter(this, currentUser);
+      List<Conversation> conversations =
+         _mainActivityHelper.getConversationList();
+      if (!conversations.isEmpty()) {
 
-      _mainActivityHelper.setMessageBoard(messageBoardRecView);
+         emptyLayout.setVisibility(View.GONE);
+         withItemsLayout.setVisibility(View.VISIBLE);
+         mainAdapter.setConversationList(conversations);
+         messageBoardRecView.setAdapter(mainAdapter);
+         messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
+      } else {
+         emptyLayout.setVisibility(View.VISIBLE);
+         withItemsLayout.setVisibility(View.GONE);
+      }
    }
 
    @Override
@@ -103,27 +118,10 @@ public class MainActivity extends BaseActivity {
    }
 
    private void _initView() {
-     // contactsButton = findViewById(R.id.newMessageButton);
+      topAppBar = findViewById(R.id.topAppBar);
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
       bottomNavigationView = findViewById(R.id.bottom_navigation);
+      emptyLayout = findViewById(R.id.llayoutEmptyMain);
+      withItemsLayout = findViewById(R.id.llayoutWithItemsMain);
    }
-/*
-   private void _setListeners() {/*
-      contactsButton.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               Intent intent = new Intent(
-                  MainActivity.this,
-                  NewChatActivity.class
-               );
-               intent.putExtra(
-                  SharedPreferencesConstants.CURRENT_USER,
-                  currentUser
-               );
-               startActivity(intent);
-            }
-         }
-      );
-   }*/
 }

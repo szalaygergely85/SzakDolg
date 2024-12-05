@@ -2,25 +2,20 @@ package com.example.szakdolg.activity.call;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewStub;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-
 import com.example.szakdolg.R;
 import com.example.szakdolg.webrtc.DataModelType;
 import com.example.szakdolg.webrtc.MainRepository;
-
 import org.webrtc.SurfaceViewRenderer;
 
-
-public class CallActivity extends AppCompatActivity implements MainRepository.Listener {
+public class CallActivity
+   extends AppCompatActivity
+   implements MainRepository.Listener {
 
    private static final String TAG = "CallActivity";
    private TextView incomingNameTV;
@@ -33,13 +28,10 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
    private ImageView micButton;
    private ImageView videoButton;
    private ImageView endCallButton;
-   private
-   SurfaceViewRenderer localView;
-   private
-   SurfaceViewRenderer remoteView;
+   private SurfaceViewRenderer localView;
+   private SurfaceViewRenderer remoteView;
    private View callLayout;
    private View whoToCallLayout;
-
 
    private MainRepository mainRepository;
    private Boolean isCameraMuted = false;
@@ -50,11 +42,11 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_call);
       mainRepository = MainRepository.getInstance();
-      mainRepository.login("Gege", this, ()->{});
+      mainRepository.login("Gege", this, () -> {});
       init();
    }
 
-   private void init(){
+   private void init() {
       incomingCallLayout = findViewById(R.id.incomingCallLayout);
       incomingNameTV = findViewById(R.id.incomingNameTV);
       acceptButton = findViewById(R.id.acceptButton);
@@ -70,60 +62,58 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
       callLayout = findViewById(R.id.callLayout);
       whoToCallLayout = findViewById(R.id.whoToCallLayout);
 
-
-
-
-      callBtn.setOnClickListener(v->{
+      callBtn.setOnClickListener(v -> {
          //start a call request here
          mainRepository.sendCallRequest(targetUserNameEt.getText().toString());
-
       });
       mainRepository.initLocalView(localView);
       mainRepository.initRemoteView(remoteView);
       mainRepository.listener = this;
 
-      mainRepository.subscribeForLatestEvent(data->{
-         if (data.getType()== DataModelType.StartCall){
-            runOnUiThread(()->{
-               incomingNameTV.setText(data.getSender()+" is Calling you");
+      mainRepository.subscribeForLatestEvent(data -> {
+         if (data.getType() == DataModelType.StartCall) {
+            runOnUiThread(() -> {
+               incomingNameTV.setText(data.getSender() + " is Calling you");
                incomingCallLayout.setVisibility(View.VISIBLE);
-               acceptButton.setOnClickListener(v->{
+               acceptButton.setOnClickListener(v -> {
                   //star the call here
                   mainRepository.startCall(data.getSender());
                   incomingCallLayout.setVisibility(View.GONE);
                });
-               rejectButton.setOnClickListener(v->{
+               rejectButton.setOnClickListener(v -> {
                   incomingCallLayout.setVisibility(View.GONE);
                });
             });
          }
       });
 
-      switchCameraButton.setOnClickListener(v->{
+      switchCameraButton.setOnClickListener(v -> {
          mainRepository.switchCamera();
       });
 
-      micButton.setOnClickListener(v->{
-         if (isMicrophoneMuted){
+      micButton.setOnClickListener(v -> {
+         if (isMicrophoneMuted) {
             micButton.setImageResource(R.drawable.ic_baseline_mic_off_24);
-         }else {
+         } else {
             micButton.setImageResource(R.drawable.ic_baseline_mic_24);
          }
          mainRepository.toggleAudio(isMicrophoneMuted);
-         isMicrophoneMuted=!isMicrophoneMuted;
+         isMicrophoneMuted = !isMicrophoneMuted;
       });
 
-      videoButton.setOnClickListener(v->{
-         if (isCameraMuted){
-            videoButton.setImageResource(R.drawable.ic_baseline_videocam_off_24);
-         }else {
+      videoButton.setOnClickListener(v -> {
+         if (isCameraMuted) {
+            videoButton.setImageResource(
+               R.drawable.ic_baseline_videocam_off_24
+            );
+         } else {
             videoButton.setImageResource(R.drawable.ic_baseline_videocam_24);
          }
          mainRepository.toggleVideo(isCameraMuted);
-         isCameraMuted=!isCameraMuted;
+         isCameraMuted = !isCameraMuted;
       });
 
-     endCallButton.setOnClickListener(v->{
+      endCallButton.setOnClickListener(v -> {
          mainRepository.endCall();
          finish();
       });
@@ -131,7 +121,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
    @Override
    public void webrtcConnected() {
-      runOnUiThread(()->{
+      runOnUiThread(() -> {
          incomingCallLayout.setVisibility(View.GONE);
          whoToCallLayout.setVisibility(View.GONE);
          callLayout.setVisibility(View.VISIBLE);

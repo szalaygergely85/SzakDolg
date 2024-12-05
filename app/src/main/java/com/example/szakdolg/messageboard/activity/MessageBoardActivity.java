@@ -30,9 +30,7 @@ import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.notification.MessageWorker;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +65,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       _initView();
 
-     // setNavMenu();
+      // setNavMenu();
 
       userToken =
       SharedPreferencesUtil.getStringPreference(
@@ -200,44 +198,44 @@ public class MessageBoardActivity extends AppCompatActivity {
    }
 
    /*
-   private void setNavMenu() {
-      BottomNavigationView bottomNavigationView = findViewById(
-         R.id.bottom_navigation
-      );
+private void setNavMenu() {
+	BottomNavigationView bottomNavigationView = findViewById(
+		R.id.bottom_navigation
+	);
 
-      bottomNavigationView.setOnItemSelectedListener(
-         new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-               Intent intent;
-               switch (item.getItemId()) {
-                  case R.id.navigation_messages:
-                     // Handle home navigation
-                     return true;
-                  case R.id.navigation_group:
-                     // Handle dashboard navigation
-                     return true;
-                  case R.id.navigation_chat:
-                     // Handle notifications navigation
-                     return true;
-                  case R.id.navigation_contact:
-                     intent =
-                     new Intent(
-                        MessageBoardActivity.this,
-                        ContactsActivity.class
-                     );
-                     intent.putExtra(
-                        SharedPreferencesConstants.CURRENT_USER,
-                        _currentUser
-                     );
-                     startActivity(intent);
-                     break;
-               }
-               return false;
-            }
-         }
-      );
-   }*/
+	bottomNavigationView.setOnItemSelectedListener(
+		new NavigationBarView.OnItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+			Intent intent;
+			switch (item.getItemId()) {
+				case R.id.navigation_messages:
+					// Handle home navigation
+					return true;
+				case R.id.navigation_group:
+					// Handle dashboard navigation
+					return true;
+				case R.id.navigation_chat:
+					// Handle notifications navigation
+					return true;
+				case R.id.navigation_contact:
+					intent =
+					new Intent(
+						MessageBoardActivity.this,
+						ContactsActivity.class
+					);
+					intent.putExtra(
+						SharedPreferencesConstants.CURRENT_USER,
+						_currentUser
+					);
+					startActivity(intent);
+					break;
+			}
+			return false;
+			}
+		}
+	);
+}*/
 
    private void _scheduleMessageWorker() {
       Constraints constraints = new Constraints.Builder()

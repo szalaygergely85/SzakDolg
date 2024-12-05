@@ -2,10 +2,6 @@ package com.example.szakdolg.db.util;
 
 import static org.junit.Assert.*;
 
-
-import org.junit.runner.RunWith;
-
-
 public class ProfileDatabaseUtilTest {
    /*
 	private ProfileDatabaseUtil profileDatabaseUtil;

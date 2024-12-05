@@ -68,8 +68,13 @@ public class RegisterActivity extends AppCompatActivity {
                pass = editPass.getText().toString();
                pass2 = editPass2.getText().toString();
                displayName = editDisplayName.getText().toString();
-               if(_validateValues(email, pass, pass2, displayName)){
-                  registerActivityHelper.registerUser(email, pass, pass2, displayName);
+               if (_validateValues(email, pass, pass2, displayName)) {
+                  registerActivityHelper.registerUser(
+                     email,
+                     pass,
+                     pass2,
+                     displayName
+                  );
                }
             }
          }
@@ -88,7 +93,12 @@ public class RegisterActivity extends AppCompatActivity {
       );
    }
 
-   private boolean _validateValues(String email, String pass, String pass2, String displayName) {
+   private boolean _validateValues(
+      String email,
+      String pass,
+      String pass2,
+      String displayName
+   ) {
       editEmailLayout.setError(null);
       editPassLayout.setError(null);
       editPass2Layout.setError(null);
@@ -96,31 +106,34 @@ public class RegisterActivity extends AppCompatActivity {
       boolean valid = true;
       if (email.isEmpty()) {
          editEmailLayout.setError(getString(R.string.email_is_required));
-         valid =  false;
-      }else if (!registerActivityHelper.isEmailValid(email)) {
+         valid = false;
+      } else if (!registerActivityHelper.isEmailValid(email)) {
          editEmailLayout.setError(getString(R.string.email_invalid));
-         valid =  false;
-
+         valid = false;
       }
       if (displayName.isEmpty()) {
-         editDisplayNameLayout.setError(getString(R.string.display_name_is_required));
-         valid =  false;
+         editDisplayNameLayout.setError(
+            getString(R.string.display_name_is_required)
+         );
+         valid = false;
       }
 
       if (pass.isEmpty()) {
          editPassLayout.setError(getString(R.string.password_is_required));
-         valid =  false;
+         valid = false;
       } else if (pass.length() < 6) {
          editPassLayout.setError(getString(R.string.password_too_short));
-         valid =  false;
+         valid = false;
       }
 
       if (pass2.isEmpty()) {
-         editPass2Layout.setError(getString(R.string.confirm_password_is_required));
-         valid =  false;
-      }else if (!pass.equals(pass2)) {
+         editPass2Layout.setError(
+            getString(R.string.confirm_password_is_required)
+         );
+         valid = false;
+      } else if (!pass.equals(pass2)) {
          editPass2Layout.setError(getString(R.string.passwords_dont_match));
-         valid =  false;
+         valid = false;
       }
 
       return valid;

@@ -24,52 +24,55 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
+    <LinearLayout
+        android:id="@+id/llayoutWithItemsMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appBarLayout"
 
-                android:layout_below="@id/appBarLayout">
+        android:orientation="vertical"
+        android:visibility="invisible">
 
-                <com.google.android.material.search.SearchBar
-                    android:id="@+id/search_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/search_for_users" />
+        <com.google.android.material.search.SearchBar
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_for_users" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/messageBoardRecView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/primaryLightColor"
-                    android:clipToPadding="true" />
-            </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messageBoardRecView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/primaryLightColor"
+            android:clipToPadding="true" />
+    </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llayoutEmptyMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_navigation"
-        android:orientation="vertical"
-        android:visibility="gone"
         android:layout_below="@id/appBarLayout"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
 
-            <ImageView
-                android:id="@+id/logoImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_messages" />
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_messages" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/looks_quite_here_say_hi_to_someone"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="@string/looks_quite_here_say_hi_to_someone"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </LinearLayout>
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -81,6 +84,7 @@
 
     <com.google.android.material.navigation.NavigationView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
 
 </RelativeLayout>

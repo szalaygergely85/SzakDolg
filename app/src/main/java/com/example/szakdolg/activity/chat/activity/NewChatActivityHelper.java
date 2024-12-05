@@ -35,8 +35,7 @@ public class NewChatActivityHelper {
       this.currentUser = currentUser;
       this.conversationParticipantCoordinatorService =
       new ConversationParticipantCoordinatorService(context, currentUser);
-      this.userCoordinatorService =
-      new UserCoordinatorService(context);
+      this.userCoordinatorService = new UserCoordinatorService(context);
       this.messageCoordinatorService =
       new MessageCoordinatorService(context, currentUser);
 

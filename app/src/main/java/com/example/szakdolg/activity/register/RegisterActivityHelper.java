@@ -1,7 +1,6 @@
 package com.example.szakdolg.activity.register;
 
 import android.content.Context;
-
 import com.example.szakdolg.models.user.api.UserApiHelper;
 import com.example.szakdolg.models.user.constans.UserConstans;
 import com.example.szakdolg.models.user.entity.User;
@@ -9,7 +8,6 @@ import com.example.szakdolg.models.user.service.UserCoordinatorService;
 import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.KeyStoreUtil;
-
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,21 +32,20 @@ public class RegisterActivityHelper {
       String pass2,
       String displayName
    ) {
-         String hashPass = HashUtils.hashPassword(pass);
-         HashMap<String, String> keyPair = KeyStoreUtil.generateKeyPair();
+      String hashPass = HashUtils.hashPassword(pass);
+      HashMap<String, String> keyPair = KeyStoreUtil.generateKeyPair();
 
-         User user = new User(
-            displayName,
-            email,
-            hashPass,
-            keyPair.get("Public"),
-            UserConstans.STATUS_ACTIVE,
-            UserConstans.TAG_PENDING
-         );
+      User user = new User(
+         displayName,
+         email,
+         hashPass,
+         keyPair.get("Public"),
+         UserConstans.STATUS_ACTIVE,
+         UserConstans.TAG_PENDING
+      );
 
-         userCoordinatorService.registerUser(user, keyPair);
-      }
-
+      userCoordinatorService.registerUser(user, keyPair);
+   }
 
    public boolean isEmailValid(String email) {
       String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
@@ -56,6 +53,4 @@ public class RegisterActivityHelper {
       Matcher matcher = pattern.matcher(email);
       return matcher.matches();
    }
-
-
 }

@@ -1,39 +1,27 @@
 package com.example.szakdolg.user.service;
 
-import android.content.Context;
-
-import com.example.szakdolg.models.user.api.UserApiHelper;
-import com.example.szakdolg.models.user.service.UserService;
-import com.example.szakdolg.util.HashUtils;
-import com.example.szakdolg.util.KeyStoreUtil;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-
 public class UserServiceTest {
-/*
-   @Mock
-   private Context mockContext;
-
-   @Mock
-   private UserApiHelper mockUserApiHelper;
-
-   @Mock
-   private KeyStoreUtil mockKeyStoreUtil;
-
-   @Mock
-   private HashUtils mockHashUtils;
-
-   private UserService userService;
-
-   @Before
-   public void setUp() {
-      MockitoAnnotations.openMocks(this);
-      userService = new UserService(mockContext);
-   }
    /*
+@Mock
+private Context mockContext;
+
+@Mock
+private UserApiHelper mockUserApiHelper;
+
+@Mock
+private KeyStoreUtil mockKeyStoreUtil;
+
+@Mock
+private HashUtils mockHashUtils;
+
+private UserService userService;
+
+@Before
+public void setUp() {
+	MockitoAnnotations.openMocks(this);
+	userService = new UserService(mockContext);
+}
+/*
 		@Test
 		public void testAddUser() {
 			// Arrange

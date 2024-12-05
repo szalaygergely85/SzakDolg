@@ -429,8 +429,6 @@ public class WebRtcManager {
                         eglBase.getEglBaseContext()
                      );
 
-
-
                   Log.d("WebRtc", "Remote video renderer added.");
                }
             }
@@ -577,12 +575,15 @@ public class WebRtcManager {
                   Log.e("WebRtc", "Failed to create local video track.");
                }
 
-            if (remoteVideoTrack != null) {
-               Log.d(TAG, "Adding remote video track to renderer.");
-               remoteVideoTrack.addSink(remoteVideoRenderer);
-            } else {
-               Log.e(TAG, "Remote video track is null. Check if remote peer is sending video.");
-            }
+               if (remoteVideoTrack != null) {
+                  Log.d(TAG, "Adding remote video track to renderer.");
+                  remoteVideoTrack.addSink(remoteVideoRenderer);
+               } else {
+                  Log.e(
+                     TAG,
+                     "Remote video track is null. Check if remote peer is sending video."
+                  );
+               }
             });
          // Ensure the renderer is initialized after layout is complete
 

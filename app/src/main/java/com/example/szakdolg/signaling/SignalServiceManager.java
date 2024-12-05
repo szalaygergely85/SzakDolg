@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
-
 import com.example.szakdolg.constans.AppConstants;
-
 import org.json.JSONObject;
 
 public class SignalServiceManager {
@@ -93,10 +91,16 @@ public class SignalServiceManager {
 
    public void connect(String serverUri, String userId) {
       if (signalService != null) {
-         Log.e(AppConstants.LOG_TAG, "SignalService is not bound yet. Cannot connect.");
+         Log.e(
+            AppConstants.LOG_TAG,
+            "SignalService is not bound yet. Cannot connect."
+         );
          signalService.connect(serverUri, userId);
       } else {
-         Log.e(AppConstants.LOG_TAG, "SignalService is not bound yet. Cannot connect.");
+         Log.e(
+            AppConstants.LOG_TAG,
+            "SignalService is not bound yet. Cannot connect."
+         );
       }
    }
 
@@ -104,7 +108,10 @@ public class SignalServiceManager {
       if (signalService != null) {
          signalService.sendMessage(message);
       } else {
-         Log.e(AppConstants.LOG_TAG, "SignalService is not bound yet. Cannot send message.");
+         Log.e(
+            AppConstants.LOG_TAG,
+            "SignalService is not bound yet. Cannot send message."
+         );
       }
    }
 
@@ -112,7 +119,10 @@ public class SignalServiceManager {
       if (signalService != null) {
          signalService.setSignalListener(listener);
       } else {
-         Log.e(AppConstants.LOG_TAG, "SignalService is not bound yet. Cannot set listener.");
+         Log.e(
+            AppConstants.LOG_TAG,
+            "SignalService is not bound yet. Cannot set listener."
+         );
       }
    }
 
