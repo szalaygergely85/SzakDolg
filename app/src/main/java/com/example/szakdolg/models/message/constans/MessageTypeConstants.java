@@ -1,4 +1,4 @@
-package com.example.szakdolg.constans;
+package com.example.szakdolg.models.message.constans;
 
 public class MessageTypeConstants {
 
@@ -7,4 +7,6 @@ public class MessageTypeConstants {
    public static final int MESSAGE = 2;
 
    public static final int IMAGE = 3;
+
+   public static final int PING = 4;
 }

@@ -23,40 +23,40 @@
             app:title="Title"
             app:titleCentered="true" >
 
-        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.MaterialToolbar>
 
-    </com.google.android.material.appbar.AppBarLayout>
+</com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/chatBarLayout" />
+<com.google.android.material.divider.MaterialDivider
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/chatBarLayout" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recViewChat"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/relLayChatSendBar"
-        android:layout_below="@id/chatBarLayout"
-        android:layout_alignParentBottom="false"
-        android:padding="5dp"/>
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/recViewChat"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@id/relLayChatSendBar"
+    android:layout_below="@id/chatBarLayout"
+    android:layout_alignParentBottom="false"
+    android:padding="5dp"/>
 
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/recViewChat" />
+<com.google.android.material.divider.MaterialDivider
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/recViewChat" />
 
-    <LinearLayout
-        android:id="@+id/relLayChatSendBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_alignParentBottom="true"
-        android:padding="0dp"
-        android:layout_margin="0dp">
+<LinearLayout
+    android:id="@+id/relLayChatSendBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_alignParentBottom="true"
+    android:padding="0dp"
+    android:layout_margin="0dp">
 
-        <!-- Attachment Icon -->
+    <!-- Attachment Icon
         <ImageView
             android:id="@+id/imgAttach"
             android:layout_width="40dp"
@@ -65,7 +65,7 @@
             android:layout_marginStart="8dp"
             android:src="@drawable/ic_attach_file"
             app:tint="@color/secondaryTextColor" />
-
+-->
         <!-- Text Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilChatInput"
@@ -74,15 +74,15 @@
             android:layout_marginVertical="5dp"
             android:layout_weight="1"
             android:hint="@string/send_a_message"
-            android:minHeight="40dp"
+            android:minHeight="30dp"
             app:boxBackgroundMode="outline"
-            app:boxCollapsedPaddingTop="0dp"
             app:boxCornerRadiusBottomEnd="24dp"
             app:boxCornerRadiusBottomStart="24dp"
             app:boxCornerRadiusTopEnd="24dp"
             app:boxCornerRadiusTopStart="24dp"
             app:boxStrokeColor="@color/gray"
             app:hintEnabled="false">
+
 
             <com.example.szakdolg.MyEditText
                 android:id="@+id/edtChatMes"
@@ -93,9 +93,11 @@
                 android:gravity="center_vertical"
                 android:hint="@string/send_a_message"
                 android:inputType="textMultiLine|textCapSentences"
-                android:minHeight="40dp"
+                android:minHeight="30dp"
                 android:textColor="@color/secondaryTextColor" />
         </com.google.android.material.textfield.TextInputLayout>
+
+
 
         <!-- Send Icon -->
         <ImageView

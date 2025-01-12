@@ -1,7 +1,7 @@
 package com.example.szakdolg.activity.chat.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.szakdolg.constans.MessageTypeConstants;
+import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;

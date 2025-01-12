@@ -9,7 +9,7 @@ import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.cache.CacheAction;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.IntentConstants;
-import com.example.szakdolg.constans.MessageTypeConstants;
+import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;

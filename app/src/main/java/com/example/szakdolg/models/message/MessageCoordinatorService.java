@@ -5,13 +5,20 @@ import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.websocket.WebSocketService;
+import com.google.gson.Gson;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MessageCoordinatorService extends BaseService {
 
-   private MessageService messageService;
+   private final MessageService messageService;
 
-   private MessageApiHelper messageApiHelper;
+   private final MessageApiHelper messageApiHelper;
+
+   private final WebSocketService webSocketService = WebSocketService.getInstance();
 
    public MessageCoordinatorService(Context context, User currentUser) {
       super(context, currentUser);
@@ -54,6 +61,9 @@ public class MessageCoordinatorService extends BaseService {
    }
 
    public void addMessage(MessageEntry messageEntry) {
+
+
+      webSocketService.sendMessage(messageEntry.getJSON());
       messageService.addMessage(messageEntry);
       messageApiHelper.addMessage(
          messageEntry,

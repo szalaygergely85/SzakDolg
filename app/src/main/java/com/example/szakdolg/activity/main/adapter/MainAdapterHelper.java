@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.MessageTypeConstants;
+import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;

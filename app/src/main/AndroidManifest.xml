@@ -30,6 +30,11 @@
             android:enabled="true"
             android:exported="false" />
 
+        <service
+            android:name=".websocket.WebSocketService"
+            android:foregroundServiceType="connectedDevice"
+            android:exported="false" />
+
         <activity
             android:name=".activity.call.CallActivity"
             android:exported="true">

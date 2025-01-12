@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.appcompat.widget.Toolbar;
@@ -15,7 +14,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
 import com.example.szakdolg.constans.IntentConstants;
-import com.example.szakdolg.constans.MessageTypeConstants;
+import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.file.api.FileApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;

@@ -1,25 +1,36 @@
 package com.example.szakdolg.models.message.entity;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
 
 public class MessageEntry implements Serializable {
 
    private Long messageId;
 
+   @Expose
    private Long conversationId;
 
+   @Expose
    private Long senderId;
 
+   @Expose
    private Long timestamp;
 
+   @Expose
    private String contentEncrypted;
 
    private boolean isRead;
 
+   @Expose
    private int type;
 
+   @Expose
    private String content;
 
+   @Expose
    private String uuid;
 
    private boolean isUploaded;
@@ -150,5 +161,10 @@ public class MessageEntry implements Serializable {
       this.content = content;
       this.uuid = uuid;
       this.isUploaded = isUploaded;
+   }
+
+   public String getJSON() {
+      Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+      return gson.toJson(this);
    }
 }

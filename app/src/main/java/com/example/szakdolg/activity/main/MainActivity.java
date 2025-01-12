@@ -1,5 +1,6 @@
 package com.example.szakdolg.activity.main;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.util.SharedPreferencesUtil;
+import com.example.szakdolg.websocket.WebSocketService;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -50,6 +52,9 @@ public class MainActivity extends BaseActivity {
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
+
+      Intent serviceIntent = new Intent(this, WebSocketService.class);
+      startService(serviceIntent);
 
       _initView();
    }

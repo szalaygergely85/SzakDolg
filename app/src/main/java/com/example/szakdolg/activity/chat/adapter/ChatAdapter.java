@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.viewholder.ImageViewHolder;
 import com.example.szakdolg.activity.chat.viewholder.TextViewHolder;
-import com.example.szakdolg.constans.MessageTypeConstants;
+import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
