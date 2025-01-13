@@ -4,8 +4,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+
+import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.models.image.constans.ImageConstans;
 import com.example.szakdolg.models.image.entity.ImageEntity;
+import com.example.szakdolg.models.user.entity.User;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,5 +80,15 @@ public class ImageUtil {
          maxSize = 800;
       }
       return maxSize;
+   }
+
+   public static String buildProfileImageUrl(User user) {
+
+      String serverUrl = AppConstants.API_URL + "/api/image/userid/";
+      Long id = user.getUserId();
+      if (id != null) {
+         return serverUrl + id;
+      }
+      return null;
    }
 }

@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity {
       List<Conversation> conversations =
          _mainActivityHelper.getConversationList();
 
-      if (!conversations.isEmpty()) {
+      if (conversations!=null) {
          emptyLayout.setVisibility(View.GONE);
          withItemsLayout.setVisibility(View.VISIBLE);
 

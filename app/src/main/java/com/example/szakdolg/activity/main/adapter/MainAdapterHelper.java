@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
+import com.example.szakdolg.constans.AppConstants;
+import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
@@ -62,17 +64,20 @@ public class MainAdapterHelper {
             participants.get(0).getUserId(),
             currentUser
          );
-         Uri uri = imageCoordinatorService.getImage(user);
-         if (uri != null) {
-            Glide
-               .with(context)
-               .load(uri)
-               .placeholder(R.drawable.ic_blank_profile) // Default image while loading
-               .error(R.drawable.ic_blank_profile) // Default image on error
-               .into(image);
+         String imageUrl = ImageUtil.buildProfileImageUrl(user);
+         if (imageUrl != null) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_blank_profile)
+                    .error(R.drawable.ic_blank_profile)
+                    .into(image);
+         } else {
+            image.setImageResource(R.drawable.ic_blank_profile);
          }
       }
    }
+
+
 
    public List<User> getParticipantUsers(Long conversationId) {
       List<ConversationParticipant> participants =
@@ -146,7 +151,7 @@ public class MainAdapterHelper {
                   return decryptedContentString;
                }
             } catch (Exception e) {
-               throw new RuntimeException(e);
+                throw new RuntimeException(e);
             }
          }
       }
