@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -14,11 +16,14 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.example.szakdolg.websocket.WebSocketService;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -41,6 +46,10 @@ public class MainActivity extends BaseActivity {
    private MaterialToolbar topAppBar;
    private MainActivityHelper _mainActivityHelper;
    private BottomNavigationView bottomNavigationView;
+
+   private ImageView profileImageHeader;
+
+   private TextView profileTextHeader;
 
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,6 +135,23 @@ public class MainActivity extends BaseActivity {
          emptyLayout.setVisibility(View.VISIBLE);
          withItemsLayout.setVisibility(View.GONE);
       }
+
+
+      //set menu text and image logo
+
+      profileTextHeader.setText(currentUser.getDisplayName());
+
+      String imageUrl = ImageUtil.buildProfileImageUrl(currentUser);
+      if (imageUrl != null) {
+         Glide.with(this)
+                 .load(imageUrl)
+                 .placeholder(R.drawable.ic_blank_profile)
+                 .error(R.drawable.ic_blank_profile)
+                 .into(profileImageHeader);
+      } else {
+         profileImageHeader.setImageResource(R.drawable.ic_blank_profile);
+      }
+
    }
 
    @Override
@@ -183,5 +209,8 @@ public class MainActivity extends BaseActivity {
       bottomNavigationView = findViewById(R.id.bottom_nav_main);
       emptyLayout = findViewById(R.id.llayoutEmptyMain);
       withItemsLayout = findViewById(R.id.llayoutWithItemsMain);
+      View headerView = navigationView.getHeaderView(0);
+      profileImageHeader = headerView.findViewById(R.id.profile_image_header);
+      profileTextHeader = headerView.findViewById(R.id.profile_name_header);
    }
 }

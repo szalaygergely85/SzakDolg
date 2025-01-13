@@ -5,7 +5,7 @@
 
     <!-- Profile Image -->
     <ImageView
-        android:id="@+id/profile_image"
+        android:id="@+id/profile_image_header"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
@@ -16,7 +16,7 @@
 
     <!-- Name and other profile details (optional) -->
     <TextView
-        android:id="@+id/profile_name"
+        android:id="@+id/profile_name_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your Name"
