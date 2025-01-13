@@ -10,7 +10,10 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
+import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.user.entity.User;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,6 +80,17 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
       } else {
 
          imageView.setVisibility(shouldShowProfilePicture?View.VISIBLE:View.INVISIBLE);
+
+         String imageUrl = ImageUtil.buildProfileImageUrl(senderId);
+         if (imageUrl != null) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_blank_profile)
+                    .error(R.drawable.ic_blank_profile)
+                    .into(imageView);
+         } else {
+            imageView.setImageResource(R.drawable.ic_blank_profile);
+         }
 
 
          lLout.setVisibility(View.GONE);

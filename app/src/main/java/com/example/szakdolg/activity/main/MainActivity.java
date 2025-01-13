@@ -141,7 +141,7 @@ public class MainActivity extends BaseActivity {
 
       profileTextHeader.setText(currentUser.getDisplayName());
 
-      String imageUrl = ImageUtil.buildProfileImageUrl(currentUser);
+      String imageUrl = ImageUtil.buildProfileImageUrl(currentUser.getUserId());
       if (imageUrl != null) {
          Glide.with(this)
                  .load(imageUrl)

@@ -64,7 +64,7 @@ public class MainAdapterHelper {
             participants.get(0).getUserId(),
             currentUser
          );
-         String imageUrl = ImageUtil.buildProfileImageUrl(user);
+         String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
          if (imageUrl != null) {
             Glide.with(context)
                     .load(imageUrl)

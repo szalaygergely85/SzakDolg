@@ -82,12 +82,11 @@ public class ImageUtil {
       return maxSize;
    }
 
-   public static String buildProfileImageUrl(User user) {
+   public static String buildProfileImageUrl(Long userId) {
 
       String serverUrl = AppConstants.API_URL + "/api/image/userid/";
-      Long id = user.getUserId();
-      if (id != null) {
-         return serverUrl + id;
+      if (userId != null) {
+         return serverUrl + userId;
       }
       return null;
    }
