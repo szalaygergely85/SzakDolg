@@ -14,6 +14,8 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
 
+   //TODO really need some feedbacks... if the server not available
+
    private TextInputLayout editMailLayout;
    private EditText editMail;
    private TextInputLayout editPassLayout;

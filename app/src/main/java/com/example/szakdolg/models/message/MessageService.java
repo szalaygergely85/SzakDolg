@@ -16,17 +16,19 @@ public class MessageService extends BaseService {
       this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
    }
 
-   public void addMessage(MessageEntry messageEntry) {
+   public MessageEntry addMessage(MessageEntry messageEntry) {
       if (messageEntry != null) {
-         messageDatabaseUtil.insertMessageEntry(messageEntry);
+         if (!_isMessageExists(messageEntry.getUuId())) {
+            messageDatabaseUtil.insertMessageEntry(messageEntry);
+         }
+         return messageDatabaseUtil.getMessageByUuid(messageEntry.getUuId());
       }
+      return null;
    }
 
    public void addMessages(List<MessageEntry> messageEntries) {
       for (MessageEntry messageEntry : messageEntries) {
-         if (!_isMessageExists(messageEntry.getMessageId())) {
-            addMessage(messageEntry);
-         }
+         addMessage(messageEntry);
       }
    }
 
@@ -45,9 +47,9 @@ public class MessageService extends BaseService {
       return messageEntries;
    }
 
-   private boolean _isMessageExists(Long messageId) {
-      List<Long> idList = messageDatabaseUtil.getAllMessageIds();
-      return idList.contains(messageId);
+   private boolean _isMessageExists(String messageUuid) {
+      List<String> uuidList = messageDatabaseUtil.getAllMessageUuids();
+      return uuidList.contains(messageUuid);
    }
 
    public void updateMessage(MessageEntry entry) {
@@ -144,11 +146,13 @@ public class MessageService extends BaseService {
       }
    }
 
-    public int getCountByNotReadMsg(Long conversationId) {
-      return messageDatabaseUtil.getUnreadMessageCountByConversationId(conversationId);
-    }
+   public int getCountByNotReadMsg(Long conversationId) {
+      return messageDatabaseUtil.getUnreadMessageCountByConversationId(
+         conversationId
+      );
+   }
 
-    public void setMessagesAsReadByConversationId(Long conversationId) {
-       messageDatabaseUtil.setMessagesAsReadByConversationId(conversationId);
-    }
+   public void setMessagesAsReadByConversationId(Long conversationId) {
+      messageDatabaseUtil.setMessagesAsReadByConversationId(conversationId);
+   }
 }

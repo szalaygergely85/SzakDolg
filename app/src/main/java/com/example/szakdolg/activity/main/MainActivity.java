@@ -16,11 +16,11 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
+import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.image.util.ImageUtil;
@@ -62,15 +62,17 @@ public class MainActivity extends BaseActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
 
-      Intent serviceIntent = new Intent(this, WebSocketService.class);
-      startService(serviceIntent);
-
       _initView();
    }
 
    @Override
    protected void onStart() {
       super.onStart();
+
+      Intent serviceIntent = new Intent(this, WebSocketService.class);
+      serviceIntent.putExtra(IntentConstants.CURRENT_USER, currentUser);
+      serviceIntent.putExtra(IntentConstants.USER_TOKEN, token);
+      startService(serviceIntent);
 
       this._mainActivityHelper = new MainActivityHelper(this, currentUser);
 
@@ -123,7 +125,7 @@ public class MainActivity extends BaseActivity {
       List<Conversation> conversations =
          _mainActivityHelper.getConversationList();
 
-      if (conversations!=null) {
+      if (conversations != null) {
          emptyLayout.setVisibility(View.GONE);
          withItemsLayout.setVisibility(View.VISIBLE);
 
@@ -136,22 +138,21 @@ public class MainActivity extends BaseActivity {
          withItemsLayout.setVisibility(View.GONE);
       }
 
-
       //set menu text and image logo
 
       profileTextHeader.setText(currentUser.getDisplayName());
 
       String imageUrl = ImageUtil.buildProfileImageUrl(currentUser.getUserId());
       if (imageUrl != null) {
-         Glide.with(this)
-                 .load(imageUrl)
-                 .placeholder(R.drawable.ic_blank_profile)
-                 .error(R.drawable.ic_blank_profile)
-                 .into(profileImageHeader);
+         Glide
+            .with(this)
+            .load(imageUrl)
+            .placeholder(R.drawable.ic_blank_profile)
+            .error(R.drawable.ic_blank_profile)
+            .into(profileImageHeader);
       } else {
          profileImageHeader.setImageResource(R.drawable.ic_blank_profile);
       }
-
    }
 
    @Override

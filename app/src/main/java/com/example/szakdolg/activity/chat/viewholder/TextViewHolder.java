@@ -1,16 +1,12 @@
 package com.example.szakdolg.activity.chat.viewholder;
 
 import android.content.Context;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.models.image.util.ImageUtil;
@@ -30,8 +26,6 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
    private final LinearLayout lLIn;
    private final LinearLayout lLout;
 
-
-
    public TextViewHolder(View itemView) {
       super(itemView);
       txtText = itemView.findViewById(R.id.chatText);
@@ -43,8 +37,6 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
       dateTextView = itemView.findViewById(R.id.dateTextView);
 
       imageView = itemView.findViewById(R.id.profilePicIn);
-
-
    }
 
    public void bind(
@@ -61,7 +53,7 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       String dateString = dateFormat.format(new Date(time));
 
-      dateTextView.setVisibility(showDateSeparator? View.VISIBLE : View.GONE);
+      dateTextView.setVisibility(showDateSeparator ? View.VISIBLE : View.GONE);
       dateTextView.setText(dateString);
       if (senderId.equals(currentUser.getUserId())) {
          imageView.setVisibility(View.GONE);
@@ -69,29 +61,36 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
          lLIn.setVisibility(View.GONE);
          lLout.setVisibility(View.VISIBLE);
 
-
          txtTimeIn.setVisibility(View.GONE);
-         txtTimeOut.setVisibility(shouldShowProfilePicture ? View.VISIBLE : View.GONE);
+         txtTimeOut.setVisibility(
+            shouldShowProfilePicture ? View.VISIBLE : View.GONE
+         );
          txtTimeOut.setText(timeForm);
-         txtTextFrMe.setBackground(shouldShowProfilePicture
-                 ? ContextCompat.getDrawable(context, R.drawable.bg_chat_one_sided_grey)
-                 : ContextCompat.getDrawable(context, R.drawable.bg_chat_grey));
+         txtTextFrMe.setBackground(
+            shouldShowProfilePicture
+               ? ContextCompat.getDrawable(
+                  context,
+                  R.drawable.bg_chat_one_sided_grey
+               )
+               : ContextCompat.getDrawable(context, R.drawable.bg_chat_grey)
+         );
          txtTextFrMe.setText(decryptedContentString);
       } else {
-
-         imageView.setVisibility(shouldShowProfilePicture?View.VISIBLE:View.INVISIBLE);
+         imageView.setVisibility(
+            shouldShowProfilePicture ? View.VISIBLE : View.INVISIBLE
+         );
 
          String imageUrl = ImageUtil.buildProfileImageUrl(senderId);
          if (imageUrl != null) {
-            Glide.with(context)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.ic_blank_profile)
-                    .error(R.drawable.ic_blank_profile)
-                    .into(imageView);
+            Glide
+               .with(context)
+               .load(imageUrl)
+               .placeholder(R.drawable.ic_blank_profile)
+               .error(R.drawable.ic_blank_profile)
+               .into(imageView);
          } else {
             imageView.setImageResource(R.drawable.ic_blank_profile);
          }
-
 
          lLout.setVisibility(View.GONE);
 
@@ -99,21 +98,23 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
 
          txtTimeOut.setVisibility(View.GONE);
 
-         txtTimeIn.setVisibility(shouldShowProfilePicture ? View.VISIBLE : View.GONE);
+         txtTimeIn.setVisibility(
+            shouldShowProfilePicture ? View.VISIBLE : View.GONE
+         );
          txtTimeIn.setText(timeForm);
 
-
-         
          txtTextFrMe.setVisibility(View.GONE);
 
          txtText.setText(decryptedContentString);
          txtText.setVisibility(View.VISIBLE);
-         txtText.setBackground(shouldShowProfilePicture
-                 ? ContextCompat.getDrawable(context, R.drawable.bg_chat_one_sided_white)
-                 : ContextCompat.getDrawable(context, R.drawable.bg_chat_white));
-
+         txtText.setBackground(
+            shouldShowProfilePicture
+               ? ContextCompat.getDrawable(
+                  context,
+                  R.drawable.bg_chat_one_sided_white
+               )
+               : ContextCompat.getDrawable(context, R.drawable.bg_chat_white)
+         );
       }
-
-
    }
 }

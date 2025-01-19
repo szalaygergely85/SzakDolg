@@ -1,19 +1,19 @@
 package com.example.szakdolg.activity.main.adapter;
 
 import android.content.Context;
-import android.net.Uri;
+import android.util.Log;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.models.image.util.ImageUtil;
-import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.image.ImageCoordinatorService;
+import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
+import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserCoordinatorService;
@@ -39,7 +39,6 @@ public class MainAdapterHelper {
    private final ImageCoordinatorService imageCoordinatorService;
    private final MessageCoordinatorService messageCoordinatorService;
 
-
    public MainAdapterHelper(User currentUser, Context context) {
       this.currentUser = currentUser;
       this.context = context;
@@ -50,7 +49,8 @@ public class MainAdapterHelper {
       new ImageCoordinatorService(context, currentUser);
       this.conversationParticipantCoordinatorService =
       new ConversationParticipantCoordinatorService(context, currentUser);
-      this.messageCoordinatorService = new MessageCoordinatorService(context, currentUser);
+      this.messageCoordinatorService =
+      new MessageCoordinatorService(context, currentUser);
    }
 
    public void setImageView(List<User> participants, ImageView image) {
@@ -66,18 +66,17 @@ public class MainAdapterHelper {
          );
          String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
          if (imageUrl != null) {
-            Glide.with(context)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.ic_blank_profile)
-                    .error(R.drawable.ic_blank_profile)
-                    .into(image);
+            Glide
+               .with(context)
+               .load(imageUrl)
+               .placeholder(R.drawable.ic_blank_profile)
+               .error(R.drawable.ic_blank_profile)
+               .into(image);
          } else {
             image.setImageResource(R.drawable.ic_blank_profile);
          }
       }
    }
-
-
 
    public List<User> getParticipantUsers(Long conversationId) {
       List<ConversationParticipant> participants =
@@ -151,7 +150,7 @@ public class MainAdapterHelper {
                   return decryptedContentString;
                }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+               Log.e(AppConstants.LOG_TAG, e.toString());
             }
          }
       }

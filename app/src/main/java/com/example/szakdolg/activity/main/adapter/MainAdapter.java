@@ -67,8 +67,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       holder.txtName.setText(conversation.getConversationName());
       Long conversationId = conversation.getConversationId();
 
-
-
       MessageEntry messageEntry =
          messageCoordinatorService.getLatestMessageEntry(conversationId);
 
@@ -82,9 +80,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       }
 
       int count = mainAdapterHelper.getCountByNotReadMsg(conversationId);
-      if (count == 0){
+      if (count == 0) {
          holder.txtNotRead.setVisibility(View.GONE);
-      }else {
+      } else {
          holder.txtNotRead.setText(String.valueOf(count));
       }
 

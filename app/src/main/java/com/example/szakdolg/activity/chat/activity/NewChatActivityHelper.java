@@ -1,11 +1,11 @@
 package com.example.szakdolg.activity.chat.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
+import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserCoordinatorService;

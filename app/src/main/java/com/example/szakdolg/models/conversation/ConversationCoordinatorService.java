@@ -91,16 +91,15 @@ public class ConversationCoordinatorService extends BaseService {
                conversationParticipantCoordinatorService.getOtherParticipants(
                   conversation.getConversationId()
                );
-            if (
-               userCoordinatorService
-                  .getConversationParticipantUser(
-                     conversationParticipants,
-                     currentUser
-                  )
-                  .size() >
-               0
-            ) {
-               validConversation.add(conversation);
+            List<User> users =
+               userCoordinatorService.getConversationParticipantUser(
+                  conversationParticipants,
+                  currentUser
+               );
+            if (users != null) {
+               if (!users.isEmpty()) {
+                  validConversation.add(conversation);
+               }
             }
          }
       }
@@ -121,9 +120,8 @@ public class ConversationCoordinatorService extends BaseService {
                newConversation
             );
             messageEntry.setConversationId(newConversation.getConversationId());
-            messageCoordinatorService.addMessage(messageEntry);
+            messageCoordinatorService.sendMessage(messageEntry);
          }
       );
    }
-
 }

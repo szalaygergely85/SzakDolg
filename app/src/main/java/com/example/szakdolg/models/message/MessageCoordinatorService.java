@@ -6,11 +6,7 @@ import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.websocket.WebSocketService;
-import com.google.gson.Gson;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MessageCoordinatorService extends BaseService {
 
@@ -18,7 +14,8 @@ public class MessageCoordinatorService extends BaseService {
 
    private final MessageApiHelper messageApiHelper;
 
-   private final WebSocketService webSocketService = WebSocketService.getInstance();
+   private final WebSocketService webSocketService =
+      WebSocketService.getInstance();
 
    public MessageCoordinatorService(Context context, User currentUser) {
       super(context, currentUser);
@@ -60,9 +57,7 @@ public class MessageCoordinatorService extends BaseService {
       }
    }
 
-   public void addMessage(MessageEntry messageEntry) {
-
-
+   public void sendMessage(MessageEntry messageEntry) {
       webSocketService.sendMessage(messageEntry.getJSON());
       messageService.addMessage(messageEntry);
       messageApiHelper.addMessage(
@@ -74,9 +69,14 @@ public class MessageCoordinatorService extends BaseService {
       );
    }
 
-    public int getCountByNotReadMsg(Long conversationId) {
+   public MessageEntry addMessage(MessageEntry messageEntry) {
+      //TODO decrypt content here, better to save uncrypted too
+      return messageService.addMessage(messageEntry);
+   }
+
+   public int getCountByNotReadMsg(Long conversationId) {
       return messageService.getCountByNotReadMsg(conversationId);
-    }
+   }
 
    public void setMessagesAsReadByConversationId(Long conversationId) {
       messageService.setMessagesAsReadByConversationId(conversationId);

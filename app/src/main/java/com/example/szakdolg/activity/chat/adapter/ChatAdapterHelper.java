@@ -48,12 +48,12 @@ public class ChatAdapterHelper {
    }
 
    public boolean isNextMessageNewDay(int position) {
-      if (position < messageEntries.size()-1) {
+      if (position < messageEntries.size() - 1) {
          // Get the timestamps of the current and previous messages
          long currentTimestamp = messageEntries.get(position).getTimestamp();
          long previousTimestamp = messageEntries
-                 .get(position +1)
-                 .getTimestamp();
+            .get(position + 1)
+            .getTimestamp();
 
          // Convert timestamps to Date objects
          Date currentDate = new Date(currentTimestamp);
@@ -98,7 +98,7 @@ public class ChatAdapterHelper {
    }
 
    private boolean isTheSameSender(int position) {
-      if (position == messageEntries.size()-1) return true; // Always show picture for the first message
+      if (position == messageEntries.size() - 1) return true; // Always show picture for the first message
       Long currentSender = messageEntries.get(position).getSenderId();
       Long nextSender = messageEntries.get(position + 1).getSenderId();
       return currentSender.equals(nextSender);

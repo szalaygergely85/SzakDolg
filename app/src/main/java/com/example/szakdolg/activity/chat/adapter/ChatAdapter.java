@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.viewholder.ImageViewHolder;
 import com.example.szakdolg.activity.chat.viewholder.TextViewHolder;
-import com.example.szakdolg.models.message.constans.MessageTypeConstants;
 import com.example.szakdolg.models.message.api.MessageApiHelper;
+import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
@@ -33,6 +33,18 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       this.currentUser = user;
       this.messageApiHelper = new MessageApiHelper(mContext, user);
       this.chatRecView = chatRecView;
+   }
+
+   public void addMessage(MessageEntry messageEntry) {
+      if (messageEntry != null) {
+         messageEntries.add(messageEntry);
+
+         messageEntries.sort(
+            Comparator.comparingLong(MessageEntry::getTimestamp)
+         );
+         notifyDataSetChanged();
+         chatRecView.scrollToPosition(getItemCount() - 1);
+      }
    }
 
    @Override
@@ -91,18 +103,17 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		}
 */
          decryptedContentString = messageEntry.getContent();
-         
 
          ((TextViewHolder) holder).bind(
                decryptedContentString,
-                 chatAdapterHelper.getTime(messageEntry.getTimestamp()),
+               chatAdapterHelper.getTime(messageEntry.getTimestamp()),
                messageEntry.getSenderId(),
                currentUser,
-                 chatAdapterHelper.isNewDay(position),
-                 messageEntry.getTimestamp(),
-         chatAdapterHelper.shouldShowTime(position),
-                 chatAdapterHelper.shouldShowProfilePicture(position),
-                 mContext
+               chatAdapterHelper.isNewDay(position),
+               messageEntry.getTimestamp(),
+               chatAdapterHelper.shouldShowTime(position),
+               chatAdapterHelper.shouldShowProfilePicture(position),
+               mContext
             );
       } else if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
          ((ImageViewHolder) holder).bind(
@@ -127,7 +138,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    public void setMessageEntries(List<MessageEntry> messageEntries) {
       if (messageEntries != null) {
          // Sort the list by timestamp
-         messageEntries.sort(Comparator.comparingLong(MessageEntry::getTimestamp));
+         messageEntries.sort(
+            Comparator.comparingLong(MessageEntry::getTimestamp)
+         );
       }
       this.messageEntries = messageEntries;
       notifyDataSetChanged();

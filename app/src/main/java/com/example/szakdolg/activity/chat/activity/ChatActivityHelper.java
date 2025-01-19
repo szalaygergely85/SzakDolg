@@ -106,7 +106,7 @@ public class ChatActivityHelper {
             UUIDUtil.UUIDGenerator()
          );
 
-         messageCoordinatorService.addMessage(messageEntry);
+         messageCoordinatorService.sendMessage(messageEntry);
       }
    }
 
@@ -120,28 +120,24 @@ public class ChatActivityHelper {
 
    public void setToolbarTitle(Toolbar mToolbar, Long conversationId) {
       String conversationName = conversation.getConversationName();
-      if (conversationName!=null){
+      if (conversationName != null) {
          mToolbar.setTitle(conversation.getConversationName());
-      }
-      else{
-
+      } else {
          mToolbar.setTitle(_createTitleWithUsernames(getUsers()));
       }
-
    }
 
-   private String _createTitleWithUsernames(List<User> users){
+   private String _createTitleWithUsernames(List<User> users) {
       String title = null;
-      for (User user: users){
-         if(users.indexOf(user)==0){
-            title =user.getDisplayName();
-         }else {
-            title +=" "+user.getDisplayName();
+      for (User user : users) {
+         if (users.indexOf(user) == 0) {
+            title = user.getDisplayName();
+         } else {
+            title += " " + user.getDisplayName();
          }
       }
       return title;
    }
-
    /*
 public void _startRepeatingTask() {
 	runnable =

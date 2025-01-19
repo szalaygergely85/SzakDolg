@@ -3,7 +3,6 @@ package com.example.szakdolg.models.message.entity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
-
 import java.io.Serializable;
 
 public class MessageEntry implements Serializable {
@@ -163,8 +162,29 @@ public class MessageEntry implements Serializable {
       this.isUploaded = isUploaded;
    }
 
+   public MessageEntry(
+      Long conversationId,
+      Long senderId,
+      Long timestamp,
+      String contentEncrypted,
+      int type,
+      String uuid
+   ) {
+      this.conversationId = conversationId;
+      this.senderId = senderId;
+      this.timestamp = timestamp;
+      this.contentEncrypted = contentEncrypted;
+      this.isRead = false;
+      this.type = type;
+      this.content = null;
+      this.uuid = uuid;
+      this.isUploaded = true;
+   }
+
    public String getJSON() {
-      Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+      Gson gson = new GsonBuilder()
+         .excludeFieldsWithoutExposeAnnotation()
+         .create();
       return gson.toJson(this);
    }
 }

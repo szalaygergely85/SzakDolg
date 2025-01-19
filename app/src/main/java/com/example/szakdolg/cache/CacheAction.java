@@ -22,7 +22,7 @@ public class CacheAction {
          context,
          user
       );
-      List<Long> localMessageIds = messageDatabaseUtil.getAllMessageIds();
+      List<String> localMessageUuids = messageDatabaseUtil.getAllMessageUuids();
 
       if (messageEntries == null || messageEntries.isEmpty()) {
          throw new IllegalArgumentException(
@@ -31,7 +31,7 @@ public class CacheAction {
       }
 
       for (MessageEntry messageEntry : messageEntries) {
-         if (!localMessageIds.contains(messageEntry.getMessageId())) {
+         if (!localMessageUuids.contains(messageEntry.getUuId())) {
             messageDatabaseUtil.insertMessageEntry(messageEntry);
          }
       }

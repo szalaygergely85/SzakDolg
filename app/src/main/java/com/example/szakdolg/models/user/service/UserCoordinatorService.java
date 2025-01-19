@@ -78,16 +78,20 @@ public class UserCoordinatorService {
       User currentUser
    ) {
       List<User> users = new ArrayList<>();
-      for (ConversationParticipant conversationParticipant : conversationParticipants) {
-         User user = getUserByUserId(
-            conversationParticipant.getUserId(),
-            currentUser
-         );
-         if (user != null) {
-            users.add(user);
+      if (conversationParticipants != null) {
+         for (ConversationParticipant conversationParticipant : conversationParticipants) {
+            User user = getUserByUserId(
+               conversationParticipant.getUserId(),
+               currentUser
+            );
+            if (user != null) {
+               users.add(user);
+            }
          }
+         return users;
+      } else {
+         return null;
       }
-      return users;
    }
 
    public List<User> getContacts(User currentUser) {

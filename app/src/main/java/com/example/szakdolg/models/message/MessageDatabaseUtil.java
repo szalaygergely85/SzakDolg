@@ -199,8 +199,8 @@ public class MessageDatabaseUtil {
       return messages;
    }
 
-   public List<Long> getAllMessageIds() {
-      List<Long> ids = new ArrayList<>();
+   public List<String> getAllMessageUuids() {
+      List<String> uuids = new ArrayList<>();
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = null;
 
@@ -208,7 +208,7 @@ public class MessageDatabaseUtil {
          cursor =
          db.query(
             "MessageEntry",
-            new String[] { "messageId" },
+            new String[] { "uUId" },
             null,
             null,
             null,
@@ -217,8 +217,10 @@ public class MessageDatabaseUtil {
          );
 
          while (cursor.moveToNext()) {
-            Long id = cursor.getLong(cursor.getColumnIndexOrThrow("messageId"));
-            ids.add(id);
+            String uuid = cursor.getString(
+               cursor.getColumnIndexOrThrow("uUId")
+            );
+            uuids.add(uuid);
          }
       } finally {
          if (cursor != null) {
@@ -227,7 +229,7 @@ public class MessageDatabaseUtil {
          db.close();
       }
 
-      return ids;
+      return uuids;
    }
 
    public Long getMessageEntryCount() {
@@ -359,19 +361,20 @@ public class MessageDatabaseUtil {
 
       // Try-with-resources ensures resources are closed automatically
       try (
-              SQLiteDatabase db = dbHelper.getReadableDatabase();
-              Cursor cursor = db.query(
-                      "MessageEntry", // Table name
-                      new String[] { "COUNT(*) AS unreadCount" }, // Columns to fetch
-                      "conversationId = ? AND isRead = 0", // WHERE clause
-                      new String[] { String.valueOf(conversationId) }, // WHERE arguments
-                      null, // GROUP BY
-                      null, // HAVING
-                      null // ORDER BY
-              )
+         SQLiteDatabase db = dbHelper.getReadableDatabase();
+         Cursor cursor = db.query(
+            "MessageEntry", // Table name
+            new String[] { "COUNT(*) AS unreadCount" }, // Columns to fetch
+            "conversationId = ? AND isRead = 0", // WHERE clause
+            new String[] { String.valueOf(conversationId) }, // WHERE arguments
+            null, // GROUP BY
+            null, // HAVING
+            null // ORDER BY
+         )
       ) {
          if (cursor != null && cursor.moveToFirst()) {
-            unreadCount = cursor.getInt(cursor.getColumnIndexOrThrow("unreadCount"));
+            unreadCount =
+            cursor.getInt(cursor.getColumnIndexOrThrow("unreadCount"));
          }
       } catch (Exception e) {
          e.printStackTrace(); // Logging exceptions; consider using a logger
@@ -389,10 +392,10 @@ public class MessageDatabaseUtil {
          values.put("isRead", 1); // Set isRead to true
 
          int rowsUpdated = db.update(
-                 "MessageEntry", // Table name
-                 values, // Values to update
-                 "conversationId = ? AND isRead = 0", // WHERE clause
-                 new String[] { String.valueOf(conversationId) } // WHERE arguments
+            "MessageEntry", // Table name
+            values, // Values to update
+            "conversationId = ? AND isRead = 0", // WHERE clause
+            new String[] { String.valueOf(conversationId) } // WHERE arguments
          );
 
          System.out.println("Messages marked as read: " + rowsUpdated);
