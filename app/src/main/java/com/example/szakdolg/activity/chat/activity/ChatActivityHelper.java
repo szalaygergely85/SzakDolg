@@ -88,11 +88,15 @@ public class ChatActivityHelper {
       } else {
          User user = users.get(0);
 
-         //TODO better key system needed.....
-         String encryptedContentString = EncryptionHelper.encrypt(
-            content,
-            CacheUtil.getPublicKeyFromCache(context, user.getEmail())
-         );
+         String publicKey = user.getPublicKey();
+
+         String encryptedContentString = null;
+         if (publicKey!=null) {
+            encryptedContentString = EncryptionHelper.encrypt(
+                    content,
+                    user.getPublicKey()
+            );
+         }
 
          MessageEntry messageEntry = new MessageEntry(
             null,

@@ -5,6 +5,8 @@ import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.util.EncryptionHelper;
+import com.example.szakdolg.util.KeyStoreUtil;
 import com.example.szakdolg.websocket.WebSocketService;
 import java.util.List;
 
@@ -58,8 +60,11 @@ public class MessageCoordinatorService extends BaseService {
    }
 
    public void sendMessage(MessageEntry messageEntry) {
-      webSocketService.sendMessage(messageEntry.getJSON());
       messageService.addMessage(messageEntry);
+      if (messageEntry.getContentEncrypted()!=null){
+
+      webSocketService.sendMessage(messageEntry.getJSON());
+
       messageApiHelper.addMessage(
          messageEntry,
          entry -> {
@@ -67,10 +72,17 @@ public class MessageCoordinatorService extends BaseService {
             messageService.updateMessage(entry);
          }
       );
+      }
    }
 
    public MessageEntry addMessage(MessageEntry messageEntry) {
-      //TODO decrypt content here, better to save uncrypted too
+      String encryptedContent= messageEntry.getContentEncrypted();
+      String content= messageEntry.getContent();
+
+      if(encryptedContent!=null && content == null){
+         content = EncryptionHelper.decrypt(encryptedContent,KeyStoreUtil.getPrivateKeyFromFile(context, currentUser));
+         messageEntry.setContent(content);
+      }
       return messageService.addMessage(messageEntry);
    }
 

@@ -3,12 +3,18 @@ package com.example.szakdolg.activity.chat.activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
@@ -53,18 +59,6 @@ public class ChatActivity extends BaseActivity {
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
-      BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-         @Override
-         public void onReceive(Context context, Intent intent) {
-            MessageEntry message = (MessageEntry) intent.getSerializableExtra(
-               "message"
-            );
-            adapter.addMessage(message);
-            adapter.notifyDataSetChanged();
-            chatRecView.scrollToPosition(adapter.getItemCount() - 1);
-         }
-      };
-
       chatActivityHelper.setToolbarTitle(mToolbar, conversationId);
    }
 
@@ -73,6 +67,41 @@ public class ChatActivity extends BaseActivity {
       this.getIntent().getLongExtra(IntentConstants.CONVERSATION_ID, 0);
    }
 
+   private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+         MessageEntry message = (MessageEntry) intent.getSerializableExtra("message");
+         if (message != null) {
+
+               adapter.addMessage(message);
+               adapter.notifyDataSetChanged();
+               chatRecView.scrollToPosition(adapter.getItemCount() - 1);
+
+         }
+      }
+
+      @Override
+      public IBinder peekService(Context myContext, Intent service) {
+         System.out.println(service.toString());
+         return super.peekService(myContext, service);
+
+
+      }
+   };
+
+   @Override
+   protected void onResume() {
+      super.onResume();
+      LocalBroadcastManager.getInstance(this).registerReceiver(
+              messageReceiver, new IntentFilter("com.example.szakdolg.models.message.entity.MessageBroadCast")
+      );
+   }
+
+   @Override
+   protected void onPause() {
+      super.onPause();
+      LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+   }
    @Override
    protected void onStart() {
       super.onStart();
@@ -108,6 +137,7 @@ public class ChatActivity extends BaseActivity {
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                String content = edtMess.getText().toString();
                if (!content.isEmpty()) {
                   try {
@@ -156,13 +186,7 @@ public class ChatActivity extends BaseActivity {
             file,
             () -> fileApiHelper.uploadFile(file, messageEntry)
          );
-         /*
-		messageApiHelper.reloadMessages(
-			ChatActivity.this,
-			conversationId,
-			adapter,
-			currentUser
-		);*/
+
       })
          .start();
    }

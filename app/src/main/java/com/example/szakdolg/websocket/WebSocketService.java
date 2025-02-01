@@ -13,7 +13,9 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.IntentConstants;
@@ -180,7 +182,7 @@ public class WebSocketService extends Service {
             }
          }
       );
-      //    startPingPong();
+          startPingPong();
    }
 
    private void startPingPong() {
@@ -273,9 +275,10 @@ public class WebSocketService extends Service {
 
    private void sendMessageBroadcast(MessageEntry message) {
       Intent intent = new Intent(
-         "com.example.szakdolg.models.message.entity.MessageEntry"
+         "com.example.szakdolg.models.message.entity.MessageBroadCast"
       );
       intent.putExtra("message", message);
       LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
    }
 }
