@@ -72,11 +72,12 @@ public class ChatActivity extends BaseActivity {
       public void onReceive(Context context, Intent intent) {
          MessageEntry message = (MessageEntry) intent.getSerializableExtra("message");
          if (message != null) {
+            if(message.getConversationId() == conversationId) {
                message.setRead(true);
                adapter.addMessage(message);
                adapter.notifyDataSetChanged();
                chatRecView.scrollToPosition(adapter.getItemCount() - 1);
-
+            }
          }
       }
    };
