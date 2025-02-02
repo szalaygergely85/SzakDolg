@@ -22,7 +22,7 @@ import retrofit2.Response;
 
 public class UserApiHelper {
 
-   private UserApiService _userApiService = RetrofitClient
+   private final UserApiService _userApiService = RetrofitClient
       .getRetrofitInstance()
       .create(UserApiService.class);
    private final String _TAG = "UserApiHelper";

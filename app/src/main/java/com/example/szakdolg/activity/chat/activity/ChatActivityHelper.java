@@ -13,7 +13,6 @@ import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserCoordinatorService;
-import com.example.szakdolg.util.CacheUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.UUIDUtil;
 import java.util.ArrayList;
@@ -91,11 +90,9 @@ public class ChatActivityHelper {
          String publicKey = user.getPublicKey();
 
          String encryptedContentString = null;
-         if (publicKey!=null) {
-            encryptedContentString = EncryptionHelper.encrypt(
-                    content,
-                    user.getPublicKey()
-            );
+         if (publicKey != null) {
+            encryptedContentString =
+            EncryptionHelper.encrypt(content, user.getPublicKey());
          }
 
          MessageEntry messageEntry = new MessageEntry(
@@ -144,7 +141,9 @@ public class ChatActivityHelper {
    }
 
    public void setMessagesRead(Long conversationId) {
-      messageCoordinatorService.setMessagesAsReadByConversationId(conversationId);
+      messageCoordinatorService.setMessagesAsReadByConversationId(
+         conversationId
+      );
    }
    /*
 public void _startRepeatingTask() {

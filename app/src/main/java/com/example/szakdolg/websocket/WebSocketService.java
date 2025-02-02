@@ -13,9 +13,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.IntentConstants;
@@ -182,7 +180,7 @@ public class WebSocketService extends Service {
             }
          }
       );
-          startPingPong();
+      startPingPong();
    }
 
    private void startPingPong() {
@@ -241,7 +239,7 @@ public class WebSocketService extends Service {
          : null;
       MessageCoordinatorService messageCoordinatorService =
          new MessageCoordinatorService(context, currentUser);
-      MessageEntry messageEntry = messageCoordinatorService.addMessage(
+      MessageEntry messageEntry = messageCoordinatorService.saveMessage(
          new MessageEntry(
             conversationId,
             senderId,
@@ -279,6 +277,5 @@ public class WebSocketService extends Service {
       );
       intent.putExtra("message", message);
       LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
    }
 }

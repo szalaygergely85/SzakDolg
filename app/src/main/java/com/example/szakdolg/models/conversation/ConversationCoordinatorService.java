@@ -57,7 +57,7 @@ public class ConversationCoordinatorService extends BaseService {
       List<Conversation> conversations =
          conversationService.getAllConversations();
       if (conversations.size() > 0) {
-         List<Conversation> validConversations = _validateConversations(
+         List<Conversation> validConversations = _getValidConversations(
             conversations
          );
          if (validConversations.size() > 0) {
@@ -76,33 +76,13 @@ public class ConversationCoordinatorService extends BaseService {
       }
    }
 
-
-
-
-
-   private List<Conversation> _validateConversations(
+   private List<Conversation> _getValidConversations(
       List<Conversation> conversations
    ) {
       List<Conversation> validConversation = new ArrayList<>();
       for (Conversation conversation : conversations) {
-         if (
-                 !messageCoordinatorService
-                         .getMessagesByConversationId(conversation.getConversationId()).isEmpty()
-         ) {
-            List<ConversationParticipant> conversationParticipants =
-               conversationParticipantCoordinatorService.getOtherParticipants(
-                  conversation.getConversationId()
-               );
-            List<User> users =
-               userCoordinatorService.getConversationParticipantUser(
-                  conversationParticipants,
-                  currentUser
-               );
-            if (users != null) {
-               if (!users.isEmpty()) {
-                  validConversation.add(conversation);
-               }
-            }
+         if (validateConversationById(conversation.getConversationId())) {
+            validConversation.add(conversation);
          }
       }
       return validConversation;
@@ -125,5 +105,31 @@ public class ConversationCoordinatorService extends BaseService {
             messageCoordinatorService.sendMessage(messageEntry);
          }
       );
+   }
+
+   public boolean validateConversationById(Long conversationId) {
+      Conversation conversation = conversationService.getConversation(
+         conversationId
+      );
+      if (conversation != null) {
+         List<ConversationParticipant> conversationParticipants =
+            conversationParticipantCoordinatorService.getOtherParticipants(
+               conversation.getConversationId()
+            );
+         List<User> users =
+            userCoordinatorService.getConversationParticipantUser(
+               conversationParticipants,
+               currentUser
+            );
+         List<MessageEntry> messageEntries =
+            messageCoordinatorService.getMessagesByConversationId(
+               conversation.getConversationId()
+            );
+         if (messageEntries != null && users != null) {
+            return !messageEntries.isEmpty() && !users.isEmpty();
+         }
+      }
+
+      return false;
    }
 }

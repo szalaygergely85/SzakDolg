@@ -36,7 +36,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    MainAdapterHelper mainAdapterHelper;
    RecyclerView mainRecView;
 
-   public MainAdapter(Context mContext, User currentUser, RecyclerView mainRecView) {
+   public MainAdapter(
+      Context mContext,
+      User currentUser,
+      RecyclerView mainRecView
+   ) {
       this.context = mContext;
       this.currentUser = currentUser;
       this.messageCoordinatorService =
@@ -45,7 +49,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       this.conversationApiHelper =
       new ConversationApiHelper(mContext, currentUser);
       this.mainRecView = mainRecView;
-
    }
 
    @NonNull
@@ -136,12 +139,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    }
 
    public void addMessage(Conversation conversation) {
-
       if (conversation != null) {
          conversationList.add(conversation);
 
          conversationList.sort(
-                 Comparator.comparingLong(Conversation::getTimeStamp)
+            Comparator.comparingLong(Conversation::getTimeStamp)
          );
          notifyDataSetChanged();
 

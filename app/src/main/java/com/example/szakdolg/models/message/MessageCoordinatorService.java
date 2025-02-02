@@ -2,6 +2,7 @@ package com.example.szakdolg.models.message;
 
 import android.content.Context;
 import com.example.szakdolg.activity.base.BaseService;
+import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
@@ -34,9 +35,7 @@ public class MessageCoordinatorService extends BaseService {
       } else {
          messageApiHelper.getMessages(
             conversationId,
-            messageEntries -> {
-               messageService.addMessages(messageEntries);
-            }
+            messageService::addMessages
          );
          return null;
       }
@@ -61,28 +60,38 @@ public class MessageCoordinatorService extends BaseService {
 
    public void sendMessage(MessageEntry messageEntry) {
       messageService.addMessage(messageEntry);
-      if (messageEntry.getContentEncrypted()!=null){
+      if (messageEntry.getContentEncrypted() != null) {
+         webSocketService.sendMessage(messageEntry.getJSON());
 
-      webSocketService.sendMessage(messageEntry.getJSON());
-
-      messageApiHelper.addMessage(
-         messageEntry,
-         entry -> {
-            entry.setUploaded(true);
-            messageService.updateMessage(entry);
-         }
-      );
+         messageApiHelper.addMessage(
+            messageEntry,
+            entry -> {
+               entry.setUploaded(true);
+               messageService.updateMessage(entry);
+            }
+         );
       }
    }
 
-   public MessageEntry addMessage(MessageEntry messageEntry) {
-      String encryptedContent= messageEntry.getContentEncrypted();
-      String content= messageEntry.getContent();
+   public MessageEntry saveMessage(MessageEntry messageEntry) {
+      String encryptedContent = messageEntry.getContentEncrypted();
+      String content = messageEntry.getContent();
 
-      if(encryptedContent!=null && content == null){
-         content = EncryptionHelper.decrypt(encryptedContent,KeyStoreUtil.getPrivateKeyFromFile(context, currentUser));
+      if (encryptedContent != null && content == null) {
+         content =
+         EncryptionHelper.decrypt(
+            encryptedContent,
+            KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
+         );
          messageEntry.setContent(content);
       }
+
+      ConversationCoordinatorService conversationCoordinatorService =
+              new ConversationCoordinatorService(context, currentUser);
+
+      conversationCoordinatorService.validateConversationById(
+         messageEntry.getConversationId()
+      );
       return messageService.addMessage(messageEntry);
    }
 

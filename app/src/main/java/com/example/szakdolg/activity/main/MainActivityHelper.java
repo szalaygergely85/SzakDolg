@@ -12,7 +12,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.activity.NewChatActivity;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
-import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
@@ -42,7 +41,6 @@ public class MainActivityHelper {
    public List<Conversation> getConversationList() {
       return conversationCoordinatorService.getAllValidConversations(null);
    }
-
 
    public void setBottomNavMenu(BottomNavigationView bottomNavigationView) {
       bottomNavigationView.setOnItemSelectedListener(
@@ -132,6 +130,8 @@ public class MainActivityHelper {
    }
 
    public Conversation getConversation(MessageEntry message) {
-      return conversationCoordinatorService.getConversation(message.getConversationId());
+      return conversationCoordinatorService.getConversation(
+         message.getConversationId()
+      );
    }
 }

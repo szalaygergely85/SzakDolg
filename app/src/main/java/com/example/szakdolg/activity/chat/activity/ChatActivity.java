@@ -6,13 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageView;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -70,9 +66,11 @@ public class ChatActivity extends BaseActivity {
    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
-         MessageEntry message = (MessageEntry) intent.getSerializableExtra("message");
+         MessageEntry message = (MessageEntry) intent.getSerializableExtra(
+            "message"
+         );
          if (message != null) {
-            if(message.getConversationId() == conversationId) {
+            if (message.getConversationId() == conversationId) {
                message.setRead(true);
                adapter.addMessage(message);
                adapter.notifyDataSetChanged();
@@ -85,16 +83,24 @@ public class ChatActivity extends BaseActivity {
    @Override
    protected void onResume() {
       super.onResume();
-      LocalBroadcastManager.getInstance(this).registerReceiver(
-              messageReceiver, new IntentFilter("com.example.szakdolg.models.message.entity.MessageBroadCast")
-      );
+      LocalBroadcastManager
+         .getInstance(this)
+         .registerReceiver(
+            messageReceiver,
+            new IntentFilter(
+               "com.example.szakdolg.models.message.entity.MessageBroadCast"
+            )
+         );
    }
 
    @Override
    protected void onPause() {
       super.onPause();
-      LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+      LocalBroadcastManager
+         .getInstance(this)
+         .unregisterReceiver(messageReceiver);
    }
+
    @Override
    protected void onStart() {
       super.onStart();
@@ -132,7 +138,6 @@ public class ChatActivity extends BaseActivity {
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                String content = edtMess.getText().toString();
                if (!content.isEmpty()) {
                   try {
@@ -181,7 +186,6 @@ public class ChatActivity extends BaseActivity {
             file,
             () -> fileApiHelper.uploadFile(file, messageEntry)
          );
-
       })
          .start();
    }
