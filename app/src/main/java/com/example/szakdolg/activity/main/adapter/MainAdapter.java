@@ -20,6 +20,7 @@ import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
@@ -33,8 +34,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    ConversationApiHelper conversationApiHelper;
 
    MainAdapterHelper mainAdapterHelper;
+   RecyclerView mainRecView;
 
-   public MainAdapter(Context mContext, User currentUser) {
+   public MainAdapter(Context mContext, User currentUser, RecyclerView mainRecView) {
       this.context = mContext;
       this.currentUser = currentUser;
       this.messageCoordinatorService =
@@ -42,6 +44,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       this.mainAdapterHelper = new MainAdapterHelper(currentUser, mContext);
       this.conversationApiHelper =
       new ConversationApiHelper(mContext, currentUser);
+      this.mainRecView = mainRecView;
+
    }
 
    @NonNull
@@ -129,6 +133,20 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    @Override
    public int getItemCount() {
       return conversationList.size();
+   }
+
+   public void addMessage(Conversation conversation) {
+
+      if (conversation != null) {
+         conversationList.add(conversation);
+
+         conversationList.sort(
+                 Comparator.comparingLong(Conversation::getTimeStamp)
+         );
+         notifyDataSetChanged();
+
+         mainRecView.scrollToPosition(getItemCount() - 1);
+      }
    }
 
    public void setConversationList(List<Conversation> conversationList) {

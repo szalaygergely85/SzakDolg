@@ -72,20 +72,12 @@ public class ChatActivity extends BaseActivity {
       public void onReceive(Context context, Intent intent) {
          MessageEntry message = (MessageEntry) intent.getSerializableExtra("message");
          if (message != null) {
-
+               message.setRead(true);
                adapter.addMessage(message);
                adapter.notifyDataSetChanged();
                chatRecView.scrollToPosition(adapter.getItemCount() - 1);
 
          }
-      }
-
-      @Override
-      public IBinder peekService(Context myContext, Intent service) {
-         System.out.println(service.toString());
-         return super.peekService(myContext, service);
-
-
       }
    };
 
@@ -105,6 +97,8 @@ public class ChatActivity extends BaseActivity {
    @Override
    protected void onStart() {
       super.onStart();
+
+      chatActivityHelper.setMessagesRead(conversationId);
    }
 
    @Override

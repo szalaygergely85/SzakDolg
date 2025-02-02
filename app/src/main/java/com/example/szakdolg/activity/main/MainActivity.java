@@ -1,6 +1,9 @@
 package com.example.szakdolg.activity.main;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -24,6 +28,7 @@ import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.image.util.ImageUtil;
+import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.example.szakdolg.websocket.WebSocketService;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -32,37 +37,78 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
-
-   private NavigationView navigationView;
-
-   private RecyclerView messageBoardRecView;
-   private static final int READ_PERMISSION_CODE = 202;
-   private static final int WRITE_PERMISSION_CODE = 203;
-
-   private LinearLayout emptyLayout;
-   private LinearLayout withItemsLayout;
-   private DrawerLayout drawerLayout;
-
-   private MaterialToolbar topAppBar;
-   private MainActivityHelper _mainActivityHelper;
-   private BottomNavigationView bottomNavigationView;
-
-   private ImageView profileImageHeader;
-
-   private TextView profileTextHeader;
-
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
       getMenuInflater().inflate(R.menu.nav_menu, menu);
       return super.onCreateOptionsMenu(menu);
    }
-
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
 
       _initView();
+
+      mainAdapter = new MainAdapter(this, currentUser, messageBoardRecView);
+   }
+   @Override
+   protected void onPause() {
+      super.onPause();
+      LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+   }
+   @Override
+   protected void onResume() {
+      super.onResume();
+      LocalBroadcastManager.getInstance(this).registerReceiver(
+              broadcastReceiver, new IntentFilter("com.example.szakdolg.models.message.entity.MessageBroadCast")
+      );
+   }
+
+   @Override
+   public void onRequestPermissionsResult(
+           int requestCode,
+           @NonNull String[] permissions,
+           @NonNull int[] grantResults
+   ) {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+      switch (requestCode) {
+         case READ_PERMISSION_CODE:
+            if (
+                    grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
+               // Permission granted
+               Toast
+                       .makeText(this, "Read permission granted", Toast.LENGTH_SHORT)
+                       .show();
+            } else {
+               // Permission denied
+               Toast
+                       .makeText(this, "Read permission denied", Toast.LENGTH_SHORT)
+                       .show();
+            }
+            break;
+         case WRITE_PERMISSION_CODE:
+            if (
+                    grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
+               // Permission granted
+               Toast
+                       .makeText(
+                               this,
+                               "Write permission granted",
+                               Toast.LENGTH_SHORT
+                       )
+                       .show();
+            } else {
+               // Permission denied
+               Toast
+                       .makeText(this, "Write permission denied", Toast.LENGTH_SHORT)
+                       .show();
+            }
+            break;
+      }
    }
 
    @Override
@@ -120,8 +166,6 @@ public class MainActivity extends BaseActivity {
          }
       });
 
-      MainAdapter mainAdapter = new MainAdapter(this, currentUser);
-
       List<Conversation> conversations =
          _mainActivityHelper.getConversationList();
 
@@ -155,52 +199,6 @@ public class MainActivity extends BaseActivity {
       }
    }
 
-   @Override
-   public void onRequestPermissionsResult(
-      int requestCode,
-      @NonNull String[] permissions,
-      @NonNull int[] grantResults
-   ) {
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-      switch (requestCode) {
-         case READ_PERMISSION_CODE:
-            if (
-               grantResults.length > 0 &&
-               grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-               // Permission granted
-               Toast
-                  .makeText(this, "Read permission granted", Toast.LENGTH_SHORT)
-                  .show();
-            } else {
-               // Permission denied
-               Toast
-                  .makeText(this, "Read permission denied", Toast.LENGTH_SHORT)
-                  .show();
-            }
-            break;
-         case WRITE_PERMISSION_CODE:
-            if (
-               grantResults.length > 0 &&
-               grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-               // Permission granted
-               Toast
-                  .makeText(
-                     this,
-                     "Write permission granted",
-                     Toast.LENGTH_SHORT
-                  )
-                  .show();
-            } else {
-               // Permission denied
-               Toast
-                  .makeText(this, "Write permission denied", Toast.LENGTH_SHORT)
-                  .show();
-            }
-            break;
-      }
-   }
 
    private void _initView() {
       navigationView = findViewById(R.id.navigation_view_main);
@@ -214,4 +212,30 @@ public class MainActivity extends BaseActivity {
       profileImageHeader = headerView.findViewById(R.id.profile_image_header);
       profileTextHeader = headerView.findViewById(R.id.profile_name_header);
    }
+
+   private BottomNavigationView bottomNavigationView;
+   private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+         MessageEntry message = (MessageEntry) intent.getSerializableExtra("message");
+
+         if (message != null) {
+
+            mainAdapter.notifyDataSetChanged();
+         }
+      }
+   };
+
+   private DrawerLayout drawerLayout;
+   private LinearLayout emptyLayout;
+   private MainActivityHelper _mainActivityHelper;
+   private MainAdapter mainAdapter;
+   private RecyclerView messageBoardRecView;
+   private NavigationView navigationView;
+   private static final int READ_PERMISSION_CODE = 202;
+   private static final int WRITE_PERMISSION_CODE = 203;
+   private LinearLayout withItemsLayout;
+   private MaterialToolbar topAppBar;
+   private ImageView profileImageHeader;
+   private TextView profileTextHeader;
 }

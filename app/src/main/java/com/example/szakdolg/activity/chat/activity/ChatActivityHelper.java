@@ -142,6 +142,10 @@ public class ChatActivityHelper {
       }
       return title;
    }
+
+   public void setMessagesRead(Long conversationId) {
+      messageCoordinatorService.setMessagesAsReadByConversationId(conversationId);
+   }
    /*
 public void _startRepeatingTask() {
 	runnable =

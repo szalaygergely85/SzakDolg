@@ -76,16 +76,18 @@ public class ConversationCoordinatorService extends BaseService {
       }
    }
 
+
+
+
+
    private List<Conversation> _validateConversations(
       List<Conversation> conversations
    ) {
       List<Conversation> validConversation = new ArrayList<>();
       for (Conversation conversation : conversations) {
          if (
-            messageCoordinatorService
-               .getMessagesByConversationId(conversation.getConversationId())
-               .size() >
-            0
+                 !messageCoordinatorService
+                         .getMessagesByConversationId(conversation.getConversationId()).isEmpty()
          ) {
             List<ConversationParticipant> conversationParticipants =
                conversationParticipantCoordinatorService.getOtherParticipants(

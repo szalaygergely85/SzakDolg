@@ -88,7 +88,7 @@ public class MessageBoardActivity extends AppCompatActivity {
 
       messageBoardRecView = findViewById(R.id.messageBoardRecView);
 
-      mainAdapter = new MainAdapter(this, _currentUser);
+      //mainAdapter = new MainAdapter(this, _currentUser);
 
       ConversationDatabaseUtil conversationDatabaseUtil =
          new ConversationDatabaseUtil(this, _currentUser);
