@@ -1,4 +1,4 @@
-package com.example.szakdolg.models.user.api;
+package com.example.szakdolg.models.contacts;
 
 import android.content.Context;
 import com.example.szakdolg.cache.CacheAction;

@@ -13,10 +13,11 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.adapter.UserAdapter;
 import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
-import com.example.szakdolg.models.user.api.ContactsApiHelper;
+import com.example.szakdolg.models.contacts.ContactsApiHelper;
 import com.example.szakdolg.models.user.entity.User;
 import java.util.List;
 
+ @Deprecated
 public class NewChatActivity extends BaseActivity {
 
    private MultiAutoCompleteTextView recipientInput;

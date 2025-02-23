@@ -21,24 +21,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SzakDolg">
         <activity
+            android:name=".activity.selectcontacts.SelectContactsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.call.StartCall"
-            android:exported="true" >
-        </activity>
+            android:exported="true"></activity>
 
         <service
             android:name=".signaling.SignalService"
             android:enabled="true"
             android:exported="false" />
-
         <service
             android:name=".websocket.WebSocketService"
-            android:foregroundServiceType="connectedDevice"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
 
         <activity
             android:name=".activity.call.CallActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activity.call.IncomingCallActivity"
             android:exported="false" />
@@ -50,22 +50,22 @@
             android:exported="false" />
         <activity
             android:name=".activity.ChangePassActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activity.ProfileActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activity.ForgotPasswordActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".activity.contacts.activity.SearchContactsActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activity.contacts.activity.ContactsActivity"
             android:exported="false" />
         <activity
             android:name=".activity.chat.activity.ChatActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".messageboard.activity.MessageBoardActivity"
             android:exported="false" />
@@ -79,13 +79,13 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.main.MainActivity"
-            android:exported="true" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

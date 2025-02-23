@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.models.user.api.ContactsApiService;
+import com.example.szakdolg.models.contacts.ContactsApiService;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import java.util.ArrayList;

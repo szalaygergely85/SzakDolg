@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-02-02T13:43:45.590465500Z">
+        <DropdownSelection timestamp="2025-02-02T15:36:16.039842300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Gege\.android\avd\Medium_Tablet_API_30.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Gege\.android\avd\Pixel_8_API_31_2.avd" />
             </handle>
           </Target>
         </DropdownSelection>

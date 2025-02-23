@@ -28,6 +28,7 @@
 </com.google.android.material.appbar.AppBarLayout>
 
 <com.google.android.material.divider.MaterialDivider
+    android:id="@+id/dividerTitle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@id/chatBarLayout" />
@@ -37,7 +38,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@id/relLayChatSendBar"
-    android:layout_below="@id/chatBarLayout"
+    android:layout_below="@id/dividerTitle"
     android:layout_alignParentBottom="false"
     android:padding="5dp"/>
 

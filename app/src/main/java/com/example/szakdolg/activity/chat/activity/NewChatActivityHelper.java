@@ -15,10 +15,11 @@ import com.example.szakdolg.util.UUIDUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Deprecated
 public class NewChatActivityHelper {
 
    private User currentUser;
-
    private List<User> contacts;
    private AppCompatActivity context;
    private ConversationCoordinatorService conversationCoordinatorService;

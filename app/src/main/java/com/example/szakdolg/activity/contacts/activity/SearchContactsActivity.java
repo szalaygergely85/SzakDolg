@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.contacts.adapter.SearchContactAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.models.user.api.ContactsApiService;
+import com.example.szakdolg.models.contacts.ContactsApiService;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.util.SharedPreferencesUtil;

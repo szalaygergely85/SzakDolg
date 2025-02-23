@@ -43,53 +43,55 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.google.android.material.search.SearchBar
-                android:id="@+id/search_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/search" />
+    <!-- Attachment Icon
+   <com.google.android.material.search.SearchBar
+       android:id="@+id/search_bar"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="@string/search" />
+-->
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/messageBoardRecView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="true" />
-        </LinearLayout>
+   <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/messageBoardRecView"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:clipToPadding="true" />
+</LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/llayoutEmptyMain"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/appBarLayout"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="visible">
+<LinearLayout
+   android:id="@+id/llayoutEmptyMain"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   android:layout_below="@id/appBarLayout"
+   android:gravity="center"
+   android:orientation="vertical"
+   android:visibility="visible">
 
-            <ImageView
-                android:id="@+id/logoImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_messages" />
+   <ImageView
+       android:id="@+id/logoImage"
+       android:layout_width="100dp"
+       android:layout_height="100dp"
+       android:layout_gravity="center_horizontal"
+       android:src="@drawable/ic_messages" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="@string/looks_quite_here_say_hi_to_someone"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-        </LinearLayout>
-        <include
-            android:id="@+id/bottom_nav_main"
-            layout="@layout/fragment_bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
-    </RelativeLayout>
+   <TextView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_gravity="center_horizontal"
+       android:layout_marginTop="16dp"
+       android:text="@string/looks_quite_here_say_hi_to_someone"
+       android:textColor="@color/black"
+       android:textSize="16sp" />
+</LinearLayout>
+<include
+   android:id="@+id/bottom_nav_main"
+   layout="@layout/fragment_bottom_navigation"
+   android:layout_width="match_parent"
+   android:layout_height="wrap_content"
+   android:layout_alignParentBottom="true" />
+</RelativeLayout>
 
-    <!-- Navigation Drawer -->
+<!-- Navigation Drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view_main"
         android:layout_width="wrap_content"
