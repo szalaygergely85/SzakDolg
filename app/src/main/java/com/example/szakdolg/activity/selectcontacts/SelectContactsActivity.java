@@ -26,7 +26,7 @@ public class SelectContactsActivity extends BaseActivity {
         super.onStart();
 
 
-        selectContactsAdapter.setContacts();
+        // selectContactsAdapter.setContacts();
 
                 selectContactsRecView.setAdapter(selectContactsAdapter);
         selectContactsRecView.setLayoutManager(new LinearLayoutManager(this));

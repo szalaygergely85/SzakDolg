@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity {
 
       _initView();
 
-      mainAdapter = new MainAdapter(this, currentUser, messageBoardRecView);
+
    }
 
    @Override
@@ -125,6 +125,8 @@ public class MainActivity extends BaseActivity {
    @Override
    protected void onStart() {
       super.onStart();
+
+      mainAdapter = new MainAdapter(this, currentUser, messageBoardRecView);
 
       Intent serviceIntent = new Intent(this, WebSocketService.class);
       serviceIntent.putExtra(IntentConstants.CURRENT_USER, currentUser);
