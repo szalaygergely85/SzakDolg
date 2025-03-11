@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-
+   private static volatile DatabaseHelper instance;
    private static final int DATABASE_VERSION = 1;
    public static final String TABLE_CONVERSATION_PARTICIPANTS =
       "conversation_participants";
@@ -103,7 +103,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       onCreate(db);
    }
 
-   public DatabaseHelper(Context context, String userId) {
+   private DatabaseHelper(Context context, String userId) {
       super(context, userId + ".db", null, DATABASE_VERSION);
+   }
+
+   public static DatabaseHelper getInstance(Context context, String userId) {
+      if (instance == null) {
+         synchronized (DatabaseHelper.class) {
+            if (instance == null) {
+               instance = new DatabaseHelper(context, userId);
+            }
+         }
+      }
+      return instance;
    }
 }

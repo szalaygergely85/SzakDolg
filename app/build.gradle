@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id "com.diffplug.spotless" version "7.0.0.BETA1"
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.appdistribution'
 
 }
 

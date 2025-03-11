@@ -5,7 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import java.io.Serializable;
 
-public class MessageEntry implements Serializable {
+
+//TODO STarted here to create Factory
+public abstract class MessageEntry implements Serializable {
 
    private Long messageId;
 

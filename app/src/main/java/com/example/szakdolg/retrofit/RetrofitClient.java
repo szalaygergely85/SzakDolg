@@ -8,17 +8,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-   private static Retrofit retrofit = null;
+   private static volatile Retrofit retrofit = null;
    private static String BASE_URL = "http://10.0.2.2:8080/api/";
 
+   private RetrofitClient() {} // Private constructor to prevent instantiation
+
    public static Retrofit getRetrofitInstance() {
-      if (retrofit == null) {
-         Gson gson = new GsonBuilder().setLenient().create();
-         retrofit =
-         new Retrofit.Builder()
-            .baseUrl(AppConstants.API_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build();
+      if (retrofit == null) {  // First check (no lock)
+         synchronized (RetrofitClient.class) {  // Synchronization block
+            if (retrofit == null) {  // Second check (inside lock)
+               Gson gson = new GsonBuilder().setLenient().create();
+               retrofit = new Retrofit.Builder()
+                       .baseUrl(BASE_URL)
+                       .addConverterFactory(GsonConverterFactory.create(gson))
+                       .build();
+            }
+         }
       }
       return retrofit;
    }

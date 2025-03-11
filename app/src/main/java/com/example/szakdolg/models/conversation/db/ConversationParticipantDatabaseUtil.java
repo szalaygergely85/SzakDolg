@@ -15,7 +15,7 @@ public class ConversationParticipantDatabaseUtil {
    private DatabaseHelper dbHelper;
 
    public ConversationParticipantDatabaseUtil(Context context, User user) {
-      dbHelper = new DatabaseHelper(context, user.getUserId().toString());
+      dbHelper = DatabaseHelper.getInstance(context, user.getUserId().toString());
    }
 
    public void insertConversationParticipant(

@@ -15,11 +15,10 @@ public class UserDatabaseUtil {
    private DatabaseHelper dbHelper;
 
    public UserDatabaseUtil(Context context, User user) {
-      dbHelper = new DatabaseHelper(context, user.getUserId().toString());
+      this(context, user.getUserId().toString());
    }
-
    public UserDatabaseUtil(Context context, String userId) {
-      dbHelper = new DatabaseHelper(context, userId.toString());
+      dbHelper = DatabaseHelper.getInstance(context, userId);
    }
 
    public List<Long> getAllUserIds() {
