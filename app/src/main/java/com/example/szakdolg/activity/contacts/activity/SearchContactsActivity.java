@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.contacts.adapter.SearchContactAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.models.contacts.ContactsApiService;
+import com.example.szakdolg.models.contacts.ContactApiService;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -24,7 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SearchContactsActivity extends AppCompatActivity {
-
+/*
    private EditText search;
    private RecyclerView contsRecView;
    private List<User> contactList;
@@ -106,12 +106,12 @@ public class SearchContactsActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                if (editable.length() >= 3) {
-                  ContactsApiService contactsApiService = RetrofitClient
+                  ContactApiService contactApiService = RetrofitClient
                      .getRetrofitInstance()
-                     .create(ContactsApiService.class);
+                     .create(ContactApiService.class);
 
                   Call<List<User>> contactsCall =
-                     contactsApiService.searchContacts(
+                     contactApiService.searchContacts(
                         editable.toString(),
                         _token
                      );
@@ -144,5 +144,5 @@ public class SearchContactsActivity extends AppCompatActivity {
             }
          }
       );
-   }
+   }*/
 }

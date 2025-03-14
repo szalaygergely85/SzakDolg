@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SzakDolg">
         <activity
-            android:name=".activity.selectcontacts.SelectContactsActivity"
+            android:name=".activity.contacts.activity.SelectContactsActivity"
             android:exported="false" />
         <activity
             android:name=".activity.call.StartCall"

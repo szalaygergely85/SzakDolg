@@ -11,11 +11,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@Deprecated
 public class ContactsApiHelper {
-
-   ContactsApiService contactsApiService = RetrofitClient
+/*
+   ContactApiService contactApiService = RetrofitClient
       .getRetrofitInstance()
-      .create(ContactsApiService.class);
+      .create(ContactApiService.class);
 
    public void checkCachedContacts(
       String token,
@@ -27,7 +28,7 @@ public class ContactsApiHelper {
          currentUser
       );
       Call<ArrayList<User>> call =
-         contactsApiService.getContactsAndCompareWithLocal(
+         contactApiService.getContactsAndCompareWithLocal(
             userDatabaseUtil.getUserCount(),
             token
          );
@@ -64,7 +65,7 @@ public class ContactsApiHelper {
       String userToken,
       ContactsCallback callback
    ) {
-      Call<List<User>> contactsCall = contactsApiService.getContacts(userToken);
+      Call<List<User>> contactsCall = contactApiService.getContacts(userToken);
 
       contactsCall.enqueue(
          new Callback<List<User>>() {
@@ -85,5 +86,5 @@ public class ContactsApiHelper {
             public void onFailure(Call<List<User>> call, Throwable t) {}
          }
       );
-   }
+   }*/
 }

@@ -6,11 +6,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/select_contacts_BarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="8dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/select_contacts_Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/menu_select_contacts_top"
+            app:navigationIcon="@drawable/ic_arrow_back2"
+            app:title="Select Contacts"
+            app:titleCentered="true">
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider_Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/select_contacts_BarLayout" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/selectContactsRecView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/divider_Title"
         android:layout_alignParentBottom="false"
-        android:padding="5dp"/>
+        android:padding="5dp" />
 </RelativeLayout>

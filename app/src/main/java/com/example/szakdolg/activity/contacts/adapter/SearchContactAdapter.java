@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.models.contacts.ContactsApiService;
+import com.example.szakdolg.models.contacts.ContactApiService;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import java.util.ArrayList;
@@ -23,8 +23,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SearchContactAdapter
-   extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder> {
 
+//   extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder>
+{
+/*
    private static final String TAG = "SearchContactAdapter";
    private final Context context;
 
@@ -81,7 +83,7 @@ public class SearchContactAdapter
 			Log.d(AppConstants.LOG_TAG, TAG + " " "setImageView: " + e);
 		}
 	}
-*/
+
    public SearchContactAdapter(
       Context context,
       User currentUser,
@@ -121,11 +123,11 @@ public class SearchContactAdapter
                   currentUser
                );
 
-               ContactsApiService contactsApiService = RetrofitClient
+               ContactApiService contactApiService = RetrofitClient
                   .getRetrofitInstance()
-                  .create(ContactsApiService.class);
+                  .create(ContactApiService.class);
 
-               Call<User> contactsCall = contactsApiService.addContact(
+               Call<User> contactsCall = contactApiService.addContact(
                   currentUser.getUserId(),
                   userSearchResult.getUserId(),
                   _token
@@ -192,5 +194,5 @@ public class SearchContactAdapter
          txtEmail = itemView.findViewById(R.id.txtContItemEmail);
          btnAdd = itemView.findViewById(R.id.btnContItemAdd);
       }
-   }
+   }*/
 }

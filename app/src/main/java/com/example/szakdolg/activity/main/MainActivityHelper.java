@@ -12,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.activity.NewChatActivity;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
+import com.example.szakdolg.activity.contacts.activity.SelectContactsActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
@@ -118,7 +119,7 @@ public class MainActivityHelper {
                switch (item.getItemId()) {
                   case R.id.menuNewMain:
                      _context.startActivity(
-                        new Intent(_context, NewChatActivity.class)
+                        new Intent(_context, SelectContactsActivity.class)
                      );
                      return true; // Indicate that the click was handled
                   default:
