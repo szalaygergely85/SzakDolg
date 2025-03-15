@@ -29,6 +29,10 @@ public interface ContactApiService {
            @Header("Authorization") String authToken
    );
 
+   @GET("contacts/get-contact/{id}")
+   Call<Contact> getContact(  @Path("id") Long contactId,
+                              @Header("Authorization") String authToken);
+
    @GET("contacts/get-contacts")
    Call<List<Contact>> getContacts(
            @Header("Authorization") String authToken,
@@ -43,7 +47,5 @@ public interface ContactApiService {
            @Header("Authorization") String authToken
    );
 
-   @GET("contacts/get-contact/{id}")
-   Call<Contact> getContact(  @Path("id") Long contactId,
-                        @Header("Authorization") String authToken);
+
 }
