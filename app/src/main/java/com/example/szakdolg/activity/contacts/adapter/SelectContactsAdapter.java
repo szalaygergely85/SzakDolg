@@ -2,6 +2,7 @@ package com.example.szakdolg.activity.contacts.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,10 +36,13 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
 
     private List<Contact> contacts = new ArrayList<>();
 
-    public SelectContactsAdapter(Context context, User currentUser) {
+    private List<Long> selectedUsers;
+
+    public SelectContactsAdapter(Context context, User currentUser, List<Long> selectedUsers) {
         this.context = context;
         this.currentUser = currentUser;
         this.userCoordinatorService = new UserCoordinatorService(context);
+        this.selectedUsers = selectedUsers;
     }
 
     @NonNull
@@ -54,23 +58,24 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
     @Override
     public void onBindViewHolder(@NonNull SelectContactsAdapter.ViewHolder holder, int position) {
     Contact contact = contacts.get(holder.getAdapterPosition());
-
+//TODO will need to do to download the users....
     User user = userCoordinatorService.getUserByUserId(contact.getContactUserId(), currentUser);
 
-    holder.txtName.setText(user.getDisplayName());
-
-    List<User> selectedUsers = new ArrayList<>();
+String displayName = user.getDisplayName();
+if(displayName!=null) {
+    holder.txtName.setText(displayName);
+}
 
         holder.linearLayout.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if(selectedUsers.contains(user)){
-                            selectedUsers.remove(user);
+                            selectedUsers.remove(user.getUserId());
                             holder.checkImageView.setVisibility(View.INVISIBLE);
 
                         }else {
-                            selectedUsers.add(user);
+                            selectedUsers.add(user.getUserId());
                             holder.checkImageView.setVisibility(View.VISIBLE);
                         }
                     }

@@ -82,17 +82,18 @@ public class ConversationApiHelper extends BaseService {
       User currentUser,
       Context context
    ) {
-      Call<Long> call = conversationApiService.addNewConversation(
+      Call<Conversation> call = conversationApiService.addConversationByUserId(
          userIds,
          token
       );
 
       call.enqueue(
-         new Callback<Long>() {
+         new Callback<Conversation>() {
             @Override
-            public void onResponse(Call<Long> call, Response<Long> response) {
+            public void onResponse(Call<Conversation> call, Response<Conversation> response) {
                if (response.isSuccessful()) {
-                  Long conversationId = response.body();
+                   Conversation conversation = response.body();
+                   Long conversationId = conversation.getConversationId();
                   if (conversationId != null) {
                      messageApiHelper.sendMessageAndOpenChat(
                         conversationId,
@@ -120,7 +121,7 @@ public class ConversationApiHelper extends BaseService {
             }
 
             @Override
-            public void onFailure(Call<Long> call, Throwable t) {}
+            public void onFailure(Call<Conversation> call, Throwable t) {}
          }
       );
    }

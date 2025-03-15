@@ -12,11 +12,15 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.activity.contacts.adapter.SelectContactsAdapter;
+import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.contacts.ContactService;
+import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.google.android.material.appbar.MaterialToolbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectContactsActivity extends BaseActivity {
@@ -27,8 +31,10 @@ public class SelectContactsActivity extends BaseActivity {
         setContentView(R.layout.activity_select_contacts);
 
         _initView();
-        selectContactsAdapter = new SelectContactsAdapter(this, currentUser);
+        selectContactsAdapter = new SelectContactsAdapter(this, currentUser, contacts);
         contactService = new ContactService(this, currentUser);
+        conversationService = new ConversationService(this, currentUser);
+
 
     }
 
@@ -57,15 +63,28 @@ public class SelectContactsActivity extends BaseActivity {
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menuNewMain:
-                                Intent intent = new Intent(
-                                        SelectContactsActivity.this,
-                                        ChatActivity.class
-                                );
-                                intent.putExtra(
-                                        SharedPreferencesConstants.CURRENT_USER,
-                                        currentUser
-                                );
-                                startActivity(intent);
+
+                                conversationService.addConversationByUserId(contacts, new ConversationService.ConversationCallback<Conversation>() {
+                                    @Override
+                                    public void onSuccess(Conversation data) {
+                                        Intent intent = new Intent(
+                                                SelectContactsActivity.this,
+                                                ChatActivity.class
+                                        );
+                                        intent.putExtra(
+                                                IntentConstants.CONVERSATION_ID,
+                                                data.getConversationId()
+                                        );
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable t) {
+
+                                    }
+                                });
+
+
                                 return true; // Indicate that the click was handled
                             default:
                                 return false;
@@ -82,7 +101,11 @@ public class SelectContactsActivity extends BaseActivity {
         topAppBar = findViewById(R.id.select_contacts_Toolbar);
     }
     private ContactService contactService;
+
+    private ConversationService conversationService;
     private SelectContactsAdapter selectContactsAdapter;
     private RecyclerView selectContactsRecView;
     private MaterialToolbar topAppBar;
+
+    private List<Long> contacts = new ArrayList<>();
 }

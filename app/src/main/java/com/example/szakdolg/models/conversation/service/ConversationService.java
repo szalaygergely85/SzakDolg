@@ -74,6 +74,24 @@ public class ConversationService {
       });
    }
 
+   public void addConversationByUserId(List<Long> userIds, final ConversationService.ConversationCallback<Conversation> callback){
+      conversationRepository.addConversationByUserId(userIds, currentUser.getAuthToken(), new Callback<Conversation>() {
+         @Override
+         public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+            if (response.isSuccessful()) {
+               callback.onSuccess(null);
+            } else {
+               callback.onError(new Throwable("Failed to update contact"));
+            }
+         }
+
+         @Override
+         public void onFailure(Call<Conversation> call, Throwable throwable) {
+            callback.onError(throwable);
+         }
+      });
+   }
+
 
    public interface ConversationCallback<T> {
       void onSuccess(T data);

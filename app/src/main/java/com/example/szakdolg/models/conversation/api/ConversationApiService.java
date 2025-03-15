@@ -13,20 +13,20 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ConversationApiService {
-   @GET("conversation/id/{id}")
+   @GET("conversation/get-conversation/{id}")
    Call<ConversationContent> getConversationAndContentById(
       @Path("id") long id,
       @Header("Authorization") String token
    );
 
-   @POST("conversation/add-conversation")
+   @POST("conversation/add-conversation/conversation")
    Call<Conversation> addConversation(
       @Body Conversation conversation,
       @Header("Authorization") String token
    );
 
-   @POST("conversation/id")
-   Call<Long> addNewConversation(
+   @POST("conversation/add-conversation/user-ids")
+   Call<Conversation> addConversationByUserId(
       @Body List<Long> userIds,
       @Header("Authorization") String token
    );
