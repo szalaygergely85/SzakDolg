@@ -14,7 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
+import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.service.UserService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,13 +26,18 @@ public class ContactsAdapter
 
    private static final String TAG = "ContactsAdapter";
 
-   private User user;
-   private final Context mContext;
-   private List<User> contact = new ArrayList<>();
+   private User currentUser;
+   private final Context context;
+   private List<Contact> contacts = new ArrayList<>();
 
-   public ContactsAdapter(Context mContext, User user) {
-      this.mContext = mContext;
-      this.user = user;
+   private UserService userService;
+
+
+   public ContactsAdapter(Context context, User currentUser) {
+      this.context = context;
+      this.currentUser = currentUser;
+
+      this.userService = new UserService(context);
    }
 
 
@@ -41,47 +49,57 @@ public class ContactsAdapter
    ) {
       View view = LayoutInflater
          .from(parent.getContext())
-         .inflate(R.layout.contact_item, parent, false);
+         .inflate(R.layout.item_contacts, parent, false);
       ViewHolder holder = new ViewHolder(view);
       return holder;
    }
 
    @Override
    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-      User contactUser = contact.get(holder.getAdapterPosition());
+      Contact contact = contacts.get(holder.getAdapterPosition());
+      userService.getUserByUserId(contact.getContactUserId(), currentUser, new UserService.UserCallback<User>() {
+                 @Override
+                 public void onSuccess(User user) {
+                    holder.txtName.setText(user.getDisplayName());
+                    holder.relativeLayout.setOnClickListener(
+                            new View.OnClickListener() {
+                               @Override
+                               public void onClick(View view) {
+                                  Intent intent = new Intent(context, ProfileActivity.class);
+                                  intent.putExtra(
+                                          SharedPreferencesConstants.OTHER_USER,
+                                          user
+                                  );
+                                  intent.putExtra(SharedPreferencesConstants.CURRENT_USER, currentUser);
+                                  context.startActivity(intent);
+                                  Toast
+                                          .makeText(
+                                                  view.getContext(),
+                                                  user.toString(),
+                                                  Toast.LENGTH_SHORT
+                                          )
+                                          .show();
+                               }
+                            }
+                    );
+                 }
 
-      holder.txtName.setText(contactUser.getDisplayName());
-      holder.txtEmail.setText(contactUser.getEmail());
-      holder.relativeLayout.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               Intent intent = new Intent(mContext, ProfileActivity.class);
-               intent.putExtra(
-                  SharedPreferencesConstants.OTHER_USER,
-                  contactUser
-               );
-               intent.putExtra(SharedPreferencesConstants.CURRENT_USER, user);
-               mContext.startActivity(intent);
-               Toast
-                  .makeText(
-                     view.getContext(),
-                     contactUser.toString(),
-                     Toast.LENGTH_SHORT
-                  )
-                  .show();
-            }
-         }
-      );
+                 @Override
+                 public void onError(Throwable t) {
+
+                 }
+              });
+
+
    }
 
    @Override
    public int getItemCount() {
-      return contact.size();
+      return contacts.size();
    }
 
-   public void setContact(List<User> contact) {
-      this.contact = contact;
+   public void setContact(List<Contact> contacts) {
+      this.contacts = contacts;
       notifyDataSetChanged();
    }
 
@@ -89,17 +107,13 @@ public class ContactsAdapter
 
       private final ImageView imageView;
       private final TextView txtName;
-      private final TextView txtEmail;
-      private final TextView txtPhone;
       private final RelativeLayout relativeLayout;
 
       public ViewHolder(@NonNull View itemView) {
          super(itemView);
-         txtName = itemView.findViewById(R.id.txtContName);
-         txtEmail = itemView.findViewById(R.id.txtContEmail);
-         txtPhone = itemView.findViewById(R.id.txtContPhone);
+         txtName = itemView.findViewById(R.id.contactName);
          relativeLayout = itemView.findViewById(R.id.relLayContact);
-         imageView = itemView.findViewById(R.id.imgCont);
+         imageView = itemView.findViewById(R.id.contactImage);
       }
    }
 }

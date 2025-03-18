@@ -1,16 +1,5 @@
 package com.example.szakdolg.models.contacts;
 
-import android.content.Context;
-import com.example.szakdolg.cache.CacheAction;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.retrofit.RetrofitClient;
-import java.util.ArrayList;
-import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 @Deprecated
 public class ContactsApiHelper {
 /*

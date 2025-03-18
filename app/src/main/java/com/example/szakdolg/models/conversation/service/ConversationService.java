@@ -79,7 +79,7 @@ public class ConversationService {
          @Override
          public void onResponse(Call<Conversation> call, Response<Conversation> response) {
             if (response.isSuccessful()) {
-               callback.onSuccess(null);
+               callback.onSuccess(response.body());
             } else {
                callback.onError(new Throwable("Failed to update contact"));
             }

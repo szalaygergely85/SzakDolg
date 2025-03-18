@@ -17,6 +17,7 @@ import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserCoordinatorService;
+import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
 import java.text.SimpleDateFormat;
@@ -60,21 +61,30 @@ public class MainAdapterHelper {
             .load(R.drawable.ic_group) // Load your drawable directly
             .into(image);
       } else {
-         User user = userCoordinatorService.getUserByUserId(
-            participants.get(0).getUserId(),
-            currentUser
-         );
-         String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
-         if (imageUrl != null) {
-            Glide
-               .with(context)
-               .load(imageUrl)
-               .placeholder(R.drawable.ic_blank_profile)
-               .error(R.drawable.ic_blank_profile)
-               .into(image);
-         } else {
-            image.setImageResource(R.drawable.ic_blank_profile);
-         }
+
+         UserService userService = new UserService(context);
+         userService.getUserByUserId(participants.get(0).getUserId(),
+                 currentUser, new UserService.UserCallback<User>() {
+                    @Override
+                    public void onSuccess(User user) {
+                       String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
+                       if (imageUrl != null) {
+                          Glide
+                                  .with(context)
+                                  .load(imageUrl)
+                                  .placeholder(R.drawable.ic_blank_profile)
+                                  .error(R.drawable.ic_blank_profile)
+                                  .into(image);
+                       } else {
+                          image.setImageResource(R.drawable.ic_blank_profile);
+                       }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+                 });
       }
    }
 
@@ -86,7 +96,7 @@ public class MainAdapterHelper {
       List<User> participantUsers = new ArrayList<>();
       if (participants != null) {
          for (ConversationParticipant participant : participants) {
-            User user = userCoordinatorService.getUserByUserId(
+            User user = userCoordinatorService. getUserByUserId(
                participant.getUserId(),
                currentUser
             );

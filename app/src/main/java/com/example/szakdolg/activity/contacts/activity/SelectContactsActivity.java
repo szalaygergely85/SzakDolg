@@ -62,8 +62,8 @@ public class SelectContactsActivity extends BaseActivity {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
-                            case R.id.menuNewMain:
-
+                            case R.id.menu_start_conversation:
+                                contacts.add(currentUser.getUserId());
                                 conversationService.addConversationByUserId(contacts, new ConversationService.ConversationCallback<Conversation>() {
                                     @Override
                                     public void onSuccess(Conversation data) {

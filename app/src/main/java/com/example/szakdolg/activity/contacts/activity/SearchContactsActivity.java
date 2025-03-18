@@ -11,10 +11,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
+import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.contacts.adapter.SearchContactAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.ContactApiService;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import java.util.ArrayList;
@@ -23,18 +25,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchContactsActivity extends AppCompatActivity {
-/*
+public class SearchContactsActivity extends BaseActivity {
+
    private EditText search;
    private RecyclerView contsRecView;
-   private List<User> contactList;
+   private List<User> userList = new ArrayList<>();;
    private SearchContactAdapter contactsAdapter;
-
-   private String _token;
-   private User user;
-   private static final String TAG = "SearchContactsActivity";
-
-   private SharedPreferencesUtil sharedPreferencesUtil;
+   private UserService userService;
 
    private void initViews() {
       search = findViewById(R.id.edtContSearch);
@@ -44,30 +41,14 @@ public class SearchContactsActivity extends AppCompatActivity {
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+
       setContentView(R.layout.activity_search_contacts);
 
-      Toolbar mToolbar = (Toolbar) findViewById(R.id.contactsearchBoardToolbar);
-      setSupportActionBar(mToolbar);
-      //toolbar settings
-
-      _token =
-      SharedPreferencesUtil.getStringPreference(
-         this,
-         SharedPreferencesConstants.USERTOKEN
-      );
-
-      user =
-      (User) this.getIntent()
-         .getSerializableExtra(SharedPreferencesConstants.CURRENT_USER);
-      contactsAdapter = new SearchContactAdapter(this, user, _token);
-
-      ActionBar actionBar = getSupportActionBar();
-      actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.setTitle("People Search");
+      contactsAdapter = new SearchContactAdapter(this, currentUser);
+      userService = new UserService(this);
 
       initViews();
    }
-
    @Override
    public boolean onSupportNavigateUp() {
       onBackPressed();
@@ -77,10 +58,10 @@ public class SearchContactsActivity extends AppCompatActivity {
    @Override
    protected void onStart() {
       super.onStart();
-      contactList = new ArrayList<>();
-      contactsAdapter.setContactList(contactList);
+      contactsAdapter.setUserList(userList);
       contsRecView.setAdapter(contactsAdapter);
       contsRecView.setLayoutManager(new LinearLayoutManager(this));
+
       search.addTextChangedListener(
          new TextWatcher() {
             private CharSequence previousText = "";
@@ -102,47 +83,23 @@ public class SearchContactsActivity extends AppCompatActivity {
                int before,
                int count
             ) {}
-
             @Override
             public void afterTextChanged(Editable editable) {
                if (editable.length() >= 3) {
-                  ContactApiService contactApiService = RetrofitClient
-                     .getRetrofitInstance()
-                     .create(ContactApiService.class);
+                   userService.searchUser(editable.toString(), currentUser, new UserService.UserCallback<List<User>>() {
+                       @Override
+                       public void onSuccess(List<User> users) {
+                           contactsAdapter.setUserList(users);
+                       }
+                       @Override
+                       public void onError(Throwable t) {
+                       }
+                   });
 
-                  Call<List<User>> contactsCall =
-                     contactApiService.searchContacts(
-                        editable.toString(),
-                        _token
-                     );
+                   }
 
-                  contactsCall.enqueue(
-                     new Callback<List<User>>() {
-                        @Override
-                        public void onResponse(
-                           Call<List<User>> call,
-                           Response<List<User>> response
-                        ) {
-                           if (response.isSuccessful()) {
-                              Log.e(TAG, "" + response.code());
-
-                              List<User> contactList = response.body();
-                              contactsAdapter.setContactList(contactList);
-                           }
-                        }
-
-                        @Override
-                        public void onFailure(
-                           Call<List<User>> call,
-                           Throwable t
-                        ) {
-                           Log.e(TAG, "" + t.getMessage());
-                        }
-                     }
-                  );
-               }
             }
          }
       );
-   }*/
+   }
 }

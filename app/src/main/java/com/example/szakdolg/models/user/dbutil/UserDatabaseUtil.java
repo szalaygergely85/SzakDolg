@@ -1,4 +1,4 @@
-package com.example.szakdolg.db.util;
+package com.example.szakdolg.models.user.dbutil;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -215,6 +215,8 @@ public class UserDatabaseUtil {
    }
 
    public void insertUser(User user) {
+
+      //TODO need to check for doubles...
       SQLiteDatabase db = dbHelper.getWritableDatabase();
 
       try {

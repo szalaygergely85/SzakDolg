@@ -10,9 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.contacts.adapter.ContactsAdapter;
+import com.example.szakdolg.activity.contacts.adapter.SelectContactsAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
+import com.example.szakdolg.models.contacts.Contact;
+import com.example.szakdolg.models.contacts.ContactService;
+import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.service.UserService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +25,11 @@ public class ContactsActivity extends BaseActivity {
 
    private RecyclerView contsRecView;
 
-   List<User> contactList;
    private FloatingActionButton btnNewContact;
+
+   private ContactService contactService;
+
+   private ContactsAdapter contactsAdapter;
 
    private void initView() {
       btnNewContact = findViewById(R.id.btnConNew);
@@ -33,6 +40,10 @@ public class ContactsActivity extends BaseActivity {
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_contacts);
+
+      contactService = new ContactService(this, currentUser);
+      contactsAdapter = new ContactsAdapter(this, currentUser);
+
 
       // Toolbar settings
       Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -54,21 +65,21 @@ public class ContactsActivity extends BaseActivity {
       return super.onSupportNavigateUp();
    }
 
+
    @Override
    protected void onStart() {
       super.onStart();
-      contactList = new ArrayList<>();
+      contactService.getContacts(currentUser.getAuthToken(), null, new ContactService.ContactCallback<List<Contact>>() {
+         @Override
+         public void onSuccess(List<Contact> data) {
+            contactsAdapter.setContact(data);
+         }
 
-      ContactsAdapter contactsAdapter = new ContactsAdapter(this, currentUser);
-      contactsAdapter.setContact(contactList);
+         @Override
+         public void onError(Throwable t) {
 
-      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
-         this,
-         currentUser
-      );
-
-      List<User> contacts = userDatabaseUtil.getAllUsers();
-      contactsAdapter.setContact(contacts);
+         }
+      });
 
       contsRecView.setAdapter(contactsAdapter);
       contsRecView.setLayoutManager(new LinearLayoutManager(this));

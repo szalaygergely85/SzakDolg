@@ -8,90 +8,37 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
-import com.example.szakdolg.models.contacts.ContactApiService;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.retrofit.RetrofitClient;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SearchContactAdapter
-
-//   extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder>
+   extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder>
 {
-/*
-   private static final String TAG = "SearchContactAdapter";
+
+
    private final Context context;
 
    private User currentUser;
-   private List<User> contactList = new ArrayList<>();
+   private List<User> userList = new ArrayList<>();
 
-   private String _token;
 
-   /*
-	public void setImageView(String uID, Context context, ImageView image) {
-		try {
-			storageRef.child(uID + ".jpg").getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
-				@Override
-				public void onComplete(@NonNull Task<StorageMetadata> task) {
-					if (task.isSuccessful()) {
-						storageRef.child(uID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-							@Override
-							public void onSuccess(Uri uri) {
-								Log.d(AppConstants.LOG_TAG, TAG + " " "getPicURl: " + uri);
-								Glide.with(context)
-										.asBitmap()
-										.load(uri)
-										.into(new CustomTarget<Bitmap>() {
-											@Override
-											public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-												try {
-													FileHandling.saveImageFile(uID, resource, context);
-												} catch (IOException e) {
-													e.printStackTrace();
-												}
-											}
-
-											@Override
-											public void onLoadCleared(@Nullable Drawable placeholder) {
-											}
-										});
-
-								Glide.with(context)
-										.asBitmap()
-										.load(uri)
-										.into(image);
-							}
-						}).addOnFailureListener(new OnFailureListener() {
-							@Override
-							public void onFailure(@NonNull Exception exception) {
-								Log.d(AppConstants.LOG_TAG, TAG + " " "onFailure: " + exception);
-							}
-						});
-					}
-				}
-			});
-
-		} catch (Exception e) {
-			Log.d(AppConstants.LOG_TAG, TAG + " " "setImageView: " + e);
-		}
-	}
 
    public SearchContactAdapter(
       Context context,
-      User currentUser,
-      String token
+      User currentUser
    ) {
       this.currentUser = currentUser;
       this.context = context;
-      this._token = token;
    }
 
    @NonNull
@@ -110,10 +57,11 @@ public class SearchContactAdapter
 
    @Override
    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-      User userSearchResult = contactList.get(holder.getAdapterPosition());
+      User user = userList.get(holder.getAdapterPosition());
 
-      holder.txtEmail.setText(userSearchResult.getEmail());
-      // setImageView(contactList.get(position).getID(), mContext, holder.imageView);
+      holder.txtName.setText(user.getDisplayName());
+
+      /*
       holder.btnAdd.setOnClickListener(
          new View.OnClickListener() {
             @Override
@@ -155,28 +103,28 @@ public class SearchContactAdapter
                         }
                         Log.e(
                            AppConstants.LOG_TAG,
-                           TAG + " " + response.code()
+                                AppConstants.LOG_TAG + " " + response.code()
                         );
                      }
 
                      @Override
                      public void onFailure(Call<User> call, Throwable t) {
-                        Log.e(AppConstants.LOG_TAG, TAG + " " + t.getMessage());
+                        Log.e(AppConstants.LOG_TAG, AppConstants.LOG_TAG + " " + t.getMessage());
                      }
                   }
                );
             }
          }
-      );
+      );*/
    }
 
    @Override
    public int getItemCount() {
-      return contactList.size();
+      return userList.size();
    }
 
-   public void setContactList(List<User> contactList) {
-      this.contactList = contactList;
+   public void setUserList(List<User> userList) {
+      this.userList = userList;
       notifyDataSetChanged();
    }
 
@@ -184,15 +132,13 @@ public class SearchContactAdapter
 
       private final ImageView imageView;
       private final TextView txtName;
-      private final TextView txtEmail;
       private final ImageButton btnAdd;
 
       public ViewHolder(@NonNull View itemView) {
          super(itemView);
          imageView = itemView.findViewById(R.id.imgContItem);
          txtName = itemView.findViewById(R.id.txtContItemName);
-         txtEmail = itemView.findViewById(R.id.txtContItemEmail);
          btnAdd = itemView.findViewById(R.id.btnContItemAdd);
       }
-   }*/
+   }
 }

@@ -3,7 +3,9 @@ package com.example.szakdolg.models.user.api;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.entity.UserToken;
-import okhttp3.ResponseBody;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -13,19 +15,23 @@ import retrofit2.http.Path;
 
 public interface UserApiService {
    @GET("user/id/{userId}")
-   Call<User> getUserByID(
+   Call<User> getUserById(
       @Path("userId") Long userId,
       @Header("Authorization") String token
    );
 
    @GET("user/token/{token}")
-   Call<User> getUserByID(@Path("token") String token);
+   Call<User> getUserByToken(@Path("token") String token);
+
+   @GET("user/search/{search}")
+   Call<List<User>> searchUser(@Path("search") String search, @Header("Authorization") String token);
+
 
    @POST("user/login")
-   Call<UserToken> logInUser(@Body LoginRequest loginRequest);
+   Call<UserToken> getTokenByPasswordAndEmail(@Body LoginRequest loginRequest);
 
    @POST("user")
-   Call<UserToken> createUser(@Body User user);
+   Call<User> addUser(@Body User user);
 
    @GET("user/publickey/{userId}")
    Call<String> getPublicKeyByUserId(
@@ -33,7 +39,4 @@ public interface UserApiService {
       @Header("Authorization") String token
    );
 
-   @Deprecated
-   @GET("user/aes/{token}")
-   Call<ResponseBody> getAESByToken(@Path("token") String token);
 }

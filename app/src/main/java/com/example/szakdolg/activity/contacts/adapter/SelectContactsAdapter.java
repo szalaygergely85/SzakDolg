@@ -21,18 +21,19 @@ import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserCoordinatorService;
+import com.example.szakdolg.models.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAdapter.ViewHolder>{
+public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAdapter.ViewHolder> {
 
     private final Context context;
 
     private final User currentUser;
 
-    private  UserCoordinatorService userCoordinatorService;
+    private UserService userService;
 
     private List<Contact> contacts = new ArrayList<>();
 
@@ -41,7 +42,7 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
     public SelectContactsAdapter(Context context, User currentUser, List<Long> selectedUsers) {
         this.context = context;
         this.currentUser = currentUser;
-        this.userCoordinatorService = new UserCoordinatorService(context);
+        this.userService = new UserService(context);
         this.selectedUsers = selectedUsers;
     }
 
@@ -57,30 +58,40 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAd
 
     @Override
     public void onBindViewHolder(@NonNull SelectContactsAdapter.ViewHolder holder, int position) {
-    Contact contact = contacts.get(holder.getAdapterPosition());
-//TODO will need to do to download the users....
-    User user = userCoordinatorService.getUserByUserId(contact.getContactUserId(), currentUser);
+        Contact contact = contacts.get(holder.getAdapterPosition());
 
-String displayName = user.getDisplayName();
-if(displayName!=null) {
-    holder.txtName.setText(displayName);
-}
-
-        holder.linearLayout.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(selectedUsers.contains(user)){
-                            selectedUsers.remove(user.getUserId());
-                            holder.checkImageView.setVisibility(View.INVISIBLE);
-
-                        }else {
-                            selectedUsers.add(user.getUserId());
-                            holder.checkImageView.setVisibility(View.VISIBLE);
-                        }
-                    }
+        userService.getUserByUserId(contact.getContactUserId(), currentUser, new UserService.UserCallback<User>() {
+            @Override
+            public void onSuccess(User user) {
+                String displayName = user.getDisplayName();
+                if (displayName != null) {
+                    holder.txtName.setText(displayName);
                 }
-        );
+
+                holder.linearLayout.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (selectedUsers.contains(user.getUserId())) {
+                                    selectedUsers.remove(user.getUserId());
+                                    holder.checkImageView.setVisibility(View.INVISIBLE);
+
+                                } else {
+                                    selectedUsers.add(user.getUserId());
+                                    holder.checkImageView.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                );
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+
 
     }
 

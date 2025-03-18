@@ -27,38 +27,6 @@ public class UserCoordinatorService {
       this.userApiHelper = new UserApiHelper();
    }
 
-   public void registerUser(User user, HashMap<String, String> keyPair) {
-      userApiHelper.addUser(
-         context,
-         user,
-         userToken -> {
-            user.setAuthToken(userToken.getToken());
-            user.setUserId(userToken.getUserId());
-
-            userService.addUser(user, user);
-
-            KeyStoreUtil.writePrivateKeysToFile(
-               context,
-               keyPair.get("Private"),
-               user
-            );
-
-            SharedPreferencesUtil.setStringPreference(
-               context,
-               SharedPreferencesConstants.USERTOKEN,
-               user.getAuthToken()
-            );
-            SharedPreferencesUtil.setStringPreference(
-               context,
-               SharedPreferencesConstants.USER_ID,
-               user.getUserId().toString()
-            );
-            Intent intent = new Intent(context, ProfilePictureActivity.class);
-            context.startActivity(intent);
-         }
-      );
-   }
-
    public User getUserByUserId(Long userId, User currentUser) {
       User user = userService.getUserByUserId(userId, currentUser);
       if (user != null) {

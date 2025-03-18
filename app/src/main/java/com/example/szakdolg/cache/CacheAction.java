@@ -1,7 +1,7 @@
 package com.example.szakdolg.cache;
 
 import android.content.Context;
-import com.example.szakdolg.db.util.UserDatabaseUtil;
+import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
