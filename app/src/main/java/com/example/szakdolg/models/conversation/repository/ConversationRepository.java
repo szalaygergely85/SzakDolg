@@ -15,7 +15,7 @@ public interface ConversationRepository {
     );
 
     void addConversationByUserId(List<Long> userIds,
-            String token, Callback<Conversation> callback);
+            String token, Callback<ConversationDTO> callback);
 
     void getConversation(
             Long id, String token, Callback<ConversationDTO> callback

@@ -80,6 +80,11 @@ public class MainActivityHelper {
                         _context,
                         SharedPreferencesConstants.CURRENT_USER
                      );
+
+                     SharedPreferencesUtil.deletePreference(
+                             _context,
+                             SharedPreferencesConstants.USER_ID
+                     );
                      _context.startActivity(
                         new Intent(_context, MainActivity.class)
                      );

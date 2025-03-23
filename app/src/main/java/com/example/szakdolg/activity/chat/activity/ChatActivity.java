@@ -12,18 +12,24 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
 import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.file.api.FileApiHelper;
+import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
+import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.FileUtil;
 import com.example.szakdolg.util.UUIDUtil;
 import java.io.File;
+import java.util.List;
 
 public class ChatActivity extends BaseActivity {
 
@@ -36,6 +42,8 @@ public class ChatActivity extends BaseActivity {
    private ChatActivityHelper chatActivityHelper;
    private Toolbar mToolbar;
    private ConversationService conversationService;
+   private Conversation conversation;
+   private List<User> users;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +59,7 @@ public class ChatActivity extends BaseActivity {
       adapter = new ChatAdapter(this, currentUser, chatRecView);
 
       chatActivityHelper =
-      new ChatActivityHelper(this, conversationId, currentUser);
+      new ChatActivityHelper(this, conversation, currentUser, users);
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
@@ -59,8 +67,11 @@ public class ChatActivity extends BaseActivity {
    }
 
    private void _getIntentExtras() {
-      conversationId =
-      this.getIntent().getLongExtra(IntentConstants.CONVERSATION_ID, 0);
+
+      ConversationDTO conversationDTO = (ConversationDTO) this.getIntent().getSerializableExtra(IntentConstants.CONVERSATION_DTO);
+      conversation = conversationDTO.getConversation();
+      users = conversationDTO.getUsers();
+      conversationId = conversation.getConversationId();
    }
 
    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
@@ -105,7 +116,7 @@ public class ChatActivity extends BaseActivity {
    protected void onStart() {
       super.onStart();
 
-      chatActivityHelper.setMessagesRead(conversationId);
+      chatActivityHelper.setMessagesRead();
    }
 
    @Override
@@ -142,13 +153,14 @@ public class ChatActivity extends BaseActivity {
                if (!content.isEmpty()) {
                   try {
                      //TODO Maximalize text long
-                     chatActivityHelper.sendMessage(
+                     MessageEntry messageEntry = chatActivityHelper.sendMessage(
                         content,
                         MessageTypeConstants.MESSAGE
                      );
 
                      edtMess.getText().clear();
-                     chatActivityHelper.reloadMessages(adapter);
+                     adapter.addMessage(messageEntry);
+
                   } catch (Exception e) {
                      throw new RuntimeException(e);
                   }

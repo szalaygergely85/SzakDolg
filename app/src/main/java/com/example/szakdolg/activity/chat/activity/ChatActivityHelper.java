@@ -1,15 +1,19 @@
 package com.example.szakdolg.activity.chat.activity;
 
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
+import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
+import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserCoordinatorService;
@@ -22,67 +26,58 @@ public class ChatActivityHelper {
 
    private Conversation conversation;
    private User currentUser;
+
+   private List<User> users;
    private AppCompatActivity context;
 
    private ConversationService conversationService;
-   private ConversationParticipantCoordinatorService conversationParticipantCoordinatorService;
-
-   private UserCoordinatorService userCoordinatorService;
-
-   private MessageCoordinatorService messageCoordinatorService;
+   private MessageService messageService;
 
    public ChatActivityHelper(
       AppCompatActivity context,
-      Long conversationId,
-      User currentUser
+      Conversation conversation,
+      User currentUser,
+      List<User> users
    ) {
+      this.conversation = conversation;
       this.context = context;
+      this.users = users;
       this.conversationService =
       new ConversationService(context, currentUser);
 
       this.currentUser = currentUser;
-      this.conversationParticipantCoordinatorService =
-      new ConversationParticipantCoordinatorService(context, currentUser);
-      this.userCoordinatorService = new UserCoordinatorService(context);
-      this.messageCoordinatorService =
-      new MessageCoordinatorService(context, currentUser);
-   }
 
-   private List<User> getUsers() {
-      List<ConversationParticipant> participants =
-         conversationParticipantCoordinatorService.getOtherParticipants(
-            conversation.getConversationId()
-         );
-      List<User> users = new ArrayList<>();
-      for (ConversationParticipant participant : participants) {
-         User user = userCoordinatorService.getUserByUserId(
-            participant.getUserId(),
-            currentUser
-         );
-         if (user != null) {
-            users.add(user);
-         }
-      }
-      return users;
+
+      new MessageService(context, currentUser);
    }
 
    public void setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {
-      adapter.setUsers(getUsers());
-      adapter.setMessageEntries(
-         messageCoordinatorService.getMessagesByConversationId(
-            conversation.getConversationId()
-         )
-      );
+      adapter.setUsers(users);
+      messageService.getMessagesByConversationId(conversation.getConversationId(), new MessageService.MessageCallback<List<MessageEntry>>() {
+         @Override
+         public void onSuccess(List<MessageEntry> messageEntries) {
+            adapter.setMessageEntries(
+                    messageEntries
+            );
+         }
+
+         @Override
+         public void onError(Throwable t) {
+
+         }
+      });
+
+
 
       chatRecView.setAdapter(adapter);
       chatRecView.setLayoutManager(new LinearLayoutManager(context));
       chatRecView.scrollToPosition(adapter.getItemCount() - 1);
    }
 
-   public void sendMessage(String content, int messageType) {
-      List<User> users = getUsers();
+   public MessageEntry sendMessage(String content, int messageType) {
       if (conversation.getNumberOfParticipants() > 2) {
          //TODO GROUP Conversation
+         return null;
       } else {
          User user = users.get(0);
 
@@ -106,16 +101,22 @@ public class ChatActivityHelper {
             UUIDUtil.UUIDGenerator()
          );
 
-         messageCoordinatorService.sendMessage(messageEntry);
-      }
-   }
+         MessageService messageService = new MessageService(context, currentUser);
+         messageService.addMessage(messageEntry, new MessageService.MessageCallback<MessageEntry>() {
+            @Override
+            public void onSuccess(MessageEntry data) {
+               Log.i(AppConstants.LOG_TAG, "Message sent to: " + messageEntry.getConversationId());
+            }
 
-   public void reloadMessages(ChatAdapter adapter) {
-      adapter.setMessageEntries(
-         messageCoordinatorService.getMessagesByConversationId(
-            conversation.getConversationId()
-         )
-      );
+            @Override
+            public void onError(Throwable t) {
+
+            }
+         });
+
+         return messageEntry;
+      }
+
    }
 
    public void setToolbarTitle(Toolbar mToolbar, Long conversationId) {
@@ -123,7 +124,7 @@ public class ChatActivityHelper {
       if (conversationName != null) {
          mToolbar.setTitle(conversation.getConversationName());
       } else {
-         mToolbar.setTitle(_createTitleWithUsernames(getUsers()));
+         mToolbar.setTitle(_createTitleWithUsernames(users));
       }
    }
 
@@ -139,10 +140,8 @@ public class ChatActivityHelper {
       return title;
    }
 
-   public void setMessagesRead(Long conversationId) {
-      messageCoordinatorService.setMessagesAsReadByConversationId(
-         conversationId
-      );
+   public void setMessagesRead() {
+      messageService.setMessagesAsReadByConversationId(conversation.getConversationId());
    }
    /*
 public void _startRepeatingTask() {

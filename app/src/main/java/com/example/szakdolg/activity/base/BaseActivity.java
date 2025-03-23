@@ -2,8 +2,11 @@ package com.example.szakdolg.activity.base;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.activity.login.LoginActivity;
+import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
@@ -44,7 +47,9 @@ public class BaseActivity extends AppCompatActivity {
    }
 
    private void _navigateToLogin() {
+      Log.d(AppConstants.LOG_TAG, "Navigating to login...");
       Intent intent = new Intent(this, LoginActivity.class);
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
       startActivity(intent);
       finish();
    }

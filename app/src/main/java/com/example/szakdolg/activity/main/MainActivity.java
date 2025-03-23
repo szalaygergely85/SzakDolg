@@ -191,8 +191,7 @@ public class MainActivity extends BaseActivity {
 
                mainAdapter.setConversationList(conversationList);
 
-               messageBoardRecView.setAdapter(mainAdapter);
-               messageBoardRecView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
             } else {
                emptyLayout.setVisibility(View.VISIBLE);
                withItemsLayout.setVisibility(View.GONE);
@@ -205,6 +204,8 @@ public class MainActivity extends BaseActivity {
          }
       });
 
+      messageBoardRecView.setAdapter(mainAdapter);
+      messageBoardRecView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
       //set menu text and image logo
 
       profileTextHeader.setText(currentUser.getDisplayName());

@@ -102,10 +102,10 @@ public class ConversationService {
       });
    }
 
-   public void addConversationByUserId(List<Long> userIds, final ConversationService.ConversationCallback<Conversation> callback){
-      conversationRepository.addConversationByUserId(userIds, currentUser.getToken(), new Callback<Conversation>() {
+   public void addConversationByUserId(List<Long> userIds, final ConversationService.ConversationCallback<ConversationDTO> callback){
+      conversationRepository.addConversationByUserId(userIds, currentUser.getToken(), new Callback<ConversationDTO>() {
          @Override
-         public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+         public void onResponse(Call<ConversationDTO> call, Response<ConversationDTO> response) {
             if (response.isSuccessful()) {
                callback.onSuccess(response.body());
             } else {
@@ -114,7 +114,7 @@ public class ConversationService {
          }
 
          @Override
-         public void onFailure(Call<Conversation> call, Throwable throwable) {
+         public void onFailure(Call<ConversationDTO> call, Throwable throwable) {
             callback.onError(throwable);
          }
       });

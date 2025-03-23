@@ -25,52 +25,6 @@ public class MessageCoordinatorService extends BaseService {
       this.messageApiHelper = new MessageApiHelper(context, currentUser);
    }
 
-   public List<MessageEntry> getMessagesByConversationId(Long conversationId) {
-      List<MessageEntry> messages = messageService.getMessagesByConversationId(
-         conversationId
-      );
-      if (messages != null) {
-         return messages;
-      } else {
-         messageApiHelper.getMessages(
-            conversationId,
-            messageService::addMessages
-         );
-         return null;
-      }
-   }
-
-   public void sendMessage(MessageEntry messageEntry) {
-      messageService.addMessage(messageEntry);
-      if (messageEntry.getContentEncrypted() != null) {
-         webSocketService.sendMessage(messageEntry.getJSON());
-
-         messageApiHelper.addMessage(
-            messageEntry,
-            entry -> {
-               entry.setUploaded(true);
-               messageService.updateMessage(entry);
-            }
-         );
-      }
-   }
-
-   public MessageEntry saveMessage(MessageEntry messageEntry) {
-      String encryptedContent = messageEntry.getContentEncrypted();
-      String content = messageEntry.getContent();
-
-      if (encryptedContent != null && content == null) {
-         content =
-         EncryptionHelper.decrypt(
-            encryptedContent,
-            KeyStoreUtil.getPrivateKeyFromFile(context, currentUser)
-         );
-         messageEntry.setContent(content);
-      }
-
-      return messageService.addMessage(messageEntry);
-   }
-
    public int getCountByNotReadMsg(Long conversationId) {
       return messageService.getCountByNotReadMsg(conversationId);
    }

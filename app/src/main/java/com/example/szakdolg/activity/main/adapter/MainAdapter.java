@@ -31,6 +31,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    private List<ConversationDTO> conversationDTOList = new ArrayList<>();
    private List<User> users = new ArrayList<>();
    private final Context context;
+   private  Conversation conversation;
    private final User currentUser;
 
    private final MessageService messageService;
@@ -75,7 +76,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    ) {
       ConversationDTO conversationDTO = conversationDTOList.get(position);
 
-      Conversation conversation = conversationDTO.getConversation();
+       conversation = conversationDTO.getConversation();
+
+      users =  conversationDTO.getUsers();
 
       Long conversationId = conversation.getConversationId();
 
@@ -103,17 +106,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                holder.txtNotRead.setText(String.valueOf(count));
             }
 
-            List<User> participants = mainAdapterHelper.getParticipantUsers(
-                    conversationId
-            );
 
-            if (participants == null) {
+            if ( users== null) {
                holder.itemView.setVisibility(View.GONE);
                return;
             }
 
             holder.txtName.setText(
-                    mainAdapterHelper.getConversationTitle(conversation, participants)
+                    mainAdapterHelper.getConversationTitle(conversation, users)
             );
 
             holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry));
@@ -122,13 +122,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                     mainAdapterHelper.getTime(messageEntry.getTimestamp())
             );
 
-            mainAdapterHelper.setImageView(participants, holder.image);
+            mainAdapterHelper.setImageView(users, holder.image);
 
             holder.parent.setOnClickListener(
                     new View.OnClickListener() {
                        @Override
                        public void onClick(View view) {
                           Intent intent = new Intent(context, ChatActivity.class);
+                          intent.putExtra(IntentConstants.CONVERSATION_DTO, conversationDTO);
                           intent.putExtra(IntentConstants.CONVERSATION_ID, conversationId);
                           context.startActivity(intent);
 

@@ -6,6 +6,6 @@ public class IntentConstants {
 
    public static final String CONVERSATION_ID = "conversation_id";
 
-   public static final String CONVERSATION_CONTENT = "conversation_content";
+   public static final String CONVERSATION_DTO = "conversation_dto";
    public static final String USER_TOKEN = "user_token";
 }

@@ -32,7 +32,8 @@ public class MessageDatabaseUtil {
          values.put("type", message.getType());
          values.put("content", message.getContent());
          values.put("uUId", message.getUuId());
-         db.insert("MessageEntry", null, values);
+         db.insertWithOnConflict(dbHelper.TABLE_MESSAGE_ENTRY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
       } finally {
          db.close();
       }

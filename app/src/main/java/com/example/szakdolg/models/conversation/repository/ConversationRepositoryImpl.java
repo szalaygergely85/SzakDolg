@@ -61,17 +61,17 @@ public class ConversationRepositoryImpl implements ConversationRepository {
     }
 
     @Override
-    public void addConversationByUserId(List<Long> userIds, String token, Callback<Conversation> callback) {
-        conversationApiService.addConversationByUserId(userIds, token).enqueue(new Callback<Conversation>() {
+    public void addConversationByUserId(List<Long> userIds, String token, Callback<ConversationDTO> callback) {
+        conversationApiService.addConversationByUserId(userIds, token).enqueue(new Callback<ConversationDTO>() {
             @Override
-            public void onResponse(Call<Conversation> call, Response<Conversation> response) {
-                conversationDatabaseUtil.insertConversation(response.body());
+            public void onResponse(Call<ConversationDTO> call, Response<ConversationDTO> response) {
+               insertConversationDTO(response.body());
 
                 callback.onResponse(call, response);
             }
 
             @Override
-            public void onFailure(Call<Conversation> call, Throwable throwable) {
+            public void onFailure(Call<ConversationDTO> call, Throwable throwable) {
                 callback.onFailure(call, new Throwable("Failed to fetch contact"));
             }
         });

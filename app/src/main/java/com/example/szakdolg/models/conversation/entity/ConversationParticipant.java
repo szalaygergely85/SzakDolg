@@ -1,6 +1,8 @@
 package com.example.szakdolg.models.conversation.entity;
 
-public class ConversationParticipant {
+import java.io.Serializable;
+
+public class ConversationParticipant implements Serializable {
 
    private long conversationParticipantId;
    private long conversationId;

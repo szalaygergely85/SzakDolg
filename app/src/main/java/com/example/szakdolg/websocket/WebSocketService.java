@@ -18,6 +18,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
+import com.example.szakdolg.models.message.MessageDatabaseUtil;
 import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
@@ -112,7 +113,7 @@ public class WebSocketService extends Service {
    }
 
    private void connectToWebSocket() {
-      Log.e("test", "response.message()");
+      Log.e("WebSocket", "response.message()");
       client = new OkHttpClient();
 
       Request request = new Request.Builder()
@@ -126,7 +127,7 @@ public class WebSocketService extends Service {
          new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
-               Log.e("test", response.message());
+               Log.e("WebSocket", response.message());
                // Connection established
 
             }
@@ -180,7 +181,7 @@ public class WebSocketService extends Service {
             }
          }
       );
-      startPingPong();
+     // startPingPong();
    }
 
    private void startPingPong() {
@@ -237,9 +238,9 @@ public class WebSocketService extends Service {
       String contentEncrypted = jsonObject.has("contentEncrypted")
          ? jsonObject.getString("contentEncrypted")
          : null;
-      MessageCoordinatorService messageCoordinatorService =
-         new MessageCoordinatorService(context, currentUser);
-      MessageEntry messageEntry = messageCoordinatorService.saveMessage(
+      MessageDatabaseUtil messageDatabaseUtil =
+         new MessageDatabaseUtil(context, currentUser);
+      MessageEntry messageEntry =
          new MessageEntry(
             conversationId,
             senderId,
@@ -247,8 +248,9 @@ public class WebSocketService extends Service {
             contentEncrypted,
             MessageTypeConstants.MESSAGE,
             uuid
-         )
+
       );
+      messageDatabaseUtil.insertMessageEntry(messageEntry);
       sendMessageBroadcast(messageEntry);
       Log.e(AppConstants.LOG_TAG, messageEntry.toString());
 

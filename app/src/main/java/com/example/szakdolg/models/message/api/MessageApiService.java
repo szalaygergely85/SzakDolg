@@ -13,16 +13,23 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MessageApiService {
-   @POST("message")
+   @POST("message/add-message")
    Call<MessageEntry> addMessage(
       @Body MessageEntry message,
       @Header("Authorization") String token
+   );
+
+   @POST("message/add-messages")
+   Call<List<MessageEntry>> addMessages(
+           @Body List<MessageEntry> messages,
+           @Header("Authorization") String token
    );
 
    @GET("message/new-message")
    Call<List<MessageEntry>> getNewMessages(
       @Header("Authorization") String token
    );
+
 
    @GET("message/get-messages")
    Call<List<MessageEntry>> getMessages(

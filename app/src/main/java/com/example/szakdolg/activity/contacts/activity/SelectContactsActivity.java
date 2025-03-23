@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
@@ -63,16 +64,20 @@ public class SelectContactsActivity extends BaseActivity {
                         switch (item.getItemId()) {
                             case R.id.menu_start_conversation:
                                 contacts.add(currentUser.getUserId());
-                                conversationService.addConversationByUserId(contacts, new ConversationService.ConversationCallback<Conversation>() {
+                                conversationService.addConversationByUserId(contacts, new ConversationService.ConversationCallback<ConversationDTO>() {
                                     @Override
-                                    public void onSuccess(Conversation data) {
+                                    public void onSuccess(ConversationDTO data) {
                                         Intent intent = new Intent(
                                                 SelectContactsActivity.this,
                                                 ChatActivity.class
                                         );
                                         intent.putExtra(
                                                 IntentConstants.CONVERSATION_ID,
-                                                data.getConversationId()
+                                                data.getConversation().getConversationId()
+                                        );
+                                        intent.putExtra(
+                                                IntentConstants.CONVERSATION_DTO,
+                                                data
                                         );
                                         startActivity(intent);
                                     }

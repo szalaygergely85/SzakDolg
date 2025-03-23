@@ -18,6 +18,7 @@ import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserCoordinatorService;
 import com.example.szakdolg.models.user.service.UserService;
+import com.example.szakdolg.models.user.util.UserUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
 import java.text.SimpleDateFormat;
@@ -55,29 +56,32 @@ public class MainAdapterHelper {
    }
 
    public void setImageView(List<User> participants, ImageView image) {
-      if (participants.size() > 1) {
+      if (participants.size() > 2) {
          Glide
             .with(context)
             .load(R.drawable.ic_group) // Load your drawable directly
             .into(image);
       } else {
+         List<User>otherUsers = UserUtil.removeCurrentUserFromList(participants, currentUser.getId());
+
+         String imageUrl = ImageUtil.buildProfileImageUrl(otherUsers.get(0).getUserId());
+         if (imageUrl != null) {
+            Glide
+                    .with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_blank_profile)
+                    .error(R.drawable.ic_blank_profile)
+                    .into(image);
+         } else {
+            image.setImageResource(R.drawable.ic_blank_profile);
+         }
 
          UserService userService = new UserService(context);
          userService.getUserByUserId(participants.get(0).getUserId(),
                  currentUser, new UserService.UserCallback<User>() {
                     @Override
                     public void onSuccess(User user) {
-                       String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
-                       if (imageUrl != null) {
-                          Glide
-                                  .with(context)
-                                  .load(imageUrl)
-                                  .placeholder(R.drawable.ic_blank_profile)
-                                  .error(R.drawable.ic_blank_profile)
-                                  .into(image);
-                       } else {
-                          image.setImageResource(R.drawable.ic_blank_profile);
-                       }
+
                     }
 
                     @Override
