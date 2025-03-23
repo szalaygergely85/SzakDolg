@@ -6,4 +6,6 @@ public class AppConstants {
 
    public static final String WS_URL = "ws://pingnest.ddns.net:8081";
    public static final String API_URL = "http://pingnest.ddns.net:8080/api/";
+
+   public static final long MESSAGE_SYNC_TIME = 10 * 60 * 1000;
 }

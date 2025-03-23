@@ -14,7 +14,7 @@ public class User implements Serializable {
    private String profilePictureUuid;
    private String status;
    private String tags;
-   private String authToken;
+   private String token;
 
    public User(
       Long id,
@@ -25,7 +25,7 @@ public class User implements Serializable {
       String profilePictureUuid,
       String status,
       String tags,
-      String authToken
+      String token
    ) {
       this.id = id;
       this.userId = userId;
@@ -36,7 +36,7 @@ public class User implements Serializable {
       this.profilePictureUuid = profilePictureUuid;
       this.status = status;
       this.tags = tags;
-      this.authToken = authToken;
+      this.token = token;
    }
 
    @Override
@@ -154,11 +154,11 @@ public class User implements Serializable {
       this.tags = tags;
    }
 
-   public String getAuthToken() {
-      return authToken;
+   public String getToken() {
+      return token;
    }
 
-   public void setAuthToken(String authToken) {
-      this.authToken = authToken;
+   public void setToken(String token) {
+      this.token = token;
    }
 }

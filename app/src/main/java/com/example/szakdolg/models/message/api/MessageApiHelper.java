@@ -83,7 +83,7 @@ public class MessageApiHelper {
       Consumer<List<MessageEntry>> onSuccess
    ) {
       Call<List<MessageEntry>> call = messageApiService.getMessages(
-         currentUser.getAuthToken(),
+         currentUser.getToken(),
          conversationId
       );
       call.enqueue(
@@ -281,7 +281,7 @@ public class MessageApiHelper {
    ) {
       Call<MessageEntry> call = messageApiService.addMessage(
          messageEntry,
-         currentUser.getAuthToken()
+         currentUser.getToken()
       );
       call.enqueue(
          new Callback<MessageEntry>() {

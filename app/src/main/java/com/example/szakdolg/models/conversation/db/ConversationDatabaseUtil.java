@@ -31,7 +31,7 @@ public class ConversationDatabaseUtil {
          conversation.getNumberOfParticipants()
       );
 
-      db.insert(dbHelper.TABLE_CONVERSATIONS, null, values);
+      db.insertWithOnConflict(dbHelper.TABLE_CONVERSATIONS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
       db.close();
    }
 

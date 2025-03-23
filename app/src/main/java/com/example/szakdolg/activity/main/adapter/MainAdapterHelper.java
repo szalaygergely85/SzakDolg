@@ -6,10 +6,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.image.ImageCoordinatorService;
 import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
@@ -33,7 +33,7 @@ public class MainAdapterHelper {
    private final Context context;
    private final UserCoordinatorService userCoordinatorService;
 
-   private final ConversationCoordinatorService conversationCoordinatorService;
+   private final ConversationService conversationService;
 
    private final ConversationParticipantCoordinatorService conversationParticipantCoordinatorService;
 
@@ -44,8 +44,8 @@ public class MainAdapterHelper {
       this.currentUser = currentUser;
       this.context = context;
       this.userCoordinatorService = new UserCoordinatorService(context);
-      this.conversationCoordinatorService =
-      new ConversationCoordinatorService(context, currentUser);
+      this.conversationService =
+      new ConversationService(context, currentUser);
       this.imageCoordinatorService =
       new ImageCoordinatorService(context, currentUser);
       this.conversationParticipantCoordinatorService =
@@ -114,11 +114,9 @@ public class MainAdapterHelper {
    }
 
    public String getConversationTitle(
-      Long conversationId,
+      Conversation conversation,
       List<User> participantUsers
    ) {
-      Conversation conversation =
-         conversationCoordinatorService.getConversation(conversationId);
       String conversationTitle = conversation.getConversationName();
       if (conversationTitle != null) {
          return conversationTitle;

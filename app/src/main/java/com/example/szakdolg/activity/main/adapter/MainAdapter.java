@@ -11,12 +11,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
+import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
@@ -25,11 +28,12 @@ import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-   private List<Conversation> conversationList = new ArrayList<>();
+   private List<ConversationDTO> conversationDTOList = new ArrayList<>();
+   private List<User> users = new ArrayList<>();
    private final Context context;
    private final User currentUser;
 
-   private final MessageCoordinatorService messageCoordinatorService;
+   private final MessageService messageService;
 
    ConversationApiHelper conversationApiHelper;
 
@@ -43,8 +47,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
    ) {
       this.context = mContext;
       this.currentUser = currentUser;
-      this.messageCoordinatorService =
-      new MessageCoordinatorService(context, currentUser);
+      this.messageService =
+      new MessageService(context, currentUser);
       this.mainAdapterHelper = new MainAdapterHelper(currentUser, mContext);
       this.conversationApiHelper =
       new ConversationApiHelper(mContext, currentUser);
@@ -69,92 +73,95 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       @NonNull ViewHolder holder,
       @SuppressLint("RecyclerView") int position
    ) {
-      Conversation conversation = conversationList.get(position);
+      ConversationDTO conversationDTO = conversationDTOList.get(position);
 
-      holder.txtName.setText(conversation.getConversationName());
+      Conversation conversation = conversationDTO.getConversation();
+
       Long conversationId = conversation.getConversationId();
 
-      MessageEntry messageEntry =
-         messageCoordinatorService.getLatestMessageEntry(conversationId);
+      messageService.getLatestMessageEntry(conversationId, new MessageService.MessageCallback<MessageEntry>() {
+         @Override
+         public void onSuccess(MessageEntry messageEntry) {
 
-      if (
-         messageEntry == null ||
-         ((messageEntry.getContentEncrypted() == null) &&
-            messageEntry.getContent() == null)
-      ) {
-         holder.itemView.setVisibility(View.GONE);
-         return;
-      }
+            holder.txtName.setText(conversation.getConversationName());
 
-      int count = mainAdapterHelper.getCountByNotReadMsg(conversationId);
-      if (count == 0) {
-         holder.txtNotRead.setVisibility(View.GONE);
-      } else {
-         holder.txtNotRead.setText(String.valueOf(count));
-      }
 
-      List<User> participants = mainAdapterHelper.getParticipantUsers(
-         conversationId
-      );
 
-      if (participants == null) {
-         holder.itemView.setVisibility(View.GONE);
-         return;
-      }
-
-      holder.txtName.setText(
-         mainAdapterHelper.getConversationTitle(conversationId, participants)
-      );
-
-      holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry));
-
-      holder.txtTime.setText(
-         mainAdapterHelper.getTime(messageEntry.getTimestamp())
-      );
-
-      mainAdapterHelper.setImageView(participants, holder.image);
-
-      holder.parent.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               Intent intent = new Intent(context, ChatActivity.class);
-               intent.putExtra(IntentConstants.CONVERSATION_ID, conversationId);
-               context.startActivity(intent);
-               /*
-			conversationApiHelper.openConversation(
-				conversation.getConversationId(),
-				context,
-				currentUser,
-
-			);*/
+            if (
+                    messageEntry == null ||
+                            ((messageEntry.getContentEncrypted() == null) &&
+                                    messageEntry.getContent() == null)
+            ) {
+               holder.itemView.setVisibility(View.GONE);
+               return;
             }
+
+            int count = mainAdapterHelper.getCountByNotReadMsg(conversationId);
+            if (count == 0) {
+               holder.txtNotRead.setVisibility(View.GONE);
+            } else {
+               holder.txtNotRead.setText(String.valueOf(count));
+            }
+
+            List<User> participants = mainAdapterHelper.getParticipantUsers(
+                    conversationId
+            );
+
+            if (participants == null) {
+               holder.itemView.setVisibility(View.GONE);
+               return;
+            }
+
+            holder.txtName.setText(
+                    mainAdapterHelper.getConversationTitle(conversation, participants)
+            );
+
+            holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry));
+
+            holder.txtTime.setText(
+                    mainAdapterHelper.getTime(messageEntry.getTimestamp())
+            );
+
+            mainAdapterHelper.setImageView(participants, holder.image);
+
+            holder.parent.setOnClickListener(
+                    new View.OnClickListener() {
+                       @Override
+                       public void onClick(View view) {
+                          Intent intent = new Intent(context, ChatActivity.class);
+                          intent.putExtra(IntentConstants.CONVERSATION_ID, conversationId);
+                          context.startActivity(intent);
+
+                       }
+                    }
+            );
+
+
+
+
          }
-      );
+
+         @Override
+         public void onError(Throwable t) {
+
+         }
+      });
+
+
+
+
    }
 
    @Override
    public int getItemCount() {
-      return conversationList.size();
+      return conversationDTOList.size();
    }
 
-   public void addMessage(Conversation conversation) {
-      if (conversation != null) {
-         conversationList.add(conversation);
-
-         conversationList.sort(
-            Comparator.comparingLong(Conversation::getTimeStamp)
-         );
-         notifyDataSetChanged();
-
-         mainRecView.scrollToPosition(getItemCount() - 1);
-      }
-   }
-
-   public void setConversationList(List<Conversation> conversationList) {
-      this.conversationList = conversationList;
+   public void setConversationList(List<ConversationDTO> conversationDTOList) {
+      this.conversationDTOList = conversationDTOList;
       notifyDataSetChanged();
    }
+
 
    public class ViewHolder extends RecyclerView.ViewHolder {
 

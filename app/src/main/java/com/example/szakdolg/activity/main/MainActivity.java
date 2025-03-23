@@ -21,12 +21,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -51,6 +53,7 @@ public class MainActivity extends BaseActivity {
 
       _initView();
 
+      conversationService = new ConversationService(this, currentUser);
 
    }
 
@@ -179,21 +182,28 @@ public class MainActivity extends BaseActivity {
          }
       });
 
-      List<Conversation> conversations =
-         _mainActivityHelper.getConversationList();
+      conversationService.getAllConversations(new ConversationService.ConversationCallback<List<ConversationDTO>>() {
+         @Override
+         public void onSuccess(List<ConversationDTO> conversationList) {
+            if (conversationList != null) {
+               emptyLayout.setVisibility(View.GONE);
+               withItemsLayout.setVisibility(View.VISIBLE);
 
-      if (conversations != null) {
-         emptyLayout.setVisibility(View.GONE);
-         withItemsLayout.setVisibility(View.VISIBLE);
+               mainAdapter.setConversationList(conversationList);
 
-         mainAdapter.setConversationList(conversations);
+               messageBoardRecView.setAdapter(mainAdapter);
+               messageBoardRecView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            } else {
+               emptyLayout.setVisibility(View.VISIBLE);
+               withItemsLayout.setVisibility(View.GONE);
+            }
+         }
 
-         messageBoardRecView.setAdapter(mainAdapter);
-         messageBoardRecView.setLayoutManager(new LinearLayoutManager(this));
-      } else {
-         emptyLayout.setVisibility(View.VISIBLE);
-         withItemsLayout.setVisibility(View.GONE);
-      }
+         @Override
+         public void onError(Throwable t) {
+
+         }
+      });
 
       //set menu text and image logo
 
@@ -251,4 +261,6 @@ public class MainActivity extends BaseActivity {
    private MaterialToolbar topAppBar;
    private ImageView profileImageHeader;
    private TextView profileTextHeader;
+
+   private ConversationService conversationService;
 }

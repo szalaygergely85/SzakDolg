@@ -17,7 +17,7 @@ import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
 import com.example.szakdolg.constans.IntentConstants;
-import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
+import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.file.api.FileApiHelper;
 import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
@@ -35,7 +35,7 @@ public class ChatActivity extends BaseActivity {
    private FileApiHelper fileApiHelper = new FileApiHelper();
    private ChatActivityHelper chatActivityHelper;
    private Toolbar mToolbar;
-   private ConversationCoordinatorService conversationCoordinatorService;
+   private ConversationService conversationService;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {

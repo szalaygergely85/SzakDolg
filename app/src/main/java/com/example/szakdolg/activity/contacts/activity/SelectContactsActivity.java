@@ -13,7 +13,6 @@ import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.activity.contacts.adapter.SelectContactsAdapter;
 import com.example.szakdolg.constans.IntentConstants;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.contacts.ContactService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
@@ -42,7 +41,7 @@ public class SelectContactsActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
 
-        contactService.getContacts(currentUser.getAuthToken(), null, new ContactService.ContactCallback<List<Contact>>() {
+        contactService.getContacts(currentUser.getToken(), null, new ContactService.ContactCallback<List<Contact>>() {
             @Override
             public void onSuccess(List<Contact> data) {
                 selectContactsAdapter.setContacts(data);

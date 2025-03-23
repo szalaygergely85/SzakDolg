@@ -1,23 +1,8 @@
 package com.example.szakdolg.activity.chat.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
-import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
-import com.example.szakdolg.models.conversation.entity.Conversation;
-import com.example.szakdolg.models.message.MessageCoordinatorService;
-import com.example.szakdolg.models.message.constants.MessageTypeConstants;
-import com.example.szakdolg.models.message.entity.MessageEntry;
-import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.service.UserCoordinatorService;
-import com.example.szakdolg.util.CacheUtil;
-import com.example.szakdolg.util.EncryptionHelper;
-import com.example.szakdolg.util.UUIDUtil;
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Deprecated
-public class NewChatActivityHelper {
+public class NewChatActivityHelper {/*
 
    private User currentUser;
    private List<User> contacts;
@@ -29,7 +14,7 @@ public class NewChatActivityHelper {
 
    private MessageCoordinatorService messageCoordinatorService;
 
-   public NewChatActivityHelper(AppCompatActivity context, User currentUser) {
+   public NewChatActivityHelper(AppCompatActivity context, User currentUser) {/
       this.context = context;
       this.conversationCoordinatorService =
       new ConversationCoordinatorService(context, currentUser);
@@ -94,5 +79,5 @@ public class NewChatActivityHelper {
          }
       }
       return null;
-   }
+   }*/
 }

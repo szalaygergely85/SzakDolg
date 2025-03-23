@@ -32,7 +32,7 @@ public class ConversationParticipantApiHelper extends BaseService {
       Call<List<ConversationParticipant>> call =
          conversationParticipantApiService.getConversationParticipants(
             conversationId,
-            currentUser.getAuthToken()
+            currentUser.getToken()
          );
       call.enqueue(
          new Callback<List<ConversationParticipant>>() {
@@ -69,7 +69,7 @@ public class ConversationParticipantApiHelper extends BaseService {
       Call<ResponseBody> call =
          conversationParticipantApiService.addConversationParticipants(
             conversationParticipants,
-            currentUser.getAuthToken()
+            currentUser.getToken()
          );
       call.enqueue(
          new Callback<ResponseBody>() {

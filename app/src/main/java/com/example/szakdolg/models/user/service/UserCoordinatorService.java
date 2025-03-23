@@ -1,17 +1,13 @@
 package com.example.szakdolg.models.user.service;
 
 import android.content.Context;
-import android.content.Intent;
-import com.example.szakdolg.activity.profilepicture.ProfilePictureActivity;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
+
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.user.api.UserApiHelper;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.util.UserUtil;
-import com.example.szakdolg.util.KeyStoreUtil;
-import com.example.szakdolg.util.SharedPreferencesUtil;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class UserCoordinatorService {
@@ -34,7 +30,7 @@ public class UserCoordinatorService {
       } else {
          userApiHelper.getUserByUserID(
             userId,
-            currentUser.getAuthToken(),
+            currentUser.getToken(),
             user1 -> userService.addUser(user1, currentUser)
          );
          return null;
@@ -60,13 +56,5 @@ public class UserCoordinatorService {
       } else {
          return null;
       }
-   }
-
-   public List<User> getContacts(User currentUser) {
-      List<User> contacts = UserUtil.removeCurrentUserFromList(
-         userService.getAllUser(currentUser),
-         currentUser.getUserId()
-      );
-      return contacts;
    }
 }

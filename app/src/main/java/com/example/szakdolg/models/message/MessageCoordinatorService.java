@@ -2,7 +2,6 @@ package com.example.szakdolg.models.message;
 
 import android.content.Context;
 import com.example.szakdolg.activity.base.BaseService;
-import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
@@ -41,23 +40,6 @@ public class MessageCoordinatorService extends BaseService {
       }
    }
 
-   public MessageEntry getLatestMessageEntry(Long conversationId) {
-      MessageEntry messageEntry = messageService.getLatestMessageEntry(
-         conversationId
-      );
-      if (messageEntry != null) {
-         return messageEntry;
-      } else {
-         messageApiHelper.getMessages(
-            conversationId,
-            messageEntries -> {
-               messageService.addMessages(messageEntries);
-            }
-         );
-         return null;
-      }
-   }
-
    public void sendMessage(MessageEntry messageEntry) {
       messageService.addMessage(messageEntry);
       if (messageEntry.getContentEncrypted() != null) {
@@ -86,12 +68,6 @@ public class MessageCoordinatorService extends BaseService {
          messageEntry.setContent(content);
       }
 
-      ConversationCoordinatorService conversationCoordinatorService =
-              new ConversationCoordinatorService(context, currentUser);
-
-      conversationCoordinatorService.validateConversationById(
-         messageEntry.getConversationId()
-      );
       return messageService.addMessage(messageEntry);
    }
 

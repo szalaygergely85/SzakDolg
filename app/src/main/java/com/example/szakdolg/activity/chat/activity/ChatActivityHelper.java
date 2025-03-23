@@ -5,10 +5,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
-import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
@@ -24,7 +24,7 @@ public class ChatActivityHelper {
    private User currentUser;
    private AppCompatActivity context;
 
-   private ConversationCoordinatorService conversationCoordinatorService;
+   private ConversationService conversationService;
    private ConversationParticipantCoordinatorService conversationParticipantCoordinatorService;
 
    private UserCoordinatorService userCoordinatorService;
@@ -37,10 +37,9 @@ public class ChatActivityHelper {
       User currentUser
    ) {
       this.context = context;
-      this.conversationCoordinatorService =
-      new ConversationCoordinatorService(context, currentUser);
-      this.conversation =
-      conversationCoordinatorService.getConversation(conversationId);
+      this.conversationService =
+      new ConversationService(context, currentUser);
+
       this.currentUser = currentUser;
       this.conversationParticipantCoordinatorService =
       new ConversationParticipantCoordinatorService(context, currentUser);

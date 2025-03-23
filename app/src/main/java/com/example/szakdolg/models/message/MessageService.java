@@ -4,16 +4,25 @@ import android.content.Context;
 import android.util.Log;
 import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
+import com.example.szakdolg.models.message.repository.MessageRepository;
+import com.example.szakdolg.models.message.repository.MessageRepositoryImpl;
 import com.example.szakdolg.models.user.entity.User;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MessageService extends BaseService {
+
+   private MessageRepository messageRepository;
 
    private MessageDatabaseUtil messageDatabaseUtil;
 
    public MessageService(Context context, User currentUser) {
       super(context, currentUser);
       this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
+      this.messageRepository = new MessageRepositoryImpl(context, currentUser);
    }
 
    public MessageEntry addMessage(MessageEntry messageEntry) {
@@ -32,11 +41,22 @@ public class MessageService extends BaseService {
       }
    }
 
-   public MessageEntry getLatestMessageEntry(Long conversationId) {
-      MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(
-         conversationId
-      );
-      return messageEntry;
+   public void getLatestMessageEntry(Long conversationId, final MessageCallback<MessageEntry> callback) {
+      messageRepository.getLatestMessage(currentUser.getToken(), conversationId, new Callback<MessageEntry>() {
+         @Override
+         public void onResponse(Call<MessageEntry> call, Response<MessageEntry> response) {
+            if (response.isSuccessful()) {
+               callback.onSuccess(response.body());
+            } else {
+               callback.onError(new Throwable("Failed to update contact"));
+            }
+         }
+
+         @Override
+         public void onFailure(Call<MessageEntry> call, Throwable throwable) {
+
+         }
+      });
    }
 
    public List<MessageEntry> getMessagesByConversationId(Long conversationId) {
@@ -154,5 +174,11 @@ public class MessageService extends BaseService {
 
    public void setMessagesAsReadByConversationId(Long conversationId) {
       messageDatabaseUtil.setMessagesAsReadByConversationId(conversationId);
+   }
+
+
+   public interface MessageCallback<T> {
+      void onSuccess(T data);
+      void onError(Throwable t);
    }
 }

@@ -1,6 +1,6 @@
 package com.example.szakdolg.models.conversation.api;
 
-import com.example.szakdolg.DTO.ConversationContent;
+import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import java.util.List;
@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 
 public interface ConversationApiService {
    @GET("conversation/get-conversation/{id}")
-   Call<ConversationContent> getConversationAndContentById(
+   Call<ConversationDTO> getConversationAndContentById(
       @Path("id") long id,
       @Header("Authorization") String token
    );
@@ -45,14 +45,14 @@ public interface ConversationApiService {
       @Header("Authorization") String token
    );
 
-   @GET("conversation/{id}")
-   Call<Conversation> getConversation(
+   @GET("conversation/get-conversation/{id}")
+   Call<ConversationDTO> getConversation(
       @Path("id") long id,
       @Header("Authorization") String token
    );
 
    @GET("conversation/get-conversations")
-   Call<List<Conversation>> getAllConversation(
+   Call<List<ConversationDTO>> getAllConversation(
       @Header("Authorization") String token
    );
 }

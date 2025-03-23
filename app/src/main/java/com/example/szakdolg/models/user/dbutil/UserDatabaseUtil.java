@@ -216,7 +216,6 @@ public class UserDatabaseUtil {
 
    public void insertUser(User user) {
 
-      //TODO need to check for doubles...
       SQLiteDatabase db = dbHelper.getWritableDatabase();
 
       try {
@@ -228,9 +227,9 @@ public class UserDatabaseUtil {
          values.put("profilePictureUuid", user.getProfilePictureUuid());
          values.put("status", user.getStatus());
          values.put("tags", user.getTags());
-         values.put("authToken", user.getAuthToken());
+         values.put("authToken", user.getToken());
 
-         db.insert(dbHelper.TABLE_USER_ENTRY, null, values);
+         db.insertWithOnConflict(dbHelper.TABLE_USER_ENTRY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
       } finally {
          db.close();
       }
@@ -260,7 +259,7 @@ public class UserDatabaseUtil {
          values.put("profilePictureUuid", user.getProfilePictureUuid());
          values.put("status", user.getStatus());
          values.put("tags", user.getTags());
-         values.put("authToken", user.getAuthToken());
+         values.put("authToken", user.getToken());
 
          // Update the user record where userId matches
          int rowsAffected = db.update(

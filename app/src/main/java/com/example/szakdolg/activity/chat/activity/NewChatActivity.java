@@ -1,24 +1,9 @@
 package com.example.szakdolg.activity.chat.activity;
 
-import android.graphics.Color;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.Button;
-import android.widget.MultiAutoCompleteTextView;
-import android.widget.Toast;
-import androidx.appcompat.widget.Toolbar;
-import com.example.szakdolg.MyEditText;
-import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
-import com.example.szakdolg.activity.chat.adapter.UserAdapter;
-import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
-import com.example.szakdolg.models.contacts.ContactsApiHelper;
-import com.example.szakdolg.models.user.entity.User;
-import java.util.List;
 
- @Deprecated
-public class NewChatActivity extends BaseActivity {
+@Deprecated
+public class NewChatActivity extends BaseActivity {/*
 
    private MultiAutoCompleteTextView recipientInput;
    private UserAdapter dropdownAdapter;
@@ -173,5 +158,5 @@ public class NewChatActivity extends BaseActivity {
       public void afterTextChanged(Editable s) {
          validateLastRecipient();
       }
-   };
+   };*/
 }

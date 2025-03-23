@@ -5,7 +5,6 @@ import android.content.Context;
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.entity.UserToken;
 import com.example.szakdolg.models.user.repository.UserRepository;
 import com.example.szakdolg.models.user.repository.UserRepositoryImpl;
 
@@ -35,7 +34,7 @@ public class UserService {
         newUser.setProfilePictureUuid(user.getProfilePictureUuid());
         newUser.setStatus(user.getStatus());
         newUser.setTags(user.getTags());
-        newUser.setAuthToken(user.getAuthToken());
+        newUser.setToken(user.getToken());
 
         UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
                 context,
@@ -53,24 +52,8 @@ public class UserService {
         return userDatabaseUtil.getUserById(userId);
     }
 
-    public void updateUser(User user, User currentUser) {
-        if (user == null || user.getUserId() == null) {
-            throw new IllegalArgumentException("User or User ID cannot be null");
-        }
-        UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
-                context,
-                currentUser
-        );
-        userDatabaseUtil.updateUser(user);
-    }
 
-    public List<User> getAllUser(User currentUser) {
-        UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
-                context,
-                currentUser
-        );
-        return userDatabaseUtil.getAllUsers();
-    }
+
 
 
     // new Repository starting from here
@@ -78,11 +61,11 @@ public class UserService {
     public void getTokenByPasswordAndEmail(
             String hashPassword,
             String email,
-            final UserService.UserCallback<UserToken> callback
+            final UserService.UserCallback<User> callback
     ) {
-        userRepository.getTokenByPasswordAndEmail(new LoginRequest(email, hashPassword), new Callback<UserToken>() {
+        userRepository.getTokenByPasswordAndEmail(new LoginRequest(email, hashPassword), new Callback<User>() {
             @Override
-            public void onResponse(Call<UserToken> call, Response<UserToken> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
                     callback.onSuccess(response.body());
                 } else {
@@ -91,8 +74,26 @@ public class UserService {
             }
 
             @Override
-            public void onFailure(Call<UserToken> call, Throwable throwable) {
+            public void onFailure(Call<User> call, Throwable throwable) {
                 callback.onError(throwable);
+            }
+        });
+    }
+
+    public void updateUser(User user, String token, final UserService.UserCallback<User> callback) {
+        userRepository.patchUser(user, token, new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(new Throwable("Failed to update contact"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable throwable) {
+
             }
         });
     }
@@ -117,10 +118,10 @@ public class UserService {
     }
 
     public void getUserByUserId(Long userId, User currentUser, final UserService.UserCallback<User> callback) {
-        userRepository.getUserByID(userId, currentUser.getAuthToken(), new Callback<User>() {
+        userRepository.getUserByID(userId, currentUser, new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body()!=null) {
                     callback.onSuccess(response.body());
                 } else {
                     callback.onError(new Throwable("Failed to update contact"));
@@ -135,7 +136,7 @@ public class UserService {
     }
 
     public void searchUser(String search, User user, final UserService.UserCallback<List<User>> callback) {
-        userRepository.searchUser(search, user.getAuthToken(), new Callback<List<User>>() {
+        userRepository.searchUser(search, user.getToken(), new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response.isSuccessful()) {

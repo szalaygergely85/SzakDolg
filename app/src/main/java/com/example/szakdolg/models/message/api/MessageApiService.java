@@ -30,12 +30,12 @@ public interface MessageApiService {
       @Query("conversationId") Long conversationId
    );
 
-   @Deprecated
-   @GET("message/byconversationid/{id}")
-   Call<ArrayList<MessageEntry>> getConversationMessages(
-      @Path("id") long conversationId,
-      @Header("Authorization") String token
+   @GET("message/get-latest-message")
+   Call<MessageEntry> getLatestMessage(
+           @Header("Authorization") String token,
+           @Query("conversationId") Long conversationId
    );
+
 
    @GET("message/validate")
    Call<ArrayList<MessageEntry>> getMessagesAndCompareWithLocal(

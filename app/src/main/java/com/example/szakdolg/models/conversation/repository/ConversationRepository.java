@@ -1,12 +1,11 @@
 package com.example.szakdolg.models.conversation.repository;
 
+import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 
 import java.util.List;
 
 import retrofit2.Callback;
-import retrofit2.http.Body;
-import retrofit2.http.Header;
 
 public interface ConversationRepository {
     void addConversation(
@@ -19,6 +18,8 @@ public interface ConversationRepository {
             String token, Callback<Conversation> callback);
 
     void getConversation(
-            Long id, String token, Callback<Conversation> callback
+            Long id, String token, Callback<ConversationDTO> callback
     );
+
+    void getAllConversation(String token, Callback<List<ConversationDTO>> callback );
 }

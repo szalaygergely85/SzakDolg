@@ -3,7 +3,7 @@ package com.example.szakdolg.models.conversation.api;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.example.szakdolg.DTO.ConversationContent;
+import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.activity.base.BaseService;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.cache.CacheAction;
@@ -40,14 +40,14 @@ public class ConversationApiHelper extends BaseService {
       super(context, currentUser);
       this.messageApiHelper = new MessageApiHelper(context, currentUser);
    }
-
+/*
    public void getConversation(
       Long conversationId,
       Consumer<Conversation> onSuccess
    ) {
       Call<Conversation> call = conversationApiService.getConversation(
          conversationId,
-         currentUser.getAuthToken()
+         currentUser.getToken()
       );
       call.enqueue(
          new Callback<Conversation>() {
@@ -74,7 +74,7 @@ public class ConversationApiHelper extends BaseService {
          }
       );
    }
-
+*/
    public void addNewConversationAndSendMessage(
       List<Long> userIds,
       String message,
@@ -180,22 +180,22 @@ public void openConversation(
       User loggedUser,
       String token
    ) {
-      Call<ConversationContent> call =
+      Call<ConversationDTO> call =
          conversationApiService.getConversationAndContentById(
             conversationId,
             token
          );
       call.enqueue(
-         new Callback<ConversationContent>() {
+         new Callback<ConversationDTO>() {
             @Override
             public void onResponse(
-               Call<ConversationContent> call,
-               Response<ConversationContent> response
+               Call<ConversationDTO> call,
+               Response<ConversationDTO> response
             ) {
                if (response.isSuccessful()) {
-                  ConversationContent conversationContent = response.body();
+                  ConversationDTO conversationDTO = response.body();
                   List<User> allParticipants =
-                     conversationContent.getParticipants();
+                     conversationDTO.getUsers();
                   List<User> otherUsers = UserUtil.removeCurrentUserFromList(
                      allParticipants,
                      loggedUser.getUserId()
@@ -221,7 +221,7 @@ public void openConversation(
                   intent.putExtra(IntentConstants.CURRENT_USER, loggedUser);
                   intent.putExtra(
                      IntentConstants.CONVERSATION_CONTENT,
-                     conversationContent
+                          conversationDTO
                   );
                   context.startActivity(intent);
                }
@@ -229,7 +229,7 @@ public void openConversation(
 
             @Override
             public void onFailure(
-               Call<ConversationContent> call,
+               Call<ConversationDTO> call,
                Throwable t
             ) {}
          }
@@ -312,67 +312,6 @@ public void openConversation(
       );
    }
 
-   public void getAllConversation(Consumer<List<Conversation>> onSuccess) {
-      Call<List<Conversation>> call = conversationApiService.getAllConversation(
-         currentUser.getAuthToken()
-      );
-      call.enqueue(
-         new Callback<List<Conversation>>() {
-            @Override
-            public void onResponse(
-               Call<List<Conversation>> call,
-               Response<List<Conversation>> response
-            ) {
-               Log.d(AppConstants.LOG_TAG, call.request().toString());
-               if (response.isSuccessful()) {
-                  if (response.body() != null) {
-                     List<Conversation> conversations = response.body();
-                     if (!conversations.isEmpty()) {
-                        onSuccess.accept(conversations);
-                     }
-                  }
-               }
-            }
 
-            @Override
-            public void onFailure(Call<List<Conversation>> call, Throwable t) {
-               Log.e(AppConstants.LOG_TAG, t.getMessage());
-            }
-         }
-      );
-   }
 
-   public void addConversation(
-      Conversation conversation,
-      Consumer<Conversation> onSuccess
-   ) {
-      Call<Conversation> call = conversationApiService.addConversation(
-         conversation,
-         currentUser.getAuthToken().toString()
-      );
-
-      call.enqueue(
-         new Callback<Conversation>() {
-            @Override
-            public void onResponse(
-               Call<Conversation> call,
-               Response<Conversation> response
-            ) {
-               if (response.isSuccessful()) {
-                  Conversation newConversation = response.body();
-                  if (newConversation != null) {
-                     Long newConversationId =
-                        newConversation.getConversationId();
-                     if (newConversationId != null) {
-                        onSuccess.accept(conversation);
-                     }
-                  }
-               }
-            }
-
-            @Override
-            public void onFailure(Call<Conversation> call, Throwable t) {}
-         }
-      );
-   }
 }

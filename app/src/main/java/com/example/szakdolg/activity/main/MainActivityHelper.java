@@ -10,12 +10,11 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.chat.activity.NewChatActivity;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.activity.contacts.activity.SelectContactsActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.models.conversation.ConversationCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
+import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
@@ -23,25 +22,21 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
-import java.util.List;
 
 public class MainActivityHelper {
 
    private final Context _context;
 
    private final User currentUser;
-   private final ConversationCoordinatorService conversationCoordinatorService;
+   private final ConversationService conversationService;
 
    public MainActivityHelper(Context _context, User currentUser) {
       this._context = _context;
       this.currentUser = currentUser;
-      this.conversationCoordinatorService =
-      new ConversationCoordinatorService(_context, currentUser);
+      this.conversationService =
+      new ConversationService(_context, currentUser);
    }
 
-   public List<Conversation> getConversationList() {
-      return conversationCoordinatorService.getAllValidConversations(null);
-   }
 
    public void setBottomNavMenu(BottomNavigationView bottomNavigationView) {
       bottomNavigationView.setOnItemSelectedListener(
@@ -127,12 +122,6 @@ public class MainActivityHelper {
                }
             }
          }
-      );
-   }
-
-   public Conversation getConversation(MessageEntry message) {
-      return conversationCoordinatorService.getConversation(
-         message.getConversationId()
       );
    }
 }

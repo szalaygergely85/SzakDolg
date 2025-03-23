@@ -10,15 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.contacts.adapter.ContactsAdapter;
-import com.example.szakdolg.activity.contacts.adapter.SelectContactsAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.contacts.ContactService;
-import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
-import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.service.UserService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class ContactsActivity extends BaseActivity {
@@ -69,7 +65,7 @@ public class ContactsActivity extends BaseActivity {
    @Override
    protected void onStart() {
       super.onStart();
-      contactService.getContacts(currentUser.getAuthToken(), null, new ContactService.ContactCallback<List<Contact>>() {
+      contactService.getContacts(currentUser.getToken(), null, new ContactService.ContactCallback<List<Contact>>() {
          @Override
          public void onSuccess(List<Contact> data) {
             contactsAdapter.setContact(data);

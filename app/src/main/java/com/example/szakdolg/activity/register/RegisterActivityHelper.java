@@ -5,10 +5,8 @@ import android.content.Intent;
 
 import com.example.szakdolg.activity.profilepicture.ProfilePictureActivity;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.models.user.api.UserApiHelper;
 import com.example.szakdolg.models.user.constans.UserConstans;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.service.UserCoordinatorService;
 import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.KeyStoreUtil;
@@ -58,7 +56,7 @@ public class RegisterActivityHelper {
             SharedPreferencesUtil.setStringPreference(
                     context,
                     SharedPreferencesConstants.USERTOKEN,
-                    data.getAuthToken()
+                    data.getToken()
             );
             SharedPreferencesUtil.setStringPreference(
                     context,

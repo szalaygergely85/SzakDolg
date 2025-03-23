@@ -6,7 +6,6 @@ import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.api.UserApiService;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.entity.UserToken;
 import com.example.szakdolg.retrofit.RetrofitClient;
 
 import java.util.List;
@@ -34,15 +33,15 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public void getUserByID(Long userId, String token, Callback<User> callback) {
-        _userApiService.getUserById(userId, token).enqueue(new Callback<User>() {
+    public void patchUser(User user, String token, Callback<User> callback) {
+        _userApiService.patchUser(user,token).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()){
                     User user = response.body();
                     if(user!=null){
                         UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context, user);
-                        userDatabaseUtil.insertUser(user);
+                        userDatabaseUtil.updateUser(user);
                     }
                     callback.onResponse(call, response);
                 } else {
@@ -58,7 +57,41 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
+    public void getUserByID(Long userId, User currentUser, Callback<User> callback) {
+        UserDatabaseUtil userDatabaseUtil= new UserDatabaseUtil(context, currentUser);
+        User  localUser = userDatabaseUtil.getUserById(userId);
+        if (localUser != null) {
+            callback.onResponse(null, Response.success(localUser));
+
+        }else {
+
+            _userApiService.getUserById(userId, currentUser.getToken()).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if (response.isSuccessful()) {
+                        User user = response.body();
+                        if (user != null) {
+                            UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context, currentUser);
+                            userDatabaseUtil.insertUser(user);
+                        }
+                        callback.onResponse(call, response);
+                    } else {
+                        callback.onFailure(call, new Throwable("Failed to fetch contact"));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable throwable) {
+                    callback.onFailure(call, new Throwable("Failed to fetch contact"));
+                }
+            });
+        }
+    }
+
+    @Override
     public void getUserByToken(String token, Callback<User> callback) {
+//TODO check local data
+
         _userApiService.getUserByToken(token).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -82,7 +115,7 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public void getTokenByPasswordAndEmail(LoginRequest loginRequest, Callback<UserToken> callback) {
+    public void getTokenByPasswordAndEmail(LoginRequest loginRequest, Callback<User> callback) {
         _userApiService.getTokenByPasswordAndEmail(loginRequest).enqueue(callback);
 
     }
