@@ -17,7 +17,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.IntentConstants;
-import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.MessageDatabaseUtil;
 import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;

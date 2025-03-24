@@ -76,10 +76,6 @@ public class MainActivityHelper {
                         _context,
                         SharedPreferencesConstants.USERTOKEN
                      );
-                     SharedPreferencesUtil.deletePreference(
-                        _context,
-                        SharedPreferencesConstants.CURRENT_USER
-                     );
 
                      SharedPreferencesUtil.deletePreference(
                              _context,

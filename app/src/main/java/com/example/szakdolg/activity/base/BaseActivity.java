@@ -37,10 +37,12 @@ public class BaseActivity extends AppCompatActivity {
 
       // Optionally handle cases where token or userId is missing
       if (token == null || userId == null) {
+         _deletePref();
          _navigateToLogin();
       } else {
          currentUser = _getCurrentUser(token, userId);
          if (currentUser == null) {
+            _deletePref();
             _navigateToLogin();
          }
       }
@@ -58,5 +60,17 @@ public class BaseActivity extends AppCompatActivity {
       UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(this, userId);
 
       return userDatabaseUtil.getCurrentUserByToken(token);
+   }
+
+   private void _deletePref(){
+      SharedPreferencesUtil.deletePreference(
+              this,
+              SharedPreferencesConstants.USERTOKEN
+      );
+
+      SharedPreferencesUtil.deletePreference(
+              this,
+              SharedPreferencesConstants.USER_ID
+      );
    }
 }

@@ -16,14 +16,13 @@ import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.constans.IntentConstants;
-import com.example.szakdolg.models.conversation.api.ConversationApiHelper;
 import com.example.szakdolg.models.conversation.entity.Conversation;
-import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.util.UserUtil;
+
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
@@ -36,7 +35,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
    private final MessageService messageService;
 
-   ConversationApiHelper conversationApiHelper;
 
    MainAdapterHelper mainAdapterHelper;
    RecyclerView mainRecView;
@@ -51,8 +49,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       this.messageService =
       new MessageService(context, currentUser);
       this.mainAdapterHelper = new MainAdapterHelper(currentUser, mContext);
-      this.conversationApiHelper =
-      new ConversationApiHelper(mContext, currentUser);
+
       this.mainRecView = mainRecView;
    }
 
@@ -88,6 +85,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
             holder.txtName.setText(conversation.getConversationName());
 
+            List<User>otherUsers = UserUtil.removeCurrentUserFromList(users, currentUser.getUserId());
 
 
             if (
@@ -113,7 +111,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             }
 
             holder.txtName.setText(
-                    mainAdapterHelper.getConversationTitle(conversation, users)
+                    mainAdapterHelper.getConversationTitle(conversation, otherUsers)
             );
 
             holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry));
@@ -122,7 +120,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                     mainAdapterHelper.getTime(messageEntry.getTimestamp())
             );
 
-            mainAdapterHelper.setImageView(users, holder.image);
+            mainAdapterHelper.setImageView(otherUsers, holder.image);
 
             holder.parent.setOnClickListener(
                     new View.OnClickListener() {
@@ -136,9 +134,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                        }
                     }
             );
-
-
-
 
          }
 

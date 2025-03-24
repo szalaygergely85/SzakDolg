@@ -17,7 +17,7 @@ public class User implements Serializable {
    private String token;
 
    public User(
-      Long id,
+
       Long userId,
       String displayName,
       String email,
@@ -27,7 +27,7 @@ public class User implements Serializable {
       String tags,
       String token
    ) {
-      this.id = id;
+
       this.userId = userId;
       this.displayName = displayName;
       this.email = email;
@@ -74,8 +74,8 @@ public class User implements Serializable {
       this.password = password;
    }
 
-   public User(Long id, String displayName, String email) {
-      this.id = id;
+   public User( String displayName, String email) {
+
       this.displayName = displayName;
       this.email = email;
    }
@@ -88,14 +88,6 @@ public class User implements Serializable {
 
    public void setPassword(String password) {
       this.password = password;
-   }
-
-   public Long getId() {
-      return id;
-   }
-
-   public void setId(Long id) {
-      this.id = id;
    }
 
    public Long getUserId() {

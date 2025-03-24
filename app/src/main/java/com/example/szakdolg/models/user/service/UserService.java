@@ -25,25 +25,6 @@ public class UserService {
         this.userRepository = new UserRepositoryImpl(context);
     }
 
-    public User addUser(User user, User currentUser) {
-        User newUser = new User();
-        newUser.setUserId(user.getUserId());
-        newUser.setDisplayName(user.getDisplayName());
-        newUser.setEmail(user.getEmail());
-        newUser.setPublicKey(user.getPublicKey());
-        newUser.setProfilePictureUuid(user.getProfilePictureUuid());
-        newUser.setStatus(user.getStatus());
-        newUser.setTags(user.getTags());
-        newUser.setToken(user.getToken());
-
-        UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
-                context,
-                currentUser
-        );
-        userDatabaseUtil.insertUser(newUser);
-        return newUser;
-    }
-
     public User getUserByUserId(Long userId, User currentUser) {
         UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
                 context,
@@ -54,9 +35,6 @@ public class UserService {
 
 
 
-
-
-    // new Repository starting from here
 
     public void getTokenByPasswordAndEmail(
             String hashPassword,

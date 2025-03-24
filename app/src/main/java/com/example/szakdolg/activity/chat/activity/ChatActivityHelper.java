@@ -8,18 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.activity.chat.adapter.ChatAdapter;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
-import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.conversation.service.ConversationService;
-import com.example.szakdolg.models.message.MessageCoordinatorService;
 import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.service.UserCoordinatorService;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.UUIDUtil;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class ChatActivityHelper {
@@ -48,7 +44,7 @@ public class ChatActivityHelper {
       this.currentUser = currentUser;
 
 
-      new MessageService(context, currentUser);
+      this.messageService = new MessageService(context, currentUser);
    }
 
    public void setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {

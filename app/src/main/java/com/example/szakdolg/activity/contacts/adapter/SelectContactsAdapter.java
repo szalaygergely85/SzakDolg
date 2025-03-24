@@ -1,8 +1,6 @@
 package com.example.szakdolg.activity.contacts.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +8,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.ProfileActivity;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.service.UserCoordinatorService;
 import com.example.szakdolg.models.user.service.UserService;
 
 import java.util.ArrayList;

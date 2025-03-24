@@ -6,23 +6,19 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
-import com.example.szakdolg.models.conversation.ConversationParticipantCoordinatorService;
 import com.example.szakdolg.models.conversation.entity.Conversation;
-import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
 import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.image.ImageCoordinatorService;
 import com.example.szakdolg.models.image.util.ImageUtil;
-import com.example.szakdolg.models.message.MessageCoordinatorService;
+import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.service.UserCoordinatorService;
 import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.models.user.util.UserUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,37 +28,31 @@ public class MainAdapterHelper {
 
    private final User currentUser;
    private final Context context;
-   private final UserCoordinatorService userCoordinatorService;
 
    private final ConversationService conversationService;
 
-   private final ConversationParticipantCoordinatorService conversationParticipantCoordinatorService;
-
    private final ImageCoordinatorService imageCoordinatorService;
-   private final MessageCoordinatorService messageCoordinatorService;
+   private final MessageService messageService;
 
    public MainAdapterHelper(User currentUser, Context context) {
       this.currentUser = currentUser;
       this.context = context;
-      this.userCoordinatorService = new UserCoordinatorService(context);
       this.conversationService =
       new ConversationService(context, currentUser);
       this.imageCoordinatorService =
       new ImageCoordinatorService(context, currentUser);
-      this.conversationParticipantCoordinatorService =
-      new ConversationParticipantCoordinatorService(context, currentUser);
-      this.messageCoordinatorService =
-      new MessageCoordinatorService(context, currentUser);
+      this.messageService =
+      new MessageService(context, currentUser);
    }
 
    public void setImageView(List<User> participants, ImageView image) {
-      if (participants.size() > 2) {
+      if (participants.size() > 1) {
          Glide
             .with(context)
             .load(R.drawable.ic_group) // Load your drawable directly
             .into(image);
       } else {
-         List<User>otherUsers = UserUtil.removeCurrentUserFromList(participants, currentUser.getId());
+         List<User>otherUsers = UserUtil.removeCurrentUserFromList(participants, currentUser.getUserId());
 
          String imageUrl = ImageUtil.buildProfileImageUrl(otherUsers.get(0).getUserId());
          if (imageUrl != null) {
@@ -76,44 +66,6 @@ public class MainAdapterHelper {
             image.setImageResource(R.drawable.ic_blank_profile);
          }
 
-         UserService userService = new UserService(context);
-         userService.getUserByUserId(participants.get(0).getUserId(),
-                 currentUser, new UserService.UserCallback<User>() {
-                    @Override
-                    public void onSuccess(User user) {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-                 });
-      }
-   }
-
-   public List<User> getParticipantUsers(Long conversationId) {
-      List<ConversationParticipant> participants =
-         conversationParticipantCoordinatorService.getOtherParticipants(
-            conversationId
-         );
-      List<User> participantUsers = new ArrayList<>();
-      if (participants != null) {
-         for (ConversationParticipant participant : participants) {
-            User user = userCoordinatorService. getUserByUserId(
-               participant.getUserId(),
-               currentUser
-            );
-            if (user != null) {
-               participantUsers.add(user);
-            } else {
-               return null;
-            }
-         }
-
-         return participantUsers;
-      } else {
-         return null;
       }
    }
 
@@ -129,7 +81,7 @@ public class MainAdapterHelper {
             if (participantUsers.size() == 1) {
                return participantUsers.get(0).getDisplayName();
             } else {
-               String title = null;
+               String title = "";
                for (User user : participantUsers) {
                   title += user.getDisplayName() + ", ";
                }
@@ -225,6 +177,6 @@ public class MainAdapterHelper {
    }
 
    public int getCountByNotReadMsg(Long conversationId) {
-      return messageCoordinatorService.getCountByNotReadMsg(conversationId);
+      return messageService.getCountByNotReadMsg(conversationId);
    }
 }

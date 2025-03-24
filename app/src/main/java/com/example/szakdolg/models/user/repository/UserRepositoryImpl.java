@@ -116,7 +116,21 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public void getTokenByPasswordAndEmail(LoginRequest loginRequest, Callback<User> callback) {
-        _userApiService.getTokenByPasswordAndEmail(loginRequest).enqueue(callback);
+        _userApiService.getTokenByPasswordAndEmail(loginRequest).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                User user = response.body();
+                if (user!=null) {
+                    UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context, user);
+                userDatabaseUtil.insertUser(user);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable throwable) {
+
+            }
+        });
 
     }
 

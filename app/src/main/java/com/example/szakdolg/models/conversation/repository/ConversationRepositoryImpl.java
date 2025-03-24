@@ -110,12 +110,16 @@ public class ConversationRepositoryImpl implements ConversationRepository {
         conversationApiService.getAllConversation(token).enqueue(new Callback<List<ConversationDTO>>() {
             @Override
             public void onResponse(Call<List<ConversationDTO>> call, Response<List<ConversationDTO>> response) {
-                for (ConversationDTO conversationDTO : response.body()) {
-                    if (conversationDTO!=null) {
-                        insertConversationDTO(conversationDTO);
+                if(response.body()!=null) {
+                    for (ConversationDTO conversationDTO : response.body()) {
+                        if (conversationDTO != null) {
+                            insertConversationDTO(conversationDTO);
+                        }
                     }
+                    callback.onResponse(call, response);
+                }else {
+                    callback.onFailure(call, new Throwable("Response body is empty"));
                 }
-                callback.onResponse(call, response);
             }
 
             @Override

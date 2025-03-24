@@ -65,7 +65,6 @@ public class UserDatabaseUtil {
             String authToken = cursor.getString(8);
 
             User user = new User(
-               id,
                userId,
                displayName,
                email,
@@ -127,7 +126,6 @@ public class UserDatabaseUtil {
             );
 
             return new User(
-               id,
                userId,
                displayName,
                email,
@@ -173,7 +171,6 @@ public class UserDatabaseUtil {
 
             // Initialize user object with all retrieved fields
             User user = new User(
-               id,
                userId,
                displayName,
                email,
