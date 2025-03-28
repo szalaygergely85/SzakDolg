@@ -7,6 +7,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.contacts.adapter.ContactsAdapter;
@@ -57,18 +59,18 @@ public class ContactsActivity extends BaseActivity {
 
    @Override
    public boolean onSupportNavigateUp() {
-      onBackPressed();
-      return super.onSupportNavigateUp();
+      getOnBackPressedDispatcher().onBackPressed();
+    return true;
    }
 
 
    @Override
    protected void onStart() {
       super.onStart();
-      contactService.getContacts(currentUser.getToken(), null, new ContactService.ContactCallback<List<Contact>>() {
+      contactService.getContacts(currentUser.getToken(), null, new ContactService.ContactCallback<List<ContactsDTO>>() {
          @Override
-         public void onSuccess(List<Contact> data) {
-            contactsAdapter.setContact(data);
+         public void onSuccess(List<ContactsDTO> data) {
+            //contactsAdapter.setContact(data);
          }
 
          @Override

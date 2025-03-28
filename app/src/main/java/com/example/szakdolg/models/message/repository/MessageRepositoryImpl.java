@@ -10,6 +10,7 @@ import com.example.szakdolg.models.message.api.MessageApiService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.util.EncryptionHelper;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class MessageRepositoryImpl implements MessageRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     MessageEntry messageEntry = response.body();
                     if (messageEntry != null) {
+                        _decryptMessage(messageEntry);
                         messageDatabaseUtil.insertMessageEntry(messageEntry);
                     }
                     callback.onResponse(call, response);
@@ -66,15 +68,24 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     @Override
     public void addMessage(MessageEntry messageEntry, Callback<MessageEntry> callback) {
+
+        messageDatabaseUtil.insertMessageEntry(messageEntry);
+
+        String encryptedContentString = null;
+//TODO ENCYPTION
+        //messageEntry.setContentEncrypted(EncryptionHelper.encrypt(messageEntry.getContent(), currentUser.getPublicKey()));
+        messageEntry.setContentEncrypted(messageEntry.getContent());
+
+
         messageApiService.addMessage(messageEntry, currentUser.getToken()).enqueue(new Callback<MessageEntry>() {
             @Override
             public void onResponse(Call<MessageEntry> call, Response<MessageEntry> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     MessageEntry messageEntry = response.body();
+
                     messageEntry.setUploaded(true);
-                    if (messageEntry != null) {
-                        messageDatabaseUtil.insertMessageEntry(messageEntry);
-                    }
+                    _decryptMessage(messageEntry);
+                        messageDatabaseUtil.updateMessageEntry(messageEntry);
                     callback.onResponse(call, response);
                 } else {
                     callback.onFailure(call, new Throwable("Failed to fetch conversation"));
@@ -101,6 +112,7 @@ public class MessageRepositoryImpl implements MessageRepository {
                 if (response.isSuccessful() && response.body() != null) {
                    for (MessageEntry messageEntry : response.body()){
                        if (messageEntry != null) {
+                           _decryptMessage(messageEntry);
                            messageDatabaseUtil.insertMessageEntry(messageEntry);
                        }
                    }
@@ -115,5 +127,9 @@ public class MessageRepositoryImpl implements MessageRepository {
 
             }
         });
+    }
+    private void _decryptMessage(MessageEntry messageEntry){
+        messageEntry.setContent(messageEntry.getContentEncrypted());
+        //messageEntry.setContent(EncryptionHelper.decrypt(messageEntry.getContentEncrypted(), currentUser.getPublicKey()));
     }
 }

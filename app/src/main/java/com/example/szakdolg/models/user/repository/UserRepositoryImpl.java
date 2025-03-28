@@ -124,6 +124,7 @@ public class UserRepositoryImpl implements UserRepository{
                     UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(context, user);
                 userDatabaseUtil.insertUser(user);
                 }
+                callback.onResponse(call, response);
             }
 
             @Override

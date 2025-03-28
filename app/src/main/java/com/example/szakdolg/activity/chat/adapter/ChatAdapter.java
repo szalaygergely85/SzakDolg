@@ -4,11 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.viewholder.ImageViewHolder;
 import com.example.szakdolg.activity.chat.viewholder.TextViewHolder;
+import com.example.szakdolg.activity.contacts.adapter.SelectContactsAdapter;
 import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
@@ -16,11 +20,16 @@ import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+   private static final int TYPE_DATE = 0;
+   private static final int TYPE_IN = 1;
+   private static final int TYPE_OUT = 2;
+
    private final Context mContext;
-   private List<MessageEntry> messageEntries = new ArrayList<>();
+   private List<Object> messageEntries = new ArrayList<>();
 
    private MessageApiHelper messageApiHelper;
    private final User currentUser;
@@ -38,10 +47,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    public void addMessage(MessageEntry messageEntry) {
       if (messageEntry != null) {
          messageEntries.add(messageEntry);
-
+/*
          messageEntries.sort(
             Comparator.comparingLong(MessageEntry::getTimestamp)
-         );
+         );*/
          notifyDataSetChanged();
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
@@ -49,7 +58,17 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
    @Override
    public int getItemViewType(int position) {
-      return messageEntries.get(position).getType();
+      if (messageEntries.get(position) instanceof String) {
+         return TYPE_DATE;
+      } else {
+         MessageEntry messageEntry = (MessageEntry) messageEntries.get(position);
+         if(Objects.equals(messageEntry.getSenderId(), currentUser.getUserId())){
+            return TYPE_OUT;
+         }else {
+            return TYPE_IN;
+         }
+
+      }
    }
 
    @NonNull
@@ -58,18 +77,20 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       @NonNull ViewGroup parent,
       int viewType
    ) {
-      if (viewType == MessageTypeConstants.MESSAGE) {
-         View view = LayoutInflater
-            .from(parent.getContext())
-            .inflate(R.layout.item_chat_list, parent, false);
-         return new TextViewHolder(view);
-      } else if (viewType == MessageTypeConstants.IMAGE) {
-         View view = LayoutInflater
-            .from(parent.getContext())
-            .inflate(R.layout.chat_image_item, parent, false);
-         return new ImageViewHolder(view);
+      LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+      if (viewType == TYPE_DATE) {
+         View view = inflater.inflate(R.layout.item_chat_date, parent, false);
+         return new ChatAdapter.DateViewHolder(view);
       }
-      return null;
+      if (viewType == TYPE_IN){
+         View view = inflater.inflate(R.layout.item_chat_inbound, parent, false);
+         return new ChatAdapter.InboundTextViewHolder(view);
+      }
+      if(viewType == TYPE_OUT) {
+         View view = inflater.inflate(R.layout.item_chat_outbound, parent, false);
+         return new ChatAdapter.OutboundTextViewHolder(view);
+      }
+      throw new IllegalArgumentException("Invalid viewType: " + viewType);
    }
 
    @Override
@@ -77,6 +98,25 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       @NonNull RecyclerView.ViewHolder holder,
       int position
    ) {
+
+      if (holder instanceof ChatAdapter.DateViewHolder) {
+         ((DateViewHolder) holder).dateTextView.setText((String)messageEntries.get(position));
+      }else {
+         MessageEntry messageEntry = (MessageEntry) messageEntries.get(position);
+
+         if (holder instanceof ChatAdapter.InboundTextViewHolder) {
+
+            ((InboundTextViewHolder) holder).txtText.setText(messageEntry.getContent());
+
+         }
+
+         if (holder instanceof ChatAdapter.OutboundTextViewHolder) {
+
+            ((OutboundTextViewHolder) holder).txtTextFrMe.setText(messageEntry.getContent());
+
+         }
+      }
+      /*
       chatAdapterHelper = new ChatAdapterHelper(messageEntries);
 
       MessageEntry messageEntry = messageEntries.get(
@@ -101,7 +141,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-*/
+
          decryptedContentString = messageEntry.getContent();
 
          ((TextViewHolder) holder).bind(
@@ -127,7 +167,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                      null
                   )
             );
-      }
+      }*/
    }
 
    @Override
@@ -135,19 +175,49 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       return messageEntries.size();
    }
 
-   public void setMessageEntries(List<MessageEntry> messageEntries) {
+   public void setMessageEntries(List<Object> messageEntries) {
       if (messageEntries != null) {
-         // Sort the list by timestamp
-         messageEntries.sort(
-            Comparator.comparingLong(MessageEntry::getTimestamp)
-         );
+
       }
       this.messageEntries = messageEntries;
       notifyDataSetChanged();
       chatRecView.scrollToPosition(getItemCount() - 1);
    }
 
-   public void setUsers(List<User> users) {
-      notifyDataSetChanged();
+
+   static class DateViewHolder extends RecyclerView.ViewHolder {
+      private final TextView dateTextView;
+
+      DateViewHolder(View itemView) {
+         super(itemView);
+         dateTextView = itemView.findViewById(R.id.dateTextView);
+      }
    }
+
+   static class InboundTextViewHolder extends RecyclerView.ViewHolder {
+      private final TextView txtText;
+      private final TextView txtTimeIn;
+
+      private final ImageView imageView;
+
+      InboundTextViewHolder(View itemView) {
+         super(itemView);
+         txtText = itemView.findViewById(R.id.chatText);
+         txtTimeIn = itemView.findViewById(R.id.chatTextTimeIn);
+         imageView = itemView.findViewById(R.id.profilePicIn);
+      }
+   }
+
+   static class OutboundTextViewHolder extends RecyclerView.ViewHolder {
+      private final TextView txtTimeOut;
+      private final TextView txtTextFrMe;
+
+      OutboundTextViewHolder(View itemView) {
+         super(itemView);
+         txtTextFrMe = itemView.findViewById(R.id.chatTextFrMe);
+         txtTimeOut = itemView.findViewById(R.id.chatTextTimeOut);
+      }
+   }
+
+
 }

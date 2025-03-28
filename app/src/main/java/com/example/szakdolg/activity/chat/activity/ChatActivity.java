@@ -46,6 +46,12 @@ public class ChatActivity extends BaseActivity {
    private List<User> users;
 
    @Override
+   public boolean onSupportNavigateUp() {
+      getOnBackPressedDispatcher().onBackPressed();
+      return true;
+   }
+
+   @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_chat);
@@ -63,7 +69,7 @@ public class ChatActivity extends BaseActivity {
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
-      chatActivityHelper.setToolbarTitle(mToolbar, conversationId);
+      chatActivityHelper.setToolbarTitle(mToolbar);
    }
 
    private void _getIntentExtras() {
@@ -73,6 +79,8 @@ public class ChatActivity extends BaseActivity {
       users = conversationDTO.getUsers();
       conversationId = conversation.getConversationId();
    }
+
+
 
    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
       @Override
@@ -144,6 +152,7 @@ public class ChatActivity extends BaseActivity {
             }
          }
       );
+      mToolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
       imgSend.setOnClickListener(
          new View.OnClickListener() {

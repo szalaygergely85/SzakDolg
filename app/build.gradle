@@ -32,6 +32,23 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     namespace 'com.example.szakdolg'
+
+    spotless {
+        java {
+            target "src/*/java/**/*.java"
+            indentWithTabs()
+            removeUnusedImports()
+            trimTrailingWhitespace()
+            prettier(['prettier': '3.0.3', 'prettier-plugin-java': '2.3.0'])
+                    .config([
+                            'parser': 'java',
+                            'tabWidth': 3,
+                            'printWidth': 80,
+                            'plugins': ['prettier-plugin-java']
+                    ])
+        }
+    }
+
 }
 
 dependencies {
@@ -88,19 +105,4 @@ tasks.withType(Test) {
     useJUnitPlatform() // Enable JUnit 5 for Android unit tests
 }
 
-spotless {
-    java {
-        target "src/*/java/**/*.java"
-        indentWithTabs()
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        prettier(['prettier': '3.0.3', 'prettier-plugin-java': '2.3.0'])
-                .config([
-                        'parser': 'java',
-                        'tabWidth': 3,
-                        'printWidth': 80,
-                        'plugins': ['prettier-plugin-java']
-                ])
-    }
-}
 

@@ -27,7 +27,7 @@ public class ConversationParticipantDatabaseUtil {
       values.put("conversationId", participant.getConversationId());
       values.put("userId", participant.getUserId());
 
-      db.insert(dbHelper.TABLE_CONVERSATION_PARTICIPANTS, null, values);
+      db.insertWithOnConflict(dbHelper.TABLE_CONVERSATION_PARTICIPANTS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
       db.close();
    }
 
@@ -45,11 +45,10 @@ public class ConversationParticipantDatabaseUtil {
 
       if (cursor.moveToFirst()) {
          do {
-            long conversationParticipantId = cursor.getLong(0); // Assuming it's the first column
-            long userId = cursor.getLong(2);
+ // Assuming it's the first column
+            long userId = cursor.getLong(1);
 
             ConversationParticipant participant = new ConversationParticipant(
-               conversationParticipantId,
                conversationId,
                userId
             );

@@ -1,5 +1,6 @@
 package com.example.szakdolg.models.contacts;
 
+import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.models.user.entity.User;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public interface ContactApiService {
                               @Header("Authorization") String authToken);
 
    @GET("contacts/get-contacts")
-   Call<List<Contact>> getContacts(
+   Call<List<ContactsDTO>> getContacts(
            @Header("Authorization") String authToken,
            @Query("search") String searchText
    );

@@ -24,9 +24,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
    private static final String CREATE_TABLE_CONVERSATION_PARTICIPANTS =
            "CREATE TABLE " + TABLE_CONVERSATION_PARTICIPANTS + " (" +
-                   "conversationParticipantId INTEGER PRIMARY KEY AUTOINCREMENT, " +
                    "conversationId INTEGER NOT NULL, " +
-                   "userId INTEGER NOT NULL" +
+                   "userId INTEGER NOT NULL, " +
+                   "PRIMARY KEY (conversationId, userId)" +
                    ");";
 
    private static final String CREATE_TABLE_CONVERSATIONS =

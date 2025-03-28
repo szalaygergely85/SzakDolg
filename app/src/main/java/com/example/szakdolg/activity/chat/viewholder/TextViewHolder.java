@@ -11,32 +11,32 @@ import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.user.entity.User;
+
+import org.junit.Ignore;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TextViewHolder extends RecyclerView.ViewHolder {
 
-   private final ImageView imageView;
 
-   private final TextView txtText;
-   private final TextView txtTimeIn;
+
    private final TextView txtTimeOut;
    private final TextView txtTextFrMe;
-   private final TextView dateTextView;
+
    private final LinearLayout lLIn;
    private final LinearLayout lLout;
 
    public TextViewHolder(View itemView) {
       super(itemView);
-      txtText = itemView.findViewById(R.id.chatText);
+
       txtTextFrMe = itemView.findViewById(R.id.chatTextFrMe);
-      txtTimeIn = itemView.findViewById(R.id.chatTextTimeIn);
       txtTimeOut = itemView.findViewById(R.id.chatTextTimeOut);
       lLIn = itemView.findViewById(R.id.chatLLin);
       lLout = itemView.findViewById(R.id.chatLLout);
-      dateTextView = itemView.findViewById(R.id.dateTextView);
 
-      imageView = itemView.findViewById(R.id.profilePicIn);
+
+
    }
 
    public void bind(
@@ -52,7 +52,7 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
    ) {
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       String dateString = dateFormat.format(new Date(time));
-
+/*
       dateTextView.setVisibility(showDateSeparator ? View.VISIBLE : View.GONE);
       dateTextView.setText(dateString);
       if (senderId.equals(currentUser.getUserId())) {
@@ -115,6 +115,6 @@ public class TextViewHolder extends RecyclerView.ViewHolder {
                )
                : ContextCompat.getDrawable(context, R.drawable.bg_chat_white)
          );
-      }
+      }*/
    }
 }

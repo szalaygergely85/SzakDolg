@@ -49,11 +49,11 @@ public class SearchContactsActivity extends BaseActivity {
 
       initViews();
    }
-   @Override
-   public boolean onSupportNavigateUp() {
-      onBackPressed();
-      return super.onSupportNavigateUp();
-   }
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
+    }
 
    @Override
    protected void onStart() {

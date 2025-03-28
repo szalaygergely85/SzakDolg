@@ -2,7 +2,9 @@ package com.example.szakdolg.models.contacts;
 
 import android.content.Context;
 
+import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.models.contacts.db.ContactDatabaseUtil;
+import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
 
@@ -16,6 +18,8 @@ public class ContactsRepositoryImpl implements ContactRepository {
 
     private final ContactApiService contactApiService;
     private final ContactDatabaseUtil contactDatabaseUtil;
+
+    private final UserDatabaseUtil userDatabaseUtil;
     private final Context context;
     private final User currentUser;
 
@@ -24,6 +28,7 @@ public class ContactsRepositoryImpl implements ContactRepository {
         this.currentUser = currentUser;
         this.contactDatabaseUtil = new ContactDatabaseUtil(context, currentUser);
         this.contactApiService = RetrofitClient.getRetrofitInstance().create(ContactApiService.class);
+        this.userDatabaseUtil = new UserDatabaseUtil(context, currentUser);
     }
 
     @Override
@@ -73,31 +78,37 @@ public class ContactsRepositoryImpl implements ContactRepository {
     }
 
     @Override
-    public void getContacts(String authToken, String search, Callback<List<Contact>> callback) {
+    public void getContacts(String authToken, String search, Callback<List<ContactsDTO>> callback) {
         // Get from local database first
+        /*
         List<Contact> localContacts = contactDatabaseUtil.getContacts(search);
         if (!localContacts.isEmpty()) {
             callback.onResponse(null, Response.success(localContacts));  // Return local data immediately
-        } else {
-            // Fetch from API
-            contactApiService.getContacts(authToken, search).enqueue(new Callback<List<Contact>>() {
-                @Override
-                public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        // Save contacts to local database
-                        contactDatabaseUtil.insertContacts(response.body());
-                        callback.onResponse(call, response);
-                    } else {
-                        callback.onFailure(call, new Throwable("Failed to fetch contacts"));
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<List<Contact>> call, Throwable t) {
-                    callback.onFailure(call, t);
+
+        } else {*/
+        // Fetch from API
+        contactApiService.getContacts(authToken, search).enqueue(new Callback<List<ContactsDTO>>() {
+            @Override
+            public void onResponse(Call<List<ContactsDTO>> call, Response<List<ContactsDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Save contacts to local database
+                    for (ContactsDTO contactsDTO : response.body()) {
+                        contactDatabaseUtil.insertContact(contactsDTO.getContact());
+                        userDatabaseUtil.insertUser(contactsDTO.getUser());
+                    }
+                    callback.onResponse(call, response);
+                } else {
+                    callback.onFailure(call, new Throwable("Failed to fetch contacts"));
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onFailure(Call<List<ContactsDTO>> call, Throwable t) {
+                callback.onFailure(call, t);
+            }
+        });
+
     }
 
     @Override

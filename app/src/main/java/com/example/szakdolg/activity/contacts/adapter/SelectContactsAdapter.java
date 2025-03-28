@@ -12,101 +12,116 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.R;
-import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class SelectContactsAdapter extends RecyclerView.Adapter<SelectContactsAdapter.ViewHolder> {
+public class SelectContactsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
     private final Context context;
 
     private final User currentUser;
 
-    private UserService userService;
 
-    private List<Contact> contacts = new ArrayList<>();
+    private List<Object> usersList = new ArrayList<>();
 
-    private List<Long> selectedUsers;
+    private List<Long> selectedUsers = new ArrayList<>();
 
-    public SelectContactsAdapter(Context context, User currentUser, List<Long> selectedUsers) {
+    public SelectContactsAdapter(Context context, User currentUser) {
         this.context = context;
         this.currentUser = currentUser;
-        this.userService = new UserService(context);
-        this.selectedUsers = selectedUsers;
+        selectedUsers.add(currentUser.getUserId());
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        if (usersList.get(position) instanceof String) {
+            return TYPE_HEADER;
+        } else {
+            return TYPE_ITEM;
+        }
     }
 
     @NonNull
     @Override
-    public SelectContactsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater
-                .from(parent.getContext())
-                .inflate(R.layout.item_select_contact, parent, false);
-        SelectContactsAdapter.ViewHolder holder = new SelectContactsAdapter.ViewHolder(view);
-        return holder;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        if (viewType == TYPE_HEADER) {
+            View view = inflater.inflate(R.layout.item_contact_header, parent, false);
+            return new HeaderViewHolder(view);
+        } else {
+            View view = inflater.inflate(R.layout.item_contact_user, parent, false);
+            return new ContactViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SelectContactsAdapter.ViewHolder holder, int position) {
-        Contact contact = contacts.get(holder.getAdapterPosition());
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof HeaderViewHolder) {
+            ((HeaderViewHolder) holder).headerText.setText((String) usersList.get(position));
+        } else {
+            User user = (User) usersList.get(position);
+            String displayName = user.getDisplayName();
+            if (displayName != null) {
+                ((ContactViewHolder)holder).txtName.setText(displayName);
+            }
 
-        userService.getUserByUserId(contact.getContactUserId(), currentUser, new UserService.UserCallback<User>() {
-            @Override
-            public void onSuccess(User user) {
-                String displayName = user.getDisplayName();
-                if (displayName != null) {
-                    holder.txtName.setText(displayName);
-                }
+            ((ContactViewHolder)holder).linearLayout.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (selectedUsers.contains(user.getUserId())) {
+                                selectedUsers.remove(user.getUserId());
+                                ((ContactViewHolder)holder).checkImageView.setVisibility(View.INVISIBLE);
 
-                holder.linearLayout.setOnClickListener(
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (selectedUsers.contains(user.getUserId())) {
-                                    selectedUsers.remove(user.getUserId());
-                                    holder.checkImageView.setVisibility(View.INVISIBLE);
-
-                                } else {
-                                    selectedUsers.add(user.getUserId());
-                                    holder.checkImageView.setVisibility(View.VISIBLE);
-                                }
+                            } else {
+                                selectedUsers.add(user.getUserId());
+                                ((ContactViewHolder)holder).checkImageView.setVisibility(View.VISIBLE);
                             }
                         }
-                );
-
-            }
-
-            @Override
-            public void onError(Throwable t) {
-
-            }
-        });
-
+                    }
+            );
+        }
 
     }
 
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
+    public List<Long> getSelectedUsers(){
+        return selectedUsers;
+    }
+
+    public void setUsers(List<Object> usersList) {
+        this.usersList = usersList;
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return contacts.size();
+        return usersList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        TextView headerText;
 
+        HeaderViewHolder(View itemView) {
+            super(itemView);
+            headerText = itemView.findViewById(R.id.headerText);
+        }
+    }
+
+    static class ContactViewHolder extends RecyclerView.ViewHolder {
         private final ImageView checkImageView;
         private final ImageView profileImageView;
         private final TextView txtName;
         private final LinearLayout linearLayout;
 
-        public ViewHolder(@NonNull View itemView) {
+        ContactViewHolder(View itemView) {
             super(itemView);
             txtName = itemView.findViewById(R.id.contactSelectName);
             linearLayout = itemView.findViewById(R.id.contactSelect_ll);

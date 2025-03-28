@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_marginTop="10dp">
+
+
+    <LinearLayout
+            android:id="@+id/chatLLout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/chatTextFrMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/bg_chat_one_sided_grey"
+                android:paddingVertical="5dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="Message from me"
+                android:textSize="16sp"
+                />
+
+            <TextView
+                android:id="@+id/chatTextTimeOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10.21"
+
+                />
+
+
+        </LinearLayout>
+
+
+
+</LinearLayout>

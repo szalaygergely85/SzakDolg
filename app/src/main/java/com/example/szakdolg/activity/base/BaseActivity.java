@@ -38,17 +38,17 @@ public class BaseActivity extends AppCompatActivity {
       // Optionally handle cases where token or userId is missing
       if (token == null || userId == null) {
          _deletePref();
-         _navigateToLogin();
+         navigateToLogin();
       } else {
          currentUser = _getCurrentUser(token, userId);
          if (currentUser == null) {
             _deletePref();
-            _navigateToLogin();
+            navigateToLogin();
          }
       }
    }
 
-   private void _navigateToLogin() {
+   protected void navigateToLogin() {
       Log.d(AppConstants.LOG_TAG, "Navigating to login...");
       Intent intent = new Intent(this, LoginActivity.class);
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

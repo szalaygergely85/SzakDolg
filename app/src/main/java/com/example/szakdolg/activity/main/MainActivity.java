@@ -50,6 +50,11 @@ public class MainActivity extends BaseActivity {
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+
+      if (currentUser == null) {
+         navigateToLogin();
+         return;
+      }
       setContentView(R.layout.activity_main);
 
       _initView();

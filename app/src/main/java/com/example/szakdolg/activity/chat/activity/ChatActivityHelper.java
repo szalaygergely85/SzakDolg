@@ -1,5 +1,6 @@
 package com.example.szakdolg.activity.chat.activity;
 
+import android.icu.text.DateFormat;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,10 +14,16 @@ import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.util.UserUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.UUIDUtil;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatActivityHelper {
 
@@ -48,12 +55,16 @@ public class ChatActivityHelper {
    }
 
    public void setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {
-      adapter.setUsers(users);
+
       messageService.getMessagesByConversationId(conversation.getConversationId(), new MessageService.MessageCallback<List<MessageEntry>>() {
          @Override
          public void onSuccess(List<MessageEntry> messageEntries) {
+            messageEntries.sort(
+                    Comparator.comparingLong(MessageEntry::getTimestamp)
+            );
+
             adapter.setMessageEntries(
-                    messageEntries
+                    _prepareMessageList(messageEntries)
             );
          }
 
@@ -70,6 +81,40 @@ public class ChatActivityHelper {
       chatRecView.scrollToPosition(adapter.getItemCount() - 1);
    }
 
+   private List<Object> _prepareMessageList(List<MessageEntry> messageEntries) {
+      List<Object> sortedList = new ArrayList<>();
+      long previousTimestamp = 0L;
+      for (MessageEntry messageEntry : messageEntries) {
+         if (isNewDay(previousTimestamp, messageEntry.getTimestamp())) {
+
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+
+            sortedList.add(dateFormat.format(new Date(messageEntry.getTimestamp())));
+
+         }
+
+         sortedList.add(messageEntry);
+         previousTimestamp=messageEntry.getTimestamp();
+
+      }
+      return sortedList;
+   }
+
+   private boolean isNewDay(long previousTimestamp, long currentTimestamp){
+
+
+            Date currentDate = new Date(currentTimestamp);
+            Date previousDate = new Date(previousTimestamp);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            String currentDateStr = dateFormat.format(currentDate);
+            String previousDateStr = dateFormat.format(previousDate);
+
+            return !currentDateStr.equals(previousDateStr);
+   }
+
+
    public MessageEntry sendMessage(String content, int messageType) {
       if (conversation.getNumberOfParticipants() > 2) {
          //TODO GROUP Conversation
@@ -79,22 +124,18 @@ public class ChatActivityHelper {
 
          String publicKey = user.getPublicKey();
 
-         String encryptedContentString = null;
-         if (publicKey != null) {
-            encryptedContentString =
-            EncryptionHelper.encrypt(content, user.getPublicKey());
-         }
 
          MessageEntry messageEntry = new MessageEntry(
             null,
             conversation.getConversationId(),
             currentUser.getUserId(),
             System.currentTimeMillis(),
-            encryptedContentString,
+            null,
             false,
             messageType,
             content,
-            UUIDUtil.UUIDGenerator()
+            UUIDUtil.UUIDGenerator(),
+                 false
          );
 
          MessageService messageService = new MessageService(context, currentUser);
@@ -115,7 +156,7 @@ public class ChatActivityHelper {
 
    }
 
-   public void setToolbarTitle(Toolbar mToolbar, Long conversationId) {
+   public void setToolbarTitle(Toolbar mToolbar) {
       String conversationName = conversation.getConversationName();
       if (conversationName != null) {
          mToolbar.setTitle(conversation.getConversationName());
@@ -125,8 +166,9 @@ public class ChatActivityHelper {
    }
 
    private String _createTitleWithUsernames(List<User> users) {
-      String title = null;
-      for (User user : users) {
+
+      String title = "";
+      for (User user : UserUtil.removeCurrentUserFromList(users, currentUser.getUserId())) {
          if (users.indexOf(user) == 0) {
             title = user.getDisplayName();
          } else {

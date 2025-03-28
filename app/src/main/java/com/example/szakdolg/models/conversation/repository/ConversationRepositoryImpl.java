@@ -65,7 +65,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
         conversationApiService.addConversationByUserId(userIds, token).enqueue(new Callback<ConversationDTO>() {
             @Override
             public void onResponse(Call<ConversationDTO> call, Response<ConversationDTO> response) {
-               insertConversationDTO(response.body());
+                insertConversationDTO(response.body());
 
                 callback.onResponse(call, response);
             }
@@ -107,17 +107,41 @@ public class ConversationRepositoryImpl implements ConversationRepository {
 
     @Override
     public void getAllConversation(String token, Callback<List<ConversationDTO>> callback) {
+        List<Conversation> localConversations = conversationDatabaseUtil.getAllConversations();
+        if(!localConversations.isEmpty()) {
+            List<ConversationDTO> conversationDTOs = new ArrayList<>();
+            List<User> users = new ArrayList<>();
+            for (Conversation conversation : localConversations) {
+                List<ConversationParticipant> conversationParticipants = conversationParticipantDatabaseUtil.getParticipantsByConversationId(conversation.getConversationId());
+                if (conversationParticipants != null) {
+
+                    for (ConversationParticipant conversationParticipant : conversationParticipants) {
+                        User user = userDatabaseUtil.getUserById(conversationParticipant.getUserId());
+                        if (user != null) {
+                            users.add(user);
+
+                        }
+
+                    }
+
+
+                }
+                conversationDTOs.add(new ConversationDTO(conversation, conversationParticipants, users));
+            }
+
+            callback.onResponse(null, Response.success(conversationDTOs));
+        }
         conversationApiService.getAllConversation(token).enqueue(new Callback<List<ConversationDTO>>() {
             @Override
             public void onResponse(Call<List<ConversationDTO>> call, Response<List<ConversationDTO>> response) {
-                if(response.body()!=null) {
+                if (response.body() != null) {
                     for (ConversationDTO conversationDTO : response.body()) {
                         if (conversationDTO != null) {
                             insertConversationDTO(conversationDTO);
                         }
                     }
                     callback.onResponse(call, response);
-                }else {
+                } else {
                     callback.onFailure(call, new Throwable("Response body is empty"));
                 }
             }

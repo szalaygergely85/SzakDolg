@@ -41,7 +41,7 @@ public class MessageApiHelper {
       Long conversationId,
       ChatAdapter adapter,
       User user
-   ) {
+   ) {/*
       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
          context,
          user
@@ -50,7 +50,7 @@ public class MessageApiHelper {
          messageDatabaseUtil.getAllMessageEntriesByConversationId(
             conversationId
          )
-      );
+      );*/
    }
 
 

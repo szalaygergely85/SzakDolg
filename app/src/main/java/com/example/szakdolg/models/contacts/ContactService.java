@@ -2,6 +2,7 @@ package com.example.szakdolg.models.contacts;
 
 import android.content.Context;
 
+import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.models.user.entity.User;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ContactService {
-    private final ContactsRepositoryImpl contactsRepository;
+    private final ContactRepository contactsRepository;
 
     public ContactService(Context context, User currentUser) {
         this.contactsRepository = new ContactsRepositoryImpl(context, currentUser);
@@ -75,10 +76,10 @@ public class ContactService {
     }
 
     // Get a list of contacts (from UI)
-    public void getContacts(String authToken, String search, final ContactCallback<List<Contact>> callback) {
-        contactsRepository.getContacts(authToken, search, new Callback<List<Contact>>() {
+    public void getContacts(String authToken, String search, final ContactCallback<List<ContactsDTO>> callback) {
+        contactsRepository.getContacts(authToken, search, new Callback<List<ContactsDTO>>() {
             @Override
-            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+            public void onResponse(Call<List<ContactsDTO>> call, Response<List<ContactsDTO>> response) {
                 if (response.isSuccessful()) {
                     callback.onSuccess(response.body());
                 } else {
@@ -87,7 +88,7 @@ public class ContactService {
             }
 
             @Override
-            public void onFailure(Call<List<Contact>> call, Throwable t) {
+            public void onFailure(Call<List<ContactsDTO>> call, Throwable t) {
                 callback.onError(t);
             }
         });
