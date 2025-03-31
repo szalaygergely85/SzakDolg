@@ -7,13 +7,13 @@ public class Contact {
    private Long contactId;
    private Long ownerId;
    private Long contactUserId;
-   private User contactUser;
+
 
    public Contact(Long contactId, Long ownerId, Long contactUserId, User user) {
       this.contactId = contactId;
       this.ownerId = ownerId;
       this.contactUserId = contactUserId;
-      this.contactUser = user;
+
    }
 
    public Contact() {}
@@ -25,13 +25,7 @@ public class Contact {
       this.contactUserId = contactUserId;
    }
 
-   public User getContactUser() {
-      return contactUser;
-   }
 
-   public void setContactUser(User contactUser) {
-      this.contactUser = contactUser;
-   }
 
    public Long getContactId() {
       return contactId;

@@ -22,10 +22,12 @@ public static User removeCurrentUserFromList(List<User> users, Long id) {
       Long id
    ) {
       List<User> newUserList = new ArrayList<>();
+      if(!users.isEmpty()){
       for (User user : users) {
          if (!user.getUserId().equals(id)) {
             newUserList.add(user);
          }
+      }
       }
       return newUserList;
    }

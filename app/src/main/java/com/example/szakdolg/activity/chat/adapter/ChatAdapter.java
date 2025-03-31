@@ -5,20 +5,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.chat.viewholder.ImageViewHolder;
-import com.example.szakdolg.activity.chat.viewholder.TextViewHolder;
-import com.example.szakdolg.activity.contacts.adapter.SelectContactsAdapter;
+import com.example.szakdolg.activity.chat.activity.ChatActivityHelper;
+import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.message.api.MessageApiHelper;
-import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,22 +36,20 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    private final User currentUser;
 
    private RecyclerView chatRecView;
-   private ChatAdapterHelper chatAdapterHelper;
+   private ChatActivityHelper chatActivityHelper;
 
-   public ChatAdapter(Context mContext, User user, RecyclerView chatRecView) {
+   public ChatAdapter(Context mContext, User user, RecyclerView chatRecView, ChatActivityHelper chatActivityHelper) {
       this.mContext = mContext;
       this.currentUser = user;
       this.messageApiHelper = new MessageApiHelper(mContext, user);
       this.chatRecView = chatRecView;
+      this.chatActivityHelper = chatActivityHelper;
    }
 
    public void addMessage(MessageEntry messageEntry) {
       if (messageEntry != null) {
          messageEntries.add(messageEntry);
-/*
-         messageEntries.sort(
-            Comparator.comparingLong(MessageEntry::getTimestamp)
-         );*/
+
          notifyDataSetChanged();
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
@@ -107,67 +106,72 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          if (holder instanceof ChatAdapter.InboundTextViewHolder) {
 
             ((InboundTextViewHolder) holder).txtText.setText(messageEntry.getContent());
+            ((InboundTextViewHolder) holder).txtTimeIn.setText(chatActivityHelper.getTime(messageEntry.getTimestamp()));
+
+            ViewGroup.MarginLayoutParams params =
+                    (ViewGroup.MarginLayoutParams) ((InboundTextViewHolder) holder).linearLayoutIn.getLayoutParams();
+            int marginInPx = 0;
+
+            if(position<getItemCount()-1) {
+               if (getItemViewType(position+1)==TYPE_IN){
+                  ((InboundTextViewHolder) holder).imageView.setVisibility(View.GONE);
+                  ((InboundTextViewHolder) holder).txtTimeIn.setVisibility(View.GONE);
+
+                  int marginInDp = 40; // You can set any margin in dp you want
+                  float density = holder.itemView.getContext().getResources().getDisplayMetrics().density;
+                   marginInPx = (int) (marginInDp * density);
+
+                  ((InboundTextViewHolder) holder).linearLayoutIn.setLayoutParams(params);
+                  ((InboundTextViewHolder) holder).txtText.setBackground(
+                           ContextCompat.getDrawable(mContext, R.drawable.bg_chat_white)
+
+
+                  );
+               }else {
+                  ((InboundTextViewHolder) holder).txtText.setBackground(
+                          ContextCompat.getDrawable(mContext, R.drawable.bg_chat_one_sided_white));
+
+                  ((InboundTextViewHolder) holder).imageView.setVisibility(View.VISIBLE);
+                  ((InboundTextViewHolder) holder).txtTimeIn.setVisibility(View.VISIBLE);
+
+                  String imageUrl = ImageUtil.buildProfileImageUrl(messageEntry.getSenderId());
+                  if (imageUrl != null) {
+                     Glide
+                             .with(mContext)
+                             .load(imageUrl)
+                             .placeholder(R.drawable.ic_blank_profile)
+                             .error(R.drawable.ic_blank_profile)
+                             .into(((InboundTextViewHolder) holder).imageView);
+                  } else {
+                     ((InboundTextViewHolder) holder).imageView.setImageResource(R.drawable.ic_blank_profile);
+                  }
+
+               }
+               params.setMargins(marginInPx, params.topMargin, params.rightMargin, params.bottomMargin);
+            }
 
          }
-
          if (holder instanceof ChatAdapter.OutboundTextViewHolder) {
 
             ((OutboundTextViewHolder) holder).txtTextFrMe.setText(messageEntry.getContent());
 
+            ((OutboundTextViewHolder) holder).txtTimeOut.setText(chatActivityHelper.getTime(messageEntry.getTimestamp()));
+
+            if(position<getItemCount()-1) {
+               if (getItemViewType(position+1)==TYPE_OUT){
+                  ((OutboundTextViewHolder) holder).txtTimeOut.setVisibility(View.GONE);
+                  ((OutboundTextViewHolder) holder).txtTextFrMe.setBackground(
+                          ContextCompat.getDrawable(mContext, R.drawable.bg_chat_grey));
+               }else{
+                  ((OutboundTextViewHolder) holder).txtTimeOut.setVisibility(View.VISIBLE);
+                  ((OutboundTextViewHolder) holder).txtTextFrMe.setBackground(
+                          ContextCompat.getDrawable(mContext, R.drawable.bg_chat_one_sided_grey));
+
+               }
+            }
+
          }
       }
-      /*
-      chatAdapterHelper = new ChatAdapterHelper(messageEntries);
-
-      MessageEntry messageEntry = messageEntries.get(
-         holder.getAdapterPosition()
-      );
-
-      if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
-         String decryptedContentString = null;/*
-		try {
-			if (isSenderLoggedUser(messageEntry)) {
-
-			decryptedContentString =
-
-					messageEntry.getContent();
-			} else {
-			decryptedContentString =
-			EncryptionHelper.decrypt(
-				messageEntry.getContentEncrypted(),
-				KeyStoreUtil.getPrivateKeyFromFile(mContext, currentUser)
-			);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-         decryptedContentString = messageEntry.getContent();
-
-         ((TextViewHolder) holder).bind(
-               decryptedContentString,
-               chatAdapterHelper.getTime(messageEntry.getTimestamp()),
-               messageEntry.getSenderId(),
-               currentUser,
-               chatAdapterHelper.isNewDay(position),
-               messageEntry.getTimestamp(),
-               chatAdapterHelper.shouldShowTime(position),
-               chatAdapterHelper.shouldShowProfilePicture(position),
-               mContext
-            );
-      } else if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
-         ((ImageViewHolder) holder).bind(
-               messageEntry.getContentEncrypted(),
-               mContext,
-               () ->
-                  messageApiHelper.reloadMessages(
-                     mContext,
-                     messageEntry.getConversationId(),
-                     this,
-                     null
-                  )
-            );
-      }*/
    }
 
    @Override
@@ -199,12 +203,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       private final TextView txtTimeIn;
 
       private final ImageView imageView;
+      private final LinearLayout linearLayoutIn;
 
       InboundTextViewHolder(View itemView) {
          super(itemView);
          txtText = itemView.findViewById(R.id.chatText);
          txtTimeIn = itemView.findViewById(R.id.chatTextTimeIn);
          imageView = itemView.findViewById(R.id.profilePicIn);
+         linearLayoutIn = itemView.findViewById(R.id.chat_in_ll);
       }
    }
 

@@ -80,7 +80,7 @@ public class ImageUtil {
    }
 
    public static String buildProfileImageUrl(Long userId) {
-      String serverUrl = AppConstants.API_URL + "/api/image/userid/";
+      String serverUrl = AppConstants.API_URL + "image/userid/";
       if (userId != null) {
          return serverUrl + userId;
       }

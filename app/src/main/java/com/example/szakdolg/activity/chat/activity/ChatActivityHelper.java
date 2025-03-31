@@ -18,6 +18,7 @@ import com.example.szakdolg.models.user.util.UserUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.UUIDUtil;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,6 +53,13 @@ public class ChatActivityHelper {
 
 
       this.messageService = new MessageService(context, currentUser);
+   }
+
+   public String getTime(Long time) {
+      Date date = new Date(time);
+
+      Format format = new SimpleDateFormat("HH:mm");
+      return format.format(date);
    }
 
    public void setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {

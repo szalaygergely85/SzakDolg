@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_marginTop="10dp">
+    android:layout_marginTop="10dp"
+    android:id="@+id/chat_in_ll">
 
 
     <LinearLayout
@@ -41,7 +42,7 @@
                 android:paddingVertical="5dp"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:text="This is a message to me ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+                android:text="This is a message to me"
                 android:textSize="16sp" />
 
             <TextView

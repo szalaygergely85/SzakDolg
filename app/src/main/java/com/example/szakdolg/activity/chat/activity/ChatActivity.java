@@ -62,10 +62,10 @@ public class ChatActivity extends BaseActivity {
 
       _setListeners();
 
-      adapter = new ChatAdapter(this, currentUser, chatRecView);
-
       chatActivityHelper =
-      new ChatActivityHelper(this, conversation, currentUser, users);
+              new ChatActivityHelper(this, conversation, currentUser, users);
+
+      adapter = new ChatAdapter(this, currentUser, chatRecView, chatActivityHelper);
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
