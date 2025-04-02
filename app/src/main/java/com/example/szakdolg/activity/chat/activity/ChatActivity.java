@@ -139,7 +139,7 @@ public class ChatActivity extends BaseActivity {
       mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
    }
 
-   private void _setListeners() {
+   private void _setListeners() {/*
       edtMess.setKeyBoardInputCallbackListener(
          new MyEditText.KeyBoardInputCallbackListener() {
             @Override
@@ -153,7 +153,7 @@ public class ChatActivity extends BaseActivity {
          }
       );
       mToolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
-
+*/
       imgSend.setOnClickListener(
          new View.OnClickListener() {
             @Override
@@ -178,7 +178,7 @@ public class ChatActivity extends BaseActivity {
          }
       );
    }
-
+/*
    private void _sendFile(Uri uri) {
       new Thread(() -> {
          String uUId = UUIDUtil.UUIDGenerator();
@@ -209,5 +209,5 @@ public class ChatActivity extends BaseActivity {
          );
       })
          .start();
-   }
+   }*/
 }

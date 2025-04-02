@@ -3,39 +3,35 @@ package com.example.szakdolg.activity.contacts.activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.widget.EditText;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.contacts.adapter.SearchContactAdapter;
-import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.models.contacts.ContactApiService;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserService;
-import com.example.szakdolg.retrofit.RetrofitClient;
-import com.example.szakdolg.util.SharedPreferencesUtil;
+import com.example.szakdolg.models.user.util.UserUtil;
+import com.google.android.material.search.SearchBar;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SearchContactsActivity extends BaseActivity {
 
-   private EditText search;
+   private SearchView searchView;
    private RecyclerView contsRecView;
    private List<User> userList = new ArrayList<>();;
    private SearchContactAdapter contactsAdapter;
    private UserService userService;
 
    private void initViews() {
-      search = findViewById(R.id.edtContSearch);
       contsRecView = findViewById(R.id.recvContactSearch);
+       searchView = findViewById(R.id.search_view);
    }
 
    @Override
@@ -48,6 +44,8 @@ public class SearchContactsActivity extends BaseActivity {
       userService = new UserService(this);
 
       initViews();
+
+
    }
     @Override
     public boolean onSupportNavigateUp() {
@@ -62,33 +60,28 @@ public class SearchContactsActivity extends BaseActivity {
       contsRecView.setAdapter(contactsAdapter);
       contsRecView.setLayoutManager(new LinearLayoutManager(this));
 
-      search.addTextChangedListener(
-         new TextWatcher() {
-            private CharSequence previousText = "";
+       searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+           @Override
+           public boolean onQueryTextSubmit(String query) {
+               return false;
+           }
 
-            @Override
-            public void beforeTextChanged(
-               CharSequence charSequence,
-               int start,
-               int count,
-               int after
-            ) {
-               previousText = charSequence;
-            }
-
-            @Override
-            public void onTextChanged(
-               CharSequence charSequence,
-               int start,
-               int before,
-               int count
-            ) {}
-            @Override
-            public void afterTextChanged(Editable editable) {
-               if (editable.length() >= 3) {
-                   userService.searchUser(editable.toString(), currentUser, new UserService.UserCallback<List<User>>() {
+           @Override
+           public boolean onQueryTextChange(String newText) {
+               if (newText.length() >= 3) {
+                   userService.searchUser(newText, currentUser, new UserService.UserCallback<List<User>>() {
                        @Override
                        public void onSuccess(List<User> users) {
+                           UserUtil.removeCurrentUser(users, currentUser.getUserId());
+                           if (!users.isEmpty()){
+                               Collections.sort(users, new Comparator<User>() {
+                                   @Override
+                                   public int compare(User o1, User o2) {
+                                       return o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName());
+                                   }
+                               });
+                           }
+
                            contactsAdapter.setUserList(users);
                        }
                        @Override
@@ -96,10 +89,15 @@ public class SearchContactsActivity extends BaseActivity {
                        }
                    });
 
+               }else {
+                   if(contactsAdapter.getItemCount()>0){
+                   contactsAdapter.setUserList(new ArrayList<>());
                    }
+               }
 
-            }
-         }
-      );
+
+               return false;
+           }
+       });
    }
 }

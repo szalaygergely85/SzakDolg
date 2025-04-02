@@ -7,40 +7,50 @@
     android:background="@color/primaryLightColor"
     tools:context=".activity.contacts.activity.SearchContactsActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/contactsearchBoardToolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/select_contacts_BarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:minHeight="?attr/actionBarSize"
-        app:titleMarginStart="32dp" />
+        android:elevation="8dp">
 
-    <EditText
-        android:id="@+id/edtContSearch"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/select_contacts_Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back2"
+            app:title="Search for People"
+            app:titleCentered="true">
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider_Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/contactsearchBoardToolbar"
-        android:layout_marginStart="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_toLeftOf="@id/imgContSearch"
-        android:hint="@string/search_for_users"
-        android:maxLines="1" />
+        android:layout_below="@id/select_contacts_BarLayout" />
 
-    <ImageView
-        android:id="@+id/imgContSearch"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_below="@id/contactsearchBoardToolbar"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_contact_search" />
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider_Title"
+        android:queryHint="@string/searchbar_hint"
+        app:iconifiedByDefault="false"
+        android:maxLines="1"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/bg_search"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recvContactSearch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/edtContSearch"
+        android:layout_below="@id/search_view"
         android:layout_margin="10dp" />
 </RelativeLayout>

@@ -32,6 +32,20 @@ public static User removeCurrentUserFromList(List<User> users, Long id) {
       return newUserList;
    }
 
+   public static void removeCurrentUser(
+           List<User> users,
+           Long id
+   ) {
+
+      if(!users.isEmpty()){
+         for (User user : users) {
+            if (user.getUserId().equals(id)) {
+               users.remove(user);
+            }
+         }
+      }
+   }
+
    public static User getUserByID(List<User> users, Long id) {
       for (User user : users) {
          if (user.getUserId().equals(id)) {

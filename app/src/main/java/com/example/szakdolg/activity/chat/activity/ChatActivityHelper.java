@@ -124,13 +124,6 @@ public class ChatActivityHelper {
 
 
    public MessageEntry sendMessage(String content, int messageType) {
-      if (conversation.getNumberOfParticipants() > 2) {
-         //TODO GROUP Conversation
-         return null;
-      } else {
-         User user = users.get(0);
-
-         String publicKey = user.getPublicKey();
 
 
          MessageEntry messageEntry = new MessageEntry(
@@ -160,7 +153,7 @@ public class ChatActivityHelper {
          });
 
          return messageEntry;
-      }
+
 
    }
 

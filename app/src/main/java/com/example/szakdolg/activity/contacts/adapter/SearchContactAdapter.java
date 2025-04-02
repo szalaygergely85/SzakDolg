@@ -1,10 +1,10 @@
 package com.example.szakdolg.activity.contacts.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,13 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.szakdolg.R;
-import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.models.user.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
 
 public class SearchContactAdapter
    extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder>
@@ -49,7 +46,7 @@ public class SearchContactAdapter
    ) {
       View view = LayoutInflater
          .from(parent.getContext())
-         .inflate(R.layout.contact_search_item, parent, false);
+         .inflate(R.layout.item_contact_search, parent, false);
       SearchContactAdapter.ViewHolder holder =
          new SearchContactAdapter.ViewHolder(view);
       return holder;
@@ -132,7 +129,7 @@ public class SearchContactAdapter
 
       private final ImageView imageView;
       private final TextView txtName;
-      private final ImageButton btnAdd;
+      private final Button btnAdd;
 
       public ViewHolder(@NonNull View itemView) {
          super(itemView);

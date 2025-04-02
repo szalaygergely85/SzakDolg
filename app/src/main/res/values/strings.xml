@@ -54,4 +54,5 @@
     <string name="video_call">Video Call</string>
     <string name="send_a_message">Send a message</string>
     <string name="search">Search...</string>
+    <string name="searchbar_hint">Search...</string>
 </resources>
