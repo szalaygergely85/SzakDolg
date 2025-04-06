@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.login.LoginActivity;
 import com.example.szakdolg.activity.main.MainActivity;
@@ -129,7 +128,6 @@ private ConversationApiHelper conversationApiHelper =
       );
 
       initView();
-
 
       ActionBar actionBar = getSupportActionBar();
       actionBar.setDisplayHomeAsUpEnabled(true);

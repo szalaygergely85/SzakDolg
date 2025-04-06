@@ -3,7 +3,6 @@ package com.example.szakdolg.activity.base;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.activity.login.LoginActivity;
 import com.example.szakdolg.constans.AppConstants;
@@ -51,7 +50,9 @@ public class BaseActivity extends AppCompatActivity {
    protected void navigateToLogin() {
       Log.d(AppConstants.LOG_TAG, "Navigating to login...");
       Intent intent = new Intent(this, LoginActivity.class);
-      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+      intent.setFlags(
+         Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK
+      );
       startActivity(intent);
       finish();
    }
@@ -62,15 +63,15 @@ public class BaseActivity extends AppCompatActivity {
       return userDatabaseUtil.getCurrentUserByToken(token);
    }
 
-   private void _deletePref(){
+   private void _deletePref() {
       SharedPreferencesUtil.deletePreference(
-              this,
-              SharedPreferencesConstants.USERTOKEN
+         this,
+         SharedPreferencesConstants.USERTOKEN
       );
 
       SharedPreferencesUtil.deletePreference(
-              this,
-              SharedPreferencesConstants.USER_ID
+         this,
+         SharedPreferencesConstants.USER_ID
       );
    }
 }

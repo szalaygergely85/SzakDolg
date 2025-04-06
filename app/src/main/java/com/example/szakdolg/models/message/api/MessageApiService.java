@@ -9,7 +9,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MessageApiService {
@@ -21,15 +20,14 @@ public interface MessageApiService {
 
    @POST("message/add-messages")
    Call<List<MessageEntry>> addMessages(
-           @Body List<MessageEntry> messages,
-           @Header("Authorization") String token
+      @Body List<MessageEntry> messages,
+      @Header("Authorization") String token
    );
 
    @GET("message/new-message")
    Call<List<MessageEntry>> getNewMessages(
       @Header("Authorization") String token
    );
-
 
    @GET("message/get-messages")
    Call<List<MessageEntry>> getMessages(
@@ -39,10 +37,9 @@ public interface MessageApiService {
 
    @GET("message/get-latest-message")
    Call<MessageEntry> getLatestMessage(
-           @Header("Authorization") String token,
-           @Query("conversationId") Long conversationId
+      @Header("Authorization") String token,
+      @Query("conversationId") Long conversationId
    );
-
 
    @GET("message/validate")
    Call<ArrayList<MessageEntry>> getMessagesAndCompareWithLocal(

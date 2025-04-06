@@ -15,8 +15,12 @@ public class ConversationDTO implements Serializable {
 
    private MessageEntry messageEntry;
 
-
-   public ConversationDTO(Conversation conversation, List<ConversationParticipant> participants, List<User> users, MessageEntry messageEntry) {
+   public ConversationDTO(
+      Conversation conversation,
+      List<ConversationParticipant> participants,
+      List<User> users,
+      MessageEntry messageEntry
+   ) {
       this.conversation = conversation;
       this.participants = participants;
       this.users = users;

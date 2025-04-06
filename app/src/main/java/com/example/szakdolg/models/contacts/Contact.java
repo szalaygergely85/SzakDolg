@@ -1,30 +1,23 @@
 package com.example.szakdolg.models.contacts;
 
-
-import com.example.szakdolg.models.user.entity.User;
-
 public class Contact {
+
    private Long contactId;
    private Long ownerId;
    private Long contactUserId;
 
-
    public Contact(Long ownerId, Long contactUserId) {
       this.ownerId = ownerId;
       this.contactUserId = contactUserId;
-
    }
 
    public Contact() {}
-
 
    public Contact(Long contactId, Long ownerId, Long contactUserId) {
       this.contactId = contactId;
       this.ownerId = ownerId;
       this.contactUserId = contactUserId;
    }
-
-
 
    public Long getContactId() {
       return contactId;

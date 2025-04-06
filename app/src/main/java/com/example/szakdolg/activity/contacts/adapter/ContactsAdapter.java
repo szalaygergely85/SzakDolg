@@ -17,7 +17,6 @@ import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserService;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +31,12 @@ public class ContactsAdapter
 
    private UserService userService;
 
-
    public ContactsAdapter(Context context, User currentUser) {
       this.context = context;
       this.currentUser = currentUser;
 
       this.userService = new UserService(context);
    }
-
 
    @NonNull
    @Override
@@ -57,40 +54,46 @@ public class ContactsAdapter
    @Override
    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
       Contact contact = contacts.get(holder.getAdapterPosition());
-      userService.getUserByUserId(contact.getContactUserId(), currentUser, new UserService.UserCallback<User>() {
-                 @Override
-                 public void onSuccess(User user) {
-                    holder.txtName.setText(user.getDisplayName());
-                    holder.relativeLayout.setOnClickListener(
-                            new View.OnClickListener() {
-                               @Override
-                               public void onClick(View view) {
-                                  Intent intent = new Intent(context, ProfileActivity.class);
-                                  intent.putExtra(
-                                          SharedPreferencesConstants.OTHER_USER,
-                                          user
-                                  );
-                                  intent.putExtra(SharedPreferencesConstants.CURRENT_USER, currentUser);
-                                  context.startActivity(intent);
-                                  Toast
-                                          .makeText(
-                                                  view.getContext(),
-                                                  user.toString(),
-                                                  Toast.LENGTH_SHORT
-                                          )
-                                          .show();
-                               }
-                            }
-                    );
-                 }
+      userService.getUserByUserId(
+         contact.getContactUserId(),
+         currentUser,
+         new UserService.UserCallback<User>() {
+            @Override
+            public void onSuccess(User user) {
+               holder.txtName.setText(user.getDisplayName());
+               holder.relativeLayout.setOnClickListener(
+                  new View.OnClickListener() {
+                     @Override
+                     public void onClick(View view) {
+                        Intent intent = new Intent(
+                           context,
+                           ProfileActivity.class
+                        );
+                        intent.putExtra(
+                           SharedPreferencesConstants.OTHER_USER,
+                           user
+                        );
+                        intent.putExtra(
+                           SharedPreferencesConstants.CURRENT_USER,
+                           currentUser
+                        );
+                        context.startActivity(intent);
+                        Toast
+                           .makeText(
+                              view.getContext(),
+                              user.toString(),
+                              Toast.LENGTH_SHORT
+                           )
+                           .show();
+                     }
+                  }
+               );
+            }
 
-                 @Override
-                 public void onError(Throwable t) {
-
-                 }
-              });
-
-
+            @Override
+            public void onError(Throwable t) {}
+         }
+      );
    }
 
    @Override

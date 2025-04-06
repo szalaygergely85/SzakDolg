@@ -4,30 +4,30 @@ import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.user.entity.User;
 
 public class ContactsDTO {
-    private Contact contact;
-    private User user;
 
-    public ContactsDTO() {
-    }
+   private Contact contact;
+   private User user;
 
-    public ContactsDTO(Contact contact, User user) {
-        this.contact = contact;
-        this.user = user;
-    }
+   public ContactsDTO() {}
 
-    public Contact getContact() {
-        return contact;
-    }
+   public ContactsDTO(Contact contact, User user) {
+      this.contact = contact;
+      this.user = user;
+   }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
+   public Contact getContact() {
+      return contact;
+   }
 
-    public User getUser() {
-        return user;
-    }
+   public void setContact(Contact contact) {
+      this.contact = contact;
+   }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+   public User getUser() {
+      return user;
+   }
+
+   public void setUser(User user) {
+      this.user = user;
+   }
 }

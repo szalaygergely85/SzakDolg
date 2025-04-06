@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
-
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.models.image.ImageCoordinatorService;
 import com.example.szakdolg.models.image.constans.ImageConstans;
@@ -39,17 +38,25 @@ public class ProfilePictureActivityHelper {
 
       UserService userService = new UserService(context);
       currentUser.setProfilePictureUuid(imageEntity.getUuid());
-      userService.updateUser(currentUser, currentUser.getToken(), new UserService.UserCallback<User>() {
-         @Override
-         public void onSuccess(User data) {
-            Log.i(AppConstants.LOG_TAG, "User: "+currentUser.getUserId() + " profile pic updated with pic uuid: " + imageEntity.getUuid());
-         }
+      userService.updateUser(
+         currentUser,
+         currentUser.getToken(),
+         new UserService.UserCallback<User>() {
+            @Override
+            public void onSuccess(User data) {
+               Log.i(
+                  AppConstants.LOG_TAG,
+                  "User: " +
+                  currentUser.getUserId() +
+                  " profile pic updated with pic uuid: " +
+                  imageEntity.getUuid()
+               );
+            }
 
-         @Override
-         public void onError(Throwable t) {
-
+            @Override
+            public void onError(Throwable t) {}
          }
-      });
+      );
    }
 
    public void setImageViewer(

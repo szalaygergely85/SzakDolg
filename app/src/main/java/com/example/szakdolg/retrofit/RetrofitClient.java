@@ -1,6 +1,5 @@
 package com.example.szakdolg.retrofit;
 
-import com.example.szakdolg.constans.AppConstants;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import retrofit2.Retrofit;
@@ -14,14 +13,15 @@ public class RetrofitClient {
    private RetrofitClient() {} // Private constructor to prevent instantiation
 
    public static Retrofit getRetrofitInstance() {
-      if (retrofit == null) {  // First check (no lock)
-         synchronized (RetrofitClient.class) {  // Synchronization block
-            if (retrofit == null) {  // Second check (inside lock)
+      if (retrofit == null) { // First check (no lock)
+         synchronized (RetrofitClient.class) { // Synchronization block
+            if (retrofit == null) { // Second check (inside lock)
                Gson gson = new GsonBuilder().setLenient().create();
-               retrofit = new Retrofit.Builder()
-                       .baseUrl(BASE_URL)
-                       .addConverterFactory(GsonConverterFactory.create(gson))
-                       .build();
+               retrofit =
+               new Retrofit.Builder()
+                  .baseUrl(BASE_URL)
+                  .addConverterFactory(GsonConverterFactory.create(gson))
+                  .build();
             }
          }
       }

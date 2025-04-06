@@ -17,6 +17,7 @@ public class UserDatabaseUtil {
    public UserDatabaseUtil(Context context, User user) {
       this(context, user.getUserId().toString());
    }
+
    public UserDatabaseUtil(Context context, String userId) {
       dbHelper = DatabaseHelper.getInstance(context, userId);
    }
@@ -212,7 +213,6 @@ public class UserDatabaseUtil {
    }
 
    public void insertUser(User user) {
-
       SQLiteDatabase db = dbHelper.getWritableDatabase();
 
       try {
@@ -226,7 +226,12 @@ public class UserDatabaseUtil {
          values.put("tags", user.getTags());
          values.put("authToken", user.getToken());
 
-         db.insertWithOnConflict(dbHelper.TABLE_USER_ENTRY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+         db.insertWithOnConflict(
+            dbHelper.TABLE_USER_ENTRY,
+            null,
+            values,
+            SQLiteDatabase.CONFLICT_REPLACE
+         );
       } finally {
          db.close();
       }

@@ -15,7 +15,8 @@ public class ConversationParticipantDatabaseUtil {
    private DatabaseHelper dbHelper;
 
    public ConversationParticipantDatabaseUtil(Context context, User user) {
-      dbHelper = DatabaseHelper.getInstance(context, user.getUserId().toString());
+      dbHelper =
+      DatabaseHelper.getInstance(context, user.getUserId().toString());
    }
 
    public void insertConversationParticipant(
@@ -27,7 +28,12 @@ public class ConversationParticipantDatabaseUtil {
       values.put("conversationId", participant.getConversationId());
       values.put("userId", participant.getUserId());
 
-      db.insertWithOnConflict(dbHelper.TABLE_CONVERSATION_PARTICIPANTS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+      db.insertWithOnConflict(
+         dbHelper.TABLE_CONVERSATION_PARTICIPANTS,
+         null,
+         values,
+         SQLiteDatabase.CONFLICT_REPLACE
+      );
       db.close();
    }
 
@@ -45,7 +51,7 @@ public class ConversationParticipantDatabaseUtil {
 
       if (cursor.moveToFirst()) {
          do {
- // Assuming it's the first column
+            // Assuming it's the first column
             long userId = cursor.getLong(1);
 
             ConversationParticipant participant = new ConversationParticipant(

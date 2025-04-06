@@ -16,7 +16,8 @@ public class ConversationDatabaseUtil {
    private DatabaseHelper dbHelper;
 
    public ConversationDatabaseUtil(Context context, User user) {
-      dbHelper = DatabaseHelper.getInstance(context, user.getUserId().toString());
+      dbHelper =
+      DatabaseHelper.getInstance(context, user.getUserId().toString());
    }
 
    public void insertConversation(Conversation conversation) {
@@ -31,7 +32,12 @@ public class ConversationDatabaseUtil {
          conversation.getNumberOfParticipants()
       );
 
-      db.insertWithOnConflict(dbHelper.TABLE_CONVERSATIONS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+      db.insertWithOnConflict(
+         dbHelper.TABLE_CONVERSATIONS,
+         null,
+         values,
+         SQLiteDatabase.CONFLICT_REPLACE
+      );
       db.close();
    }
 

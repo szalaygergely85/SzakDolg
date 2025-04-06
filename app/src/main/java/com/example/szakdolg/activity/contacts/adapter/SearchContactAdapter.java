@@ -4,27 +4,20 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.szakdolg.R;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.contacts.ContactService;
 import com.example.szakdolg.models.user.entity.User;
 import com.google.android.material.button.MaterialButton;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchContactAdapter
-   extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder>
-{
-
+   extends RecyclerView.Adapter<SearchContactAdapter.ViewHolder> {
 
    private final Context context;
 
@@ -32,11 +25,7 @@ public class SearchContactAdapter
    private List<User> userList = new ArrayList<>();
    private ContactService contactService;
 
-
-   public SearchContactAdapter(
-      Context context,
-      User currentUser
-   ) {
+   public SearchContactAdapter(Context context, User currentUser) {
       this.currentUser = currentUser;
       this.context = context;
       this.contactService = new ContactService(context, currentUser);
@@ -62,39 +51,44 @@ public class SearchContactAdapter
 
       holder.txtName.setText(user.getDisplayName());
 
-      contactService.isContact(user.getUserId(), currentUser.getToken(), new ContactService.ContactCallback<Boolean>() {
-         @Override
-         public void onSuccess(Boolean found) {
-            if(found){
-               holder.btnAdd.setIconResource(R.drawable.ic_check);
-            }
-
-         }
-
-         @Override
-         public void onError(Throwable t) {
-
-         }
-      });
-
-      holder.btnAdd.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
-            contactService.addContact(new Contact(currentUser.getUserId(), user.getUserId()), currentUser.getToken(), new ContactService.ContactCallback<Contact>() {
-               @Override
-               public void onSuccess(Contact contact) {
-               if(contact!=null){
+      contactService.isContact(
+         user.getUserId(),
+         currentUser.getToken(),
+         new ContactService.ContactCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean found) {
+               if (found) {
                   holder.btnAdd.setIconResource(R.drawable.ic_check);
                }
-               }
+            }
 
-               @Override
-               public void onError(Throwable t) {
-
-               }
-            });
+            @Override
+            public void onError(Throwable t) {}
          }
-      });
+      );
+
+      holder.btnAdd.setOnClickListener(
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               contactService.addContact(
+                  new Contact(currentUser.getUserId(), user.getUserId()),
+                  currentUser.getToken(),
+                  new ContactService.ContactCallback<Contact>() {
+                     @Override
+                     public void onSuccess(Contact contact) {
+                        if (contact != null) {
+                           holder.btnAdd.setIconResource(R.drawable.ic_check);
+                        }
+                     }
+
+                     @Override
+                     public void onError(Throwable t) {}
+                  }
+               );
+            }
+         }
+      );
    }
 
    @Override

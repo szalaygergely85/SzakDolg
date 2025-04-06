@@ -4,15 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.MyEditText;
 import com.example.szakdolg.R;
@@ -22,15 +19,10 @@ import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.file.api.FileApiHelper;
-import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.util.FileUtil;
-import com.example.szakdolg.util.UUIDUtil;
 import com.google.android.material.appbar.MaterialToolbar;
-
-import java.io.File;
 import java.util.List;
 
 public class ChatActivity extends BaseActivity {
@@ -53,7 +45,9 @@ public class ChatActivity extends BaseActivity {
       setContentView(R.layout.activity_chat);
 
       MaterialToolbar toolbar = findViewById(R.id.chatToolbar);
-      toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+      toolbar.setNavigationOnClickListener(v ->
+         getOnBackPressedDispatcher().onBackPressed()
+      );
 
       _initView();
 
@@ -62,9 +56,10 @@ public class ChatActivity extends BaseActivity {
       _setListeners();
 
       chatActivityHelper =
-              new ChatActivityHelper(this, conversation, currentUser, users);
+      new ChatActivityHelper(this, conversation, currentUser, users);
 
-      adapter = new ChatAdapter(this, currentUser, chatRecView, chatActivityHelper);
+      adapter =
+      new ChatAdapter(this, currentUser, chatRecView, chatActivityHelper);
 
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
@@ -72,14 +67,12 @@ public class ChatActivity extends BaseActivity {
    }
 
    private void _getIntentExtras() {
-
-      ConversationDTO conversationDTO = (ConversationDTO) this.getIntent().getSerializableExtra(IntentConstants.CONVERSATION_DTO);
+      ConversationDTO conversationDTO = (ConversationDTO) this.getIntent()
+         .getSerializableExtra(IntentConstants.CONVERSATION_DTO);
       conversation = conversationDTO.getConversation();
       users = conversationDTO.getUsers();
       conversationId = conversation.getConversationId();
    }
-
-
 
    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
       @Override
@@ -139,19 +132,19 @@ public class ChatActivity extends BaseActivity {
    }
 
    private void _setListeners() {/*
-      edtMess.setKeyBoardInputCallbackListener(
-         new MyEditText.KeyBoardInputCallbackListener() {
-            @Override
-            public void onCommitContent(
-               InputContentInfoCompat inputContentInfo,
-               int flags,
-               Bundle opts
-            ) {
-               _sendFile(inputContentInfo.getLinkUri());
-            }
-         }
-      );
-      mToolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+	edtMess.setKeyBoardInputCallbackListener(
+		new MyEditText.KeyBoardInputCallbackListener() {
+			@Override
+			public void onCommitContent(
+			InputContentInfoCompat inputContentInfo,
+			int flags,
+			Bundle opts
+			) {
+			_sendFile(inputContentInfo.getLinkUri());
+			}
+		}
+	);
+	mToolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 */
       imgSend.setOnClickListener(
          new View.OnClickListener() {
@@ -168,7 +161,6 @@ public class ChatActivity extends BaseActivity {
 
                      edtMess.getText().clear();
                      adapter.addMessage(messageEntry);
-
                   } catch (Exception e) {
                      throw new RuntimeException(e);
                   }
@@ -177,36 +169,36 @@ public class ChatActivity extends BaseActivity {
          }
       );
    }
-/*
-   private void _sendFile(Uri uri) {
-      new Thread(() -> {
-         String uUId = UUIDUtil.UUIDGenerator();
+   /*
+private void _sendFile(Uri uri) {
+	new Thread(() -> {
+		String uUId = UUIDUtil.UUIDGenerator();
 
-         File file = new File(
-            this.getFilesDir() +
-            "/Pictures/" +
-            uUId +
-            "." +
-            FileUtil.getFileExtensionFromUri(uri)
-         );
+		File file = new File(
+			this.getFilesDir() +
+			"/Pictures/" +
+			uUId +
+			"." +
+			FileUtil.getFileExtensionFromUri(uri)
+		);
 
-         MessageEntry messageEntry = new MessageEntry(
-            null,
-            conversationId,
-            currentUser.getUserId(),
-            System.currentTimeMillis(),
-            null,
-            false,
-            MessageTypeConstants.IMAGE,
-            uUId + "." + FileUtil.getFileExtensionFromUri(uri),
-            UUIDUtil.UUIDGenerator()
-         );
-         FileUtil.saveFileFromUri(
-            uri,
-            file,
-            () -> fileApiHelper.uploadFile(file, messageEntry)
-         );
-      })
-         .start();
-   }*/
+		MessageEntry messageEntry = new MessageEntry(
+			null,
+			conversationId,
+			currentUser.getUserId(),
+			System.currentTimeMillis(),
+			null,
+			false,
+			MessageTypeConstants.IMAGE,
+			uUId + "." + FileUtil.getFileExtensionFromUri(uri),
+			UUIDUtil.UUIDGenerator()
+		);
+		FileUtil.saveFileFromUri(
+			uri,
+			file,
+			() -> fileApiHelper.uploadFile(file, messageEntry)
+		);
+	})
+		.start();
+}*/
 }

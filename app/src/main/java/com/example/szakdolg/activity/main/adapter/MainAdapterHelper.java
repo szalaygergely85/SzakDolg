@@ -14,7 +14,6 @@ import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
-import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.models.user.util.UserUtil;
 import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.KeyStoreUtil;
@@ -37,12 +36,10 @@ public class MainAdapterHelper {
    public MainAdapterHelper(User currentUser, Context context) {
       this.currentUser = currentUser;
       this.context = context;
-      this.conversationService =
-      new ConversationService(context, currentUser);
+      this.conversationService = new ConversationService(context, currentUser);
       this.imageCoordinatorService =
       new ImageCoordinatorService(context, currentUser);
-      this.messageService =
-      new MessageService(context, currentUser);
+      this.messageService = new MessageService(context, currentUser);
    }
 
    public void setImageView(List<User> participants, ImageView image) {
@@ -52,20 +49,24 @@ public class MainAdapterHelper {
             .load(R.drawable.ic_group) // Load your drawable directly
             .into(image);
       } else {
-         List<User>otherUsers = UserUtil.removeCurrentUserFromList(participants, currentUser.getUserId());
+         List<User> otherUsers = UserUtil.removeCurrentUserFromList(
+            participants,
+            currentUser.getUserId()
+         );
 
-         String imageUrl = ImageUtil.buildProfileImageUrl(otherUsers.get(0).getUserId());
+         String imageUrl = ImageUtil.buildProfileImageUrl(
+            otherUsers.get(0).getUserId()
+         );
          if (imageUrl != null) {
             Glide
-                    .with(context)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.ic_blank_profile)
-                    .error(R.drawable.ic_blank_profile)
-                    .into(image);
+               .with(context)
+               .load(imageUrl)
+               .placeholder(R.drawable.ic_blank_profile)
+               .error(R.drawable.ic_blank_profile)
+               .into(image);
          } else {
             image.setImageResource(R.drawable.ic_blank_profile);
          }
-
       }
    }
 

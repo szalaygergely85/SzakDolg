@@ -7,16 +7,13 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.contacts.adapter.ContactsAdapter;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.contacts.ContactService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.List;
 
 public class ContactsActivity extends BaseActivity {
@@ -42,7 +39,6 @@ public class ContactsActivity extends BaseActivity {
       contactService = new ContactService(this, currentUser);
       contactsAdapter = new ContactsAdapter(this, currentUser);
 
-
       // Toolbar settings
       Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
       setSupportActionBar(mToolbar);
@@ -60,24 +56,25 @@ public class ContactsActivity extends BaseActivity {
    @Override
    public boolean onSupportNavigateUp() {
       getOnBackPressedDispatcher().onBackPressed();
-    return true;
+      return true;
    }
-
 
    @Override
    protected void onStart() {
       super.onStart();
-      contactService.getContacts(currentUser.getToken(), null, new ContactService.ContactCallback<List<ContactsDTO>>() {
-         @Override
-         public void onSuccess(List<ContactsDTO> data) {
-            //contactsAdapter.setContact(data);
-         }
+      contactService.getContacts(
+         currentUser.getToken(),
+         null,
+         new ContactService.ContactCallback<List<ContactsDTO>>() {
+            @Override
+            public void onSuccess(List<ContactsDTO> data) {
+               //contactsAdapter.setContact(data);
+            }
 
-         @Override
-         public void onError(Throwable t) {
-
+            @Override
+            public void onError(Throwable t) {}
          }
-      });
+      );
 
       contsRecView.setAdapter(contactsAdapter);
       contsRecView.setLayoutManager(new LinearLayoutManager(this));

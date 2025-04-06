@@ -16,7 +16,8 @@ public class MessageDatabaseUtil {
    private DatabaseHelper dbHelper;
 
    public MessageDatabaseUtil(Context context, User user) {
-      dbHelper = DatabaseHelper.getInstance(context, user.getUserId().toString());
+      dbHelper =
+      DatabaseHelper.getInstance(context, user.getUserId().toString());
    }
 
    public void insertMessageEntry(MessageEntry message) {
@@ -32,8 +33,12 @@ public class MessageDatabaseUtil {
          values.put("type", message.getType());
          values.put("content", message.getContent());
          values.put("uUId", message.getUuId());
-         db.insertWithOnConflict(dbHelper.TABLE_MESSAGE_ENTRY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-
+         db.insertWithOnConflict(
+            dbHelper.TABLE_MESSAGE_ENTRY,
+            null,
+            values,
+            SQLiteDatabase.CONFLICT_REPLACE
+         );
       } finally {
          db.close();
       }

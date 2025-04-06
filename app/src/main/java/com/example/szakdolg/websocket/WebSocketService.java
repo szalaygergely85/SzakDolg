@@ -180,7 +180,7 @@ public class WebSocketService extends Service {
             }
          }
       );
-     // startPingPong();
+      // startPingPong();
    }
 
    private void startPingPong() {
@@ -237,17 +237,17 @@ public class WebSocketService extends Service {
       String contentEncrypted = jsonObject.has("contentEncrypted")
          ? jsonObject.getString("contentEncrypted")
          : null;
-      MessageDatabaseUtil messageDatabaseUtil =
-         new MessageDatabaseUtil(context, currentUser);
-      MessageEntry messageEntry =
-         new MessageEntry(
-            conversationId,
-            senderId,
-            timestamp,
-            contentEncrypted,
-            MessageTypeConstants.MESSAGE,
-            uuid
-
+      MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
+         context,
+         currentUser
+      );
+      MessageEntry messageEntry = new MessageEntry(
+         conversationId,
+         senderId,
+         timestamp,
+         contentEncrypted,
+         MessageTypeConstants.MESSAGE,
+         uuid
       );
       messageDatabaseUtil.insertMessageEntry(messageEntry);
       sendMessageBroadcast(messageEntry);

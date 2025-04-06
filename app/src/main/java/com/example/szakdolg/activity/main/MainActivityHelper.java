@@ -10,14 +10,11 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.activity.contacts.activity.SelectContactsActivity;
 import com.example.szakdolg.activity.contacts.constans.ContactsConstans;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.service.ConversationService;
-import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -35,10 +32,8 @@ public class MainActivityHelper {
    public MainActivityHelper(Context _context, User currentUser) {
       this._context = _context;
       this.currentUser = currentUser;
-      this.conversationService =
-      new ConversationService(_context, currentUser);
+      this.conversationService = new ConversationService(_context, currentUser);
    }
-
 
    public void setBottomNavMenu(BottomNavigationView bottomNavigationView) {
       bottomNavigationView.setOnItemSelectedListener(
@@ -52,11 +47,13 @@ public class MainActivityHelper {
                      _context.startActivity(intent);
                      break;
                   case R.id.nav_contact_main:
-                     intent =  new Intent(_context, SelectContactsActivity.class);
-                     intent.putExtra(IntentConstants.CONTACTS_ACTION, ContactsConstans.ACTION_VIEW);
-                     _context.startActivity(
-                             intent
+                     intent =
+                     new Intent(_context, SelectContactsActivity.class);
+                     intent.putExtra(
+                        IntentConstants.CONTACTS_ACTION,
+                        ContactsConstans.ACTION_VIEW
                      );
+                     _context.startActivity(intent);
 
                      break;
                }
@@ -84,8 +81,8 @@ public class MainActivityHelper {
                      );
 
                      SharedPreferencesUtil.deletePreference(
-                             _context,
-                             SharedPreferencesConstants.USER_ID
+                        _context,
+                        SharedPreferencesConstants.USER_ID
                      );
                      _context.startActivity(
                         new Intent(_context, MainActivity.class)
@@ -120,8 +117,14 @@ public class MainActivityHelper {
             public boolean onMenuItemClick(@NonNull MenuItem item) {
                switch (item.getItemId()) {
                   case R.id.menuNewMain:
-                     Intent intent =  new Intent(_context, SelectContactsActivity.class);
-                     intent.putExtra(IntentConstants.CONTACTS_ACTION, ContactsConstans.ACTION_SELECT);
+                     Intent intent = new Intent(
+                        _context,
+                        SelectContactsActivity.class
+                     );
+                     intent.putExtra(
+                        IntentConstants.CONTACTS_ACTION,
+                        ContactsConstans.ACTION_SELECT
+                     );
                      _context.startActivity(intent);
                      return true; // Indicate that the click was handled
                   default:

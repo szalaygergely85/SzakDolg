@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +27,6 @@ import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
-import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.message.entity.MessageEntry;
@@ -60,7 +58,6 @@ public class MainActivity extends BaseActivity {
       _initView();
 
       conversationService = new ConversationService(this, currentUser);
-
    }
 
    @Override
@@ -188,30 +185,30 @@ public class MainActivity extends BaseActivity {
          }
       });
 
-      conversationService.getAllConversations(new ConversationService.ConversationCallback<List<ConversationDTO>>() {
-         @Override
-         public void onSuccess(List<ConversationDTO> conversationList) {
-            if (conversationList != null) {
-               _validateConversation(conversationList);
-               emptyLayout.setVisibility(View.GONE);
-               withItemsLayout.setVisibility(View.VISIBLE);
-               mainAdapter.setConversationList(conversationList);
-
-
-            } else {
-               emptyLayout.setVisibility(View.VISIBLE);
-               withItemsLayout.setVisibility(View.GONE);
+      conversationService.getAllConversations(
+         new ConversationService.ConversationCallback<List<ConversationDTO>>() {
+            @Override
+            public void onSuccess(List<ConversationDTO> conversationList) {
+               if (conversationList != null) {
+                  _validateConversation(conversationList);
+                  emptyLayout.setVisibility(View.GONE);
+                  withItemsLayout.setVisibility(View.VISIBLE);
+                  mainAdapter.setConversationList(conversationList);
+               } else {
+                  emptyLayout.setVisibility(View.VISIBLE);
+                  withItemsLayout.setVisibility(View.GONE);
+               }
             }
-         }
 
-         @Override
-         public void onError(Throwable t) {
-
+            @Override
+            public void onError(Throwable t) {}
          }
-      });
+      );
 
       messageBoardRecView.setAdapter(mainAdapter);
-      messageBoardRecView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+      messageBoardRecView.setLayoutManager(
+         new LinearLayoutManager(MainActivity.this)
+      );
       //set menu text and image logo
 
       profileTextHeader.setText(currentUser.getDisplayName());
@@ -230,8 +227,12 @@ public class MainActivity extends BaseActivity {
    }
 
    private void _validateConversation(List<ConversationDTO> conversationList) {
-      for (ConversationDTO conversationDTO : conversationList){
-         if(conversationDTO.getConversation()==null || conversationDTO.getUsers()==null || conversationDTO.getParticipants()==null){
+      for (ConversationDTO conversationDTO : conversationList) {
+         if (
+            conversationDTO.getConversation() == null ||
+            conversationDTO.getUsers() == null ||
+            conversationDTO.getParticipants() == null
+         ) {
             conversationList.remove(conversationDTO);
          }
       }

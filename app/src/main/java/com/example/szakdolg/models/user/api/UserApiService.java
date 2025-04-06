@@ -2,9 +2,7 @@ package com.example.szakdolg.models.user.api;
 
 import com.example.szakdolg.DTO.LoginRequest;
 import com.example.szakdolg.models.user.entity.User;
-
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -24,7 +22,10 @@ public interface UserApiService {
    Call<User> getUserByToken(@Path("token") String token);
 
    @GET("user/search/{search}")
-   Call<List<User>> searchUser(@Path("search") String search, @Header("Authorization") String token);
+   Call<List<User>> searchUser(
+      @Path("search") String search,
+      @Header("Authorization") String token
+   );
 
    @POST("user/login")
    Call<User> getTokenByPasswordAndEmail(@Body LoginRequest loginRequest);
@@ -40,5 +41,4 @@ public interface UserApiService {
       @Path("userId") Long userId,
       @Header("Authorization") String token
    );
-
 }

@@ -2,7 +2,6 @@ package com.example.szakdolg.activity.chat.activity;
 
 import android.icu.text.DateFormat;
 import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,9 +14,7 @@ import com.example.szakdolg.models.message.MessageService;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.util.UserUtil;
-import com.example.szakdolg.util.EncryptionHelper;
 import com.example.szakdolg.util.UUIDUtil;
-
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,11 +43,9 @@ public class ChatActivityHelper {
       this.conversation = conversation;
       this.context = context;
       this.users = users;
-      this.conversationService =
-      new ConversationService(context, currentUser);
+      this.conversationService = new ConversationService(context, currentUser);
 
       this.currentUser = currentUser;
-
 
       this.messageService = new MessageService(context, currentUser);
    }
@@ -63,26 +58,22 @@ public class ChatActivityHelper {
    }
 
    public void setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {
+      messageService.getMessagesByConversationId(
+         conversation.getConversationId(),
+         new MessageService.MessageCallback<List<MessageEntry>>() {
+            @Override
+            public void onSuccess(List<MessageEntry> messageEntries) {
+               messageEntries.sort(
+                  Comparator.comparingLong(MessageEntry::getTimestamp)
+               );
 
-      messageService.getMessagesByConversationId(conversation.getConversationId(), new MessageService.MessageCallback<List<MessageEntry>>() {
-         @Override
-         public void onSuccess(List<MessageEntry> messageEntries) {
-            messageEntries.sort(
-                    Comparator.comparingLong(MessageEntry::getTimestamp)
-            );
+               adapter.setMessageEntries(_prepareMessageList(messageEntries));
+            }
 
-            adapter.setMessageEntries(
-                    _prepareMessageList(messageEntries)
-            );
+            @Override
+            public void onError(Throwable t) {}
          }
-
-         @Override
-         public void onError(Throwable t) {
-
-         }
-      });
-
-
+      );
 
       chatRecView.setAdapter(adapter);
       chatRecView.setLayoutManager(new LinearLayoutManager(context));
@@ -94,67 +85,66 @@ public class ChatActivityHelper {
       long previousTimestamp = 0L;
       for (MessageEntry messageEntry : messageEntries) {
          if (isNewDay(previousTimestamp, messageEntry.getTimestamp())) {
+            DateFormat dateFormat = DateFormat.getDateInstance(
+               DateFormat.SHORT,
+               Locale.getDefault()
+            );
 
-            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-
-            sortedList.add(dateFormat.format(new Date(messageEntry.getTimestamp())));
-
+            sortedList.add(
+               dateFormat.format(new Date(messageEntry.getTimestamp()))
+            );
          }
 
          sortedList.add(messageEntry);
-         previousTimestamp=messageEntry.getTimestamp();
-
+         previousTimestamp = messageEntry.getTimestamp();
       }
       return sortedList;
    }
 
-   private boolean isNewDay(long previousTimestamp, long currentTimestamp){
+   private boolean isNewDay(long previousTimestamp, long currentTimestamp) {
+      Date currentDate = new Date(currentTimestamp);
+      Date previousDate = new Date(previousTimestamp);
 
+      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            Date currentDate = new Date(currentTimestamp);
-            Date previousDate = new Date(previousTimestamp);
+      String currentDateStr = dateFormat.format(currentDate);
+      String previousDateStr = dateFormat.format(previousDate);
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            String currentDateStr = dateFormat.format(currentDate);
-            String previousDateStr = dateFormat.format(previousDate);
-
-            return !currentDateStr.equals(previousDateStr);
+      return !currentDateStr.equals(previousDateStr);
    }
 
-
    public MessageEntry sendMessage(String content, int messageType) {
+      MessageEntry messageEntry = new MessageEntry(
+         null,
+         conversation.getConversationId(),
+         currentUser.getUserId(),
+         System.currentTimeMillis(),
+         null,
+         false,
+         messageType,
+         content,
+         UUIDUtil.UUIDGenerator(),
+         false
+      );
 
-
-         MessageEntry messageEntry = new MessageEntry(
-            null,
-            conversation.getConversationId(),
-            currentUser.getUserId(),
-            System.currentTimeMillis(),
-            null,
-            false,
-            messageType,
-            content,
-            UUIDUtil.UUIDGenerator(),
-                 false
-         );
-
-         MessageService messageService = new MessageService(context, currentUser);
-         messageService.addMessage(messageEntry, new MessageService.MessageCallback<MessageEntry>() {
+      MessageService messageService = new MessageService(context, currentUser);
+      messageService.addMessage(
+         messageEntry,
+         new MessageService.MessageCallback<MessageEntry>() {
             @Override
             public void onSuccess(MessageEntry data) {
-               Log.i(AppConstants.LOG_TAG, "Message sent to: " + messageEntry.getConversationId());
+               Log.i(
+                  AppConstants.LOG_TAG,
+                  "Message sent to: " + messageEntry.getConversationId()
+               );
             }
 
             @Override
-            public void onError(Throwable t) {
+            public void onError(Throwable t) {}
+         }
+      );
 
-            }
-         });
-
-         return messageEntry;
-
-
+      return messageEntry;
    }
 
    public void setToolbarTitle(Toolbar mToolbar) {
@@ -167,9 +157,11 @@ public class ChatActivityHelper {
    }
 
    private String _createTitleWithUsernames(List<User> users) {
-
       String title = "";
-      for (User user : UserUtil.removeCurrentUserFromList(users, currentUser.getUserId())) {
+      for (User user : UserUtil.removeCurrentUserFromList(
+         users,
+         currentUser.getUserId()
+      )) {
          if (users.indexOf(user) == 0) {
             title = user.getDisplayName();
          } else {
@@ -180,7 +172,9 @@ public class ChatActivityHelper {
    }
 
    public void setMessagesRead() {
-      messageService.setMessagesAsReadByConversationId(conversation.getConversationId());
+      messageService.setMessagesAsReadByConversationId(
+         conversation.getConversationId()
+      );
    }
    /*
 public void _startRepeatingTask() {
