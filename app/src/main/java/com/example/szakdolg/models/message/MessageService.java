@@ -73,7 +73,7 @@ public class MessageService extends BaseService {
 
          @Override
          public void onFailure(Call<MessageEntry> call, Throwable throwable) {
-
+            callback.onError(throwable);
          }
       });
    }
@@ -92,7 +92,7 @@ public class MessageService extends BaseService {
 
          @Override
          public void onFailure(Call<List<MessageEntry>> call, Throwable throwable) {
-
+            callback.onError(throwable);
          }
       });
    }

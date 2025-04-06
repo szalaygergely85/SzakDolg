@@ -19,7 +19,7 @@
             android:gravity="center"
             android:layout_weight="6"
             android:textSize="20sp"
-            android:textColor="@color/black"
+            android:textColor="@color/cardBackground"
             android:text="someone is calling"
             android:id="@+id/incomingNameTV"/>
 

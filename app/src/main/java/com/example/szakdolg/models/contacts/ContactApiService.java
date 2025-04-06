@@ -24,9 +24,9 @@ public interface ContactApiService {
            @Header("Authorization") String authToken
    );
 
-   @DELETE("contacts/delete-contact/{id}")
+   @DELETE("contacts/delete-contact")
    Call<Void> deleteContact(
-           @Path("id") Long contactId,
+           @Query("ContactUserId") Long userId,
            @Header("Authorization") String authToken
    );
 

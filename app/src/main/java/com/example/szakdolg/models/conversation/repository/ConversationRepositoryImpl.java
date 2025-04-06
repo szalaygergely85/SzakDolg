@@ -8,6 +8,9 @@ import com.example.szakdolg.models.conversation.db.ConversationDatabaseUtil;
 import com.example.szakdolg.models.conversation.db.ConversationParticipantDatabaseUtil;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.entity.ConversationParticipant;
+import com.example.szakdolg.models.message.MessageDatabaseUtil;
+import com.example.szakdolg.models.message.MessageService;
+import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
@@ -28,6 +31,8 @@ public class ConversationRepositoryImpl implements ConversationRepository {
     private final UserDatabaseUtil userDatabaseUtil;
     private final ConversationParticipantDatabaseUtil conversationParticipantDatabaseUtil;
 
+    private final MessageDatabaseUtil messageDatabaseUtil;
+
     public ConversationRepositoryImpl(Context context, User currentUser) {
         this.context = context;
         this.currentUser = currentUser;
@@ -35,6 +40,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
         this.conversationApiService = RetrofitClient.getRetrofitInstance().create(ConversationApiService.class);
         this.userDatabaseUtil = new UserDatabaseUtil(context, currentUser);
         this.conversationParticipantDatabaseUtil = new ConversationParticipantDatabaseUtil(context, currentUser);
+        this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
     }
 
 
@@ -94,7 +100,13 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                     }
 
                 }
-                callback.onResponse(null, Response.success(new ConversationDTO(localConversation, conversationParticipants, users)));
+                MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(id);
+                if (messageEntry!=null){
+                    callback.onResponse(null, Response.success(new ConversationDTO(localConversation, conversationParticipants, users, messageEntry)));
+                }else {
+                    getConversationDTOFromApi(id, token, callback);
+                }
+
             } else {
                 getConversationDTOFromApi(id, token, callback);
             }
@@ -110,8 +122,9 @@ public class ConversationRepositoryImpl implements ConversationRepository {
         List<Conversation> localConversations = conversationDatabaseUtil.getAllConversations();
         if(!localConversations.isEmpty()) {
             List<ConversationDTO> conversationDTOs = new ArrayList<>();
-            List<User> users = new ArrayList<>();
+
             for (Conversation conversation : localConversations) {
+                List<User> users = new ArrayList<>();
                 List<ConversationParticipant> conversationParticipants = conversationParticipantDatabaseUtil.getParticipantsByConversationId(conversation.getConversationId());
                 if (conversationParticipants != null) {
 
@@ -119,14 +132,15 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                         User user = userDatabaseUtil.getUserById(conversationParticipant.getUserId());
                         if (user != null) {
                             users.add(user);
-
                         }
 
                     }
-
-
                 }
-                conversationDTOs.add(new ConversationDTO(conversation, conversationParticipants, users));
+                MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(conversation.getConversationId());
+                if (messageEntry!=null){
+                    conversationDTOs.add(new ConversationDTO(conversation, conversationParticipants, users, messageEntry));
+                }
+
             }
 
             callback.onResponse(null, Response.success(conversationDTOs));

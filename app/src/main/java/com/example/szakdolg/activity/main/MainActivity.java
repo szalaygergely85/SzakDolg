@@ -192,9 +192,9 @@ public class MainActivity extends BaseActivity {
          @Override
          public void onSuccess(List<ConversationDTO> conversationList) {
             if (conversationList != null) {
+               _validateConversation(conversationList);
                emptyLayout.setVisibility(View.GONE);
                withItemsLayout.setVisibility(View.VISIBLE);
-
                mainAdapter.setConversationList(conversationList);
 
 
@@ -226,6 +226,14 @@ public class MainActivity extends BaseActivity {
             .into(profileImageHeader);
       } else {
          profileImageHeader.setImageResource(R.drawable.ic_blank_profile);
+      }
+   }
+
+   private void _validateConversation(List<ConversationDTO> conversationList) {
+      for (ConversationDTO conversationDTO : conversationList){
+         if(conversationDTO.getConversation()==null || conversationDTO.getUsers()==null || conversationDTO.getParticipants()==null){
+            conversationList.remove(conversationDTO);
+         }
       }
    }
 

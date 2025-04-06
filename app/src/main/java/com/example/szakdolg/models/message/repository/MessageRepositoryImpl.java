@@ -61,7 +61,7 @@ public class MessageRepositoryImpl implements MessageRepository {
 
             @Override
             public void onFailure(Call<MessageEntry> call, Throwable throwable) {
-
+                callback.onFailure(call, throwable);
             }
         });
     }
@@ -124,7 +124,7 @@ public class MessageRepositoryImpl implements MessageRepository {
 
             @Override
             public void onFailure(Call<List<MessageEntry>> call, Throwable throwable) {
-
+                callback.onFailure(call, throwable);
             }
         });
     }

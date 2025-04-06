@@ -12,6 +12,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.activity.contacts.activity.SelectContactsActivity;
+import com.example.szakdolg.activity.contacts.constans.ContactsConstans;
+import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
 import com.example.szakdolg.models.conversation.service.ConversationService;
@@ -50,8 +52,12 @@ public class MainActivityHelper {
                      _context.startActivity(intent);
                      break;
                   case R.id.nav_contact_main:
-                     intent = new Intent(_context, ContactsActivity.class);
-                     _context.startActivity(intent);
+                     intent =  new Intent(_context, SelectContactsActivity.class);
+                     intent.putExtra(IntentConstants.CONTACTS_ACTION, ContactsConstans.ACTION_VIEW);
+                     _context.startActivity(
+                             intent
+                     );
+
                      break;
                }
                return false;
@@ -114,9 +120,9 @@ public class MainActivityHelper {
             public boolean onMenuItemClick(@NonNull MenuItem item) {
                switch (item.getItemId()) {
                   case R.id.menuNewMain:
-                     _context.startActivity(
-                        new Intent(_context, SelectContactsActivity.class)
-                     );
+                     Intent intent =  new Intent(_context, SelectContactsActivity.class);
+                     intent.putExtra(IntentConstants.CONTACTS_ACTION, ContactsConstans.ACTION_SELECT);
+                     _context.startActivity(intent);
                      return true; // Indicate that the click was handled
                   default:
                      return false;

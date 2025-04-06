@@ -9,8 +9,7 @@ public class Contact {
    private Long contactUserId;
 
 
-   public Contact(Long contactId, Long ownerId, Long contactUserId, User user) {
-      this.contactId = contactId;
+   public Contact(Long ownerId, Long contactUserId) {
       this.ownerId = ownerId;
       this.contactUserId = contactUserId;
 

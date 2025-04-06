@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/chatParent"
-    android:background="@color/primaryLightColor"
     tools:context=".activity.chat.activity.NewChatActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -79,9 +78,9 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:background="@color/primaryDarkColor"
+            android:background="@color/colorPrimaryDark"
             android:text="@string/send"
-            android:textColor="@color/primaryTextColor" />
+            android:textColor="@color/textPrimary" />
 
         <com.example.szakdolg.MyEditText
             android:id="@+id/edtNewChatMes"
@@ -93,7 +92,7 @@
             android:hint="Type a message"
             android:maxLength="150"
             android:minHeight="48dp"
-            android:textColor="@color/primaryTextColor" />
+            android:textColor="@color/textPrimary" />
     </RelativeLayout>
 
 </RelativeLayout>

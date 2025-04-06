@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".messageboard.activity.MessageBoardActivity">
+    tools:context=".activity.main.MainActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/messageBoardToolbar"
@@ -22,7 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/messageBoardToolbar"
-        android:background="@color/primaryLightColor"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp" />
 
@@ -42,9 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp"
-        app:itemBackground="@color/primaryColor"
-        app:itemIconTint="@color/primaryTextColor"
-        app:itemTextColor="@color/primaryColor"
+        app:itemBackground="@color/colorPrimary"
+        app:itemIconTint="@color/textPrimary"
+        app:itemTextColor="@color/colorPrimary"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_nav_menu" />
 

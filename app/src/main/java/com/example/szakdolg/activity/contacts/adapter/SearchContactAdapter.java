@@ -13,7 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.szakdolg.R;
+import com.example.szakdolg.models.contacts.Contact;
+import com.example.szakdolg.models.contacts.ContactService;
 import com.example.szakdolg.models.user.entity.User;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,7 @@ public class SearchContactAdapter
 
    private User currentUser;
    private List<User> userList = new ArrayList<>();
-
+   private ContactService contactService;
 
 
    public SearchContactAdapter(
@@ -36,6 +39,7 @@ public class SearchContactAdapter
    ) {
       this.currentUser = currentUser;
       this.context = context;
+      this.contactService = new ContactService(context, currentUser);
    }
 
    @NonNull
@@ -58,61 +62,39 @@ public class SearchContactAdapter
 
       holder.txtName.setText(user.getDisplayName());
 
-      /*
-      holder.btnAdd.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
-                  context,
-                  currentUser
-               );
-
-               ContactApiService contactApiService = RetrofitClient
-                  .getRetrofitInstance()
-                  .create(ContactApiService.class);
-
-               Call<User> contactsCall = contactApiService.addContact(
-                  currentUser.getUserId(),
-                  userSearchResult.getUserId(),
-                  _token
-               );
-
-               contactsCall.enqueue(
-                  new Callback<User>() {
-                     @Override
-                     public void onResponse(
-                        Call<User> call,
-                        Response<User> response
-                     ) {
-                        if (response.isSuccessful()) {
-                           User user = response.body();
-                           if (user != null) {
-                              if (
-                                 userDatabaseUtil.getUserById(
-                                    user.getUserId()
-                                 ) ==
-                                 null
-                              ) {
-                                 userDatabaseUtil.insertUser(user);
-                              }
-                           }
-                        }
-                        Log.e(
-                           AppConstants.LOG_TAG,
-                                AppConstants.LOG_TAG + " " + response.code()
-                        );
-                     }
-
-                     @Override
-                     public void onFailure(Call<User> call, Throwable t) {
-                        Log.e(AppConstants.LOG_TAG, AppConstants.LOG_TAG + " " + t.getMessage());
-                     }
-                  }
-               );
+      contactService.isContact(user.getUserId(), currentUser.getToken(), new ContactService.ContactCallback<Boolean>() {
+         @Override
+         public void onSuccess(Boolean found) {
+            if(found){
+               holder.btnAdd.setIconResource(R.drawable.ic_check);
             }
+
          }
-      );*/
+
+         @Override
+         public void onError(Throwable t) {
+
+         }
+      });
+
+      holder.btnAdd.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view) {
+            contactService.addContact(new Contact(currentUser.getUserId(), user.getUserId()), currentUser.getToken(), new ContactService.ContactCallback<Contact>() {
+               @Override
+               public void onSuccess(Contact contact) {
+               if(contact!=null){
+                  holder.btnAdd.setIconResource(R.drawable.ic_check);
+               }
+               }
+
+               @Override
+               public void onError(Throwable t) {
+
+               }
+            });
+         }
+      });
    }
 
    @Override
@@ -129,7 +111,7 @@ public class SearchContactAdapter
 
       private final ImageView imageView;
       private final TextView txtName;
-      private final Button btnAdd;
+      private final MaterialButton btnAdd;
 
       public ViewHolder(@NonNull View itemView) {
          super(itemView);

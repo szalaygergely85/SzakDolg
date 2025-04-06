@@ -13,6 +13,7 @@ import com.example.szakdolg.activity.contacts.adapter.SearchContactAdapter;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.models.user.util.UserUtil;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.search.SearchBar;
 
 import java.util.ArrayList;
@@ -37,8 +38,10 @@ public class SearchContactsActivity extends BaseActivity {
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-
       setContentView(R.layout.activity_search_contacts);
+
+       MaterialToolbar toolbar = findViewById(R.id.search_contacts_Toolbar);
+       toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
       contactsAdapter = new SearchContactAdapter(this, currentUser);
       userService = new UserService(this);

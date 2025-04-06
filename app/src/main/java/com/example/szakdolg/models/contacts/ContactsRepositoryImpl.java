@@ -33,20 +33,43 @@ public class ContactsRepositoryImpl implements ContactRepository {
 
     @Override
     public void addContact(Contact contact, String authToken, Callback<Contact> callback) {
-        // Save contact to local database
-        contactDatabaseUtil.insertContact(contact);
 
-        // Make API call and handle response asynchronously
-        contactApiService.addContact(contact, authToken).enqueue(callback);
+        contactApiService.addContact(contact, authToken).enqueue(new Callback<Contact>() {
+            @Override
+            public void onResponse(Call<Contact> call, Response<Contact> response) {
+                contactDatabaseUtil.insertContact(contact);
+                callback.onResponse(null, Response.success(contact));
+            }
+
+            @Override
+            public void onFailure(Call<Contact> call, Throwable throwable) {
+
+            }
+        });
     }
 
     @Override
-    public void deleteContact(Long contactId, String authToken, Callback<Void> callback) {
+    public void deleteContact(Contact contact, String authToken, Callback<Void> callback) {
         // Delete from local database
-        contactDatabaseUtil.deleteContact(contactId);
+        ;
 
         // Also delete from the API
-        contactApiService.deleteContact(contactId, authToken).enqueue(callback);
+        contactApiService.deleteContact(contact.getContactUserId(), authToken).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                contactDatabaseUtil.deleteContact(contact.getContactId());
+                if (callback != null) {
+                    callback.onResponse(call, response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable) {
+                if (callback != null) {
+                    callback.onFailure(call, throwable);
+                }
+            }
+        });
     }
 
     @Override

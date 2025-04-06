@@ -14,7 +14,9 @@ import retrofit2.Response;
 public class ContactService {
     private final ContactRepository contactsRepository;
 
+    private  User currentUser;
     public ContactService(Context context, User currentUser) {
+        this.currentUser = currentUser;
         this.contactsRepository = new ContactsRepositoryImpl(context, currentUser);
     }
 
@@ -38,8 +40,8 @@ public class ContactService {
     }
 
     // Delete a contact (from UI)
-    public void deleteContact(Long contactId, String authToken, final ContactCallback<Void> callback) {
-        contactsRepository.deleteContact(contactId, authToken, new Callback<Void>() {
+    public void deleteContact(Contact contact, final ContactCallback<Void> callback) {
+        contactsRepository.deleteContact(contact, currentUser.getToken(), new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -108,6 +110,34 @@ public class ContactService {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError(t);
+            }
+        });
+    }
+
+    public void isContact(Long userId, String authToken, final ContactCallback<Boolean> callback) {
+        contactsRepository.getContacts(authToken, null, new Callback<List<ContactsDTO>>() {
+            @Override
+            public void onResponse(Call<List<ContactsDTO>> call, Response<List<ContactsDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    boolean found = false;
+
+                    for (ContactsDTO contactsDTO : response.body()) {
+                        Contact contact = contactsDTO.getContact();
+                        if (userId.equals(contact.getContactUserId())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    callback.onSuccess(found);
+
+                } else {
+                    callback.onError(new Throwable("Failed to get contacts"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ContactsDTO>> call, Throwable t) {
                 callback.onError(t);
             }
         });

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="8dp"
-            android:backgroundTint="@color/primaryColor"
+            android:backgroundTint="@color/colorPrimary"
             >
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -26,6 +26,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:menu="@menu/menu_main_top_bar"
                 app:navigationIcon="@drawable/ic_menu_hamburger"
+                app:titleTextColor="@color/textOnPrimary"
                 app:title="@string/app_name"
                 app:titleCentered="true" />
         </com.google.android.material.appbar.AppBarLayout>
@@ -80,7 +81,7 @@
        android:layout_gravity="center_horizontal"
        android:layout_marginTop="16dp"
        android:text="@string/looks_quite_here_say_hi_to_someone"
-       android:textColor="@color/black"
+       android:textColor="@color/textSecondary"
        android:textSize="16sp" />
 </LinearLayout>
 <include

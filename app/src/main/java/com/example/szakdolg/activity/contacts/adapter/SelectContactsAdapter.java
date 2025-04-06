@@ -1,19 +1,33 @@
 package com.example.szakdolg.activity.contacts.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.szakdolg.DTO.ContactsDTO;
+import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
+import com.example.szakdolg.activity.ProfileActivity;
+import com.example.szakdolg.activity.chat.activity.ChatActivity;
+import com.example.szakdolg.activity.contacts.activity.SelectContactsActivity;
+import com.example.szakdolg.activity.contacts.constans.ContactsConstans;
+import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.models.contacts.Contact;
+import com.example.szakdolg.models.contacts.ContactService;
+import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.example.szakdolg.models.user.entity.User;
 
 import java.util.ArrayList;
@@ -29,20 +43,29 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private final User currentUser;
 
 
-    private List<Object> usersList = new ArrayList<>();
+    private List<Object> contactsDTOList = new ArrayList<>();
 
     private List<Long> selectedUsers = new ArrayList<>();
 
-    public SelectContactsAdapter(Context context, User currentUser) {
+    private String actionId;
+
+    private ContactService contactService;
+
+    private ConversationService conversationService;
+
+    public SelectContactsAdapter(Context context, User currentUser, String actionId) {
         this.context = context;
         this.currentUser = currentUser;
         selectedUsers.add(currentUser.getUserId());
+        this.actionId = actionId;
+        this.contactService = new ContactService(context, currentUser);
+        this.conversationService = new ConversationService(context, currentUser);
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        if (usersList.get(position) instanceof String) {
+        if (contactsDTOList.get(position) instanceof String) {
             return TYPE_HEADER;
         } else {
             return TYPE_ITEM;
@@ -65,29 +88,125 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
-            ((HeaderViewHolder) holder).headerText.setText((String) usersList.get(position));
+            ((HeaderViewHolder) holder).headerText.setText((String) contactsDTOList.get(position));
         } else {
-            User user = (User) usersList.get(position);
+            ContactsDTO contactsDTO = (ContactsDTO) contactsDTOList.get(position);
+            User user = contactsDTO.getUser();
+            Contact contact = contactsDTO.getContact();
             String displayName = user.getDisplayName();
             if (displayName != null) {
                 ((ContactViewHolder)holder).txtName.setText(displayName);
             }
 
-            ((ContactViewHolder)holder).linearLayout.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (selectedUsers.contains(user.getUserId())) {
-                                selectedUsers.remove(user.getUserId());
-                                ((ContactViewHolder)holder).checkImageView.setVisibility(View.INVISIBLE);
 
-                            } else {
-                                selectedUsers.add(user.getUserId());
-                                ((ContactViewHolder)holder).checkImageView.setVisibility(View.VISIBLE);
-                            }
+
+
+            //VIEW ACTION
+
+
+            if(actionId.equals(ContactsConstans.ACTION_VIEW)){
+
+                ((ContactViewHolder)holder).linearLayout.setOnLongClickListener(v -> {
+                    // Give haptic feedback
+                    v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+
+                    // Show popup menu
+                    PopupMenu popup = new PopupMenu(v.getContext(), v);
+                    popup.getMenuInflater().inflate(R.menu.menu_contact_action, popup.getMenu());
+
+
+
+                    popup.setOnMenuItemClickListener(item -> {
+                        Intent intent;
+                        switch (item.getItemId()) {
+                            case R.id.action_view_profile:
+                                 intent =  new Intent(context, ProfileActivity.class);
+                                intent.putExtra(IntentConstants.CONTACTS_ACTION, ContactsConstans.ACTION_SELECT);
+                                context.startActivity(intent);
+                                return true;
+                            case R.id.action_start_chat:
+                                List<Long> participants = new ArrayList<>();
+                                participants.add(currentUser.getUserId());
+                                participants.add(user.getUserId());
+
+                                conversationService.addConversationByUserId(participants, new ConversationService.ConversationCallback<ConversationDTO>() {
+                                    @Override
+                                    public void onSuccess(ConversationDTO data) {
+                                        Intent intent = new Intent(
+                                                context,
+                                                ChatActivity.class
+                                        );
+                                        intent.putExtra(
+                                                IntentConstants.CONVERSATION_ID,
+                                                data.getConversation().getConversationId()
+                                        );
+                                        intent.putExtra(
+                                                IntentConstants.CONVERSATION_DTO,
+                                                data
+                                        );
+                                        context.startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable t) {
+
+                                    }
+                                });
+                                return true;
+                            case R.id.action_remove:
+                                contactService.deleteContact(contact, new ContactService.ContactCallback<Void>() {
+
+                                    @Override
+                                    public void onSuccess(Void data) {
+                                        Toast.makeText(v.getContext(), "Contact removed", Toast.LENGTH_SHORT).show();
+                                        contactsDTOList.remove(contactsDTO);
+                                        notifyItemChanged(position);
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable t) {
+
+                                    }
+                                });
+
+                                return true;
+
+                        }
+                        return false;
+                    });
+
+                    popup.show();
+                    return true;
+                });
+
+                ((ContactViewHolder)holder).linearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent =  new Intent(context, ProfileActivity.class);
+                        intent.putExtra(IntentConstants.CONTACTS_ACTION, ContactsConstans.ACTION_SELECT);
+                        context.startActivity(intent);
+                    }
+                });
+
+            }
+
+            //SELECT ACTION
+
+            if (actionId.equals(ContactsConstans.ACTION_SELECT)) {
+                ((ContactViewHolder)holder).linearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (selectedUsers.contains(user.getUserId())) {
+                            selectedUsers.remove(user.getUserId());
+                            ((ContactViewHolder) holder).checkImageView.setVisibility(View.INVISIBLE);
+
+                        } else {
+                            selectedUsers.add(user.getUserId());
+                            ((ContactViewHolder) holder).checkImageView.setVisibility(View.VISIBLE);
                         }
                     }
-            );
+                });
+            }
         }
 
     }
@@ -97,13 +216,13 @@ public class SelectContactsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public void setUsers(List<Object> usersList) {
-        this.usersList = usersList;
+        this.contactsDTOList = usersList;
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return usersList.size();
+        return contactsDTOList.size();
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {

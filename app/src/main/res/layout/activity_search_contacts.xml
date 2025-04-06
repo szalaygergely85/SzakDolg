@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryLightColor"
+    android:background="@color/colorPrimary"
     tools:context=".activity.contacts.activity.SearchContactsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -14,7 +14,7 @@
         android:elevation="8dp">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/select_contacts_Toolbar"
+            android:id="@+id/search_contacts_Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_arrow_back2"

@@ -3,6 +3,7 @@ package com.example.szakdolg.activity.contacts.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,14 +12,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
+import com.example.szakdolg.activity.ProfileActivity;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.activity.contacts.adapter.SelectContactsAdapter;
+import com.example.szakdolg.activity.contacts.constans.ContactsConstans;
 import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.ContactService;
 
 import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,28 +32,36 @@ import java.util.List;
 
 public class SelectContactsActivity extends BaseActivity {
 
+    private String actionId;
+
+    private MaterialToolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_contacts);
 
+        actionId= getIntent().getStringExtra(IntentConstants.CONTACTS_ACTION);
+
         _initView();
-        selectContactsAdapter = new SelectContactsAdapter(this, currentUser);
+        selectContactsAdapter = new SelectContactsAdapter(this, currentUser, actionId);
         contactService = new ContactService(this, currentUser);
         conversationService = new ConversationService(this, currentUser);
 
+        toolbar = findViewById(R.id.select_contacts_Toolbar);
 
-    }
+        toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        getOnBackPressedDispatcher().onBackPressed();
-        return true;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        if(actionId.equals(ContactsConstans.ACTION_VIEW)){
+            toolbar.getMenu().clear();
+            toolbar.setTitle("Contacts");
+        }
 
         contactService.getContacts(currentUser.getToken(), null, new ContactService.ContactCallback<List<ContactsDTO>>() {
             @Override
@@ -68,7 +81,7 @@ public class SelectContactsActivity extends BaseActivity {
                     sortedList.add(String.valueOf(firstLetter)); // Add header
                     lastHeader = firstLetter;
                 }
-                sortedList.add(contactsDTO.getUser());
+                sortedList.add(contactsDTO);
 
             }
 
@@ -124,12 +137,31 @@ public class SelectContactsActivity extends BaseActivity {
                 }
         );
 
+        if(actionId.equals(ContactsConstans.ACTION_VIEW)){
+            btnNewContact.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(
+                                    SelectContactsActivity.this,
+                                    SearchContactsActivity.class
+                            );
+                            intent.putExtra(
+                                    SharedPreferencesConstants.CURRENT_USER,
+                                    currentUser
+                            );
+                            startActivity(intent);
+                        }
+                    }
+            );
+        }
 
     }
 
     private void _initView() {
         selectContactsRecView = findViewById(R.id.selectContactsRecView);
         topAppBar = findViewById(R.id.select_contacts_Toolbar);
+        btnNewContact = findViewById(R.id.btnConNew);
     }
     private ContactService contactService;
 
@@ -138,5 +170,6 @@ public class SelectContactsActivity extends BaseActivity {
     private RecyclerView selectContactsRecView;
     private MaterialToolbar topAppBar;
 
+    private FloatingActionButton btnNewContact;
     private List<Long> contacts = new ArrayList<>();
 }

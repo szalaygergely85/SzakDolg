@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="textURL">
-        <item name="android:textColor">@color/url</item>
+        <item name="android:textColor">@color/textSecondary</item>
         <item name="android:textStyle">bold</item>
     </style>
     <style name="textInputRegLog">

@@ -39,4 +39,14 @@
         android:layout_below="@+id/divider_Title"
         android:layout_alignParentBottom="false"
         android:padding="5dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnConNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_add_contact" />
 </RelativeLayout>

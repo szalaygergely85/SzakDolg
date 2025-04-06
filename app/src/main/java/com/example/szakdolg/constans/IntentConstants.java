@@ -8,4 +8,5 @@ public class IntentConstants {
 
    public static final String CONVERSATION_DTO = "conversation_dto";
    public static final String USER_TOKEN = "user_token";
+   public static final String CONTACTS_ACTION = "contacts_action";
 }

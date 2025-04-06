@@ -17,6 +17,7 @@
             android:id="@+id/imgContItem"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_gravity="center"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:src="@drawable/ic_blank_profile"
@@ -25,7 +26,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:layout_weight="52"
             android:orientation="vertical">
@@ -48,7 +49,7 @@
         </LinearLayout>
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             style="?attr/materialIconButtonFilledTonalStyle"
             android:id="@+id/btnContItemAdd"
             android:layout_width="wrap_content"

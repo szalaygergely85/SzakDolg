@@ -28,6 +28,8 @@ import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.FileUtil;
 import com.example.szakdolg.util.UUIDUtil;
+import com.google.android.material.appbar.MaterialToolbar;
+
 import java.io.File;
 import java.util.List;
 
@@ -46,15 +48,12 @@ public class ChatActivity extends BaseActivity {
    private List<User> users;
 
    @Override
-   public boolean onSupportNavigateUp() {
-      getOnBackPressedDispatcher().onBackPressed();
-      return true;
-   }
-
-   @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_chat);
+
+      MaterialToolbar toolbar = findViewById(R.id.chatToolbar);
+      toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
       _initView();
 

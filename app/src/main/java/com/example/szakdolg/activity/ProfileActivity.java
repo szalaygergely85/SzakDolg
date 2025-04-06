@@ -104,10 +104,7 @@ private ConversationApiHelper conversationApiHelper =
    private void initView() {
       imageView = findViewById(R.id.profPic);
       name = findViewById(R.id.profTxtName);
-      email = findViewById(R.id.profTxtEmail);
-      changePW = findViewById(R.id.profBtnChangePass);
-      singOut = findViewById(R.id.profBtnSignOut);
-      deleteAccount = findViewById(R.id.profBtnDelete);
+
       deleteContact = findViewById(R.id.profBtnDeleteContact);
       sendMessage = findViewById(R.id.profBtnSendMsg);
    }
@@ -133,9 +130,6 @@ private ConversationApiHelper conversationApiHelper =
 
       initView();
 
-      Toolbar mToolbar = (Toolbar) findViewById(R.id.profBoardToolbar);
-      setSupportActionBar(mToolbar);
-      //toolbar settings
 
       ActionBar actionBar = getSupportActionBar();
       actionBar.setDisplayHomeAsUpEnabled(true);

@@ -13,11 +13,14 @@ public class ConversationDTO implements Serializable {
    private List<ConversationParticipant> participants;
    private List<User> users;
 
+   private MessageEntry messageEntry;
 
-   public ConversationDTO(Conversation conversation, List<ConversationParticipant> participants, List<User> users) {
+
+   public ConversationDTO(Conversation conversation, List<ConversationParticipant> participants, List<User> users, MessageEntry messageEntry) {
       this.conversation = conversation;
       this.participants = participants;
       this.users = users;
+      this.messageEntry = messageEntry;
    }
 
    public Conversation getConversation() {
@@ -42,5 +45,13 @@ public class ConversationDTO implements Serializable {
 
    public void setUsers(List<User> users) {
       this.users = users;
+   }
+
+   public MessageEntry getMessageEntry() {
+      return messageEntry;
+   }
+
+   public void setMessageEntry(MessageEntry messageEntry) {
+      this.messageEntry = messageEntry;
    }
 }
