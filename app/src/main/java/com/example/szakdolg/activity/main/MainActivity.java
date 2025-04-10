@@ -152,22 +152,26 @@ public class MainActivity extends BaseActivity {
          .findViewById(R.id.switch_item);
 
       View headerView = navigationView.getHeaderView(0); // Get the header view
-      ShapeableImageView profileImage = headerView.findViewById(R.id.profile_image_header);
+      ShapeableImageView profileImage = headerView.findViewById(
+         R.id.profile_image_header
+      );
 
-      profileImage.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    ProfileActivity.class
-            );
-            intent.putExtra(
-                    IntentConstants.PROFILE_ACTION,
-                    ProfileConstants.VIEW_PROFILE
-            );
-            startActivity(intent);
+      profileImage.setOnClickListener(
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(
+                  MainActivity.this,
+                  ProfileActivity.class
+               );
+               intent.putExtra(
+                  IntentConstants.PROFILE_ACTION,
+                  ProfileConstants.VIEW_PROFILE
+               );
+               startActivity(intent);
+            }
          }
-      });
+      );
 
       _mainActivityHelper.setBottomNavMenu(bottomNavigationView);
       _mainActivityHelper.setListeners(topAppBar, drawerLayout, navigationView);
@@ -248,10 +252,12 @@ public class MainActivity extends BaseActivity {
    }
 
    private void _validateConversation(List<ConversationDTO> conversationList) {
-       conversationList.removeIf(conversationDTO -> conversationDTO.getConversation() == null ||
-               conversationDTO.getUsers() == null ||
-               conversationDTO.getParticipants() == null
-               || conversationDTO.getMessageEntry() == null);
+      conversationList.removeIf(conversationDTO ->
+         conversationDTO.getConversation() == null ||
+         conversationDTO.getUsers() == null ||
+         conversationDTO.getParticipants() == null ||
+         conversationDTO.getMessageEntry() == null
+      );
    }
 
    private void _initView() {

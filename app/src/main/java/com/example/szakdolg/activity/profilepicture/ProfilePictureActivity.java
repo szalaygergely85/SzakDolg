@@ -114,14 +114,16 @@ public class ProfilePictureActivity extends BaseActivity {
             imageUri = result.getData().getData();
             try {
                Bitmap originalBitmap = MediaStore.Images.Media.getBitmap(
-                       getContentResolver(),
-                       imageUri
+                  getContentResolver(),
+                  imageUri
                );
 
                // Resize the bitmap if needed
-               Bitmap resizedBitmap = ImageUtil.resizeImage(originalBitmap, 800);
+               Bitmap resizedBitmap = ImageUtil.resizeImage(
+                  originalBitmap,
+                  800
+               );
                _profileImageView.setImageURI(imageUri);
-
             } catch (IOException e) {
                throw new RuntimeException(e);
             }

@@ -49,13 +49,10 @@ public class MainAdapterHelper {
             .load(R.drawable.ic_group) // Load your drawable directly
             .into(image);
       } else {
-         UserUtil.removeCurrentUser(
-            participants,
-            currentUser.getUserId()
-         );
+         UserUtil.removeCurrentUser(participants, currentUser.getUserId());
 
          String imageUrl = ImageUtil.buildProfileImageUrl(
-                 participants.get(0).getUserId()
+            participants.get(0).getUserId()
          );
          if (imageUrl != null) {
             Glide

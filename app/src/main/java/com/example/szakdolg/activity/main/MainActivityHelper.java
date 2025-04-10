@@ -47,8 +47,7 @@ public class MainActivityHelper {
                      _context.startActivity(intent);
                      break;
                   case R.id.nav_contact_main:
-                     intent =
-                     new Intent(_context, ContactsActivity.class);
+                     intent = new Intent(_context, ContactsActivity.class);
                      intent.putExtra(
                         IntentConstants.CONTACTS_ACTION,
                         ContactsConstans.ACTION_VIEW

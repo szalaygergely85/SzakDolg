@@ -39,8 +39,7 @@ public class ContactsActivity extends BaseActivity {
       actionId = getIntent().getStringExtra(IntentConstants.CONTACTS_ACTION);
 
       _initView();
-      contactsAdapter =
-      new ContactsAdapter(this, currentUser, actionId);
+      contactsAdapter = new ContactsAdapter(this, currentUser, actionId);
       contactService = new ContactService(this, currentUser);
       conversationService = new ConversationService(this, currentUser);
 

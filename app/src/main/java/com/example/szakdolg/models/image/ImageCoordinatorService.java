@@ -47,12 +47,12 @@ public class ImageCoordinatorService extends BaseService {
 
          //Database
 
-        // imageService.addImage(imageEntity);
+         // imageService.addImage(imageEntity);
 
          //File
 
-      /*   ImageLocalHelper imageLocalHelper = new ImageLocalHelper();
-         imageLocalHelper.saveImageToDisk(context, currentUser, imageEntity);
+         /*   ImageLocalHelper imageLocalHelper = new ImageLocalHelper();
+		imageLocalHelper.saveImageToDisk(context, currentUser, imageEntity);
 */
          //Api
 

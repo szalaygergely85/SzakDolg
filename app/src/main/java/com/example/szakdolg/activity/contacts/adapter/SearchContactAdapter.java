@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.models.contacts.Contact;
@@ -54,15 +53,13 @@ public class SearchContactAdapter
 
       holder.txtName.setText(user.getDisplayName());
 
-      String imageUrl = ImageUtil.buildProfileImageUrl(
-              user.getUserId()
-      );
+      String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
       Glide
-              .with(context)
-              .load(imageUrl)
-              .placeholder(R.drawable.ic_blank_profile)
-              .error(R.drawable.ic_blank_profile)
-              .into(holder.imageView);
+         .with(context)
+         .load(imageUrl)
+         .placeholder(R.drawable.ic_blank_profile)
+         .error(R.drawable.ic_blank_profile)
+         .into(holder.imageView);
 
       contactService.isContact(
          user.getUserId(),

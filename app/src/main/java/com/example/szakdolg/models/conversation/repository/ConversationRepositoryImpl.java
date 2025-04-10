@@ -168,45 +168,45 @@ public class ConversationRepositoryImpl implements ConversationRepository {
       String token,
       Callback<List<ConversationDTO>> callback
    ) {/*
-      List<Conversation> localConversations =
-         conversationDatabaseUtil.getAllConversations();
-      if (!localConversations.isEmpty()) {
-         List<ConversationDTO> conversationDTOs = new ArrayList<>();
+	List<Conversation> localConversations =
+		conversationDatabaseUtil.getAllConversations();
+	if (!localConversations.isEmpty()) {
+		List<ConversationDTO> conversationDTOs = new ArrayList<>();
 
-         for (Conversation conversation : localConversations) {
-            List<User> users = new ArrayList<>();
-            List<ConversationParticipant> conversationParticipants =
-               conversationParticipantDatabaseUtil.getParticipantsByConversationId(
-                  conversation.getConversationId()
-               );
-            if (conversationParticipants != null) {
-               for (ConversationParticipant conversationParticipant : conversationParticipants) {
-                  User user = userDatabaseUtil.getUserById(
-                     conversationParticipant.getUserId()
-                  );
-                  if (user != null) {
-                     users.add(user);
-                  }
-               }
-            }
-            MessageEntry messageEntry =
-               messageDatabaseUtil.getLatestMessageEntry(
-                  conversation.getConversationId()
-               );
-            if (messageEntry != null) {
-               conversationDTOs.add(
-                  new ConversationDTO(
-                     conversation,
-                     conversationParticipants,
-                     users,
-                     messageEntry
-                  )
-               );
-               callback.onResponse(null, Response.success(conversationDTOs));
-            }
-         }
+		for (Conversation conversation : localConversations) {
+			List<User> users = new ArrayList<>();
+			List<ConversationParticipant> conversationParticipants =
+			conversationParticipantDatabaseUtil.getParticipantsByConversationId(
+				conversation.getConversationId()
+			);
+			if (conversationParticipants != null) {
+			for (ConversationParticipant conversationParticipant : conversationParticipants) {
+				User user = userDatabaseUtil.getUserById(
+					conversationParticipant.getUserId()
+				);
+				if (user != null) {
+					users.add(user);
+				}
+			}
+			}
+			MessageEntry messageEntry =
+			messageDatabaseUtil.getLatestMessageEntry(
+				conversation.getConversationId()
+			);
+			if (messageEntry != null) {
+			conversationDTOs.add(
+				new ConversationDTO(
+					conversation,
+					conversationParticipants,
+					users,
+					messageEntry
+				)
+			);
+			callback.onResponse(null, Response.success(conversationDTOs));
+			}
+		}
 
-      }*/
+	}*/
       conversationApiService
          .getAllConversation(token)
          .enqueue(
@@ -219,12 +219,14 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                   if (response.body() != null) {
                      for (ConversationDTO conversationDTO : response.body()) {
                         if (conversationDTO != null) {
-                           MessageEntry messageEntry = conversationDTO.getMessageEntry();
-                           if(messageEntry!=null) {
-                              messageEntry.setContent(messageEntry.getContentEncrypted());
+                           MessageEntry messageEntry =
+                              conversationDTO.getMessageEntry();
+                           if (messageEntry != null) {
+                              messageEntry.setContent(
+                                 messageEntry.getContentEncrypted()
+                              );
                               insertConversationDTO(conversationDTO);
                            }
-
                         }
                      }
                      callback.onResponse(call, response);
@@ -293,30 +295,30 @@ public class ConversationRepositoryImpl implements ConversationRepository {
    }
 
    private void insertConversationDTO(ConversationDTO conversationDTO) {
-       Conversation conversation = conversationDTO.getConversation();
-       if (conversation != null) {
-           conversationDatabaseUtil.insertConversation(
-                   conversationDTO.getConversation()
-           );
-       }
+      Conversation conversation = conversationDTO.getConversation();
+      if (conversation != null) {
+         conversationDatabaseUtil.insertConversation(
+            conversationDTO.getConversation()
+         );
+      }
 
-       for (ConversationParticipant conversationParticipant : conversationDTO.getParticipants()) {
-           if (conversationParticipant != null) {
-               conversationParticipantDatabaseUtil.insertConversationParticipant(
-                       conversationParticipant
-               );
-           }
-       }
+      for (ConversationParticipant conversationParticipant : conversationDTO.getParticipants()) {
+         if (conversationParticipant != null) {
+            conversationParticipantDatabaseUtil.insertConversationParticipant(
+               conversationParticipant
+            );
+         }
+      }
 
-       for (User user : conversationDTO.getUsers()) {
-           if (user != null) {
-               userDatabaseUtil.insertUser(user);
-           }
-       }
+      for (User user : conversationDTO.getUsers()) {
+         if (user != null) {
+            userDatabaseUtil.insertUser(user);
+         }
+      }
 
-       MessageEntry messageEntry = conversationDTO.getMessageEntry();
-       if (messageEntry != null) {
-           messageDatabaseUtil.insertMessageEntry(messageEntry);
-       }
+      MessageEntry messageEntry = conversationDTO.getMessageEntry();
+      if (messageEntry != null) {
+         messageDatabaseUtil.insertMessageEntry(messageEntry);
+      }
    }
 }

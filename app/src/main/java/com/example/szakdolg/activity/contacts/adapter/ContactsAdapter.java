@@ -13,14 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.profile.ProfileActivity;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.activity.contacts.constans.ContactsConstans;
+import com.example.szakdolg.activity.profile.ProfileActivity;
 import com.example.szakdolg.activity.profile.ProfileConstants;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.models.contacts.Contact;
@@ -50,11 +49,7 @@ public class ContactsAdapter
 
    private ConversationService conversationService;
 
-   public ContactsAdapter(
-      Context context,
-      User currentUser,
-      String actionId
-   ) {
+   public ContactsAdapter(Context context, User currentUser, String actionId) {
       this.context = context;
       this.currentUser = currentUser;
       selectedUsers.add(currentUser.getUserId());
@@ -101,8 +96,7 @@ public class ContactsAdapter
       @NonNull RecyclerView.ViewHolder holder,
       int position
    ) {
-
-       int i = holder.getAdapterPosition();
+      int i = holder.getAdapterPosition();
       if (holder instanceof HeaderViewHolder) {
          ((HeaderViewHolder) holder).headerText.setText(
                (String) contactsDTOList.get(i)
@@ -116,15 +110,13 @@ public class ContactsAdapter
             ((ContactViewHolder) holder).txtName.setText(displayName);
          }
 
-         String imageUrl = ImageUtil.buildProfileImageUrl(
-                 user.getUserId()
-         );
+         String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
          Glide
-                 .with(context)
-                 .load(imageUrl)
-                 .placeholder(R.drawable.ic_blank_profile)
-                 .error(R.drawable.ic_blank_profile)
-                 .into(((ContactViewHolder) holder).profileImageView);
+            .with(context)
+            .load(imageUrl)
+            .placeholder(R.drawable.ic_blank_profile)
+            .error(R.drawable.ic_blank_profile)
+            .into(((ContactViewHolder) holder).profileImageView);
 
          //VIEW ACTION
 
@@ -219,7 +211,7 @@ public class ContactsAdapter
                   new View.OnClickListener() {
                      @Override
                      public void onClick(View view) {
-startProfileActivity(user, contact);
+                        startProfileActivity(user, contact);
                      }
                   }
                );
@@ -251,14 +243,10 @@ startProfileActivity(user, contact);
    }
 
    private void startProfileActivity(User user, Contact contact) {
-
-      Intent intent = new Intent(
-              context,
-              ProfileActivity.class
-      );
+      Intent intent = new Intent(context, ProfileActivity.class);
       intent.putExtra(
-              IntentConstants.PROFILE_ACTION,
-              ProfileConstants.VIEW_CONTACT
+         IntentConstants.PROFILE_ACTION,
+         ProfileConstants.VIEW_CONTACT
       );
       intent.putExtra(IntentConstants.CONTACT, contact);
       intent.putExtra(IntentConstants.USER, user);

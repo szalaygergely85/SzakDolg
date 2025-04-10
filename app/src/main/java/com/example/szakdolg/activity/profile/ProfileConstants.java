@@ -1,8 +1,8 @@
 package com.example.szakdolg.activity.profile;
 
 public class ProfileConstants {
-    public final static String VIEW_CONTACT = "view";
-    public final static String VIEW_PROFILE = "profile";
-    public final static String SET_PROFILE = "set";
 
+   public static final String VIEW_CONTACT = "view";
+   public static final String VIEW_PROFILE = "profile";
+   public static final String SET_PROFILE = "set";
 }
