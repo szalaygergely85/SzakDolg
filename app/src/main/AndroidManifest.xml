@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SzakDolg">
         <activity
-            android:name=".activity.contacts.activity.SelectContactsActivity"
+            android:name=".activity.contacts.activity.ContactsActivity"
             android:exported="false" />
         <activity
             android:name=".activity.call.StartCall"
@@ -55,7 +55,7 @@
             android:name=".activity.ChangePassActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.ProfileActivity"
+            android:name=".activity.profile.ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".activity.ForgotPasswordActivity"
@@ -63,14 +63,9 @@
         <activity
             android:name=".activity.contacts.activity.SearchContactsActivity"
             android:exported="false" />
-        <activity
-            android:name=".activity.contacts.activity.ContactsActivity"
-            android:exported="false" />
+
         <activity
             android:name=".activity.chat.activity.ChatActivity"
-            android:exported="false" />
-        <activity
-            android:name=".messageboard.activity.MessageBoardActivity"
             android:exported="false" />
         <activity
             android:name=".activity.register.RegisterActivity"

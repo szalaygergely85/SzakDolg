@@ -21,6 +21,7 @@ public class ImageApiHelper {
       .create(ImageApiService.class);
 
    public void uploadImage(File file, ImageEntity imageEntity) {
+       /*
       RequestBody requestFile = RequestBody.create(
          file,
          MediaType.get("multipart/form-data")
@@ -53,6 +54,8 @@ public class ImageApiHelper {
             }
          }
       );
+
+        */
    }
 
    public void getImage(String uuid, Consumer<ResponseBody> onFileDownloaded) {

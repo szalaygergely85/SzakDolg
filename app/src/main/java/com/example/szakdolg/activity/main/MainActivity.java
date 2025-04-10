@@ -25,6 +25,8 @@ import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
+import com.example.szakdolg.activity.profile.ProfileActivity;
+import com.example.szakdolg.activity.profile.ProfileConstants;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.conversation.service.ConversationService;
@@ -34,6 +36,7 @@ import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.example.szakdolg.websocket.WebSocketService;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
 import java.util.List;
 
@@ -148,6 +151,24 @@ public class MainActivity extends BaseActivity {
          .getActionView()
          .findViewById(R.id.switch_item);
 
+      View headerView = navigationView.getHeaderView(0); // Get the header view
+      ShapeableImageView profileImage = headerView.findViewById(R.id.profile_image_header);
+
+      profileImage.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    ProfileActivity.class
+            );
+            intent.putExtra(
+                    IntentConstants.PROFILE_ACTION,
+                    ProfileConstants.VIEW_PROFILE
+            );
+            startActivity(intent);
+         }
+      });
+
       _mainActivityHelper.setBottomNavMenu(bottomNavigationView);
       _mainActivityHelper.setListeners(topAppBar, drawerLayout, navigationView);
 
@@ -227,15 +248,10 @@ public class MainActivity extends BaseActivity {
    }
 
    private void _validateConversation(List<ConversationDTO> conversationList) {
-      for (ConversationDTO conversationDTO : conversationList) {
-         if (
-            conversationDTO.getConversation() == null ||
-            conversationDTO.getUsers() == null ||
-            conversationDTO.getParticipants() == null
-         ) {
-            conversationList.remove(conversationDTO);
-         }
-      }
+       conversationList.removeIf(conversationDTO -> conversationDTO.getConversation() == null ||
+               conversationDTO.getUsers() == null ||
+               conversationDTO.getParticipants() == null
+               || conversationDTO.getMessageEntry() == null);
    }
 
    private void _initView() {

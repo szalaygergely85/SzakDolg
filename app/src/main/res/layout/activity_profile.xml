@@ -4,38 +4,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    tools:context=".activity.ProfileActivity">
+    android:background="@color/background"
+    tools:context=".activity.profile.ProfileActivity">
 
     <!-- Gradient Background Header -->
+
+
+    <!-- Background Header FIRST -->
     <View
         android:id="@+id/headerBackground"
         android:layout_width="0dp"
         android:layout_height="220dp"
-        android:background="@drawable/bg_gradient_profile_header"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:background="@drawable/bg_gradient_profile_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- AppBarLayout with Toolbar NEXT -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/chatBarLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:backgroundTint="@android:color/transparent"
         android:elevation="0dp"
-        android:minHeight="?attr/actionBarSize"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Profile Picture Container with Glow -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/chatToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:menu="@menu/menu_chat_top_bar"
+            app:title="Username"
+            app:titleCentered="true"
+            android:background="@android:color/transparent"
+            app:titleTextColor="@color/white"
+            app:iconTint="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Profile Picture Container LAST (AFTER HEADER AND APPBAR) -->
     <FrameLayout
         android:id="@+id/profilePicContainer"
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+
+        app:layout_constraintTop_toBottomOf="@id/chatBarLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -43,12 +61,12 @@
             android:id="@+id/profPic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_blank_profile"
+            android:background="@color/background"
             android:scaleType="centerCrop"
-            android:background="@drawable/bg_profile_pic_glow"
-            android:padding="4dp" />
+            android:translationZ="0dp"
+            android:src="@drawable/ic_blank_profile"
+            app:shapeAppearanceOverlay="@style/CircularImage" />
 
-        <!-- Edit icon overlay -->
         <ImageView
             android:id="@+id/iconEditPic"
             android:layout_width="36dp"
@@ -59,59 +77,53 @@
             android:background="@drawable/bg_circle_light"
             android:padding="6dp"
             app:tint="@color/textPrimary" />
+
     </FrameLayout>
 
+
     <!-- Display Name -->
-    <TextView
-        android:id="@+id/profTxtName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Username"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/textPrimary"
-        app:layout_constraintTop_toBottomOf="@id/profilePicContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
+
 
     <!-- Status Card with Edit Icon -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardStatus"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="2dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
-        app:layout_constraintTop_toBottomOf="@id/profTxtName"
+        app:layout_constraintTop_toBottomOf="@id/profilePicContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp">
+            android:paddingHorizontal="12dp"
+            >
 
-            <TextView
-                android:id="@+id/profTxtStatus"
+            <EditText
+                android:id="@+id/profeditStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
                 android:text="Tap to set a status..."
-                android:textSize="14sp"
                 android:textColor="@color/textPrimary"
-                android:layout_alignParentStart="true" />
+                android:textSize="14sp" />
 
             <ImageView
                 android:id="@+id/iconEditStatus"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_edit"
+                android:layout_centerVertical="true"
                 android:padding="4dp"
+                android:src="@drawable/ic_edit"
                 app:tint="@color/textPrimary" />
         </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>

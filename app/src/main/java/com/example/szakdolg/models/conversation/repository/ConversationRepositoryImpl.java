@@ -167,7 +167,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
    public void getAllConversation(
       String token,
       Callback<List<ConversationDTO>> callback
-   ) {
+   ) {/*
       List<Conversation> localConversations =
          conversationDatabaseUtil.getAllConversations();
       if (!localConversations.isEmpty()) {
@@ -202,11 +202,11 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                      messageEntry
                   )
                );
+               callback.onResponse(null, Response.success(conversationDTOs));
             }
          }
 
-         callback.onResponse(null, Response.success(conversationDTOs));
-      }
+      }*/
       conversationApiService
          .getAllConversation(token)
          .enqueue(
@@ -219,7 +219,12 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                   if (response.body() != null) {
                      for (ConversationDTO conversationDTO : response.body()) {
                         if (conversationDTO != null) {
-                           insertConversationDTO(conversationDTO);
+                           MessageEntry messageEntry = conversationDTO.getMessageEntry();
+                           if(messageEntry!=null) {
+                              messageEntry.setContent(messageEntry.getContentEncrypted());
+                              insertConversationDTO(conversationDTO);
+                           }
+
                         }
                      }
                      callback.onResponse(call, response);
@@ -288,25 +293,30 @@ public class ConversationRepositoryImpl implements ConversationRepository {
    }
 
    private void insertConversationDTO(ConversationDTO conversationDTO) {
-      Conversation conversation = conversationDTO.getConversation();
-      if (conversation != null) {
-         conversationDatabaseUtil.insertConversation(
-            conversationDTO.getConversation()
-         );
-      }
+       Conversation conversation = conversationDTO.getConversation();
+       if (conversation != null) {
+           conversationDatabaseUtil.insertConversation(
+                   conversationDTO.getConversation()
+           );
+       }
 
-      for (ConversationParticipant conversationParticipant : conversationDTO.getParticipants()) {
-         if (conversationParticipant != null) {
-            conversationParticipantDatabaseUtil.insertConversationParticipant(
-               conversationParticipant
-            );
-         }
-      }
+       for (ConversationParticipant conversationParticipant : conversationDTO.getParticipants()) {
+           if (conversationParticipant != null) {
+               conversationParticipantDatabaseUtil.insertConversationParticipant(
+                       conversationParticipant
+               );
+           }
+       }
 
-      for (User user : conversationDTO.getUsers()) {
-         if (user != null) {
-            userDatabaseUtil.insertUser(user);
-         }
-      }
+       for (User user : conversationDTO.getUsers()) {
+           if (user != null) {
+               userDatabaseUtil.insertUser(user);
+           }
+       }
+
+       MessageEntry messageEntry = conversationDTO.getMessageEntry();
+       if (messageEntry != null) {
+           messageDatabaseUtil.insertMessageEntry(messageEntry);
+       }
    }
 }

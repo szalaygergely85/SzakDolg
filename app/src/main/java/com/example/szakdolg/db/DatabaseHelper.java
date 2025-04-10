@@ -68,8 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "CREATE TABLE " +
       TABLE_MESSAGE_ENTRY +
       " (" +
-      "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      "messageId INTEGER , " +
+      "messageId INTEGER PRIMARY KEY, " +
       "conversationId INTEGER NOT NULL, " +
       "senderId INTEGER NOT NULL, " +
       "timestamp INTEGER NOT NULL, " +

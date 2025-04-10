@@ -27,6 +27,7 @@
                 app:menu="@menu/menu_main_top_bar"
                 app:navigationIcon="@drawable/ic_menu_hamburger"
                 app:titleTextColor="@color/textOnPrimary"
+                app:navigationIconTint="@color/textOnPrimary"
                 app:title="@string/app_name"
                 app:titleCentered="true" />
         </com.google.android.material.appbar.AppBarLayout>
@@ -98,6 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/background"
         app:headerLayout="@layout/header_navigation_drawer_main" 
         app:menu="@menu/main_menu" />
 

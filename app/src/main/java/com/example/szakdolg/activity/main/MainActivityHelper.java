@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.szakdolg.R;
-import com.example.szakdolg.activity.contacts.activity.SelectContactsActivity;
+import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
 import com.example.szakdolg.activity.contacts.constans.ContactsConstans;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
@@ -48,7 +48,7 @@ public class MainActivityHelper {
                      break;
                   case R.id.nav_contact_main:
                      intent =
-                     new Intent(_context, SelectContactsActivity.class);
+                     new Intent(_context, ContactsActivity.class);
                      intent.putExtra(
                         IntentConstants.CONTACTS_ACTION,
                         ContactsConstans.ACTION_VIEW
@@ -119,7 +119,7 @@ public class MainActivityHelper {
                   case R.id.menuNewMain:
                      Intent intent = new Intent(
                         _context,
-                        SelectContactsActivity.class
+                        ContactsActivity.class
                      );
                      intent.putExtra(
                         IntentConstants.CONTACTS_ACTION,

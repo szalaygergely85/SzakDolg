@@ -1,8 +1,10 @@
 package com.example.szakdolg.activity.profilepicture;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.main.MainActivity;
+import com.example.szakdolg.models.image.util.ImageUtil;
 import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 
@@ -110,11 +113,15 @@ public class ProfilePictureActivity extends BaseActivity {
          if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             imageUri = result.getData().getData();
             try {
-               _profilePictureActivityHelper.setImageViewer(
-                  this,
-                  imageUri,
-                  _profileImageView
+               Bitmap originalBitmap = MediaStore.Images.Media.getBitmap(
+                       getContentResolver(),
+                       imageUri
                );
+
+               // Resize the bitmap if needed
+               Bitmap resizedBitmap = ImageUtil.resizeImage(originalBitmap, 800);
+               _profileImageView.setImageURI(imageUri);
+
             } catch (IOException e) {
                throw new RuntimeException(e);
             }

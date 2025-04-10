@@ -37,7 +37,7 @@ public class MessageDatabaseUtil {
             dbHelper.TABLE_MESSAGE_ENTRY,
             null,
             values,
-            SQLiteDatabase.CONFLICT_REPLACE
+            SQLiteDatabase.CONFLICT_IGNORE
          );
       } finally {
          db.close();

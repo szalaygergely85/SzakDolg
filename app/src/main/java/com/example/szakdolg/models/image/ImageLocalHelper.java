@@ -16,63 +16,59 @@ import com.example.szakdolg.models.image.service.ImageService;
 import com.example.szakdolg.models.image.util.ImageUtil;
 import com.example.szakdolg.models.user.entity.User;
 import java.io.File;
+import java.io.IOException;
 
 public class ImageLocalHelper {
 
-   public void saveImageToDisk(
-      Context context,
-      User currentUser,
-      ImageEntity imageEntity
-   ) {
-      Uri imageUri = Uri.parse(imageEntity.getImageUri());
+    public void saveImageToDisk(
+            Context context,
+            User currentUser,
+            ImageEntity imageEntity,
+            ImageSaveCallback callback
+    ) {
+        Uri imageUri = Uri.parse(imageEntity.getImageUri());
 
-      Glide
-         .with(context)
-         .asBitmap()
-         .load(imageUri)
-         .into(
-            new CustomTarget<Bitmap>() {
-               @Override
-               public void onResourceReady(
-                  @NonNull Bitmap bitmap,
-                  @Nullable Transition<? super Bitmap> transition
-               ) {
-                  Bitmap resizedBitmap = ImageUtil.resizeImage(
-                     bitmap,
-                     ImageUtil.getMaxSize(imageEntity)
-                  );
+        Glide.with(context)
+                .asBitmap()
+                .load(imageUri)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+                        try {
+                            Bitmap resizedBitmap = ImageUtil.resizeImage(bitmap, ImageUtil.getMaxSize(imageEntity));
+                            File savedFile = ImageUtil.saveImageLocally(context, resizedBitmap, imageEntity.getFileName());
 
-                  // Save locally
-                  File savedFile = ImageUtil.saveImageLocally(
-                     context,
-                     resizedBitmap,
-                     imageEntity.getFileName()
-                  );
+                            if (savedFile.exists()) {
+                                Uri fileUri = Uri.fromFile(savedFile);
+                                imageEntity.setImageUri(fileUri.toString());
+                                imageEntity.setHeight(resizedBitmap.getHeight());
+                                imageEntity.setWidth(resizedBitmap.getWidth());
+                                imageEntity.setSize(resizedBitmap.getByteCount());
 
-                  Uri fileUri = Uri.fromFile(savedFile);
+                                new ImageService(context, currentUser).updateImage(imageEntity);
 
-                  if (savedFile.exists()) {
-                     imageEntity.setImageUri(fileUri.toString());
-                     imageEntity.setHeight(resizedBitmap.getHeight());
-                     imageEntity.setWidth(resizedBitmap.getWidth());
-                     imageEntity.setSize(resizedBitmap.getByteCount());
+                                if (callback != null) {
+                                    callback.onImageSaved(imageEntity);
+                                }
+                            } else {
+                                Log.e(AppConstants.LOG_TAG, "File not found: " + savedFile.getAbsolutePath());
+                                if (callback != null) {
+                                    callback.onError(new IOException("File not saved"));
+                                }
+                            }
+                        } catch (Exception e) {
+                            if (callback != null) {
+                                callback.onError(e);
+                            }
+                        }
+                    }
 
-                     ImageService imageService = new ImageService(
-                        context,
-                        currentUser
-                     );
-                     imageService.updateImage(imageEntity);
-                  } else {
-                     Log.e(
-                        AppConstants.LOG_TAG,
-                        "File not found: " + savedFile.getAbsolutePath()
-                     );
-                  }
-               }
-
-               @Override
-               public void onLoadCleared(@Nullable Drawable placeholder) {}
-            }
-         );
-   }
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {}
+                });
+    }
+    public interface ImageSaveCallback {
+        void onImageSaved(ImageEntity updatedImage);
+        void onError(Exception e);
+    }
 }

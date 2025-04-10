@@ -5,6 +5,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -15,7 +16,8 @@ public interface ImageApiService {
    @POST("image/upload")
    Call<ResponseBody> uploadImage(
       @Part MultipartBody.Part filePart,
-      @Part("imageEntry") ImageEntity imageEntity
+      @Part("imageEntry") ImageEntity imageEntity,
+      @Header("Authorization") String token
    );
 
    @GET("image/{uuid}")

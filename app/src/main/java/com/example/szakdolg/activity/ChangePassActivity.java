@@ -11,6 +11,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.szakdolg.R;
+import com.example.szakdolg.activity.profile.ProfileActivity;
 import com.example.szakdolg.util.ErrorUtil;
 
 public class ChangePassActivity extends AppCompatActivity {

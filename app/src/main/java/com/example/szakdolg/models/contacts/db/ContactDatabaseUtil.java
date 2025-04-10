@@ -25,9 +25,18 @@ public class ContactDatabaseUtil {
          values.put("contactId", contact.getContactId());
          values.put("ownerId", contact.getOwnerId());
          values.put("contactUserId", contact.getContactUserId());
-         db.insert("Contact", null, values);
+
+
+         db.insertWithOnConflict(
+                 dbHelper.TABLE_CONTACT,
+                 null,
+                 values,
+                 SQLiteDatabase.CONFLICT_REPLACE
+         );
       }
-   }
+      }
+
+
 
    public void deleteContact(Long contactId) {
       try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
