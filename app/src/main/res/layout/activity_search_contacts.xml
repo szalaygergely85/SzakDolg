@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,50 +7,64 @@
     android:background="@color/background"
     tools:context=".activity.contacts.activity.SearchContactsActivity">
 
+    <!-- Gradient Header Background -->
+    <View
+        android:id="@+id/headerBackground"
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:background="@drawable/bg_gradient_profile_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/select_contacts_BarLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:elevation="8dp">
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/search_contacts_Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
             app:navigationIcon="@drawable/ic_arrow_back2"
             app:title="Search for People"
-            app:titleCentered="true">
-
-        </com.google.android.material.appbar.MaterialToolbar>
-
+            app:titleCentered="true"
+            app:titleTextColor="@color/white"
+            app:iconTint="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/divider_Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/select_contacts_BarLayout" />
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/divider_Title"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_search"
+        android:elevation="4dp"
+        android:maxLines="1"
+        android:paddingHorizontal="12dp"
         android:queryHint="@string/searchbar_hint"
         app:iconifiedByDefault="false"
-        android:maxLines="1"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_margin="10dp"
-        android:background="@drawable/bg_search"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_contacts_BarLayout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recvContactSearch"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/search_view"
-        android:layout_margin="10dp" />
-</RelativeLayout>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="8dp"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerBackground" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
