@@ -31,10 +31,6 @@
                 app:title="@string/app_name"
                 app:titleCentered="true" />
         </com.google.android.material.appbar.AppBarLayout>
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/appBarLayout" />
 
         <!-- Main Layout -->
         <LinearLayout
