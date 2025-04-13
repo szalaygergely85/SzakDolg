@@ -197,7 +197,7 @@ public class UserRepositoryImpl implements UserRepository {
                      User userRemote = response.body();
                      if (userRemote != null) {
                         UserDatabaseUtil userDatabaseUtil =
-                           new UserDatabaseUtil(context, user);
+                           new UserDatabaseUtil(context, userRemote);
                         userDatabaseUtil.insertUser(userRemote);
                      }
                      callback.onResponse(call, response);

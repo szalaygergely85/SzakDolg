@@ -17,6 +17,7 @@ import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
+import com.example.szakdolg.activity.main.MainActivity;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.contacts.ContactService;
@@ -44,6 +45,7 @@ public class ProfileActivity extends BaseActivity {
 
    private Button deleteContact;
    private Button sendMessage;
+   private Button continueButton;
    private User user;
    private String action;
 
@@ -66,6 +68,8 @@ public class ProfileActivity extends BaseActivity {
       profeditStatus = findViewById(R.id.profeditStatus);
       iconEditStatus = findViewById(R.id.iconEditStatus);
       iconEditPic = findViewById(R.id.iconEditPic);
+
+      continueButton = findViewById(R.id.profBtnContinue);
    }
 
    @Override
@@ -95,16 +99,22 @@ public class ProfileActivity extends BaseActivity {
          iconEditPic.setVisibility(View.GONE);
 
          profeditStatus.setInputType(InputType.TYPE_NULL);
+      }else {
+
+            user = currentUser;
+            deleteContact.setVisibility(View.GONE);
+            sendMessage.setVisibility(View.GONE);
+            profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
+
+            addEditProfileImageListener();
+         if (action.equals(ProfileConstants.ACCEPT_PROFILE)) {
+            continueButton.setVisibility(View.VISIBLE);
+         }else {
+            continueButton.setVisibility(View.GONE);
+         }
       }
 
-      if (action.equals(ProfileConstants.VIEW_PROFILE)) {
-         user = currentUser;
-         deleteContact.setVisibility(View.GONE);
-         sendMessage.setVisibility(View.GONE);
-         profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
 
-         addEditProfileImageListener();
-      }
 
       chatToolbar.setTitle(user.getDisplayName());
 
@@ -133,6 +143,18 @@ public class ProfileActivity extends BaseActivity {
    @Override
    protected void onStart() {
       super.onStart();
+
+      continueButton.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent intent = new Intent(
+                    ProfileActivity.this,
+                    MainActivity.class
+            );
+
+            startActivity(intent);
+         }
+      });
 
       deleteContact.setOnClickListener(
          new View.OnClickListener() {
@@ -217,32 +239,35 @@ public class ProfileActivity extends BaseActivity {
                   getContentResolver(),
                   imageUri
                );
+               if (originalBitmap!=null) {
+                  // Resize the bitmap if needed
+                  Bitmap resizedBitmap = ImageUtil.resizeImage(
+                          originalBitmap,
+                          800
+                  );
 
-               // Resize the bitmap if needed
-               Bitmap resizedBitmap = ImageUtil.resizeImage(
-                  originalBitmap,
-                  800
-               );
+                  Glide
+                          .with(this)
+                          .load(resizedBitmap)
+                          .placeholder(R.drawable.ic_blank_profile)
+                          .error(R.drawable.ic_blank_profile)
+                          .into(profPic);
 
-               Glide
-                  .with(this)
-                  .load(resizedBitmap)
-                  .placeholder(R.drawable.ic_blank_profile)
-                  .error(R.drawable.ic_blank_profile)
-                  .into(profPic);
+                  imageService.addPicture(
+                          imageUri,
+                          currentUser.getUserId(),
+                          ImageConstans.TAG_PROFILE,
+                          new ImageService.ImageCallback() {
+                             @Override
+                             public void onSuccess(Object data) {
+                             }
 
-               imageService.addPicture(
-                  imageUri,
-                  currentUser.getUserId(),
-                  ImageConstans.TAG_PROFILE,
-                  new ImageService.ImageCallback() {
-                     @Override
-                     public void onSuccess(Object data) {}
-
-                     @Override
-                     public void onError(Throwable t) {}
-                  }
-               );
+                             @Override
+                             public void onError(Throwable t) {
+                             }
+                          }
+                  );
+               }
             } catch (IOException e) {
                throw new RuntimeException(e);
             }

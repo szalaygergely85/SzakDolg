@@ -4,5 +4,5 @@ public class ProfileConstants {
 
    public static final String VIEW_CONTACT = "view";
    public static final String VIEW_PROFILE = "profile";
-   public static final String SET_PROFILE = "set";
+   public static final String ACCEPT_PROFILE = "accept";
 }

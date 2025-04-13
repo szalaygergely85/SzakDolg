@@ -2,7 +2,12 @@ package com.example.szakdolg.activity.register;
 
 import android.content.Context;
 import android.content.Intent;
+
+import com.example.szakdolg.activity.main.MainActivity;
+import com.example.szakdolg.activity.profile.ProfileActivity;
+import com.example.szakdolg.activity.profile.ProfileConstants;
 import com.example.szakdolg.activity.profilepicture.ProfilePictureActivity;
+import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.user.constans.UserConstans;
 import com.example.szakdolg.models.user.entity.User;
@@ -65,8 +70,12 @@ public class RegisterActivityHelper {
                   data.getUserId().toString()
                );
                Intent intent = new Intent(
-                  context,
-                  ProfilePictureActivity.class
+                       context,
+                       ProfileActivity.class
+               );
+               intent.putExtra(
+                       IntentConstants.PROFILE_ACTION,
+                       ProfileConstants.ACCEPT_PROFILE
                );
                context.startActivity(intent);
             }
