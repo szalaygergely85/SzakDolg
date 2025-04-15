@@ -5,6 +5,7 @@
         android:id="@+id/menuNewMain"
         android:icon="@drawable/ic_edit"
         android:title="@string/new_message"
-        android:contentDescription="@string/new_message"
+        app:iconTint="@color/textOnPrimary"
+        app:contentDescription="@string/new_message"
         app:showAsAction="always" />
 </menu>

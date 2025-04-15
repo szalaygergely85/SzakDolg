@@ -31,4 +31,5 @@
     <color name="grayDark">#424242</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="bottom_nav_active">#33FFFFFF</color>
 </resources>

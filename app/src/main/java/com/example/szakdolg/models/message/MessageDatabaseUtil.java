@@ -21,6 +21,7 @@ public class MessageDatabaseUtil {
    }
 
    public void insertMessageEntry(MessageEntry message) {
+      if(isExistingEntry(message)){
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       try {
          ContentValues values = new ContentValues();
@@ -42,6 +43,17 @@ public class MessageDatabaseUtil {
       } finally {
          db.close();
       }
+      }
+   }
+
+   private boolean isExistingEntry(MessageEntry message) {
+
+      MessageEntry messageEntry = getMessageByUuid(message.getUuId());
+
+      if(messageEntry==null){
+         return false;
+      }
+      return true;
    }
 
    public MessageEntry getLatestMessageEntry(long conversationId) {

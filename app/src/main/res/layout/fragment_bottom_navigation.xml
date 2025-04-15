@@ -7,4 +7,5 @@
     app:backgroundTint="@color/colorPrimary"
     app:itemTextColor="@color/textOnPrimary"
     app:itemIconTint="@color/textOnPrimary"
-    app:menu="@menu/bottom_nav_menu" />
+    app:menu="@menu/bottom_nav_menu"
+    app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"/>

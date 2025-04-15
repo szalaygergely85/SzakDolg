@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.activity.ChatActivityHelper;
 import com.example.szakdolg.models.image.util.ImageUtil;
-import com.example.szakdolg.models.message.api.MessageApiHelper;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    private final Context mContext;
    private List<Object> messageEntries = new ArrayList<>();
 
-   private MessageApiHelper messageApiHelper;
+
    private final User currentUser;
 
    private RecyclerView chatRecView;
@@ -44,7 +43,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    ) {
       this.mContext = mContext;
       this.currentUser = user;
-      this.messageApiHelper = new MessageApiHelper(mContext, user);
       this.chatRecView = chatRecView;
       this.chatActivityHelper = chatActivityHelper;
    }

@@ -22,24 +22,19 @@
             app:navigationIcon="@drawable/ic_arrow_back"
             app:menu="@menu/menu_chat_top_bar"
             app:title="Title"
+            app:titleTextColor="@color/textOnPrimary"
             app:titleCentered="true" >
 
     </com.google.android.material.appbar.MaterialToolbar>
 
 </com.google.android.material.appbar.AppBarLayout>
 
-<com.google.android.material.divider.MaterialDivider
-    android:id="@+id/dividerTitle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/chatBarLayout" />
-
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/recViewChat"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@id/relLayChatSendBar"
-    android:layout_below="@id/dividerTitle"
+    android:layout_below="@id/chatBarLayout"
     android:layout_alignParentBottom="false"
     android:padding="5dp"/>
 
@@ -55,6 +50,8 @@
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:layout_alignParentBottom="true"
+    android:backgroundTint="@color/colorPrimary"
+
     android:padding="0dp"
     android:layout_margin="0dp">
 
@@ -76,13 +73,13 @@
             android:layout_marginVertical="5dp"
             android:layout_weight="1"
             android:hint="@string/send_a_message"
-            android:minHeight="30dp"
             app:boxBackgroundMode="outline"
             app:boxCornerRadiusBottomEnd="24dp"
             app:boxCornerRadiusBottomStart="24dp"
             app:boxCornerRadiusTopEnd="24dp"
             app:boxCornerRadiusTopStart="24dp"
             app:boxStrokeColor="@color/grayLight"
+            android:background="@android:color/transparent"
             app:hintEnabled="false">
 
 
@@ -91,11 +88,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
+                android:paddingHorizontal="12dp"
                 android:background="@null"
                 android:gravity="center_vertical"
                 android:hint="@string/send_a_message"
                 android:inputType="textMultiLine|textCapSentences"
-                android:minHeight="30dp"
                 android:textColor="@color/textOnPrimary" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,6 +106,6 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_send_message"
-            app:tint="@color/textOnPrimary" />
+            app:tint="@color/textSecondary" />
     </LinearLayout>
 </RelativeLayout>

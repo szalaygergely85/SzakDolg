@@ -14,7 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp">
 
 
 
@@ -28,9 +31,9 @@
              />
 
         <LinearLayout
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:gravity="start"
             android:orientation="vertical">
 
@@ -39,9 +42,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_chat_one_sided_white"
-                android:paddingVertical="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
+                android:layout_marginRight="40dp"
                 android:text="This is a message to me"
                 android:textSize="16sp" />
 
@@ -49,8 +54,10 @@
                 android:id="@+id/chatTextTimeIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/chatText"
-                android:text="10.21" />
+                android:text="10:21"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"
+                android:textColor="#888888"/>
         </LinearLayout>
 
     </LinearLayout>
