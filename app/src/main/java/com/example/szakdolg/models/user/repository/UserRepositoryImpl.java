@@ -6,6 +6,8 @@ import com.example.szakdolg.models.user.api.UserApiService;
 import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.util.DateTimeUtil;
+
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,48 +79,70 @@ public class UserRepositoryImpl implements UserRepository {
       );
       User localUser = userDatabaseUtil.getUserById(userId);
       if (localUser != null) {
-         callback.onResponse(null, Response.success(localUser));
-      } else {
-         _userApiService
-            .getUserById(userId, currentUser.getToken())
-            .enqueue(
-               new Callback<User>() {
-                  @Override
-                  public void onResponse(
-                     Call<User> call,
-                     Response<User> response
-                  ) {
-                     if (response.isSuccessful()) {
-                        User user = response.body();
-                        if (user != null) {
-                           UserDatabaseUtil userDatabaseUtil =
-                              new UserDatabaseUtil(context, currentUser);
-                           userDatabaseUtil.insertUser(user);
-                        }
-                        callback.onResponse(call, response);
-                     } else {
-                        callback.onFailure(
-                           call,
-                           new Throwable("Failed to fetch contact")
-                        );
-                     }
-                  }
 
-                  @Override
-                  public void onFailure(Call<User> call, Throwable throwable) {
-                     callback.onFailure(
-                        call,
-                        new Throwable("Failed to fetch contact")
-                     );
-                  }
-               }
-            );
+          if (DateTimeUtil.daysFromNow(localUser.getLastUpdated())>1){
+              _getUserByIDApi(userId, currentUser, callback);
+          }else {
+              callback.onResponse(null, Response.success(localUser));
+          }
+      } else{
+              _getUserByIDApi(userId, currentUser, callback);
+          }
       }
-   }
+
+private void _insertUserToDB(User currentUser, User user){
+    UserDatabaseUtil userDatabaseUtil =
+            new UserDatabaseUtil(context, currentUser);
+    userDatabaseUtil.insertUser(user);
+}
+    private void _getUserByIDApi(
+            Long userId,
+            User currentUser,
+            Callback<User> callback) {
+        _userApiService
+                .getUserById(userId, currentUser.getToken())
+                .enqueue(
+                        new Callback<User>() {
+                            @Override
+                            public void onResponse(
+                                    Call<User> call,
+                                    Response<User> response
+                            ) {
+                                if (response.isSuccessful()) {
+                                    User user = response.body();
+                                    if (user == null) {
+                                        callback.onFailure(
+                                                call,
+                                                new Throwable("No user Found")
+                                        );
+                                        return;
+                                    }
+
+                                    _insertUserToDB(currentUser, user);
+
+                                    callback.onResponse(call, response);
+                                } else {
+                                    callback.onFailure(
+                                            call,
+                                            new Throwable("Failed to fetch contact")
+                                    );
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<User> call, Throwable throwable) {
+                                callback.onFailure(
+                                        call,
+                                        new Throwable("Failed to fetch contact")
+                                );
+                            }
+                        }
+                );
+
+    }
 
    @Override
    public void getUserByToken(String token, Callback<User> callback) {
-      //TODO check local data
 
       _userApiService
          .getUserByToken(token)

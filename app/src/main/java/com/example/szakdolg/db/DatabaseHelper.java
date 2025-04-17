@@ -81,19 +81,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       ");";
 
    private static final String CREATE_TABLE_USER_ENTRY =
-      "CREATE TABLE " +
-      TABLE_USER_ENTRY +
-      " (" +
-      "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      "userId INTEGER UNIQUE, " +
-      "displayName TEXT NOT NULL, " +
-      "email TEXT NOT NULL, " +
-      "publicKey LONGTEXT NOT NULL, " +
-      "profilePictureUuid TEXT, " +
-      "status TEXT, " +
-      "tags TEXT, " +
-      "authToken TEXT" +
-      ");";
+           "CREATE TABLE " +
+                   TABLE_USER_ENTRY +
+                   " (" +
+                   "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                   "userId INTEGER UNIQUE, " +
+                   "displayName TEXT NOT NULL, " +
+                   "email TEXT NOT NULL, " +
+                   "publicKey LONGTEXT NOT NULL, " +
+                   "profilePictureUuid TEXT, " +
+                   "status TEXT, " +
+                   "tags TEXT, " +
+                   "authToken TEXT," +
+                   "lastUpdated INTEGER" +
+                   ");";
 
    @Override
    public void onCreate(SQLiteDatabase db) {

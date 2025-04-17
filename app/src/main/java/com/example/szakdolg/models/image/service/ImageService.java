@@ -140,14 +140,6 @@ public class ImageService {
       }
    }
 
-   public ImageEntity getImageByUserId(Long userId) {
-      UserService userService = new UserService(context);
-      User user = userService.getUserByUserId(userId, currentUser);
-      ImageEntity imageEntity = imageDatabaseUtil.getImageEntityByUuid(
-         user.getProfilePictureUuid()
-      );
-      return imageEntity;
-   }
 
    public ImageEntity getImageByUUID(String uuid) {
       return imageDatabaseUtil.getImageEntityByUuid(uuid);

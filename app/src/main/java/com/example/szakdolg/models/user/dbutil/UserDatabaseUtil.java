@@ -64,6 +64,7 @@ public class UserDatabaseUtil {
             String status = cursor.getString(6);
             String tags = cursor.getString(7);
             String authToken = cursor.getString(8);
+            Long lastUpdated = cursor.getLong(9);
 
             User user = new User(
                userId,
@@ -73,7 +74,8 @@ public class UserDatabaseUtil {
                profilePictureUuid,
                status,
                tags,
-               authToken
+               authToken,
+                    lastUpdated
             );
             users.add(user);
          }
@@ -93,7 +95,7 @@ public class UserDatabaseUtil {
       try {
          cursor =
          db.rawQuery(
-            "SELECT id, userId, displayName, email, publicKey, profilePictureUuid, status, tags, authToken FROM " +
+            "SELECT id, userId, displayName, email, publicKey, profilePictureUuid, status, tags, authToken, lastUpdated FROM " +
             dbHelper.TABLE_USER_ENTRY +
             " WHERE authToken = ?",
             new String[] { token }
@@ -125,6 +127,9 @@ public class UserDatabaseUtil {
             String authToken = cursor.getString(
                cursor.getColumnIndexOrThrow("authToken")
             );
+            Long lastUpdated = cursor.getLong(
+                    cursor.getColumnIndexOrThrow("lastUpdated")
+            );
 
             return new User(
                userId,
@@ -134,7 +139,8 @@ public class UserDatabaseUtil {
                profilePictureUuid,
                status,
                tags,
-               authToken
+               authToken,
+                    lastUpdated
             );
          }
       } finally {
@@ -169,7 +175,7 @@ public class UserDatabaseUtil {
             String status = cursor.getString(5);
             String tags = cursor.getString(6);
             String authToken = cursor.getString(7);
-
+            Long lastUpdated = cursor.getLong(8);
             // Initialize user object with all retrieved fields
             User user = new User(
                userId,
@@ -179,7 +185,8 @@ public class UserDatabaseUtil {
                profilePictureUuid,
                status,
                tags,
-               authToken
+               authToken,
+                    lastUpdated
             );
             return user;
          }
@@ -213,28 +220,39 @@ public class UserDatabaseUtil {
    }
 
    public void insertUser(User user) {
-      SQLiteDatabase db = dbHelper.getWritableDatabase();
+      if(_isInsertable(user)) {
+         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-      try {
-         ContentValues values = new ContentValues();
-         values.put("userId", user.getUserId());
-         values.put("displayName", user.getDisplayName());
-         values.put("email", user.getEmail());
-         values.put("publicKey", user.getPublicKey());
-         values.put("profilePictureUuid", user.getProfilePictureUuid());
-         values.put("status", user.getStatus());
-         values.put("tags", user.getTags());
-         values.put("authToken", user.getToken());
+         try {
+            ContentValues values = new ContentValues();
+            values.put("userId", user.getUserId());
+            values.put("displayName", user.getDisplayName());
+            values.put("email", user.getEmail());
+            values.put("publicKey", user.getPublicKey());
+            values.put("profilePictureUuid", user.getProfilePictureUuid());
+            values.put("status", user.getStatus());
+            values.put("tags", user.getTags());
+            values.put("authToken", user.getToken());
 
-         db.insertWithOnConflict(
-            dbHelper.TABLE_USER_ENTRY,
-            null,
-            values,
-            SQLiteDatabase.CONFLICT_REPLACE
-         );
-      } finally {
-         db.close();
+            db.insertWithOnConflict(
+                    dbHelper.TABLE_USER_ENTRY,
+                    null,
+                    values,
+                    SQLiteDatabase.CONFLICT_REPLACE
+            );
+         } finally {
+            db.close();
+         }
       }
+   }
+
+   private boolean _isInsertable(User user) {
+      User localUser = getUserById(user.getUserId());
+         if(localUser == null || localUser.getLastUpdated()< user.getLastUpdated()){
+            return true;
+         }
+
+      return false;
    }
 
    public void deleteUser(int userId) {

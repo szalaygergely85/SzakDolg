@@ -1,8 +1,7 @@
 plugins {
     id 'com.android.application'
     id "com.diffplug.spotless" version "7.0.0.BETA1"
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.appdistribution'
+
 
 }
 
@@ -21,7 +20,7 @@ android {
         unitTests.includeAndroidResources = true
     }
 
-    buildTypes {
+    buildTypes {A
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -33,21 +32,7 @@ android {
     }
     namespace 'com.example.szakdolg'
 
-    spotless {
-        java {
-            target "src/*/java/**/*.java"
-            indentWithTabs()
-            removeUnusedImports()
-            trimTrailingWhitespace()
-            prettier(['prettier': '3.0.3', 'prettier-plugin-java': '2.3.0'])
-                    .config([
-                            'parser': 'java',
-                            'tabWidth': 3,
-                            'printWidth': 80,
-                            'plugins': ['prettier-plugin-java']
-                    ])
-        }
-    }
+
 
 }
 
@@ -78,7 +63,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.google.firebase:firebase-messaging:24.1.1'
+
 
     // Bouncy Castle for cryptography
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
@@ -105,4 +90,18 @@ tasks.withType(Test) {
     useJUnitPlatform() // Enable JUnit 5 for Android unit tests
 }
 
-
+spotless {
+    java {
+        target "src/*/java/**/*.java"
+        indentWithTabs()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        prettier(['prettier': '3.0.3', 'prettier-plugin-java': '2.3.0'])
+                .config([
+                        'parser': 'java',
+                        'tabWidth': 3,
+                        'printWidth': 80,
+                        'plugins': ['prettier-plugin-java']
+                ])
+    }
+}

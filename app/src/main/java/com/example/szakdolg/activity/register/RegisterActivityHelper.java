@@ -45,7 +45,8 @@ public class RegisterActivityHelper {
          hashPass,
          keyPair.get("Public"),
          UserConstans.STATUS_ACTIVE,
-         UserConstans.TAG_PENDING
+         UserConstans.TAG_PENDING,
+              null
       );
 
       userService.addUser(

@@ -22,13 +22,6 @@ public class UserService {
       this.userRepository = new UserRepositoryImpl(context);
    }
 
-   public User getUserByUserId(Long userId, User currentUser) {
-      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
-         context,
-         currentUser
-      );
-      return userDatabaseUtil.getUserById(userId);
-   }
 
    public void getTokenByPasswordAndEmail(
       String hashPassword,

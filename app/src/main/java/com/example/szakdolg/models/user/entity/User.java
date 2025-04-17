@@ -16,6 +16,10 @@ public class User implements Serializable {
    private String tags;
    private String token;
 
+   private Long lastUpdated;
+
+
+
    public User(
       Long userId,
       String displayName,
@@ -24,7 +28,8 @@ public class User implements Serializable {
       String profilePictureUuid,
       String status,
       String tags,
-      String token
+      String token,
+      Long lastUpdated
    ) {
       this.userId = userId;
       this.displayName = displayName;
@@ -35,6 +40,7 @@ public class User implements Serializable {
       this.status = status;
       this.tags = tags;
       this.token = token;
+      this.lastUpdated = lastUpdated;
    }
 
    @Override
@@ -56,7 +62,8 @@ public class User implements Serializable {
       String password,
       String publicKey,
       String status,
-      String tags
+      String tags,
+      Long lastUpdated
    ) {
       this.displayName = displayName;
       this.email = email;
@@ -64,6 +71,7 @@ public class User implements Serializable {
       this.publicKey = publicKey;
       this.status = status;
       this.tags = tags;
+      this.lastUpdated = lastUpdated;
    }
 
    public User(String displayName, String email, String password) {
@@ -150,4 +158,13 @@ public class User implements Serializable {
    public void setToken(String token) {
       this.token = token;
    }
+
+   public Long getLastUpdated() {
+      return lastUpdated;
+   }
+
+   public void setLastUpdated(Long lastUpdated) {
+      this.lastUpdated = lastUpdated;
+   }
+
 }
