@@ -73,13 +73,15 @@ public class ConversationDatabaseUtil {
             long timeStamp = cursor.getLong(2);
             long creatorUserId = cursor.getLong(3);
             int numberOfParticipants = cursor.getInt(4);
+            long lastUpdated = cursor.getLong(5);
 
             Conversation conversation = new Conversation(
                conversationId,
                conversationName,
                timeStamp,
                creatorUserId,
-               numberOfParticipants
+               numberOfParticipants,
+                    lastUpdated
             );
             conversations.add(conversation);
          } while (cursor.moveToNext());
@@ -127,6 +129,9 @@ public class ConversationDatabaseUtil {
          );
          conversation.setNumberOfParticipants(
             cursor.getInt(cursor.getColumnIndexOrThrow("numberOfParticipants"))
+         );
+         conversation.setLastUpdated(
+                 cursor.getInt(cursor.getColumnIndexOrThrow("lastUpdated"))
          );
          cursor.close();
       }

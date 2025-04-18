@@ -160,7 +160,7 @@ public class UserDatabaseUtil {
       try {
          cursor =
          db.rawQuery(
-            "SELECT id, displayName, email, publicKey, profilePictureUuid, status, tags, authToken FROM " +
+            "SELECT id, displayName, email, publicKey, profilePictureUuid, status, tags, authToken, lastUpdated FROM " +
             dbHelper.TABLE_USER_ENTRY +
             " WHERE userId = ?",
             new String[] { String.valueOf(userId) }

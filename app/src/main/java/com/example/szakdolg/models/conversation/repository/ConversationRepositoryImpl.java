@@ -12,6 +12,8 @@ import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
+import com.example.szakdolg.util.DateTimeUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -93,7 +95,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                   Call<ConversationDTO> call,
                   Response<ConversationDTO> response
                ) {
-                  insertConversationDTO(response.body());
+                  _insertConversationDTO(response.body(), null);
 
                   callback.onResponse(call, response);
                }
@@ -120,7 +122,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
    ) {
       Conversation localConversation =
          conversationDatabaseUtil.getConversationById(id);
-      if (localConversation != null) {
+      if (localConversation != null && DateTimeUtil.daysFromNow(localConversation.getLastUpdated())<1) {
          List<ConversationParticipant> conversationParticipants =
             conversationParticipantDatabaseUtil.getParticipantsByConversationId(
                localConversation.getConversationId()
@@ -134,7 +136,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                if (user != null) {
                   users.add(user);
                } else {
-                  getConversationDTOFromApi(id, token, callback);
+                  _getConversationDTOFromApi(id, token, callback, localConversation);
                   break;
                }
             }
@@ -153,13 +155,13 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                   )
                );
             } else {
-               getConversationDTOFromApi(id, token, callback);
+               _getConversationDTOFromApi(id, token, callback, localConversation);
             }
          } else {
-            getConversationDTOFromApi(id, token, callback);
+            _getConversationDTOFromApi(id, token, callback, localConversation);
          }
       } else {
-         getConversationDTOFromApi(id, token, callback);
+         _getConversationDTOFromApi(id, token, callback, localConversation);
       }
    }
 
@@ -167,7 +169,12 @@ public class ConversationRepositoryImpl implements ConversationRepository {
    public void getAllConversation(
       String token,
       Callback<List<ConversationDTO>> callback
-   ) {/*
+   ) {
+
+       //TODO csak kell majd az a updated tabla
+       /*
+
+
 	List<Conversation> localConversations =
 		conversationDatabaseUtil.getAllConversations();
 	if (!localConversations.isEmpty()) {
@@ -225,7 +232,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                               messageEntry.setContent(
                                  messageEntry.getContentEncrypted()
                               );
-                              insertConversationDTO(conversationDTO);
+                              _insertConversationDTO(conversationDTO, null);
                            }
                         }
                      }
@@ -252,11 +259,11 @@ public class ConversationRepositoryImpl implements ConversationRepository {
          );
    }
 
-   private void getConversationDTOFromApi(
+   private void _getConversationDTOFromApi(
       Long id,
       String token,
-      Callback<ConversationDTO> callback
-   ) {
+      Callback<ConversationDTO> callback,
+      Conversation localConversation) {
       conversationApiService
          .getConversation(id, token)
          .enqueue(
@@ -269,7 +276,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                   if (response.isSuccessful() && response.body() != null) {
                      ConversationDTO conversationDTO = response.body();
                      if (conversationDTO != null) {
-                        insertConversationDTO(conversationDTO);
+                        _insertConversationDTO(conversationDTO, localConversation);
                      }
                      callback.onResponse(call, response);
                   } else {
@@ -294,12 +301,15 @@ public class ConversationRepositoryImpl implements ConversationRepository {
          );
    }
 
-   private void insertConversationDTO(ConversationDTO conversationDTO) {
+   private void _insertConversationDTO(ConversationDTO conversationDTO, Conversation localConversation) {
       Conversation conversation = conversationDTO.getConversation();
       if (conversation != null) {
-         conversationDatabaseUtil.insertConversation(
-            conversationDTO.getConversation()
-         );
+          if(localConversation!=null) {
+              if (conversation.getLastUpdated() <= localConversation.getLastUpdated())
+                  conversationDatabaseUtil.insertConversation(
+                          conversationDTO.getConversation()
+                  );
+          }
       }
 
       for (ConversationParticipant conversationParticipant : conversationDTO.getParticipants()) {

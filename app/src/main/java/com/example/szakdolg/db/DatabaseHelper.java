@@ -43,7 +43,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "conversationName TEXT, " +
       "timeStamp INTEGER, " +
       "creatorUserId INTEGER, " +
-      "numberOfParticipants INTEGER" +
+      "numberOfParticipants INTEGER, " +
+              " lastUpdated INTEGER" +
       ");";
 
    private static final String CREATE_TABLE_IMAGE =

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,12 +16,16 @@ import com.example.szakdolg.activity.base.BaseActivity;
 import com.example.szakdolg.activity.chat.activity.ChatActivity;
 import com.example.szakdolg.activity.contacts.adapter.ContactsAdapter;
 import com.example.szakdolg.activity.contacts.constans.ContactsConstans;
+import com.example.szakdolg.activity.main.MainActivity;
 import com.example.szakdolg.constans.IntentConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
 import com.example.szakdolg.models.contacts.ContactService;
 import com.example.szakdolg.models.conversation.service.ConversationService;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +53,28 @@ public class ContactsActivity extends BaseActivity {
 
       toolbar.setNavigationOnClickListener(v ->
          getOnBackPressedDispatcher().onBackPressed()
+      );
+
+
+      BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_contacts);
+      bottomNav.setSelectedItemId(R.id.nav_contact_main);
+
+
+      bottomNav.setOnItemSelectedListener(
+              new NavigationBarView.OnItemSelectedListener() {
+                 @Override
+                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Intent intent;
+                    switch (item.getItemId()) {
+                       case R.id.nav_messages_main:
+                          intent = new Intent(ContactsActivity.this, MainActivity.class);
+                          startActivity(intent);
+                          break;
+
+                    }
+                    return false;
+                 }
+              }
       );
    }
 

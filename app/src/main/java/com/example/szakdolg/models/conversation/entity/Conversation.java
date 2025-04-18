@@ -11,6 +11,8 @@ public class Conversation implements Serializable {
    private long creatorUserId;
    private int numberOfParticipants;
 
+   private long lastUpdated;
+
    public Conversation() {}
 
    public Conversation(
@@ -18,13 +20,15 @@ public class Conversation implements Serializable {
       String conversationName,
       long timeStamp,
       Long creatorUserId,
-      int numberOfParticipants
+      int numberOfParticipants,
+      long lastUpdated
    ) {
       this.conversationId = conversationId;
       this.conversationName = conversationName;
       this.timeStamp = timeStamp;
       this.creatorUserId = creatorUserId;
       this.numberOfParticipants = numberOfParticipants;
+      this.lastUpdated = lastUpdated;
    }
 
    public Conversation(
@@ -45,6 +49,14 @@ public class Conversation implements Serializable {
       if (obj == null || getClass() != obj.getClass()) return false; // Check for null or different class
       Conversation other = (Conversation) obj;
       return conversationId.equals(other.conversationId); // Compare only by ID
+   }
+
+   public long getLastUpdated() {
+      return lastUpdated;
+   }
+
+   public void setLastUpdated(long lastUpdated) {
+      this.lastUpdated = lastUpdated;
    }
 
    @Override

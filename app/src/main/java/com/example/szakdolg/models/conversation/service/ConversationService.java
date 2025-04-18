@@ -28,18 +28,8 @@ public class ConversationService {
       new ConversationDatabaseUtil(context, currentUser);
    }
 
-   public Conversation addConversation(Conversation conversation) {
-      List<Conversation> localConversations =
-         conversationDatabaseUtil.getAllConversations();
-      if (!localConversations.contains(conversation)) {
-         conversationDatabaseUtil.insertConversation(conversation);
-         return conversation;
-      } else {
-         return null;
-      }
-   }
 
-   //Starting the new Repository way from here
+
 
    public void getConversation(
       Long conversationId,
