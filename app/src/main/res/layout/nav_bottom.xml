@@ -8,4 +8,5 @@
     app:itemTextColor="@color/textOnPrimary"
     app:itemIconTint="@color/textOnPrimary"
     app:menu="@menu/bottom_nav_menu"
+    android:fitsSystemWindows="true"
     app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"/>

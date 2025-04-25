@@ -49,9 +49,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
    public void addMessage(MessageEntry messageEntry) {
       if (messageEntry != null) {
-         messageEntries.add(messageEntry);
-
-         notifyDataSetChanged();
+         messageEntries.add(getItemCount(), messageEntry);
+         notifyItemInserted(getItemCount() - 1);
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
    }

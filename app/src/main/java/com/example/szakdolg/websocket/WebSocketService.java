@@ -43,6 +43,8 @@ public class WebSocketService extends Service {
 
    private static WebSocketService instance;
 
+    private boolean isConnected= false;
+
    public class LocalBinder extends Binder {
 
       WebSocketService getService() {
@@ -127,6 +129,7 @@ public class WebSocketService extends Service {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                Log.e("WebSocket", response.message());
+               isConnected = true;
                // Connection established
 
             }
@@ -169,21 +172,27 @@ public class WebSocketService extends Service {
                Response response
             ) {
                // Connection failure, handle reconnection
-
+                isConnected = false;
                reconnectToWebSocket();
             }
 
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
+
+                isConnected = false;
                // Connection closed
                reconnectToWebSocket();
             }
          }
       );
-      // startPingPong();
+       startPingPong();
    }
 
-   private void startPingPong() {
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    private void startPingPong() {
       Handler handler = new Handler(Looper.getMainLooper());
       Runnable pingRunnable = new Runnable() {
          @Override
@@ -202,7 +211,7 @@ public class WebSocketService extends Service {
 
    private void reconnectToWebSocket() {
       Handler handler = new Handler(Looper.getMainLooper());
-      handler.postDelayed(this::connectToWebSocket, 5000); // Retry after 5 seconds
+      handler.postDelayed(this::connectToWebSocket, 10000); // Retry after 5 seconds
 
       Log.e("WebSocket", "Reconnecting");
    }
@@ -249,6 +258,12 @@ public class WebSocketService extends Service {
          MessageTypeConstants.MESSAGE,
          uuid
       );
+
+
+      //TODO encryption
+      messageEntry.setContent(contentEncrypted);
+
+
       messageDatabaseUtil.insertMessageEntry(messageEntry);
       sendMessageBroadcast(messageEntry);
       Log.e(AppConstants.LOG_TAG, messageEntry.toString());

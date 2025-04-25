@@ -2,10 +2,16 @@ package com.example.szakdolg.models.message;
 
 import android.content.Context;
 import com.example.szakdolg.activity.base.BaseService;
+import com.example.szakdolg.models.message.constants.MessageTypeConstants;
 import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.message.repository.MessageRepository;
 import com.example.szakdolg.models.message.repository.MessageRepositoryImpl;
 import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.websocket.WebSocketService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,6 +23,8 @@ public class MessageService extends BaseService {
 
    private MessageDatabaseUtil messageDatabaseUtil;
 
+
+
    public MessageService(Context context, User currentUser) {
       super(context, currentUser);
       this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
@@ -27,32 +35,55 @@ public class MessageService extends BaseService {
       MessageEntry messageEntry,
       final MessageCallback<MessageEntry> callback
    ) {
-      if (messageEntry != null) {
-         messageRepository.addMessage(
-            messageEntry,
-            new Callback<MessageEntry>() {
-               @Override
-               public void onResponse(
-                  Call<MessageEntry> call,
-                  Response<MessageEntry> response
-               ) {
-                  if (response.isSuccessful()) {
-                     callback.onSuccess(response.body());
-                  } else {
-                     callback.onError(
-                        new Throwable("Failed to update contact")
-                     );
-                  }
-               }
+       if (messageEntry == null) return;
 
-               @Override
-               public void onFailure(
-                  Call<MessageEntry> call,
-                  Throwable throwable
-               ) {}
-            }
-         );
-      }
+       String encryptedContentString = null;
+       //TODO ENCYPTION
+       //messageEntry.setContentEncrypted(EncryptionHelper.encrypt(messageEntry.getContent(), currentUser.getPublicKey()));
+       messageEntry.setContentEncrypted(messageEntry.getContent());
+
+       WebSocketService wsService = WebSocketService.getInstance();
+
+       if (wsService != null && wsService.isConnected()) {
+           try {
+               JSONObject json = new JSONObject();
+               json.put("type", MessageTypeConstants.MESSAGE);
+               json.put("senderId", messageEntry.getSenderId());
+               json.put("conversationId", messageEntry.getConversationId());
+               json.put("uuid", messageEntry.getUuId());
+               json.put("timestamp", messageEntry.getTimestamp());
+               json.put("contentEncrypted", messageEntry.getContentEncrypted());
+
+               wsService.sendMessage(json.toString());
+               messageDatabaseUtil.insertMessageEntry(messageEntry);
+               callback.onSuccess(messageEntry); // Assume WebSocket worked
+           } catch (JSONException e) {
+               callback.onError(e);
+           }
+       } else {
+           // WebSocket not available – fallback to API
+           messageRepository.addMessage(
+                   messageEntry,
+                   new Callback<MessageEntry>() {
+                       @Override
+                       public void onResponse(
+                               Call<MessageEntry> call,
+                               Response<MessageEntry> response
+                       ) {
+                           if (response.isSuccessful()) {
+                               callback.onSuccess(response.body());
+                           } else {
+                               callback.onError(new Throwable("Failed to send message via API"));
+                           }
+                       }
+
+                       @Override
+                       public void onFailure(Call<MessageEntry> call, Throwable throwable) {
+                           callback.onError(throwable);
+                       }
+                   }
+           );
+       }
    }
 
    public void addMessages(List<MessageEntry> messageEntries) {

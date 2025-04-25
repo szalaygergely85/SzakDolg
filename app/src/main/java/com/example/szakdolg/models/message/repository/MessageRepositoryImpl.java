@@ -87,10 +87,7 @@ public class MessageRepositoryImpl implements MessageRepository {
    ) {
       messageDatabaseUtil.insertMessageEntry(messageEntry);
 
-      String encryptedContentString = null;
-      //TODO ENCYPTION
-      //messageEntry.setContentEncrypted(EncryptionHelper.encrypt(messageEntry.getContent(), currentUser.getPublicKey()));
-      messageEntry.setContentEncrypted(messageEntry.getContent());
+
 
       messageApiService
          .addMessage(messageEntry, currentUser.getToken())
