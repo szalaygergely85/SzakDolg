@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/newChatParent"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
     tools:context=".activity.chat.activity.ChatActivity">
 
@@ -11,6 +12,7 @@
         android:id="@+id/chatBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
         android:elevation="8dp"
         android:backgroundTint="@color/colorPrimary"
         >
@@ -19,7 +21,8 @@
             android:id="@+id/chatToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIcon="@drawable/ic_arrow_back2"
+            app:navigationIconTint="@color/textOnPrimary"
             app:menu="@menu/menu_chat_top_bar"
             app:title="Title"
             app:titleTextColor="@color/textOnPrimary"
@@ -71,6 +74,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
+            android:padding="5dp"
             android:layout_weight="1"
             android:hint="@string/send_a_message"
             app:boxBackgroundMode="outline"
@@ -89,11 +93,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:paddingHorizontal="12dp"
+                android:paddingVertical="10dp"
                 android:background="@null"
                 android:gravity="center_vertical"
                 android:hint="@string/send_a_message"
                 android:inputType="textMultiLine|textCapSentences"
-                android:textColor="@color/textOnPrimary" />
+                android:textColor="@color/textPrimary" />
         </com.google.android.material.textfield.TextInputLayout>
 
 

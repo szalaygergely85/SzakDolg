@@ -1,5 +1,6 @@
 package com.example.szakdolg.websocket;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -29,8 +30,12 @@ import okhttp3.WebSocketListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class WebSocketService extends Service {
+import java.util.List;
 
+
+public class WebSocketService extends Service {
+   private Handler pongTimeoutHandler;
+   private Runnable pongTimeoutRunnable;
    private final IBinder binder = new LocalBinder();
    private OkHttpClient client;
    private WebSocket webSocket;
@@ -44,6 +49,20 @@ public class WebSocketService extends Service {
    private static WebSocketService instance;
 
     private boolean isConnected= false;
+
+   private Handler pingHandler;
+   private Runnable pingRunnable;
+
+
+
+   private boolean isConnecting = false;
+
+
+   private static final int PONG_TIMEOUT_MS = 40000;
+
+   private long currentPingIntervalMs = 30000; // Start with 30 seconds
+   private static final long MAX_PING_INTERVAL_MS = 120000; // Max 2 minutes
+
 
    public class LocalBinder extends Binder {
 
@@ -61,6 +80,18 @@ public class WebSocketService extends Service {
       super.onCreate();
       instance = this;
       context = getApplicationContext();
+   }
+
+   @Override
+   public void onTaskRemoved(Intent rootIntent) {
+      super.onTaskRemoved(rootIntent);
+
+      // Restart the service
+      Intent restartServiceIntent = new Intent(getApplicationContext(), WebSocketService.class);
+      restartServiceIntent.setPackage(getPackageName());
+      startForegroundService(restartServiceIntent);
+
+
    }
 
    @Override
@@ -84,41 +115,53 @@ public class WebSocketService extends Service {
    }
 
    private void startForegroundNotification() {
-      createNotificationChannel();
-      Notification notification = new NotificationCompat.Builder(
-         this,
-         "CHANNEL_ID"
-      )
-         .setContentTitle("WebSocket Service")
-         .setContentText("Maintaining WebSocket connection")
-         .setSmallIcon(R.drawable.ic_chat)
-         .build();
+      createNotificationChannel(); // <-- THIS IS THE CALL
+      Notification notification = new NotificationCompat.Builder(this, "CHANNEL_ID")
+              .setContentTitle("WebSocket Service")
+              .setContentText("Maintaining WebSocket connection")
+              .setSmallIcon(R.drawable.ic_chat)
+              .build();
       startForeground(1, notification);
    }
 
    private void createNotificationChannel() {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-         NotificationChannel channel = new NotificationChannel(
-            "CHANNEL_ID",
-            "WebSocket Service",
-            NotificationManager.IMPORTANCE_LOW
+         NotificationChannel serviceChannel = new NotificationChannel(
+                 "SERVICE_CHANNEL",
+                 "WebSocket Service",
+                 NotificationManager.IMPORTANCE_LOW
          );
-         channel.setDescription("Notification for WebSocket Service");
-         NotificationManager manager = getSystemService(
-            NotificationManager.class
+         serviceChannel.setDescription("Notification for WebSocket Service");
+
+         NotificationChannel messageChannel = new NotificationChannel(
+                 "MESSAGE_CHANNEL",
+                 "Message Notifications",
+                 NotificationManager.IMPORTANCE_HIGH
          );
+         messageChannel.setDescription("Notifications for incoming chat messages");
+
+         NotificationManager manager = getSystemService(NotificationManager.class);
          if (manager != null) {
-            manager.createNotificationChannel(channel);
+            manager.createNotificationChannel(serviceChannel);
+            manager.createNotificationChannel(messageChannel);
          }
       }
    }
 
+
    private void connectToWebSocket() {
-      Log.e("WebSocket", "response.message()");
+      if (isConnecting) {
+         Log.e("WebSocket", "Already trying to connect, skipping...");
+         return;
+      }
+
+      isConnecting = true;
+
+
       client = new OkHttpClient();
 
       Request request = new Request.Builder()
-         .url("ws://10.0.2.2:8081/ws")
+         .url(AppConstants.WS_URL)
          .addHeader("token", userToken)
          .build();
 
@@ -130,6 +173,8 @@ public class WebSocketService extends Service {
             public void onOpen(WebSocket webSocket, Response response) {
                Log.e("WebSocket", response.message());
                isConnected = true;
+               isConnecting = false;
+               startPingPong();
                // Connection established
 
             }
@@ -173,6 +218,7 @@ public class WebSocketService extends Service {
             ) {
                // Connection failure, handle reconnection
                 isConnected = false;
+               isConnecting = false;
                reconnectToWebSocket();
             }
 
@@ -180,38 +226,54 @@ public class WebSocketService extends Service {
             public void onClosed(WebSocket webSocket, int code, String reason) {
 
                 isConnected = false;
+               isConnecting = false;
                // Connection closed
                reconnectToWebSocket();
             }
          }
       );
-       startPingPong();
+
    }
 
     public boolean isConnected() {
         return isConnected;
     }
 
-    private void startPingPong() {
-      Handler handler = new Handler(Looper.getMainLooper());
-      Runnable pingRunnable = new Runnable() {
+   private void startPingPong() {
+      if (pingHandler != null && pingRunnable != null) {
+         pingHandler.removeCallbacks(pingRunnable); // Cancel old loop
+      }
+
+      pingHandler = new Handler(Looper.getMainLooper());
+      pingRunnable = new Runnable() {
          @Override
          public void run() {
-            if (webSocket != null) {
-               String pingMessage =
-                  "{\"type\": " + MessageTypeConstants.PING + "}";
+            if (webSocket != null && isConnected) {
+               String pingMessage = "{\"type\": " + MessageTypeConstants.PING + "}";
                webSocket.send(pingMessage);
+
+               startPongTimeout();
+
                Log.e("WebSocket", "Sending ping message");
-               handler.postDelayed(this, 30000); // Send ping every 30 seconds
+               pingHandler.postDelayed(this, 60000);
             }
          }
       };
-      handler.post(pingRunnable);
+
+      pingHandler.post(pingRunnable);
    }
 
+
    private void reconnectToWebSocket() {
+      if (pingHandler != null && pingRunnable != null) {
+         pingHandler.removeCallbacks(pingRunnable);
+      }
+
       Handler handler = new Handler(Looper.getMainLooper());
-      handler.postDelayed(this::connectToWebSocket, 10000); // Retry after 5 seconds
+
+      currentPingIntervalMs = Math.min(currentPingIntervalMs + 10000, MAX_PING_INTERVAL_MS); // +10 seconds each time
+
+      handler.postDelayed(this::connectToWebSocket, currentPingIntervalMs);
 
       Log.e("WebSocket", "Reconnecting");
    }
@@ -222,12 +284,42 @@ public class WebSocketService extends Service {
       if (webSocket != null) {
          webSocket.close(1000, null);
       }
+
+      if (pingHandler != null && pingRunnable != null) {
+         pingHandler.removeCallbacks(pingRunnable);
+      }
+
+      if (pongTimeoutHandler != null && pongTimeoutRunnable != null) {
+         pongTimeoutHandler.removeCallbacks(pongTimeoutRunnable);
+      }
    }
 
    private void handlePong() {
+      if (pongTimeoutHandler != null && pongTimeoutRunnable != null) {
+         pongTimeoutHandler.removeCallbacks(pongTimeoutRunnable);
+      }
+
+      startPongTimeout();
       Log.e("WebSocket", "Pong received from server");
    }
 
+   private void startPongTimeout() {
+      if (pongTimeoutHandler != null && pongTimeoutRunnable != null) {
+         pongTimeoutHandler.removeCallbacks(pongTimeoutRunnable);
+      }
+
+      pongTimeoutHandler = new Handler(Looper.getMainLooper());
+      pongTimeoutRunnable = new Runnable() {
+         @Override
+         public void run() {
+            // Pong was not received in time
+            Log.e("WebSocket", "Pong timeout, reconnecting...");
+            isConnected = false;
+            reconnectToWebSocket();
+         }
+      };
+      pongTimeoutHandler.postDelayed(pongTimeoutRunnable, PONG_TIMEOUT_MS);
+   }
    private void handleMessage(JSONObject jsonObject) throws JSONException {
       Log.e("WebSocket", "Message received: " + jsonObject);
 
@@ -265,9 +357,13 @@ public class WebSocketService extends Service {
 
 
       messageDatabaseUtil.insertMessageEntry(messageEntry);
-      sendMessageBroadcast(messageEntry);
-      Log.e(AppConstants.LOG_TAG, messageEntry.toString());
+      if(isAppInForeground()) {
+         sendMessageBroadcast(messageEntry);
+         Log.e(AppConstants.LOG_TAG, messageEntry.toString());
 
+      }else {
+         showIncomingMessageNotification(messageEntry.getContent());
+      }
       if (messageEntry != null) {
          String message =
             "{\"type\": " +
@@ -294,4 +390,33 @@ public class WebSocketService extends Service {
       intent.putExtra("message", message);
       LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
    }
+   private boolean isAppInForeground() {
+      ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+      List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+      if (appProcesses == null) {
+         return false;
+      }
+      final String packageName = getPackageName();
+      for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+         if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+                 appProcess.processName.equals(packageName)) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   private void showIncomingMessageNotification(String messageText) {
+      NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "MESSAGE_CHANNEL")
+              .setSmallIcon(R.drawable.ic_chat)
+              .setContentTitle("New Message")
+              .setContentText(messageText)
+              .setPriority(NotificationCompat.PRIORITY_HIGH)
+              .setAutoCancel(true);
+
+      NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+      notificationManager.notify(2, builder.build());
+   }
+
+
 }

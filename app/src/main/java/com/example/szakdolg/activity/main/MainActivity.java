@@ -36,6 +36,7 @@ import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.example.szakdolg.websocket.WebSocketService;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
 import java.util.List;
@@ -140,7 +141,7 @@ public class MainActivity extends BaseActivity {
       Intent serviceIntent = new Intent(this, WebSocketService.class);
       serviceIntent.putExtra(IntentConstants.CURRENT_USER, currentUser);
       serviceIntent.putExtra(IntentConstants.USER_TOKEN, token);
-      startService(serviceIntent);
+      startForegroundService(serviceIntent);
 
       this._mainActivityHelper = new MainActivityHelper(this, currentUser);
 
@@ -174,7 +175,7 @@ public class MainActivity extends BaseActivity {
       );
 
       _mainActivityHelper.setBottomNavMenu(bottomNavigationView);
-      _mainActivityHelper.setListeners(topAppBar, drawerLayout, navigationView);
+      _mainActivityHelper.setListeners(topAppBar, drawerLayout, navigationView, newConv);
 
       boolean isNightMode = SharedPreferencesUtil.getBooleanPreferences(
          this,
@@ -271,6 +272,7 @@ public class MainActivity extends BaseActivity {
       View headerView = navigationView.getHeaderView(0);
       profileImageHeader = headerView.findViewById(R.id.profile_image_header);
       profileTextHeader = headerView.findViewById(R.id.profile_name_header);
+      newConv = findViewById(R.id.btnNewConv);
    }
 
    private BottomNavigationView bottomNavigationView;
@@ -301,4 +303,6 @@ public class MainActivity extends BaseActivity {
    private TextView profileTextHeader;
 
    private ConversationService conversationService;
+
+   private FloatingActionButton newConv;
 }

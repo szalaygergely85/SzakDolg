@@ -5,6 +5,7 @@
             <item
                 android:id="@+id/menu_start_conversation"
                 android:icon="@drawable/ic_arrow_forward"
+                app:iconTint="@color/textOnPrimary"
                 android:title="@string/start_conversation"
                 app:showAsAction="always" />
 

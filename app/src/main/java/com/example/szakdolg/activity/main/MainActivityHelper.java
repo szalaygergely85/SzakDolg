@@ -19,6 +19,7 @@ import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -65,7 +66,8 @@ public class MainActivityHelper {
    public void setListeners(
       MaterialToolbar topAppBar,
       DrawerLayout drawerLayout,
-      NavigationView navigationView
+      NavigationView navigationView,
+      FloatingActionButton newConv
    ) {
       navigationView.setNavigationItemSelectedListener(
          new NavigationView.OnNavigationItemSelectedListener() {
@@ -109,6 +111,21 @@ public class MainActivityHelper {
             }
          }
       );
+
+      newConv.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent intent = new Intent(
+                    _context,
+                    ContactsActivity.class
+            );
+            intent.putExtra(
+                    IntentConstants.CONTACTS_ACTION,
+                    ContactsConstans.ACTION_SELECT
+            );
+            _context.startActivity(intent);
+         }
+      });
 
       topAppBar.setOnMenuItemClickListener(
          new MaterialToolbar.OnMenuItemClickListener() {

@@ -99,6 +99,8 @@ public class ProfileActivity extends BaseActivity {
          iconEditPic.setVisibility(View.GONE);
 
          profeditStatus.setInputType(InputType.TYPE_NULL);
+
+         continueButton.setVisibility(View.GONE);
       }else {
 
             user = currentUser;
