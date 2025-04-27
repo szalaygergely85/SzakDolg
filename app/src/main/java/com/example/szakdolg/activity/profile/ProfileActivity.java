@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
@@ -137,6 +138,7 @@ public class ProfileActivity extends BaseActivity {
       Glide
          .with(this)
          .load(imageUrl)
+              .diskCacheStrategy(DiskCacheStrategy.ALL)
          .placeholder(R.drawable.ic_blank_profile)
          .error(R.drawable.ic_blank_profile)
          .into(profPic);
@@ -251,6 +253,7 @@ public class ProfileActivity extends BaseActivity {
                   Glide
                           .with(this)
                           .load(resizedBitmap)
+                          .diskCacheStrategy(DiskCacheStrategy.ALL)
                           .placeholder(R.drawable.ic_blank_profile)
                           .error(R.drawable.ic_blank_profile)
                           .into(profPic);

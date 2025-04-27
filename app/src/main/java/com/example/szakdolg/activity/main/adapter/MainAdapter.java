@@ -139,6 +139,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       notifyDataSetChanged();
    }
 
+
+   public void addConversationDTO( ConversationDTO conversationDTO){
+      if (conversationDTO!=null){
+         conversationDTOList.add(getItemCount(), conversationDTO);
+         notifyItemInserted(getItemCount() - 1);
+      }
+   }
+
    public class ViewHolder extends RecyclerView.ViewHolder {
 
       private final TextView txtName;

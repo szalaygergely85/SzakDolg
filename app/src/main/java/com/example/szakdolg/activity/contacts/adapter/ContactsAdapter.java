@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.szakdolg.DTO.ContactsDTO;
 import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
@@ -115,6 +116,7 @@ public class ContactsAdapter
             .with(context)
             .load(imageUrl)
             .placeholder(R.drawable.ic_blank_profile)
+                 .diskCacheStrategy(DiskCacheStrategy.ALL)
             .error(R.drawable.ic_blank_profile)
             .into(((ContactViewHolder) holder).profileImageView);
 

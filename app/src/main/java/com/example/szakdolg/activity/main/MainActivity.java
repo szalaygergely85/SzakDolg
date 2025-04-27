@@ -21,6 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
@@ -62,6 +63,9 @@ public class MainActivity extends BaseActivity {
       _initView();
 
       conversationService = new ConversationService(this, currentUser);
+
+      mainAdapter = new MainAdapter(this, currentUser, messageBoardRecView);
+
    }
 
    @Override
@@ -136,7 +140,7 @@ public class MainActivity extends BaseActivity {
    protected void onStart() {
       super.onStart();
 
-      mainAdapter = new MainAdapter(this, currentUser, messageBoardRecView);
+
 
       Intent serviceIntent = new Intent(this, WebSocketService.class);
       serviceIntent.putExtra(IntentConstants.CURRENT_USER, currentUser);
@@ -245,6 +249,7 @@ public class MainActivity extends BaseActivity {
             .with(this)
             .load(imageUrl)
             .placeholder(R.drawable.ic_blank_profile)
+                 .diskCacheStrategy(DiskCacheStrategy.ALL)
             .error(R.drawable.ic_blank_profile)
             .into(profileImageHeader);
       } else {
@@ -282,6 +287,19 @@ public class MainActivity extends BaseActivity {
          MessageEntry message = (MessageEntry) intent.getSerializableExtra(
             "message"
          );
+
+         conversationService.getConversation(message.getConversationId(), new ConversationService.ConversationCallback<ConversationDTO>() {
+            @Override
+            public void onSuccess(ConversationDTO conversation) {
+               conversation.setMessageEntry(message);
+               mainAdapter.addConversationDTO(conversation);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+         });
 
          if (message != null) {
             mainAdapter.notifyDataSetChanged();

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.szakdolg.R;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.models.conversation.entity.Conversation;
@@ -56,11 +57,12 @@ public class MainAdapterHelper {
          );
          if (imageUrl != null) {
             Glide
-               .with(context)
-               .load(imageUrl)
-               .placeholder(R.drawable.ic_blank_profile)
-               .error(R.drawable.ic_blank_profile)
-               .into(image);
+                    .with(context)
+                    .load(imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_blank_profile)
+                    .error(R.drawable.ic_blank_profile)
+                    .into(image);
          } else {
             image.setImageResource(R.drawable.ic_blank_profile);
          }

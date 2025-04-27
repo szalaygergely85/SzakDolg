@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.szakdolg.R;
 import com.example.szakdolg.models.contacts.Contact;
 import com.example.szakdolg.models.contacts.ContactService;
@@ -58,6 +59,7 @@ public class SearchContactAdapter
          .with(context)
          .load(imageUrl)
          .placeholder(R.drawable.ic_blank_profile)
+              .diskCacheStrategy(DiskCacheStrategy.ALL)
          .error(R.drawable.ic_blank_profile)
          .into(holder.imageView);
 
