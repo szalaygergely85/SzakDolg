@@ -6,6 +6,8 @@ import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.repository.UserRepository;
 import com.example.szakdolg.models.user.repository.UserRepositoryImpl;
+
+import java.net.HttpURLConnection;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,7 +28,7 @@ public class UserService {
    public void getTokenByPasswordAndEmail(
       String hashPassword,
       String email,
-      final UserService.UserCallback<User> callback
+      final UserService.LoginCallback<User> callback
    ) {
       userRepository.getTokenByPasswordAndEmail(
          new LoginRequest(email, hashPassword),
@@ -36,7 +38,11 @@ public class UserService {
                if (response.isSuccessful()) {
                   callback.onSuccess(response.body());
                } else {
-                  callback.onError(new Throwable("Failed to update contact"));
+                   if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                       callback.onUserNotFound();
+                   }else {
+                       callback.onError(new Throwable("Failed to login"));
+                   }
                }
             }
 
@@ -153,7 +159,7 @@ public class UserService {
 
    public void addUser(
       User user,
-      final UserService.UserCallback<User> callback
+      final UserService.LoginCallback<User> callback
    ) {
       userRepository.addUser(
          user,
@@ -163,7 +169,11 @@ public class UserService {
                if (response.isSuccessful()) {
                   callback.onSuccess(response.body());
                } else {
-                  callback.onError(new Throwable("Failed to update contact"));
+                   if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                       callback.onUserNotFound();
+                   }else {
+                       callback.onError(new Throwable("Failed to login"));
+                   };
                }
             }
 
@@ -177,7 +187,12 @@ public class UserService {
 
    public interface UserCallback<T> {
       void onSuccess(T data);
-
       void onError(Throwable t);
    }
+
+    public interface LoginCallback<T> {
+        void onSuccess(T data);
+        void onUserNotFound();
+        void onError(Throwable t);
+    }
 }

@@ -30,10 +30,10 @@ public class LoginActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_login);
 
-      loginActivityHelper = new LoginActivityHelper(this);
-
       _initView();
       _setOnClickListeners();
+
+      loginActivityHelper = new LoginActivityHelper(this, editMailLayout, editPassLayout);
    }
 
    @Override

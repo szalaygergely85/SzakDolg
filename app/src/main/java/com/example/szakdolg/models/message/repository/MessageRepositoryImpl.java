@@ -125,9 +125,25 @@ public class MessageRepositoryImpl implements MessageRepository {
    @Override
    public void addMessages(
       List<MessageEntry> messageEntries,
-      Callback<MessageEntry> callback
+      Callback<List<MessageEntry>> callback
    ) {
-      //TODO add messages
+       messageApiService.addMessages(messageEntries, currentUser.getToken()).enqueue(new Callback<List<MessageEntry>>() {
+           @Override
+           public void onResponse(Call<List<MessageEntry>> call, Response<List<MessageEntry>> response) {
+               if (response.isSuccessful() && response.body() != null) {
+                   callback.onResponse(call, response);
+               }
+
+           }
+
+           @Override
+           public void onFailure(Call<List<MessageEntry>> call, Throwable throwable) {
+               callback.onFailure(
+                       call,
+                       throwable
+               );
+           }
+       });
    }
 
    @Override

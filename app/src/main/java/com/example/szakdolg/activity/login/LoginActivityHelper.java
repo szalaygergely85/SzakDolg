@@ -8,16 +8,22 @@ import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.models.user.service.UserService;
 import com.example.szakdolg.util.HashUtils;
 import com.example.szakdolg.util.SharedPreferencesUtil;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivityHelper {
 
    private Context context;
    private UserService userService;
 
-   public LoginActivityHelper(Context context) {
-      this.context = context;
-      this.userService = new UserService(context);
-   }
+    private TextInputLayout editMailLayout;
+    private TextInputLayout editPassLayout;
+
+    public LoginActivityHelper(Context context, TextInputLayout editMailLayout, TextInputLayout editPassLayout) {
+        this.context = context;
+        this.editMailLayout = editMailLayout;
+        this.editPassLayout = editPassLayout;
+        this.userService = new UserService(context);
+    }
 
    public void loginUser(String email, String password) {
       String hashPassword = HashUtils.hashPassword(password);
@@ -25,7 +31,7 @@ public class LoginActivityHelper {
       userService.getTokenByPasswordAndEmail(
          hashPassword,
          email,
-         new UserService.UserCallback<User>() {
+         new UserService.LoginCallback<User>() {
             @Override
             public void onSuccess(User user) {
                String token = user.getToken();
@@ -45,7 +51,13 @@ public class LoginActivityHelper {
                context.startActivity(intent);
             }
 
-            @Override
+             @Override
+             public void onUserNotFound() {
+editMailLayout.setError(" ");
+editPassLayout.setError("Invalid email or password");
+             }
+
+             @Override
             public void onError(Throwable t) {}
          }
       );

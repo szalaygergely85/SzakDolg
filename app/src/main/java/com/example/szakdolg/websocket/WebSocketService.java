@@ -115,8 +115,8 @@ public class WebSocketService extends Service {
    }
 
    private void startForegroundNotification() {
-      createNotificationChannel(); // <-- THIS IS THE CALL
-      Notification notification = new NotificationCompat.Builder(this, "CHANNEL_ID")
+      createNotificationChannel(); // <-- Good, creates SERVICE_CHANNEL
+      Notification notification = new NotificationCompat.Builder(this, "SERVICE_CHANNEL") // <-- FIXED HERE
               .setContentTitle("WebSocket Service")
               .setContentText("Maintaining WebSocket connection")
               .setSmallIcon(R.drawable.ic_chat)

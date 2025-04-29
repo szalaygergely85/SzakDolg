@@ -50,7 +50,6 @@ public class ConversationRepositoryImpl implements ConversationRepository {
       String token,
       Callback<Conversation> callback
    ) {
-      //TODO Check locally if Conversation exists
 
       conversationApiService
          .addConversation(conversation, token)
@@ -86,6 +85,27 @@ public class ConversationRepositoryImpl implements ConversationRepository {
       String token,
       Callback<ConversationDTO> callback
    ) {
+
+      List<Conversation> conversationList = conversationDatabaseUtil.getAllConversations();
+       for (Conversation conversation : conversationList) {
+           if (localConversationExists(userIds, conversation)) {
+               getConversation(conversation.getConversationId(), token, new Callback<ConversationDTO>() {
+                   @Override
+                   public void onResponse(Call<ConversationDTO> call, Response<ConversationDTO> response) {
+                       callback.onResponse(call, response);
+                   }
+
+                   @Override
+                   public void onFailure(Call<ConversationDTO> call, Throwable throwable) {
+
+                   }
+               });
+return;
+           }
+       }
+
+
+
       conversationApiService
          .addConversationByUserId(userIds, token)
          .enqueue(
@@ -114,7 +134,24 @@ public class ConversationRepositoryImpl implements ConversationRepository {
          );
    }
 
-   @Override
+    private boolean localConversationExists(List<Long> userIds, Conversation conversation) {
+
+            if (conversation.getNumberOfParticipants() == userIds.size()){
+                List<ConversationParticipant> participants = conversationParticipantDatabaseUtil.getParticipantsByConversationId(conversation.getConversationId());
+                for (ConversationParticipant conversationParticipant: participants){
+                    if(!userIds.contains(conversationParticipant.getUserId())){
+                        return false;
+                    }
+                }
+
+            }else {
+                return false;
+            }
+
+   return true;
+   }
+
+    @Override
    public void getConversation(
       Long id,
       String token,
@@ -307,8 +344,11 @@ public class ConversationRepositoryImpl implements ConversationRepository {
           if(localConversation!=null) {
               if (conversation.getLastUpdated() <= localConversation.getLastUpdated())
                   conversationDatabaseUtil.insertConversation(
-                          conversationDTO.getConversation()
+                          conversation
                   );
+          }else {
+              conversationDatabaseUtil.insertConversation(
+                      conversation);
           }
       }
 

@@ -8,9 +8,11 @@ import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.retrofit.RetrofitClient;
 import com.example.szakdolg.util.DateTimeUtil;
 
+import java.net.HttpURLConnection;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.HttpException;
 import retrofit2.Response;
 
 public class UserRepositoryImpl implements UserRepository {
@@ -188,16 +190,22 @@ private void _insertUserToDB(User currentUser, User user){
                public void onResponse(
                   Call<User> call,
                   Response<User> response
-               ) {
+               ) {if (response.isSuccessful()){
+                   if (response.body()!=null){
                   User user = response.body();
-                  if (user != null) {
+
                      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
                         context,
                         user
                      );
-                     userDatabaseUtil.insertUser(user);
+                     userDatabaseUtil.insertUser(user);}
+
+
+
                   }
-                  callback.onResponse(call, response);
+
+                   callback.onResponse(call, response);
+
                }
 
                @Override
@@ -224,17 +232,19 @@ private void _insertUserToDB(User currentUser, User user){
                            new UserDatabaseUtil(context, userRemote);
                         userDatabaseUtil.insertUser(userRemote);
                      }
-                     callback.onResponse(call, response);
-                  } else {
-                     callback.onFailure(
-                        call,
-                        new Throwable("Failed to fetch contact")
-                     );
+
                   }
+
+                   callback.onResponse(call, response);
                }
 
                @Override
-               public void onFailure(Call<User> call, Throwable throwable) {}
+               public void onFailure(Call<User> call, Throwable throwable) {
+                   callback.onFailure(
+                           call,
+                           new Throwable("Failed to fetch contact")
+                   );
+               }
             }
          );
    }

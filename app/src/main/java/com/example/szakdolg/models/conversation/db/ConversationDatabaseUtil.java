@@ -62,7 +62,7 @@ public class ConversationDatabaseUtil {
       List<Conversation> conversations = new ArrayList<>();
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = db.rawQuery(
-         "SELECT * FROM " + dbHelper.TABLE_CONVERSATIONS,
+         "SELECT * FROM " + DatabaseHelper.TABLE_CONVERSATIONS,
          null
       );
 
@@ -98,6 +98,7 @@ public class ConversationDatabaseUtil {
          "timeStamp",
          "creatorUserId",
          "numberOfParticipants",
+              "lastUpdated"
       };
       String selection = "conversationId = ?";
       String[] selectionArgs = { String.valueOf(conversationId) };

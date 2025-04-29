@@ -12,7 +12,7 @@ public interface MessageRepository {
 
    public void addMessages(
       List<MessageEntry> messageEntries,
-      Callback<MessageEntry> callback
+      Callback<List<MessageEntry>> callback
    );
 
    public void getLatestMessage(

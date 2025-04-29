@@ -96,44 +96,7 @@ public class MainActivity extends BaseActivity {
       @NonNull int[] grantResults
    ) {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-      switch (requestCode) {
-         case READ_PERMISSION_CODE:
-            if (
-               grantResults.length > 0 &&
-               grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-               // Permission granted
-               Toast
-                  .makeText(this, "Read permission granted", Toast.LENGTH_SHORT)
-                  .show();
-            } else {
-               // Permission denied
-               Toast
-                  .makeText(this, "Read permission denied", Toast.LENGTH_SHORT)
-                  .show();
-            }
-            break;
-         case WRITE_PERMISSION_CODE:
-            if (
-               grantResults.length > 0 &&
-               grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-               // Permission granted
-               Toast
-                  .makeText(
-                     this,
-                     "Write permission granted",
-                     Toast.LENGTH_SHORT
-                  )
-                  .show();
-            } else {
-               // Permission denied
-               Toast
-                  .makeText(this, "Write permission denied", Toast.LENGTH_SHORT)
-                  .show();
-            }
-            break;
-      }
+
    }
 
    @Override
@@ -313,8 +276,7 @@ public class MainActivity extends BaseActivity {
    private MainAdapter mainAdapter;
    private RecyclerView messageBoardRecView;
    private NavigationView navigationView;
-   private static final int READ_PERMISSION_CODE = 202;
-   private static final int WRITE_PERMISSION_CODE = 203;
+
    private LinearLayout withItemsLayout;
    private MaterialToolbar topAppBar;
    private ImageView profileImageHeader;

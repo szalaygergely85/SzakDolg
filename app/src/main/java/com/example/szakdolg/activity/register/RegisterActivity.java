@@ -9,10 +9,25 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.login.LoginActivity;
+import com.example.szakdolg.activity.profile.ProfileActivity;
+import com.example.szakdolg.activity.profile.ProfileConstants;
+import com.example.szakdolg.constans.IntentConstants;
+import com.example.szakdolg.constans.SharedPreferencesConstants;
+import com.example.szakdolg.models.user.constans.UserConstans;
+import com.example.szakdolg.models.user.entity.User;
+import com.example.szakdolg.models.user.service.UserService;
+import com.example.szakdolg.util.HashUtils;
+import com.example.szakdolg.util.KeyStoreUtil;
+import com.example.szakdolg.util.SharedPreferencesUtil;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
 
+   private UserService userService;
    private TextInputLayout editEmailLayout;
    private EditText editEmail;
    private TextInputLayout editPassLayout;
@@ -37,9 +52,11 @@ public class RegisterActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_register);
 
-      registerActivityHelper = new RegisterActivityHelper(this);
+      userService = new UserService(this);
+
       _initView();
       _setOnClickListeners();
+
    }
 
    protected void onStart() {
@@ -69,7 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
                pass2 = editPass2.getText().toString();
                displayName = editDisplayName.getText().toString();
                if (_validateValues(email, pass, pass2, displayName)) {
-                  registerActivityHelper.registerUser(
+                  registerUser(
                      email,
                      pass,
                      pass2,
@@ -107,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
       if (email.isEmpty()) {
          editEmailLayout.setError(getString(R.string.email_is_required));
          valid = false;
-      } else if (!registerActivityHelper.isEmailValid(email)) {
+      } else if (!isEmailValid(email)) {
          editEmailLayout.setError(getString(R.string.email_invalid));
          valid = false;
       }
@@ -138,4 +155,76 @@ public class RegisterActivity extends AppCompatActivity {
 
       return valid;
    }
+
+   public void registerUser(
+           String email,
+           String pass,
+           String pass2,
+           String displayName) {
+      String hashPass = HashUtils.hashPassword(pass);
+      HashMap<String, String> keyPair = KeyStoreUtil.generateKeyPair();
+
+      User user = new User(
+              displayName,
+              email,
+              hashPass,
+              keyPair.get("Public"),
+              UserConstans.STATUS_ACTIVE,
+              UserConstans.TAG_PENDING,
+              null
+      );
+
+      userService.addUser(
+              user,
+              new UserService.LoginCallback<User>() {
+                 @Override
+                 public void onSuccess(User data) {
+                    KeyStoreUtil.writePrivateKeysToFile(
+                            RegisterActivity.this,
+                            keyPair.get("Private"),
+                            data
+                    );
+
+                    SharedPreferencesUtil.setStringPreference(
+                            RegisterActivity.this,
+                            SharedPreferencesConstants.USERTOKEN,
+                            data.getToken()
+                    );
+                    SharedPreferencesUtil.setStringPreference(
+                            RegisterActivity.this,
+                            SharedPreferencesConstants.USER_ID,
+                            data.getUserId().toString()
+                    );
+                    Intent intent = new Intent(
+                            RegisterActivity.this,
+                            ProfileActivity.class
+                    );
+                    intent.putExtra(
+                            IntentConstants.PROFILE_ACTION,
+                            ProfileConstants.ACCEPT_PROFILE
+                    );
+                     startActivity(intent);
+                 }
+
+                 @Override
+                 public void onUserNotFound() {
+                    runOnUiThread(()->{
+                       editEmailLayout.setError("Email is already registered");
+                    });
+
+                 }
+
+                 @Override
+                 public void onError(Throwable t) {}
+              }
+      );
+   }
+
+   public boolean isEmailValid(String email) {
+      String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+      Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+      Matcher matcher = pattern.matcher(email);
+      return matcher.matches();
+   }
+
 }

@@ -86,21 +86,25 @@ public class MessageService extends BaseService {
        }
    }
 
-   public void addMessages(List<MessageEntry> messageEntries) {
+   public void addMessages(List<MessageEntry> messageEntries,   final MessageCallback<List<MessageEntry>> callback) {
       messageRepository.addMessages(
          messageEntries,
-         new Callback<MessageEntry>() {
+         new Callback<List<MessageEntry>>() {
             @Override
             public void onResponse(
-               Call<MessageEntry> call,
-               Response<MessageEntry> response
-            ) {}
+               Call<List<MessageEntry>> call,
+               Response<List<MessageEntry>> response
+            ) {
+                callback.onSuccess(response.body());
+            }
 
             @Override
             public void onFailure(
-               Call<MessageEntry> call,
+               Call<List<MessageEntry>> call,
                Throwable throwable
-            ) {}
+            ) {
+                callback.onError(throwable);
+            }
          }
       );
    }
