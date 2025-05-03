@@ -24,22 +24,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 public class MainAdapterHelper {
 
    private final User currentUser;
    private final Context context;
 
-   private final ConversationService conversationService;
-
-   private final ImageCoordinatorService imageCoordinatorService;
    private final MessageService messageService;
 
    public MainAdapterHelper(User currentUser, Context context) {
       this.currentUser = currentUser;
       this.context = context;
-      this.conversationService = new ConversationService(context, currentUser);
-      this.imageCoordinatorService =
-      new ImageCoordinatorService(context, currentUser);
       this.messageService = new MessageService(context, currentUser);
    }
 
@@ -99,7 +95,7 @@ public class MainAdapterHelper {
 
          if (messageEntry.getContent() != null) {
             if (isSenderLoggedUser(messageEntry)) {
-               return "You " + messageEntry.getContent();
+               return "You: " + messageEntry.getContent();
             } else {
                return messageEntry.getContent();
             }
@@ -114,7 +110,7 @@ public class MainAdapterHelper {
                   return decryptedContentString;
                }
             } catch (Exception e) {
-               Log.e(AppConstants.LOG_TAG, e.toString());
+               Timber.e(e);
             }
          }
       }

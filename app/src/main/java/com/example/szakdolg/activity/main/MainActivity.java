@@ -1,5 +1,6 @@
 package com.example.szakdolg.activity.main;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +27,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.szakdolg.DTO.ConversationDTO;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.base.BaseActivity;
+import com.example.szakdolg.activity.contacts.activity.ContactsActivity;
+import com.example.szakdolg.activity.contacts.constans.ContactsConstans;
 import com.example.szakdolg.activity.main.adapter.MainAdapter;
 import com.example.szakdolg.activity.profile.ProfileActivity;
 import com.example.szakdolg.activity.profile.ProfileConstants;
@@ -39,8 +43,11 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class MainActivity extends BaseActivity {
 
@@ -62,11 +69,17 @@ public class MainActivity extends BaseActivity {
 
       _initView();
 
+      _setBottomNavMenu();
+
       conversationService = new ConversationService(this, currentUser);
 
       mainAdapter = new MainAdapter(this, currentUser, messageBoardRecView);
 
+      _startingWebSocketService();
+
    }
+
+
 
    @Override
    protected void onPause() {
@@ -105,97 +118,37 @@ public class MainActivity extends BaseActivity {
 
 
 
-      Intent serviceIntent = new Intent(this, WebSocketService.class);
-      serviceIntent.putExtra(IntentConstants.CURRENT_USER, currentUser);
-      serviceIntent.putExtra(IntentConstants.USER_TOKEN, token);
-      startForegroundService(serviceIntent);
+      _setListeners();
 
-      this._mainActivityHelper = new MainActivityHelper(this, currentUser);
+      _setNightMode();
 
-      MenuItem themeItem = navigationView
-         .getMenu()
-         .findItem(R.id.main_dark_theme);
-      SwitchCompat switchTheme = themeItem
-         .getActionView()
-         .findViewById(R.id.switch_item);
-
-      View headerView = navigationView.getHeaderView(0); // Get the header view
-      ShapeableImageView profileImage = headerView.findViewById(
-         R.id.profile_image_header
-      );
-
-      profileImage.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Intent intent = new Intent(
-                  MainActivity.this,
-                  ProfileActivity.class
-               );
-               intent.putExtra(
-                  IntentConstants.PROFILE_ACTION,
-                  ProfileConstants.VIEW_PROFILE
-               );
-               startActivity(intent);
-            }
-         }
-      );
-
-      _mainActivityHelper.setBottomNavMenu(bottomNavigationView);
-      _mainActivityHelper.setListeners(topAppBar, drawerLayout, navigationView, newConv);
-
-      boolean isNightMode = SharedPreferencesUtil.getBooleanPreferences(
-         this,
-         SharedPreferencesConstants.DARK_MODE
-      );
-
-      switchTheme.setChecked(isNightMode);
-
-      // Apply the theme
-      if (isNightMode) {
-         AppCompatDelegate.setDefaultNightMode(
-            AppCompatDelegate.MODE_NIGHT_YES
-         );
-      } else {
-         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-      }
-
-      switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
-         SharedPreferencesUtil.setBoolean(
-            this,
-            SharedPreferencesConstants.DARK_MODE,
-            isChecked
-         );
-
-         if (isChecked) {
-            AppCompatDelegate.setDefaultNightMode(
-               AppCompatDelegate.MODE_NIGHT_YES
-            );
-         } else {
-            AppCompatDelegate.setDefaultNightMode(
-               AppCompatDelegate.MODE_NIGHT_NO
-            );
-         }
-      });
 
       conversationService.getAllConversations(
-         new ConversationService.ConversationCallback<List<ConversationDTO>>() {
-            @Override
-            public void onSuccess(List<ConversationDTO> conversationList) {
-               if (conversationList != null) {
-                  _validateConversation(conversationList);
-                  emptyLayout.setVisibility(View.GONE);
-                  withItemsLayout.setVisibility(View.VISIBLE);
-                  mainAdapter.setConversationList(conversationList);
-               } else {
-                  emptyLayout.setVisibility(View.VISIBLE);
-                  withItemsLayout.setVisibility(View.GONE);
-               }
-            }
+              new ConversationService.ConversationCallback<List<ConversationDTO>>() {
+                 @Override
+                 public void onSuccess(List<ConversationDTO> conversationList) {
+                    runOnUiThread(() -> {
+                       if (conversationList != null && !conversationList.isEmpty()) {
+                          _validateConversation(conversationList);
+                          emptyLayout.setVisibility(View.GONE);
+                          withItemsLayout.setVisibility(View.VISIBLE);
+                          mainAdapter.setConversationList(conversationList);
+                       } else {
+                          emptyLayout.setVisibility(View.VISIBLE);
+                          withItemsLayout.setVisibility(View.GONE);
+                       }
+                    });
+                 }
 
-            @Override
-            public void onError(Throwable t) {}
-         }
+                 @Override
+                 public void onError(Throwable t) {
+                    Timber.e(t);
+                    runOnUiThread(() -> {
+                       emptyLayout.setVisibility(View.VISIBLE);
+                       withItemsLayout.setVisibility(View.GONE);
+                    });
+                 }
+              }
       );
 
       messageBoardRecView.setAdapter(mainAdapter);
@@ -220,13 +173,23 @@ public class MainActivity extends BaseActivity {
       }
    }
 
-   private void _validateConversation(List<ConversationDTO> conversationList) {
-      conversationList.removeIf(conversationDTO ->
-         conversationDTO.getConversation() == null ||
-         conversationDTO.getUsers() == null ||
-         conversationDTO.getParticipants() == null ||
-         conversationDTO.getMessageEntry() == null
+   private void _setNightMode() {
+
+      boolean isNightMode = SharedPreferencesUtil.getBooleanPreferences(
+              this,
+              SharedPreferencesConstants.DARK_MODE
       );
+
+      switchTheme.setChecked(isNightMode);
+
+      // Apply the theme
+      if (isNightMode) {
+         AppCompatDelegate.setDefaultNightMode(
+                 AppCompatDelegate.MODE_NIGHT_YES
+         );
+      } else {
+         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+      }
    }
 
    private void _initView() {
@@ -237,10 +200,184 @@ public class MainActivity extends BaseActivity {
       bottomNavigationView = findViewById(R.id.bottom_nav_main);
       emptyLayout = findViewById(R.id.llayoutEmptyMain);
       withItemsLayout = findViewById(R.id.llayoutWithItemsMain);
-      View headerView = navigationView.getHeaderView(0);
-      profileImageHeader = headerView.findViewById(R.id.profile_image_header);
-      profileTextHeader = headerView.findViewById(R.id.profile_name_header);
+
+
       newConv = findViewById(R.id.btnNewConv);
+      MenuItem themeItem = navigationView
+              .getMenu()
+              .findItem(R.id.main_dark_theme);
+      switchTheme = themeItem
+              .getActionView()
+              .findViewById(R.id.switch_item);
+
+      headerView = navigationView.getHeaderView(0); // Get the header view
+
+      profileTextHeader = headerView.findViewById(R.id.profile_name_header);
+      profileImageHeader = headerView.findViewById(
+              R.id.profile_image_header
+      );
+   }
+
+   public void _setBottomNavMenu() {
+      bottomNavigationView.setOnItemSelectedListener(
+              new NavigationBarView.OnItemSelectedListener() {
+                 @Override
+                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Intent intent;
+                    switch (item.getItemId()) {
+                       case R.id.nav_messages_main:
+                          intent = new Intent(MainActivity.this, MainActivity.class);
+                          startActivity(intent);
+                          break;
+                       case R.id.nav_contact_main:
+                          intent = new Intent(MainActivity.this, ContactsActivity.class);
+                          intent.putExtra(
+                                  IntentConstants.CONTACTS_ACTION,
+                                  ContactsConstans.ACTION_VIEW
+                          );
+                          startActivity(intent);
+
+                          break;
+                    }
+                    return false;
+                 }
+              }
+      );
+   }
+
+   public void _setListeners(
+   ) {
+
+      switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+         SharedPreferencesUtil.setBoolean(
+                 this,
+                 SharedPreferencesConstants.DARK_MODE,
+                 isChecked
+         );
+
+         if (isChecked) {
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_YES
+            );
+         } else {
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_NO
+            );
+         }
+      });
+
+      profileImageHeader.setOnClickListener(
+              new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                    Intent intent = new Intent(
+                            MainActivity.this,
+                            ProfileActivity.class
+                    );
+                    intent.putExtra(
+                            IntentConstants.PROFILE_ACTION,
+                            ProfileConstants.VIEW_PROFILE
+                    );
+                    startActivity(intent);
+                 }
+              }
+      );
+      navigationView.setNavigationItemSelectedListener(
+              new NavigationView.OnNavigationItemSelectedListener() {
+                 @SuppressLint("NonConstantResourceId")
+                 @Override
+                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    switch (item.getItemId()) {
+                       case R.id.main_sign_out:
+                          SharedPreferencesUtil.deletePreference(
+                                  MainActivity.this,
+                                  SharedPreferencesConstants.USERTOKEN
+                          );
+
+                          SharedPreferencesUtil.deletePreference(
+                                  MainActivity.this,
+                                  SharedPreferencesConstants.USER_ID
+                          );
+                          MainActivity.this.startActivity(
+                                  new Intent(MainActivity.this, MainActivity.class)
+                          );
+                       case R.id.main_dark_theme:
+                          AppCompatDelegate.setDefaultNightMode(
+                                  AppCompatDelegate.MODE_NIGHT_NO
+                          );
+                       default:
+                          return false;
+                    }
+                 }
+              }
+      );
+
+      topAppBar.setNavigationOnClickListener(
+              new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                    if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                       drawerLayout.closeDrawer(GravityCompat.START);
+                    } else {
+                       drawerLayout.openDrawer(GravityCompat.START);
+                    }
+                 }
+              }
+      );
+
+      newConv.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    ContactsActivity.class
+            );
+            intent.putExtra(
+                    IntentConstants.CONTACTS_ACTION,
+                    ContactsConstans.ACTION_SELECT
+            );
+            MainActivity.this.startActivity(intent);
+         }
+      });
+
+      topAppBar.setOnMenuItemClickListener(
+              new MaterialToolbar.OnMenuItemClickListener() {
+                 @Override
+                 public boolean onMenuItemClick(@NonNull MenuItem item) {
+                    switch (item.getItemId()) {
+                       case R.id.menuNewMain:
+                          Intent intent = new Intent(
+                                  MainActivity.this,
+                                  ContactsActivity.class
+                          );
+                          intent.putExtra(
+                                  IntentConstants.CONTACTS_ACTION,
+                                  ContactsConstans.ACTION_SELECT
+                          );
+                          MainActivity.this.startActivity(intent);
+                          return true; // Indicate that the click was handled
+                       default:
+                          return false;
+                    }
+                 }
+              }
+      );
+   }
+
+   private void _startingWebSocketService() {
+      Intent serviceIntent = new Intent(this, WebSocketService.class);
+      serviceIntent.putExtra(IntentConstants.CURRENT_USER, currentUser);
+      serviceIntent.putExtra(IntentConstants.USER_TOKEN, token);
+      startForegroundService(serviceIntent);
+   }
+
+   private void _validateConversation(List<ConversationDTO> conversationList) {
+      conversationList.removeIf(conversationDTO ->
+              conversationDTO.getConversation() == null ||
+                      conversationDTO.getUsers() == null ||
+                      conversationDTO.getParticipants() == null ||
+                      conversationDTO.getMessageEntry() == null
+      );
    }
 
    private BottomNavigationView bottomNavigationView;
@@ -255,7 +392,10 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onSuccess(ConversationDTO conversation) {
                conversation.setMessageEntry(message);
-               mainAdapter.addConversationDTO(conversation);
+               runOnUiThread(()->{
+                  mainAdapter.addConversationDTO(conversation);
+               });
+
             }
 
             @Override
@@ -264,15 +404,10 @@ public class MainActivity extends BaseActivity {
             }
          });
 
-         if (message != null) {
-            mainAdapter.notifyDataSetChanged();
-         }
       }
    };
-
    private DrawerLayout drawerLayout;
    private LinearLayout emptyLayout;
-   private MainActivityHelper _mainActivityHelper;
    private MainAdapter mainAdapter;
    private RecyclerView messageBoardRecView;
    private NavigationView navigationView;
@@ -285,4 +420,8 @@ public class MainActivity extends BaseActivity {
    private ConversationService conversationService;
 
    private FloatingActionButton newConv;
+
+   private  View headerView;
+
+  private SwitchCompat switchTheme;
 }

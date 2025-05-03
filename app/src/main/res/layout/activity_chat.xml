@@ -96,6 +96,7 @@
                 android:paddingVertical="10dp"
                 android:background="@null"
                 android:gravity="center_vertical"
+                android:maxLength="200"
                 android:hint="@string/send_a_message"
                 android:inputType="textMultiLine|textCapSentences"
                 android:textColor="@color/textPrimary" />

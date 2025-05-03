@@ -16,6 +16,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class MessageService extends BaseService {
 
@@ -58,9 +59,11 @@ public class MessageService extends BaseService {
                messageDatabaseUtil.insertMessageEntry(messageEntry);
                callback.onSuccess(messageEntry); // Assume WebSocket worked
            } catch (JSONException e) {
+               Timber.e(e);
                callback.onError(e);
            }
        } else {
+           Timber.w("Web socket is not available, sending message through api");
            // WebSocket not available – fallback to API
            messageRepository.addMessage(
                    messageEntry,
@@ -73,12 +76,14 @@ public class MessageService extends BaseService {
                            if (response.isSuccessful()) {
                                callback.onSuccess(response.body());
                            } else {
+                               Timber.e("Failed to send message by Api");
                                callback.onError(new Throwable("Failed to send message via API"));
                            }
                        }
 
                        @Override
                        public void onFailure(Call<MessageEntry> call, Throwable throwable) {
+                           Timber.e(throwable, call.toString());
                            callback.onError(throwable);
                        }
                    }
@@ -181,9 +186,11 @@ public class MessageService extends BaseService {
    }
 
    public int getCountByNotReadMsg(Long conversationId) {
-      return messageDatabaseUtil.getUnreadMessageCountByConversationId(
-         conversationId
-      );
+       int notReadedCount = messageDatabaseUtil.getUnreadMessageCountByConversationId(
+               conversationId
+       );
+       Timber.i("Getting getCountByNotReadMsg and it is: " + notReadedCount);
+      return notReadedCount;
    }
 
    public void setMessagesAsReadByConversationId(Long conversationId) {

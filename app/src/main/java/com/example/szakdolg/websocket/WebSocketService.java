@@ -27,6 +27,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import timber.log.Timber;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,6 +82,7 @@ public class WebSocketService extends Service {
       super.onCreate();
       instance = this;
       context = getApplicationContext();
+      Timber.i("Starting WebSocketService");
    }
 
    @Override
@@ -101,11 +104,13 @@ public class WebSocketService extends Service {
 
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
+      startForegroundNotification();
+
       userToken = intent.getStringExtra(IntentConstants.USER_TOKEN);
       currentUser =
-      (User) intent.getSerializableExtra(IntentConstants.CURRENT_USER);
+              (User) intent.getSerializableExtra(IntentConstants.CURRENT_USER);
 
-      startForegroundNotification();
+
       connectToWebSocket();
       return START_STICKY;
    }

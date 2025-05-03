@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.example.szakdolg.db.DatabaseHelper;
+import com.example.szakdolg.database.DatabaseHelper;
 import com.example.szakdolg.models.image.entity.ImageEntity;
 import com.example.szakdolg.models.user.entity.User;
 

@@ -11,7 +11,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ContactsRepositoryImpl implements ContactRepository {
+public class ContactRepositoryImpl implements ContactRepository {
 
    private final ContactApiService contactApiService;
    private final ContactDatabaseUtil contactDatabaseUtil;
@@ -20,7 +20,7 @@ public class ContactsRepositoryImpl implements ContactRepository {
    private final Context context;
    private final User currentUser;
 
-   public ContactsRepositoryImpl(Context context, User currentUser) {
+   public ContactRepositoryImpl(Context context, User currentUser) {
       this.context = context;
       this.currentUser = currentUser;
       this.contactDatabaseUtil = new ContactDatabaseUtil(context, currentUser);

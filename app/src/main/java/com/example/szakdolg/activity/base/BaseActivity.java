@@ -16,9 +16,13 @@ import android.Manifest;
 import com.example.szakdolg.activity.login.LoginActivity;
 import com.example.szakdolg.constans.AppConstants;
 import com.example.szakdolg.constans.SharedPreferencesConstants;
+import com.example.szakdolg.logging.CrashHandler;
 import com.example.szakdolg.models.user.dbutil.UserDatabaseUtil;
 import com.example.szakdolg.models.user.entity.User;
 import com.example.szakdolg.util.SharedPreferencesUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -27,11 +31,8 @@ public class BaseActivity extends AppCompatActivity {
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
 
-      requestReadPermission();
-      requestWritePermission();
-      requestNotificationPermission();
-      requestCameraPermission();
-      requestRecordAudioPermission();
+      preparePermissions();
+      requestNextPermission();
 
       // Retrieve the token and user ID
       token =
@@ -87,116 +88,43 @@ public class BaseActivity extends AppCompatActivity {
       );
    }
 
-   @Override
-   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-      switch (requestCode) {
-         case READ_PERMISSION_CODE:
-            if (
-                    grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-               // Permission granted
-               Toast
-                       .makeText(this, "Read permission granted", Toast.LENGTH_SHORT)
-                       .show();
-            } else {
-               // Permission denied
-               Toast
-                       .makeText(this, "Read permission denied", Toast.LENGTH_SHORT)
-                       .show();
-            }
-            break;
-         case WRITE_PERMISSION_CODE:
-            if (
-                    grantResults.length > 0 &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-               // Permission granted
-               Toast
-                       .makeText(
-                               this,
-                               "Write permission granted",
-                               Toast.LENGTH_SHORT
-                       )
-                       .show();
-            } else {
-               // Permission denied
-               Toast
-                       .makeText(this, "Write permission denied", Toast.LENGTH_SHORT)
-                       .show();
-            }
-            break;
-      }
-   }
-   private void requestReadPermission() {
-      String readPermission;
+   private void preparePermissions() {
       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-         readPermission = Manifest.permission.READ_MEDIA_IMAGES;
+         permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES);
+         permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS);
       } else {
-         readPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
+         permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE);
       }
 
-      if (ContextCompat.checkSelfPermission(this, readPermission)
-              != PackageManager.PERMISSION_GRANTED) {
-         ActivityCompat.requestPermissions(
-                 this,
-                 new String[]{readPermission},
-                 READ_PERMISSION_CODE
-         );
-      } else {
-         Toast.makeText(this, "Read permission already granted", Toast.LENGTH_SHORT).show();
-      }
+      permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+      permissionsToRequest.add(Manifest.permission.CAMERA);
+      permissionsToRequest.add(Manifest.permission.RECORD_AUDIO);
    }
-
-
-   // Example function to request write permission
-   private void requestWritePermission() {
-      if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-              != PackageManager.PERMISSION_GRANTED) {
-         ActivityCompat.requestPermissions(
-                 this,
-                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                 WRITE_PERMISSION_CODE
-         );
-      } else {
-         Toast.makeText(this, "Write permission already granted", Toast.LENGTH_SHORT).show();
-      }
-   }
-
-   private void requestNotificationPermission() {
-      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+   private void requestNextPermission() {
+      if (currentPermissionIndex < permissionsToRequest.size()) {
+         String permission = permissionsToRequest.get(currentPermissionIndex);
+         if (ContextCompat.checkSelfPermission(this, permission)
                  != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this,
-                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                    NOTIFICATION_PERMISSION_CODE
+                    new String[]{permission},
+                    PERMISSION_REQUEST_CODE
             );
+         } else {
+            currentPermissionIndex++;
+            requestNextPermission(); // Skip already-granted
          }
       }
    }
 
-   private void requestCameraPermission() {
-      if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-              != PackageManager.PERMISSION_GRANTED) {
-         ActivityCompat.requestPermissions(
-                 this,
-                 new String[]{Manifest.permission.CAMERA},
-                 CAMERA_PERMISSION_CODE
-         );
-      }
-   }
+   @Override
+   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                          @NonNull int[] grantResults) {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-   private void requestRecordAudioPermission() {
-      if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-              != PackageManager.PERMISSION_GRANTED) {
-         ActivityCompat.requestPermissions(
-                 this,
-                 new String[]{Manifest.permission.RECORD_AUDIO},
-                 RECORD_AUDIO_PERMISSION_CODE
-         );
+      if (requestCode == PERMISSION_REQUEST_CODE) {
+         currentPermissionIndex++;
+         requestNextPermission();
       }
    }
 
@@ -206,10 +134,7 @@ public class BaseActivity extends AppCompatActivity {
    protected User currentUser;
 
 
-   private static final int READ_PERMISSION_CODE = 202;
-   private static final int WRITE_PERMISSION_CODE = 203;
-
-   private static final int NOTIFICATION_PERMISSION_CODE = 204;
-   private static final int CAMERA_PERMISSION_CODE = 205;
-   private static final int RECORD_AUDIO_PERMISSION_CODE = 206;
+   private final List<String> permissionsToRequest = new ArrayList<>();
+   private int currentPermissionIndex = 0;
+   private static final int PERMISSION_REQUEST_CODE = 999;
 }

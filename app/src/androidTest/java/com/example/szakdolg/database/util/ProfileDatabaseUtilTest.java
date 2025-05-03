@@ -1,6 +1,4 @@
-package com.example.szakdolg.db.util;
-
-import static org.junit.Assert.*;
+package com.example.szakdolg.database.util;
 
 public class ProfileDatabaseUtilTest {
    /*

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.szakdolg.R;
 import com.example.szakdolg.activity.chat.activity.ChatActivityHelper;
 import com.example.szakdolg.models.image.util.ImageUtil;
@@ -175,15 +176,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                   );
                   if (imageUrl != null) {
                      Glide
-                        .with(mContext)
-                        .load(imageUrl)
-                        .placeholder(R.drawable.ic_blank_profile)
-                        .error(R.drawable.ic_blank_profile)
-                        .into(((InboundTextViewHolder) holder).imageView);
+                             .with(mContext)
+                             .load(imageUrl)
+                             .diskCacheStrategy(DiskCacheStrategy.ALL)
+                             .placeholder(R.drawable.ic_blank_profile)
+                             .error(R.drawable.ic_blank_profile)
+                             .into( ((InboundTextViewHolder) holder).imageView);
                   } else {
-                     ((InboundTextViewHolder) holder).imageView.setImageResource(
-                           R.drawable.ic_blank_profile
-                        );
+                     ((InboundTextViewHolder) holder).imageView.setImageResource(R.drawable.ic_blank_profile);
                   }
                }
                params.setMargins(

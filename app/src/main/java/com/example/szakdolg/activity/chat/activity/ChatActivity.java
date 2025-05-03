@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.appcompat.widget.Toolbar;
@@ -24,6 +26,9 @@ import com.example.szakdolg.models.message.entity.MessageEntry;
 import com.example.szakdolg.models.user.entity.User;
 import com.google.android.material.appbar.MaterialToolbar;
 import java.util.List;
+import java.util.Objects;
+
+import timber.log.Timber;
 
 public class ChatActivity extends BaseActivity {
 
@@ -32,7 +37,6 @@ public class ChatActivity extends BaseActivity {
    private RecyclerView chatRecView;
    private ImageView imgSend;
    private MyEditText edtMess;
-   private FileApiHelper fileApiHelper = new FileApiHelper();
    private ChatActivityHelper chatActivityHelper;
    private Toolbar mToolbar;
    private ConversationService conversationService;
@@ -66,13 +70,7 @@ public class ChatActivity extends BaseActivity {
       chatActivityHelper.setToolbarTitle(mToolbar);
    }
 
-   private void _getIntentExtras() {
-      ConversationDTO conversationDTO = (ConversationDTO) this.getIntent()
-         .getSerializableExtra(IntentConstants.CONVERSATION_DTO);
-      conversation = conversationDTO.getConversation();
-      users = conversationDTO.getUsers();
-      conversationId = conversation.getConversationId();
-   }
+
 
    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
       @Override
@@ -80,14 +78,14 @@ public class ChatActivity extends BaseActivity {
          MessageEntry message = (MessageEntry) intent.getSerializableExtra(
             "message"
          );
-         if (message != null) {
-            if (message.getConversationId() == conversationId) {
-               message.setRead(true);
-               adapter.addMessage(message);
-               adapter.notifyDataSetChanged();
-               chatRecView.scrollToPosition(adapter.getItemCount() - 1);
+         runOnUiThread(()->{
+            if (message != null) {
+               if (Objects.equals(message.getConversationId(), conversationId)) {
+                  adapter.addMessage(message);
+               }
             }
-         }
+         });
+
       }
    };
 
@@ -153,7 +151,7 @@ public class ChatActivity extends BaseActivity {
                String content = edtMess.getText().toString();
                if (!content.isEmpty()) {
                   try {
-                     //TODO Maximalize text long
+
                      MessageEntry messageEntry = chatActivityHelper.sendMessage(
                         content,
                         MessageTypeConstants.MESSAGE
@@ -168,6 +166,18 @@ public class ChatActivity extends BaseActivity {
             }
          }
       );
+   }
+
+   private void _getIntentExtras() {
+      ConversationDTO conversationDTO = (ConversationDTO) this.getIntent()
+              .getSerializableExtra(IntentConstants.CONVERSATION_DTO);
+       if (conversationDTO != null) {
+          conversation = conversationDTO.getConversation();
+          users = conversationDTO.getUsers();
+          conversationId = conversation.getConversationId();
+       }else{
+          Timber.w("Could not fetch ConversationDTO from intent.");
+       }
    }
    /*
 private void _sendFile(Uri uri) {
