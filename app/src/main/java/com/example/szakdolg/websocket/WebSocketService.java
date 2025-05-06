@@ -246,7 +246,7 @@ public class WebSocketService extends Service {
 
    private void startPingPong() {
       if (pingHandler != null && pingRunnable != null) {
-         pingHandler.removeCallbacks(pingRunnable); // Cancel old loop
+         pingHandler.removeCallbacks(pingRunnable);
       }
 
       pingHandler = new Handler(Looper.getMainLooper());
@@ -259,7 +259,7 @@ public class WebSocketService extends Service {
 
                startPongTimeout();
 
-               Log.e("WebSocket", "Sending ping message");
+               Timber.i("Sending ping message");
                pingHandler.postDelayed(this, 60000);
             }
          }
@@ -280,7 +280,7 @@ public class WebSocketService extends Service {
 
       handler.postDelayed(this::connectToWebSocket, currentPingIntervalMs);
 
-      Log.e("WebSocket", "Reconnecting");
+      Timber.w( "Reconnecting");
    }
 
    @Override
@@ -302,10 +302,8 @@ public class WebSocketService extends Service {
    private void handlePong() {
       if (pongTimeoutHandler != null && pongTimeoutRunnable != null) {
          pongTimeoutHandler.removeCallbacks(pongTimeoutRunnable);
+         Timber.i("Pong received, timeout cleared");
       }
-
-      startPongTimeout();
-      Log.e("WebSocket", "Pong received from server");
    }
 
    private void startPongTimeout() {
@@ -318,7 +316,7 @@ public class WebSocketService extends Service {
          @Override
          public void run() {
             // Pong was not received in time
-            Log.e("WebSocket", "Pong timeout, reconnecting...");
+            Timber.w("Pong timeout, reconnecting...");
             isConnected = false;
             reconnectToWebSocket();
          }

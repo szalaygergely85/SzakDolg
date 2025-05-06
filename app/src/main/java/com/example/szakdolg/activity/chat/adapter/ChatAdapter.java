@@ -52,6 +52,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       if (messageEntry != null) {
          messageEntries.add(getItemCount(), messageEntry);
          notifyItemInserted(getItemCount() - 1);
+         notifyItemChanged(getItemCount() - 2);
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
    }
@@ -192,6 +193,19 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                   params.rightMargin,
                   params.bottomMargin
                );
+            }else {
+               String imageUrl = ImageUtil.buildProfileImageUrl(
+                       messageEntry.getSenderId()
+               );
+               if (imageUrl != null) {
+                  Glide
+                          .with(mContext)
+                          .load(imageUrl)
+                          .diskCacheStrategy(DiskCacheStrategy.ALL)
+                          .placeholder(R.drawable.ic_blank_profile)
+                          .error(R.drawable.ic_blank_profile)
+                          .into( ((InboundTextViewHolder) holder).imageView);
+               }
             }
          }
          if (holder instanceof ChatAdapter.OutboundTextViewHolder) {
@@ -236,10 +250,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    }
 
    public void setMessageEntries(List<Object> messageEntries) {
-      if (messageEntries != null) {}
-      this.messageEntries = messageEntries;
-      notifyDataSetChanged();
-      chatRecView.scrollToPosition(getItemCount() - 1);
+      if (messageEntries != null) {
+         this.messageEntries = messageEntries;
+         notifyDataSetChanged();
+         chatRecView.scrollToPosition(getItemCount() - 1);
+      }
+
    }
 
    static class DateViewHolder extends RecyclerView.ViewHolder {
