@@ -87,7 +87,7 @@
             app:hintEnabled="false">
 
 
-            <com.example.szakdolg.MyEditText
+            <com.zen_vy.chat.MyEditText
                 android:id="@+id/edtChatMes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
