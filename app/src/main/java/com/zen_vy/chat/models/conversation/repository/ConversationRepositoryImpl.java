@@ -317,6 +317,9 @@ return;
                      }
                      callback.onResponse(call, response);
                   } else {
+                      if(localConversation!=null){
+                          callback.onResponse(null, Response.success(lo));
+                      }
                      callback.onFailure(
                         call,
                         new Throwable("Failed to fetch conversation")

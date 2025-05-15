@@ -248,7 +248,8 @@ public class UserDatabaseUtil {
 
    private boolean _isInsertable(User user) {
       User localUser = getUserById(user.getUserId());
-         if(localUser == null || localUser.getLastUpdated()< user.getLastUpdated()){
+
+         if(localUser == null || user.getLastUpdated()==null || localUser.getLastUpdated()< user.getLastUpdated()){
             return true;
          }
 

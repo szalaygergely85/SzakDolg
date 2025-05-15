@@ -169,78 +169,81 @@ public class WebSocketService extends Service {
          .url(AppConstants.WS_URL)
          .addHeader("token", userToken)
          .build();
+try {
+   webSocket =
+           client.newWebSocket(
+                   request,
+                   new WebSocketListener() {
+                      @Override
+                      public void onOpen(WebSocket webSocket, Response response) {
+                         Timber.i(response.message());
+                         isConnected = true;
+                         isConnecting = false;
+                         startPingPong();
+                         // Connection established
 
-      webSocket =
-      client.newWebSocket(
-         request,
-         new WebSocketListener() {
-            @Override
-            public void onOpen(WebSocket webSocket, Response response) {
-               Log.e("WebSocket", response.message());
-               isConnected = true;
-               isConnecting = false;
-               startPingPong();
-               // Connection established
+                      }
 
-            }
+                      @Override
+                      public void onMessage(WebSocket webSocket, String text) {
+                         try {
+                            Timber.i(text);
+                            JSONObject jsonObject = new JSONObject(text);
 
-            @Override
-            public void onMessage(WebSocket webSocket, String text) {
-               try {
-                  Log.e(AppConstants.LOG_TAG, text);
-                  JSONObject jsonObject = new JSONObject(text);
+                            int type = jsonObject.getInt("type");
 
-                  int type = jsonObject.getInt("type");
+                            switch (type) {
+                               case MessageTypeConstants.ERROR:
+                                  handleError(jsonObject);
+                                  break;
+                               case MessageTypeConstants.PING:
+                                  handlePong();
+                                  break;
+                               case MessageTypeConstants.MESSAGE:
+                                  handleMessage(jsonObject);
+                                  break;
+                               case MessageTypeConstants.IMAGE:
+                                  // Handle image message
+                                  break;
+                               // Add more cases for other message types as needed
+                               default:
+                                   Timber.e("Unknown message type: %s", type);
+                                  break;
+                            }
+                         } catch (JSONException e) {
+                             Timber.e("Error parsing message: %s", e.getMessage());
+                         }
+                      }
 
-                  switch (type) {
-                     case MessageTypeConstants.PING:
-                        handlePong();
-                        break;
-                     case MessageTypeConstants.MESSAGE:
-                        handleMessage(jsonObject);
-                        break;
-                     case MessageTypeConstants.IMAGE:
-                        // Handle image message
-                        break;
-                     // Add more cases for other message types as needed
-                     default:
-                        Log.e("WebSocket", "Unknown message type: " + type);
-                        break;
-                  }
-               } catch (JSONException e) {
-                  Log.e(
-                     "WebSocket",
-                     "Error parsing message: " + e.getMessage()
-                  );
-               }
-            }
+                      @Override
+                      public void onFailure(
+                              WebSocket webSocket,
+                              Throwable t,
+                              Response response
+                      ) {
+                         // Connection failure, handle reconnection
+                         isConnected = false;
+                         isConnecting = false;
+                         reconnectToWebSocket();
+                      }
 
-            @Override
-            public void onFailure(
-               WebSocket webSocket,
-               Throwable t,
-               Response response
-            ) {
-               // Connection failure, handle reconnection
-                isConnected = false;
-               isConnecting = false;
-               reconnectToWebSocket();
-            }
+                      @Override
+                      public void onClosed(WebSocket webSocket, int code, String reason) {
 
-            @Override
-            public void onClosed(WebSocket webSocket, int code, String reason) {
-
-                isConnected = false;
-               isConnecting = false;
-               // Connection closed
-               reconnectToWebSocket();
-            }
-         }
-      );
-
+                         isConnected = false;
+                         isConnecting = false;
+                         // Connection closed
+                         reconnectToWebSocket();
+                      }
+                   }
+           );
+} catch (RuntimeException e) {
+   throw new RuntimeException(e);
+}
    }
 
-    public boolean isConnected() {
+
+   public boolean isConnected() {
         return isConnected;
     }
 
@@ -323,8 +326,30 @@ public class WebSocketService extends Service {
       };
       pongTimeoutHandler.postDelayed(pongTimeoutRunnable, PONG_TIMEOUT_MS);
    }
+   private void handleError(JSONObject jsonObject) throws JSONException {
+
+     int errorType = jsonObject.has("error_type")
+              ? jsonObject.getInt("error_type")
+              : -1;
+
+      switch (errorType) {
+         //TODO finish error handling
+         case MessageTypeConstants.ERROR_MISSING_AUTH_TOKEN:
+            Timber.e("AUTH_TOKEN Not found on WebSocket Server");
+            break;
+         case MessageTypeConstants.ERROR_USER_NOT_FOUND:
+            Timber.e("User Not found on WebSocket Server");
+            break;
+
+         default:
+            Timber.e("Unknown message type: %s", errorType);
+            break;
+      }
+   }
+
+
    private void handleMessage(JSONObject jsonObject) throws JSONException {
-      Log.e("WebSocket", "Message received: " + jsonObject);
+      Timber.i("Message received: %s", jsonObject);
 
       Long senderId = jsonObject.has("senderId")
          ? jsonObject.getLong("senderId")
