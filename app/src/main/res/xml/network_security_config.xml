@@ -5,5 +5,6 @@
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">pingnest.ddns.net</domain>
         <domain includeSubdomains="true">ddns.net</domain>
+        <domain includeSubdomains="true">zen-vy.com</domain>
     </domain-config>
 </network-security-config>

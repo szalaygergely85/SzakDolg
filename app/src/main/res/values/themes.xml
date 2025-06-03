@@ -20,5 +20,13 @@
         <!-- Status bar -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
 
+        <item name="colorPrimaryContainer">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimaryContainer">@color/textOnPrimary</item>
+
+        <item name="colorSecondaryContainer">@color/grayDark</item>
+        <item name="colorOnSecondaryContainer">@color/textOnPrimary</item>
+
+        <item name="colorOnBackground">@color/textPrimary</item>
+
     </style>
 </resources>

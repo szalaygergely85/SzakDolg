@@ -311,19 +311,15 @@ return;
                   Response<ConversationDTO> response
                ) {
                   if (response.isSuccessful() && response.body() != null) {
-                     ConversationDTO conversationDTO = response.body();
-                     if (conversationDTO != null) {
-                        _insertConversationDTO(conversationDTO, localConversation);
-                     }
+                        _insertConversationDTO(response.body(), localConversation);
                      callback.onResponse(call, response);
                   } else {
-                      if(localConversation!=null){
-                          callback.onResponse(null, Response.success(lo));
+                      ConversationDTO localDTO = buildLocalConversationDTO(id);
+                      if (localDTO != null) {
+                          callback.onResponse(null, Response.success(localDTO));
+                      } else {
+                          callback.onFailure(call, new Throwable("Failed to fetch conversation and build local DTO"));
                       }
-                     callback.onFailure(
-                        call,
-                        new Throwable("Failed to fetch conversation")
-                     );
                   }
                }
 
@@ -332,10 +328,12 @@ return;
                   Call<ConversationDTO> call,
                   Throwable throwable
                ) {
-                  callback.onFailure(
-                     call,
-                     new Throwable("Failed to fetch conversation")
-                  );
+                   ConversationDTO localDTO = buildLocalConversationDTO(id);
+                   if (localDTO != null) {
+                       callback.onResponse(null, Response.success(localDTO));
+                   } else {
+                       callback.onFailure(call, new Throwable("Failed to fetch conversation and build local DTO"));
+                   }
                }
             }
          );
@@ -345,7 +343,7 @@ return;
       Conversation conversation = conversationDTO.getConversation();
       if (conversation != null) {
           if(localConversation!=null) {
-              if (conversation.getLastUpdated() <= localConversation.getLastUpdated())
+              if (conversation.getLastUpdated() > localConversation.getLastUpdated())
                   conversationDatabaseUtil.insertConversation(
                           conversation
                   );
@@ -374,4 +372,27 @@ return;
          messageDatabaseUtil.insertMessageEntry(messageEntry);
       }
    }
+
+    private ConversationDTO buildLocalConversationDTO(Long conversationId) {
+        Conversation conversation = conversationDatabaseUtil.getConversationById(conversationId);
+        if (conversation == null) return null;
+
+        List<ConversationParticipant> participants =
+                conversationParticipantDatabaseUtil.getParticipantsByConversationId(conversationId);
+
+        if (participants == null) return null;
+
+        List<User> users = new ArrayList<>();
+        for (ConversationParticipant participant : participants) {
+            User user = userDatabaseUtil.getUserById(participant.getUserId());
+            if (user == null) return null;
+            users.add(user);
+        }
+
+        MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(conversationId);
+        if (messageEntry == null) return null;
+
+        return new ConversationDTO(conversation, participants, users, messageEntry);
+    }
+
 }

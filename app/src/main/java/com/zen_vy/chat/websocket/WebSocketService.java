@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -15,13 +16,19 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.R;
+import com.zen_vy.chat.activity.chat.activity.ChatActivity;
 import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.constans.IntentConstants;
+import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.message.MessageDatabaseUtil;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
+import com.zen_vy.chat.util.RandomUtil;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -120,7 +127,7 @@ public class WebSocketService extends Service {
    }
 
    private void startForegroundNotification() {
-      createNotificationChannel(); // <-- Good, creates SERVICE_CHANNEL
+      createNotificationChannel();
       Notification notification = new NotificationCompat.Builder(this, "SERVICE_CHANNEL") // <-- FIXED HERE
               .setContentTitle("WebSocket Service")
               .setContentText("Maintaining WebSocket connection")
@@ -390,7 +397,7 @@ try {
          Log.e(AppConstants.LOG_TAG, messageEntry.toString());
 
       }else {
-         showIncomingMessageNotification(messageEntry.getContent());
+         showIncomingMessageNotification(messageEntry.getContent(), messageEntry.getConversationId());
       }
       if (messageEntry != null) {
          String message =
@@ -434,16 +441,44 @@ try {
       return false;
    }
 
-   private void showIncomingMessageNotification(String messageText) {
-      NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "MESSAGE_CHANNEL")
-              .setSmallIcon(R.drawable.ic_chat)
-              .setContentTitle("New Message")
-              .setContentText(messageText)
-              .setPriority(NotificationCompat.PRIORITY_HIGH)
-              .setAutoCancel(true);
+   private void showIncomingMessageNotification(String messageText, long conversationId) {
 
-      NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-      notificationManager.notify(2, builder.build());
+      ConversationService conversationService = new ConversationService(context, currentUser);
+      conversationService.getConversation(conversationId, new ConversationService.ConversationCallback<ConversationDTO>() {
+         @Override
+         public void onSuccess(ConversationDTO data) {
+            // 1. Create the intent to open ChatActivity
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra(IntentConstants.CONVERSATION_DTO, data);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            // 2. Create the pending intent
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    context,
+                    RandomUtil.getSecureRandomInt(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE // FLAG_IMMUTABLE for Android 12+
+            );
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "MESSAGE_CHANNEL")
+                    .setSmallIcon(R.drawable.ic_chat)
+                    .setContentTitle("New Message")
+                    .setContentText(messageText)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(2, builder.build());
+         }
+
+         @Override
+         public void onError(Throwable t) {
+
+         }
+      });
+
+
    }
 
 

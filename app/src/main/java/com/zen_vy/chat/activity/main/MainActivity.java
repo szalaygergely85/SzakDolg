@@ -386,12 +386,16 @@ public class MainActivity extends BaseActivity {
             "message"
          );
 
+
+
+
          conversationService.getConversation(message.getConversationId(), new ConversationService.ConversationCallback<ConversationDTO>() {
             @Override
             public void onSuccess(ConversationDTO conversation) {
                conversation.setMessageEntry(message);
                runOnUiThread(()->{
-                  mainAdapter.addConversationDTO(conversation);
+                  mainAdapter.updateConversationDTO(conversation);
+
                });
 
             }
