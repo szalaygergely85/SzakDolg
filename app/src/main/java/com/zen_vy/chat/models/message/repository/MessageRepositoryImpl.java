@@ -152,6 +152,8 @@ public class MessageRepositoryImpl implements MessageRepository {
       Long conversationId,
       Callback<List<MessageEntry>> callback
    ) {
+
+
       messageApiService
          .getMessages(currentUser.getToken(), conversationId)
          .enqueue(

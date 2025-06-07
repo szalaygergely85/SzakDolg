@@ -15,6 +15,8 @@ public class ImageEntity {
    private String tags;
    private String uuid;
 
+   Long conversationId;
+
    public ImageEntity(
       String imageUri,
       Long userId,
@@ -22,7 +24,8 @@ public class ImageEntity {
       long dateAdded,
       String status,
       String tags,
-      String uuid
+      String uuid,
+      Long conversationId
    ) {
       this.imageUri = imageUri;
       this.userId = userId;
@@ -31,6 +34,7 @@ public class ImageEntity {
       this.status = status;
       this.tags = tags;
       this.uuid = uuid;
+      this.conversationId = conversationId;
    }
 
    public ImageEntity(
@@ -41,7 +45,8 @@ public class ImageEntity {
       long dateAdded,
       String status,
       String tags,
-      String uuid
+      String uuid,
+      Long conversationId
    ) {
       this.fileName = fileName;
       this.userId = userId;
@@ -51,6 +56,15 @@ public class ImageEntity {
       this.status = status;
       this.tags = tags;
       this.uuid = uuid;
+      this.conversationId = conversationId;
+   }
+
+   public Long getConversationId() {
+      return conversationId;
+   }
+
+   public void setConversationId(Long conversationId) {
+      this.conversationId = conversationId;
    }
 
    public ImageEntity() {}

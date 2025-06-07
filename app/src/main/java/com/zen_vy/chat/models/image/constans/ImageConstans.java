@@ -6,6 +6,8 @@ public class ImageConstans {
    public static final String TAG_PROFILE = "Profile";
    public static final String TAG_USER = "User";
    public static final String TAG_THUMBNAIL = "Thumbnail";
+
+   public static final String TAG_MESSAGE = "Message";
    // Add more tags as needed
 
    // Statuses

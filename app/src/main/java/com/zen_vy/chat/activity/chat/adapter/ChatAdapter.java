@@ -12,9 +12,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.chat.activity.ChatActivityHelper;
 import com.zen_vy.chat.models.image.util.ImageUtil;
+import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.ArrayList;
@@ -26,6 +29,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    private static final int TYPE_DATE = 0;
    private static final int TYPE_IN = 1;
    private static final int TYPE_OUT = 2;
+
+   private static final int TYPE_IN_IMAGE = 3;
+   private static final int TYPE_OUT_IMAGE = 4;
 
    private final Context mContext;
    private List<Object> messageEntries = new ArrayList<>();
@@ -52,7 +58,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       if (messageEntry != null) {
          messageEntries.add(getItemCount(), messageEntry);
          notifyItemInserted(getItemCount() - 1);
-         notifyItemChanged(getItemCount() - 2);
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
    }
@@ -65,14 +70,29 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          MessageEntry messageEntry = (MessageEntry) messageEntries.get(
             position
          );
-         if (
-            Objects.equals(messageEntry.getSenderId(), currentUser.getUserId())
-         ) {
-            return TYPE_OUT;
-         } else {
-            return TYPE_IN;
+
+         if (MessageTypeConstants.MESSAGE == messageEntry.getType()) {
+            if (
+                    Objects.equals(messageEntry.getSenderId(), currentUser.getUserId())
+            ) {
+               return TYPE_OUT;
+            } else {
+               return TYPE_IN;
+            }
+         }
+         if (MessageTypeConstants.IMAGE == messageEntry.getType()){
+
+            if (
+                    Objects.equals(messageEntry.getSenderId(), currentUser.getUserId())
+            ) {
+               return TYPE_OUT_IMAGE;
+            } else {
+               return TYPE_IN_IMAGE;
+            }
+
          }
       }
+      return -1;
    }
 
    @NonNull
@@ -102,6 +122,26 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          );
          return new ChatAdapter.OutboundTextViewHolder(view);
       }
+
+      if (viewType == TYPE_OUT_IMAGE) {
+         View view = inflater.inflate(
+                 R.layout.item_chat_outbound_image,
+                 parent,
+                 false
+         );
+         return new ChatAdapter.OutBoundImageHolder(view);
+      }
+
+      if (viewType == TYPE_IN_IMAGE) {
+         View view = inflater.inflate(
+                 R.layout.item_chat_inbound_image,
+                 parent,
+                 false
+         );
+         return new ChatAdapter.InBoundImageHolder(view);
+      }
+
+
       throw new IllegalArgumentException("Invalid viewType: " + viewType);
    }
 
@@ -114,10 +154,22 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          ((DateViewHolder) holder).dateTextView.setText(
                (String) messageEntries.get(position)
             );
-      } else {
+      }
+
          MessageEntry messageEntry = (MessageEntry) messageEntries.get(
             position
          );
+
+      String imageProfileUrl = ImageUtil.buildProfileImageUrl(
+              messageEntry.getSenderId()
+      );
+
+      GlideUrl glideProfileUrl = new GlideUrl(
+              imageProfileUrl,
+              new LazyHeaders.Builder()
+                      .addHeader("Authorization",  currentUser.getToken())
+                      .build()
+      );
 
          if (holder instanceof ChatAdapter.InboundTextViewHolder) {
             ((InboundTextViewHolder) holder).txtText.setText(
@@ -172,20 +224,16 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         View.VISIBLE
                      );
 
-                  String imageUrl = ImageUtil.buildProfileImageUrl(
-                     messageEntry.getSenderId()
-                  );
-                  if (imageUrl != null) {
+
+
                      Glide
                              .with(mContext)
-                             .load(imageUrl)
+                             .load(glideProfileUrl)
                              .diskCacheStrategy(DiskCacheStrategy.ALL)
                              .placeholder(R.drawable.ic_blank_profile)
                              .error(R.drawable.ic_blank_profile)
                              .into( ((InboundTextViewHolder) holder).imageView);
-                  } else {
-                     ((InboundTextViewHolder) holder).imageView.setImageResource(R.drawable.ic_blank_profile);
-                  }
+
                }
                params.setMargins(
                   marginInPx,
@@ -194,18 +242,16 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                   params.bottomMargin
                );
             }else {
-               String imageUrl = ImageUtil.buildProfileImageUrl(
-                       messageEntry.getSenderId()
-               );
-               if (imageUrl != null) {
+
+
                   Glide
                           .with(mContext)
-                          .load(imageUrl)
+                          .load(glideProfileUrl)
                           .diskCacheStrategy(DiskCacheStrategy.ALL)
                           .placeholder(R.drawable.ic_blank_profile)
                           .error(R.drawable.ic_blank_profile)
                           .into( ((InboundTextViewHolder) holder).imageView);
-               }
+
             }
          }
          if (holder instanceof ChatAdapter.OutboundTextViewHolder) {
@@ -241,6 +287,40 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                }
             }
          }
+
+         if (holder instanceof ChatAdapter.InBoundImageHolder) {
+
+            GlideUrl glideUrl = getGlideUrl(messageEntry);
+
+
+            if (glideUrl != null) {
+               Glide
+                       .with(mContext)
+                       .load(glideUrl)
+                       .diskCacheStrategy(DiskCacheStrategy.ALL)
+                       .placeholder(R.drawable.ic_blank_profile)
+                       .error(R.drawable.ic_blank_profile)
+                       .into(((InBoundImageHolder) holder).inImageView);
+            }
+         }
+            if (holder instanceof ChatAdapter.OutBoundImageHolder) {
+
+
+
+               GlideUrl glideUrl = getGlideUrl(messageEntry);
+
+               if (glideUrl != null) {
+                  Glide
+                          .with(mContext)
+                          .load(glideUrl)
+                          .diskCacheStrategy(DiskCacheStrategy.ALL)
+                          .placeholder(R.drawable.ic_blank_profile)
+                          .error(R.drawable.ic_blank_profile)
+                          .into( ((OutBoundImageHolder) holder).outImageView);
+               }
+
+
+
       }
    }
 
@@ -256,6 +336,20 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
 
+   }
+
+   private GlideUrl getGlideUrl(MessageEntry messageEntry) {
+
+      String imageUrl = ImageUtil.buildImageUrl(
+              messageEntry.getContent()
+      );
+
+      return new GlideUrl(
+              imageUrl,
+              new LazyHeaders.Builder()
+                      .addHeader("Authorization",  currentUser.getToken())
+                      .build()
+      );
    }
 
    static class DateViewHolder extends RecyclerView.ViewHolder {
@@ -285,6 +379,32 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       }
    }
 
+   static class OutBoundImageHolder extends RecyclerView.ViewHolder {
+
+
+      private final ImageView outImageView;
+
+      OutBoundImageHolder(View itemView) {
+         super(itemView);
+
+         outImageView = itemView.findViewById(R.id.sentImageView);
+
+      }
+   }
+
+   static class InBoundImageHolder extends RecyclerView.ViewHolder {
+
+
+      private final ImageView inImageView;
+
+      InBoundImageHolder(View itemView) {
+         super(itemView);
+
+         inImageView = itemView.findViewById(R.id.receivedImageView);
+
+      }
+   }
+
    static class OutboundTextViewHolder extends RecyclerView.ViewHolder {
 
       private final TextView txtTimeOut;
@@ -297,3 +417,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       }
    }
 }
+
+
+

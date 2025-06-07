@@ -207,10 +207,8 @@ try {
                                   handlePong();
                                   break;
                                case MessageTypeConstants.MESSAGE:
-                                  handleMessage(jsonObject);
-                                  break;
                                case MessageTypeConstants.IMAGE:
-                                  // Handle image message
+                                  handleMessage(jsonObject);
                                   break;
                                // Add more cases for other message types as needed
                                default:
@@ -370,6 +368,10 @@ try {
       Long timestamp = jsonObject.has("timestamp")
          ? jsonObject.getLong("timestamp")
          : null;
+
+      int mType = jsonObject.has("type")
+              ? jsonObject.getInt("type")
+              : 0;
       String contentEncrypted = jsonObject.has("contentEncrypted")
          ? jsonObject.getString("contentEncrypted")
          : null;
@@ -382,7 +384,7 @@ try {
          senderId,
          timestamp,
          contentEncrypted,
-         MessageTypeConstants.MESSAGE,
+              mType,
          uuid
       );
 

@@ -46,7 +46,9 @@ public class ImageService {
       Uri imageUri,
       Long userId,
       String tags,
+      Long conversationId,
       final ImageService.ImageCallback callback
+
    ) {
       String mimeType = ImageUtil.getMimeType(context, imageUri);
 
@@ -62,7 +64,8 @@ public class ImageService {
             System.currentTimeMillis(),
             ImageConstans.STATUS_PENDING,
             tags,
-            uuid
+            uuid,
+                 conversationId
          );
          ImageLocalHelper imageLocalHelper = new ImageLocalHelper();
          imageLocalHelper.saveImageToDisk(
@@ -109,7 +112,7 @@ public class ImageService {
                                  Response<ResponseBody> response
                               ) {
                                  if (response.isSuccessful()) {
-                                    callback.onSuccess(response.body());
+                                    callback.onSuccess(imageEntity.getUuid());
                                  } else {
                                     callback.onError(
                                        new Throwable(

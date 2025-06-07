@@ -55,8 +55,8 @@ public class ImageApiHelper {
 		*/
    }
 
-   public void getImage(String uuid, Consumer<ResponseBody> onFileDownloaded) {
-      Call<ResponseBody> getImageCall = imageApiService.downloadFile(uuid);
+   public void getImage(String uuid, String token,  Consumer<ResponseBody> onFileDownloaded) {
+      Call<ResponseBody> getImageCall = imageApiService.downloadFile(uuid, token);
       getImageCall.enqueue(
          new Callback<ResponseBody>() {
             @Override

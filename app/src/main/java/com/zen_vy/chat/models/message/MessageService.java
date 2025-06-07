@@ -48,7 +48,7 @@ public class MessageService extends BaseService {
        if (wsService != null && wsService.isConnected()) {
            try {
                JSONObject json = new JSONObject();
-               json.put("type", MessageTypeConstants.MESSAGE);
+               json.put("type", messageEntry.getType());
                json.put("senderId", messageEntry.getSenderId());
                json.put("conversationId", messageEntry.getConversationId());
                json.put("uuid", messageEntry.getUuId());

@@ -21,7 +21,7 @@ public class MessageDatabaseUtil {
    }
 
    public void insertMessageEntry(MessageEntry message) {
-      if(isExistingEntry(message)){
+      if(!isExistingEntry(message)){
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       try {
          ContentValues values = new ContentValues();

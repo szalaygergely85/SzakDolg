@@ -261,7 +261,7 @@ public class ProfileActivity extends BaseActivity {
                   imageService.addPicture(
                           imageUri,
                           currentUser.getUserId(),
-                          ImageConstans.TAG_PROFILE,
+                          ImageConstans.TAG_PROFILE, null,
                           new ImageService.ImageCallback() {
                              @Override
                              public void onSuccess(Object data) {

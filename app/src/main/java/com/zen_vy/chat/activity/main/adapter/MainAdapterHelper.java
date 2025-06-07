@@ -4,6 +4,8 @@ import android.content.Context;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.image.util.ImageUtil;
@@ -47,17 +49,23 @@ public class MainAdapterHelper {
          String imageUrl = ImageUtil.buildProfileImageUrl(
             participants.get(0).getUserId()
          );
-         if (imageUrl != null) {
+
+         GlideUrl glideUrl = new GlideUrl(
+                 imageUrl,
+                 new LazyHeaders.Builder()
+                         .addHeader("Authorization",  currentUser.getToken())
+                         .build()
+         );
+
+
             Glide
                     .with(context)
-                    .load(imageUrl)
+                    .load(glideUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.ic_blank_profile)
                     .error(R.drawable.ic_blank_profile)
                     .into(image);
-         } else {
-            image.setImageResource(R.drawable.ic_blank_profile);
-         }
+
       }
    }
 

@@ -42,7 +42,8 @@ public class ImageCoordinatorService extends BaseService {
             System.currentTimeMillis(),
             ImageConstans.STATUS_PENDING,
             tags,
-            uuid
+            uuid,
+                 null
          );
 
          //Database
@@ -119,6 +120,7 @@ public class ImageCoordinatorService extends BaseService {
       ImageApiHelper imageApiHelper = new ImageApiHelper();
       imageApiHelper.getImage(
          uuid,
+         currentUser.getToken(),
          responseBody -> {
             boolean writtenToDisk = false;
             try {

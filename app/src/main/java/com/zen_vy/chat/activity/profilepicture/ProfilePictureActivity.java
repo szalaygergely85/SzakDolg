@@ -18,6 +18,7 @@ import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 
+@Deprecated
 public class ProfilePictureActivity extends BaseActivity {
 
    private Button continueButton;

@@ -21,5 +21,5 @@ public interface ImageApiService {
    );
 
    @GET("image/{uuid}")
-   Call<ResponseBody> downloadFile(@Path("uuid") String uuid);
+   Call<ResponseBody> downloadFile(@Path("uuid") String uuid,  @Header("Authorization") String authToken);
 }

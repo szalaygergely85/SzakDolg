@@ -86,4 +86,12 @@ public class ImageUtil {
       }
       return null;
    }
+
+   public static String buildImageUrl(String uuid) {
+      String serverUrl = AppConstants.API_URL + "image/uuid/";
+      if (uuid != null) {
+         return serverUrl + uuid;
+      }
+      return null;
+   }
 }

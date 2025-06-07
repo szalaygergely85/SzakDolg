@@ -1,12 +1,19 @@
 package com.zen_vy.chat.activity.chat.activity;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +25,9 @@ import com.zen_vy.chat.activity.chat.adapter.ChatAdapter;
 import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
+import com.zen_vy.chat.models.image.constans.ImageConstans;
+import com.zen_vy.chat.models.image.entity.ImageEntity;
+import com.zen_vy.chat.models.image.service.ImageService;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
@@ -33,12 +43,17 @@ public class ChatActivity extends BaseActivity {
    private Long conversationId;
    private RecyclerView chatRecView;
    private ImageView imgSend;
+   private ImageView imgAttach;
    private MyEditText edtMess;
    private ChatActivityHelper chatActivityHelper;
    private Toolbar mToolbar;
    private ConversationService conversationService;
    private Conversation conversation;
    private List<User> users;
+
+   private ActivityResultLauncher<Intent> galleryLauncher;
+   private ActivityResultLauncher<Intent> cameraLauncher;
+   private Uri imageUri;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +80,23 @@ public class ChatActivity extends BaseActivity {
       chatActivityHelper.setMessageBoard(chatRecView, adapter);
 
       chatActivityHelper.setToolbarTitle(mToolbar);
+
+      galleryLauncher = registerForActivityResult(
+              new ActivityResultContracts.StartActivityForResult(),
+              result -> {
+                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri selectedImage = result.getData().getData();
+                    sendImage(selectedImage);
+                 }
+              });
+
+      cameraLauncher = registerForActivityResult(
+              new ActivityResultContracts.StartActivityForResult(),
+              result -> {
+                 if (result.getResultCode() == RESULT_OK) {
+                    sendImage(imageUri);
+                 }
+              });
    }
 
 
@@ -120,27 +152,31 @@ public class ChatActivity extends BaseActivity {
    }
 
    private void _initView() {
+      imgAttach = findViewById(R.id.imgAttach);
       chatRecView = findViewById(R.id.recViewChat);
       imgSend = findViewById(R.id.imgSend);
       edtMess = findViewById(R.id.edtChatMes);
       mToolbar = (Toolbar) findViewById(R.id.chatToolbar);
    }
 
-   private void _setListeners() {/*
-	edtMess.setKeyBoardInputCallbackListener(
-		new MyEditText.KeyBoardInputCallbackListener() {
-			@Override
-			public void onCommitContent(
-			InputContentInfoCompat inputContentInfo,
-			int flags,
-			Bundle opts
-			) {
-			_sendFile(inputContentInfo.getLinkUri());
-			}
-		}
-	);
-	mToolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
-*/
+   private void _setListeners() {
+      imgAttach.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            String[] options = {"Choose from Gallery", "Take Photo"};
+            new AlertDialog.Builder(ChatActivity.this)
+                    .setTitle("Attach Image")
+                    .setItems(options, (dialog, which) -> {
+                       if (which == 0) {
+                          pickImageFromGallery();
+                       } else {
+                          captureImageWithCamera();
+                       }
+                    })
+                    .show();
+         }
+      });
+
       imgSend.setOnClickListener(
          new View.OnClickListener() {
             @Override
@@ -150,8 +186,8 @@ public class ChatActivity extends BaseActivity {
                   try {
 
                      MessageEntry messageEntry = chatActivityHelper.sendMessage(
-                        content,
-                        MessageTypeConstants.MESSAGE
+                             content,
+                             MessageTypeConstants.MESSAGE
                      );
 
                      edtMess.getText().clear();
@@ -176,36 +212,49 @@ public class ChatActivity extends BaseActivity {
           Timber.w("Could not fetch ConversationDTO from intent.");
        }
    }
-   /*
-private void _sendFile(Uri uri) {
-	new Thread(() -> {
-		String uUId = UUIDUtil.UUIDGenerator();
 
-		File file = new File(
-			this.getFilesDir() +
-			"/Pictures/" +
-			uUId +
-			"." +
-			FileUtil.getFileExtensionFromUri(uri)
-		);
+   private void pickImageFromGallery() {
+      Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+      galleryLauncher.launch(intent);
+   }
 
-		MessageEntry messageEntry = new MessageEntry(
-			null,
-			conversationId,
-			currentUser.getUserId(),
-			System.currentTimeMillis(),
-			null,
-			false,
-			MessageTypeConstants.IMAGE,
-			uUId + "." + FileUtil.getFileExtensionFromUri(uri),
-			UUIDUtil.UUIDGenerator()
-		);
-		FileUtil.saveFileFromUri(
-			uri,
-			file,
-			() -> fileApiHelper.uploadFile(file, messageEntry)
-		);
-	})
-		.start();
-}*/
+   private void captureImageWithCamera() {
+      ContentValues values = new ContentValues();
+      values.put(MediaStore.Images.Media.TITLE, "New Picture");
+      values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
+      imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+      Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+      intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+      cameraLauncher.launch(intent);
+   }
+
+
+
+private void sendImage(Uri uri) {
+
+   ImageService imageService = new ImageService(this, currentUser);
+
+   imageService.addPicture(uri, currentUser.getUserId(), ImageConstans.TAG_MESSAGE, conversationId, new ImageService.ImageCallback<String>() {
+      @Override
+      public void onSuccess(String data) {
+         try {
+
+            MessageEntry messageEntry = chatActivityHelper.sendMessage(
+                    data,
+                    MessageTypeConstants.IMAGE
+            );
+
+            adapter.addMessage(messageEntry);
+         } catch (Exception e) {
+            throw new RuntimeException(e);
+         }
+      }
+
+      @Override
+      public void onError(Throwable t) {
+
+      }
+   });
+}
 }
