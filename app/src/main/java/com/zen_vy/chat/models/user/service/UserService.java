@@ -5,7 +5,6 @@ import com.zen_vy.chat.DTO.LoginRequest;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.repository.UserRepository;
 import com.zen_vy.chat.models.user.repository.UserRepositoryImpl;
-
 import java.net.HttpURLConnection;
 import java.util.List;
 import retrofit2.Call;
@@ -23,7 +22,6 @@ public class UserService {
       this.userRepository = new UserRepositoryImpl(context);
    }
 
-
    public void getTokenByPasswordAndEmail(
       String hashPassword,
       String email,
@@ -37,11 +35,11 @@ public class UserService {
                if (response.isSuccessful()) {
                   callback.onSuccess(response.body());
                } else {
-                   if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                       callback.onUserNotFound();
-                   }else {
-                       callback.onError(new Throwable("Failed to login"));
-                   }
+                  if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                     callback.onUserNotFound();
+                  } else {
+                     callback.onError(new Throwable("Failed to login"));
+                  }
                }
             }
 
@@ -168,11 +166,11 @@ public class UserService {
                if (response.isSuccessful()) {
                   callback.onSuccess(response.body());
                } else {
-                   if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                       callback.onUserNotFound();
-                   }else {
-                       callback.onError(new Throwable("Failed to login"));
-                   };
+                  if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                     callback.onUserNotFound();
+                  } else {
+                     callback.onError(new Throwable("Failed to login"));
+                  }
                }
             }
 
@@ -189,9 +187,9 @@ public class UserService {
       void onError(Throwable t);
    }
 
-    public interface LoginCallback<T> {
-        void onSuccess(T data);
-        void onUserNotFound();
-        void onError(Throwable t);
-    }
+   public interface LoginCallback<T> {
+      void onSuccess(T data);
+      void onUserNotFound();
+      void onError(Throwable t);
+   }
 }

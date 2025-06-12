@@ -36,7 +36,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    private final Context mContext;
    private List<Object> messageEntries = new ArrayList<>();
 
-
    private final User currentUser;
 
    private RecyclerView chatRecView;
@@ -73,23 +72,27 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
          if (MessageTypeConstants.MESSAGE == messageEntry.getType()) {
             if (
-                    Objects.equals(messageEntry.getSenderId(), currentUser.getUserId())
+               Objects.equals(
+                  messageEntry.getSenderId(),
+                  currentUser.getUserId()
+               )
             ) {
                return TYPE_OUT;
             } else {
                return TYPE_IN;
             }
          }
-         if (MessageTypeConstants.IMAGE == messageEntry.getType()){
-
+         if (MessageTypeConstants.IMAGE == messageEntry.getType()) {
             if (
-                    Objects.equals(messageEntry.getSenderId(), currentUser.getUserId())
+               Objects.equals(
+                  messageEntry.getSenderId(),
+                  currentUser.getUserId()
+               )
             ) {
                return TYPE_OUT_IMAGE;
             } else {
                return TYPE_IN_IMAGE;
             }
-
          }
       }
       return -1;
@@ -125,22 +128,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
       if (viewType == TYPE_OUT_IMAGE) {
          View view = inflater.inflate(
-                 R.layout.item_chat_outbound_image,
-                 parent,
-                 false
+            R.layout.item_chat_outbound_image,
+            parent,
+            false
          );
          return new ChatAdapter.OutBoundImageHolder(view);
       }
 
       if (viewType == TYPE_IN_IMAGE) {
          View view = inflater.inflate(
-                 R.layout.item_chat_inbound_image,
-                 parent,
-                 false
+            R.layout.item_chat_inbound_image,
+            parent,
+            false
          );
          return new ChatAdapter.InBoundImageHolder(view);
       }
-
 
       throw new IllegalArgumentException("Invalid viewType: " + viewType);
    }
@@ -154,22 +156,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          ((DateViewHolder) holder).dateTextView.setText(
                (String) messageEntries.get(position)
             );
-      }
-
+      } else {
          MessageEntry messageEntry = (MessageEntry) messageEntries.get(
             position
          );
 
-      String imageProfileUrl = ImageUtil.buildProfileImageUrl(
-              messageEntry.getSenderId()
-      );
+         String imageProfileUrl = ImageUtil.buildProfileImageUrl(
+            messageEntry.getSenderId()
+         );
 
-      GlideUrl glideProfileUrl = new GlideUrl(
-              imageProfileUrl,
-              new LazyHeaders.Builder()
-                      .addHeader("Authorization",  currentUser.getToken())
-                      .build()
-      );
+         GlideUrl glideProfileUrl = new GlideUrl(
+            imageProfileUrl,
+            new LazyHeaders.Builder()
+               .addHeader("Authorization", currentUser.getToken())
+               .build()
+         );
 
          if (holder instanceof ChatAdapter.InboundTextViewHolder) {
             ((InboundTextViewHolder) holder).txtText.setText(
@@ -224,16 +225,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         View.VISIBLE
                      );
 
-
-
-                     Glide
-                             .with(mContext)
-                             .load(glideProfileUrl)
-                             .diskCacheStrategy(DiskCacheStrategy.ALL)
-                             .placeholder(R.drawable.ic_blank_profile)
-                             .error(R.drawable.ic_blank_profile)
-                             .into( ((InboundTextViewHolder) holder).imageView);
-
+                  Glide
+                     .with(mContext)
+                     .load(glideProfileUrl)
+                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                     .placeholder(R.drawable.ic_blank_profile)
+                     .error(R.drawable.ic_blank_profile)
+                     .into(((InboundTextViewHolder) holder).imageView);
                }
                params.setMargins(
                   marginInPx,
@@ -241,17 +239,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                   params.rightMargin,
                   params.bottomMargin
                );
-            }else {
-
-
-                  Glide
-                          .with(mContext)
-                          .load(glideProfileUrl)
-                          .diskCacheStrategy(DiskCacheStrategy.ALL)
-                          .placeholder(R.drawable.ic_blank_profile)
-                          .error(R.drawable.ic_blank_profile)
-                          .into( ((InboundTextViewHolder) holder).imageView);
-
+            } else {
+               Glide
+                  .with(mContext)
+                  .load(glideProfileUrl)
+                  .diskCacheStrategy(DiskCacheStrategy.ALL)
+                  .placeholder(R.drawable.ic_blank_profile)
+                  .error(R.drawable.ic_blank_profile)
+                  .into(((InboundTextViewHolder) holder).imageView);
             }
          }
          if (holder instanceof ChatAdapter.OutboundTextViewHolder) {
@@ -289,38 +284,31 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          }
 
          if (holder instanceof ChatAdapter.InBoundImageHolder) {
-
             GlideUrl glideUrl = getGlideUrl(messageEntry);
-
 
             if (glideUrl != null) {
                Glide
-                       .with(mContext)
-                       .load(glideUrl)
-                       .diskCacheStrategy(DiskCacheStrategy.ALL)
-                       .placeholder(R.drawable.ic_blank_profile)
-                       .error(R.drawable.ic_blank_profile)
-                       .into(((InBoundImageHolder) holder).inImageView);
+                  .with(mContext)
+                  .load(glideUrl)
+                  .diskCacheStrategy(DiskCacheStrategy.ALL)
+                  .placeholder(R.drawable.ic_blank_profile)
+                  .error(R.drawable.ic_blank_profile)
+                  .into(((InBoundImageHolder) holder).inImageView);
             }
          }
-            if (holder instanceof ChatAdapter.OutBoundImageHolder) {
+         if (holder instanceof ChatAdapter.OutBoundImageHolder) {
+            GlideUrl glideUrl = getGlideUrl(messageEntry);
 
-
-
-               GlideUrl glideUrl = getGlideUrl(messageEntry);
-
-               if (glideUrl != null) {
-                  Glide
-                          .with(mContext)
-                          .load(glideUrl)
-                          .diskCacheStrategy(DiskCacheStrategy.ALL)
-                          .placeholder(R.drawable.ic_blank_profile)
-                          .error(R.drawable.ic_blank_profile)
-                          .into( ((OutBoundImageHolder) holder).outImageView);
-               }
-
-
-
+            if (glideUrl != null) {
+               Glide
+                  .with(mContext)
+                  .load(glideUrl)
+                  .diskCacheStrategy(DiskCacheStrategy.ALL)
+                  .placeholder(R.drawable.ic_blank_profile)
+                  .error(R.drawable.ic_blank_profile)
+                  .into(((OutBoundImageHolder) holder).outImageView);
+            }
+         }
       }
    }
 
@@ -335,20 +323,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          notifyDataSetChanged();
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
-
    }
 
    private GlideUrl getGlideUrl(MessageEntry messageEntry) {
+      String imageUrl = ImageUtil.buildImageUrl(messageEntry.getContent());
 
-      String imageUrl = ImageUtil.buildImageUrl(
-              messageEntry.getContent()
-      );
-
-      return new GlideUrl(
-              imageUrl,
-              new LazyHeaders.Builder()
-                      .addHeader("Authorization",  currentUser.getToken())
-                      .build()
+      return ImageUtil.getGlideUrlWithTokenHeader(
+         imageUrl,
+         currentUser.getToken()
       );
    }
 
@@ -381,27 +363,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
    static class OutBoundImageHolder extends RecyclerView.ViewHolder {
 
-
       private final ImageView outImageView;
 
       OutBoundImageHolder(View itemView) {
          super(itemView);
-
          outImageView = itemView.findViewById(R.id.sentImageView);
-
       }
    }
 
    static class InBoundImageHolder extends RecyclerView.ViewHolder {
 
-
       private final ImageView inImageView;
 
       InBoundImageHolder(View itemView) {
          super(itemView);
-
          inImageView = itemView.findViewById(R.id.receivedImageView);
-
       }
    }
 
@@ -417,6 +393,3 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       }
    }
 }
-
-
-

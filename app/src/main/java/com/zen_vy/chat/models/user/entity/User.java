@@ -18,8 +18,6 @@ public class User implements Serializable {
 
    private Long lastUpdated;
 
-
-
    public User(
       Long userId,
       String displayName,
@@ -166,5 +164,4 @@ public class User implements Serializable {
    public void setLastUpdated(Long lastUpdated) {
       this.lastUpdated = lastUpdated;
    }
-
 }

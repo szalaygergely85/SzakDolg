@@ -16,8 +16,7 @@ public class ContactService {
 
    public ContactService(Context context, User currentUser) {
       this.currentUser = currentUser;
-      this.contactsRepository =
-      new ContactRepositoryImpl(context, currentUser);
+      this.contactsRepository = new ContactRepositoryImpl(context, currentUser);
    }
 
    // Add a contact (from UI)

@@ -139,42 +139,39 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       notifyDataSetChanged();
    }
 
-
-   public void addConversationDTO( ConversationDTO conversationDTO){
-      if (conversationDTO!=null){
+   public void addConversationDTO(ConversationDTO conversationDTO) {
+      if (conversationDTO != null) {
          conversationDTOList.add(getItemCount(), conversationDTO);
          notifyItemInserted(getItemCount() - 1);
       }
    }
 
-
-
-    public void updateConversationDTO(ConversationDTO conversationDTO) {
-       if (conversationDTO!=null){
-       int index = _getConversationPosition(conversationDTO);
-          if (index>=0){
-             conversationDTOList.set(index, conversationDTO);
-             notifyItemChanged(index);
-          }else {
-             addConversationDTO(conversationDTO);
-          }
-
-       }
-    }
-
-    private int _getConversationPosition(ConversationDTO conversationDTO){
-
-         for (ConversationDTO conversationEntry : conversationDTOList) {
-            if (conversationEntry.getConversationId()==conversationDTO.getConversationId()){
-               return conversationDTOList.indexOf(conversationEntry);
-            }
+   public void updateConversationDTO(ConversationDTO conversationDTO) {
+      if (conversationDTO != null) {
+         int index = _getConversationPosition(conversationDTO);
+         if (index >= 0) {
+            conversationDTOList.set(index, conversationDTO);
+            notifyItemChanged(index);
+         } else {
+            addConversationDTO(conversationDTO);
          }
+      }
+   }
 
+   private int _getConversationPosition(ConversationDTO conversationDTO) {
+      for (ConversationDTO conversationEntry : conversationDTOList) {
+         if (
+            conversationEntry.getConversationId() ==
+            conversationDTO.getConversationId()
+         ) {
+            return conversationDTOList.indexOf(conversationEntry);
+         }
+      }
 
-         return -1;
-    }
+      return -1;
+   }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+   public class ViewHolder extends RecyclerView.ViewHolder {
 
       private final TextView txtName;
       private final TextView txtMessage;

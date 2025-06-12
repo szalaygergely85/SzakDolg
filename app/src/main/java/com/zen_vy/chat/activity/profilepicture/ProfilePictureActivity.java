@@ -11,11 +11,11 @@ import android.widget.ImageView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.base.BaseActivity;
 import com.zen_vy.chat.activity.main.MainActivity;
 import com.zen_vy.chat.models.image.util.ImageUtil;
-import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 
 @Deprecated

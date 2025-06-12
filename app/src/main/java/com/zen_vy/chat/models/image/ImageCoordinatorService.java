@@ -43,7 +43,7 @@ public class ImageCoordinatorService extends BaseService {
             ImageConstans.STATUS_PENDING,
             tags,
             uuid,
-                 null
+            null
          );
 
          //Database

@@ -28,9 +28,6 @@ public class ConversationService {
       new ConversationDatabaseUtil(context, currentUser);
    }
 
-
-
-
    public void getConversation(
       Long conversationId,
       final ConversationService.ConversationCallback<ConversationDTO> callback

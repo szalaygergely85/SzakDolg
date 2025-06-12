@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.models.image.ImageCoordinatorService;
 import com.zen_vy.chat.models.image.constans.ImageConstans;
@@ -12,7 +13,6 @@ import com.zen_vy.chat.models.image.entity.ImageEntity;
 import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.service.UserService;
-import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 
 public class ProfilePictureActivityHelper {

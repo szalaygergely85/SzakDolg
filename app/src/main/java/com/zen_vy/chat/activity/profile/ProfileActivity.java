@@ -14,6 +14,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.base.BaseActivity;
@@ -27,8 +30,6 @@ import com.zen_vy.chat.models.image.constans.ImageConstans;
 import com.zen_vy.chat.models.image.service.ImageService;
 import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.zen_vy.chat.models.user.entity.User;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.imageview.ShapeableImageView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,22 +103,19 @@ public class ProfileActivity extends BaseActivity {
          profeditStatus.setInputType(InputType.TYPE_NULL);
 
          continueButton.setVisibility(View.GONE);
-      }else {
+      } else {
+         user = currentUser;
+         deleteContact.setVisibility(View.GONE);
+         sendMessage.setVisibility(View.GONE);
+         profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
 
-            user = currentUser;
-            deleteContact.setVisibility(View.GONE);
-            sendMessage.setVisibility(View.GONE);
-            profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
-
-            addEditProfileImageListener();
+         addEditProfileImageListener();
          if (action.equals(ProfileConstants.ACCEPT_PROFILE)) {
             continueButton.setVisibility(View.VISIBLE);
-         }else {
+         } else {
             continueButton.setVisibility(View.GONE);
          }
       }
-
-
 
       chatToolbar.setTitle(user.getDisplayName());
 
@@ -135,10 +133,26 @@ public class ProfileActivity extends BaseActivity {
       //Set image
 
       String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
+
+      GlideUrl glideUrl = ImageUtil.getGlideUrlWithTokenHeader(imageUrl, token);
+
+      //TODO caching validation:
+
+      /*
+String profileImageVersion = user.getProfileImageVersion(); // e.g., a timestamp or version string
+
+Glide.with(this)
+	.load(glideUrl)
+	.diskCacheStrategy(DiskCacheStrategy.ALL)
+	.signature(new ObjectKey(profileImageVersion)) // This is the key!
+	.placeholder(R.drawable.ic_blank_profile)
+	.error(R.drawable.ic_blank_profile)
+	.into(profPic);
+		*/
+
       Glide
          .with(this)
-         .load(imageUrl)
-              .diskCacheStrategy(DiskCacheStrategy.ALL)
+         .load(glideUrl)
          .placeholder(R.drawable.ic_blank_profile)
          .error(R.drawable.ic_blank_profile)
          .into(profPic);
@@ -148,17 +162,19 @@ public class ProfileActivity extends BaseActivity {
    protected void onStart() {
       super.onStart();
 
-      continueButton.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-            Intent intent = new Intent(
-                    ProfileActivity.this,
-                    MainActivity.class
-            );
+      continueButton.setOnClickListener(
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(
+                  ProfileActivity.this,
+                  MainActivity.class
+               );
 
-            startActivity(intent);
+               startActivity(intent);
+            }
          }
-      });
+      );
 
       deleteContact.setOnClickListener(
          new View.OnClickListener() {
@@ -243,34 +259,33 @@ public class ProfileActivity extends BaseActivity {
                   getContentResolver(),
                   imageUri
                );
-               if (originalBitmap!=null) {
+               if (originalBitmap != null) {
                   // Resize the bitmap if needed
                   Bitmap resizedBitmap = ImageUtil.resizeImage(
-                          originalBitmap,
-                          800
+                     originalBitmap,
+                     800
                   );
 
                   Glide
-                          .with(this)
-                          .load(resizedBitmap)
-                          .diskCacheStrategy(DiskCacheStrategy.ALL)
-                          .placeholder(R.drawable.ic_blank_profile)
-                          .error(R.drawable.ic_blank_profile)
-                          .into(profPic);
+                     .with(this)
+                     .load(resizedBitmap)
+                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                     .placeholder(R.drawable.ic_blank_profile)
+                     .error(R.drawable.ic_blank_profile)
+                     .into(profPic);
 
                   imageService.addPicture(
-                          imageUri,
-                          currentUser.getUserId(),
-                          ImageConstans.TAG_PROFILE, null,
-                          new ImageService.ImageCallback() {
-                             @Override
-                             public void onSuccess(Object data) {
-                             }
+                     imageUri,
+                     currentUser.getUserId(),
+                     ImageConstans.TAG_PROFILE,
+                     null,
+                     new ImageService.ImageCallback() {
+                        @Override
+                        public void onSuccess(Object data) {}
 
-                             @Override
-                             public void onError(Throwable t) {
-                             }
-                          }
+                        @Override
+                        public void onError(Throwable t) {}
+                     }
                   );
                }
             } catch (IOException e) {

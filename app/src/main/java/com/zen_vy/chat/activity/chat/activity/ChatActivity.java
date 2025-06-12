@@ -6,17 +6,19 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.icu.text.DateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.MyEditText;
 import com.zen_vy.chat.R;
@@ -26,15 +28,19 @@ import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.image.constans.ImageConstans;
-import com.zen_vy.chat.models.image.entity.ImageEntity;
 import com.zen_vy.chat.models.image.service.ImageService;
+import com.zen_vy.chat.models.message.MessageService;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
-import com.google.android.material.appbar.MaterialToolbar;
+import com.zen_vy.chat.util.DateTimeUtil;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
-
 import timber.log.Timber;
 
 public class ChatActivity extends BaseActivity {
@@ -50,15 +56,19 @@ public class ChatActivity extends BaseActivity {
    private ConversationService conversationService;
    private Conversation conversation;
    private List<User> users;
-
    private ActivityResultLauncher<Intent> galleryLauncher;
    private ActivityResultLauncher<Intent> cameraLauncher;
    private Uri imageUri;
+   private MessageService messageService;
+
+   private List<Object> messageEntries;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_chat);
+
+      messageService = new MessageService(this, currentUser);
 
       MaterialToolbar toolbar = findViewById(R.id.chatToolbar);
       toolbar.setNavigationOnClickListener(v ->
@@ -77,29 +87,41 @@ public class ChatActivity extends BaseActivity {
       adapter =
       new ChatAdapter(this, currentUser, chatRecView, chatActivityHelper);
 
-      chatActivityHelper.setMessageBoard(chatRecView, adapter);
+      setMessageBoard(chatRecView, adapter);
 
       chatActivityHelper.setToolbarTitle(mToolbar);
 
-      galleryLauncher = registerForActivityResult(
-              new ActivityResultContracts.StartActivityForResult(),
-              result -> {
-                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri selectedImage = result.getData().getData();
-                    sendImage(selectedImage);
-                 }
-              });
+      galleryLauncher =
+      registerForActivityResult(
+         new ActivityResultContracts.StartActivityForResult(),
+         result -> {
+            if (
+               result.getResultCode() == RESULT_OK && result.getData() != null
+            ) {
+               Uri selectedImage = result.getData().getData();
+               try {
+                  sendImage(selectedImage);
+               } catch (IOException e) {
+                  throw new RuntimeException(e);
+               }
+            }
+         }
+      );
 
-      cameraLauncher = registerForActivityResult(
-              new ActivityResultContracts.StartActivityForResult(),
-              result -> {
-                 if (result.getResultCode() == RESULT_OK) {
-                    sendImage(imageUri);
-                 }
-              });
+      cameraLauncher =
+      registerForActivityResult(
+         new ActivityResultContracts.StartActivityForResult(),
+         result -> {
+            if (result.getResultCode() == RESULT_OK) {
+               try {
+                  sendImage(imageUri);
+               } catch (IOException e) {
+                  throw new RuntimeException(e);
+               }
+            }
+         }
+      );
    }
-
-
 
    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
       @Override
@@ -107,14 +129,35 @@ public class ChatActivity extends BaseActivity {
          MessageEntry message = (MessageEntry) intent.getSerializableExtra(
             "message"
          );
-         runOnUiThread(()->{
+         runOnUiThread(() -> {
             if (message != null) {
-               if (Objects.equals(message.getConversationId(), conversationId)) {
-                  adapter.addMessage(message);
+               if (
+                  Objects.equals(message.getConversationId(), conversationId)
+               ) {
+                  if (
+                     messageEntries.size() == 0 ||
+                     !isNewMessageEntryNewDay(
+                        messageEntries.get(messageEntries.size() - 1),
+                        message
+                     )
+                  ) {
+                     messageEntries.add(message);
+                     int lastMessagePosition = adapter.getItemCount() - 1;
+                     adapter.notifyItemChanged(lastMessagePosition);
+                     chatRecView.scrollToPosition(lastMessagePosition);
+                  } else {
+                     messageEntries.add(
+                        createDateObject(message.getTimestamp())
+                     );
+                     messageEntries.add(message);
+
+                     int lastMessagePosition = adapter.getItemCount() - 1;
+                     adapter.notifyItemRangeChanged(lastMessagePosition - 1, 2);
+                     chatRecView.scrollToPosition(lastMessagePosition);
+                  }
                }
             }
          });
-
       }
    };
 
@@ -160,22 +203,27 @@ public class ChatActivity extends BaseActivity {
    }
 
    private void _setListeners() {
-      imgAttach.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-            String[] options = {"Choose from Gallery", "Take Photo"};
-            new AlertDialog.Builder(ChatActivity.this)
-                    .setTitle("Attach Image")
-                    .setItems(options, (dialog, which) -> {
-                       if (which == 0) {
-                          pickImageFromGallery();
-                       } else {
-                          captureImageWithCamera();
-                       }
-                    })
-                    .show();
+      imgAttach.setOnClickListener(
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               String[] options = { "Choose from Gallery", "Take Photo" };
+               new AlertDialog.Builder(ChatActivity.this)
+                  .setTitle("Attach Image")
+                  .setItems(
+                     options,
+                     (dialog, which) -> {
+                        if (which == 0) {
+                           pickImageFromGallery();
+                        } else {
+                           captureImageWithCamera();
+                        }
+                     }
+                  )
+                  .show();
+            }
          }
-      });
+      );
 
       imgSend.setOnClickListener(
          new View.OnClickListener() {
@@ -184,10 +232,9 @@ public class ChatActivity extends BaseActivity {
                String content = edtMess.getText().toString();
                if (!content.isEmpty()) {
                   try {
-
                      MessageEntry messageEntry = chatActivityHelper.sendMessage(
-                             content,
-                             MessageTypeConstants.MESSAGE
+                        content,
+                        MessageTypeConstants.MESSAGE
                      );
 
                      edtMess.getText().clear();
@@ -203,18 +250,21 @@ public class ChatActivity extends BaseActivity {
 
    private void _getIntentExtras() {
       ConversationDTO conversationDTO = (ConversationDTO) this.getIntent()
-              .getSerializableExtra(IntentConstants.CONVERSATION_DTO);
-       if (conversationDTO != null) {
-          conversation = conversationDTO.getConversation();
-          users = conversationDTO.getUsers();
-          conversationId = conversation.getConversationId();
-       }else{
-          Timber.w("Could not fetch ConversationDTO from intent.");
-       }
+         .getSerializableExtra(IntentConstants.CONVERSATION_DTO);
+      if (conversationDTO != null) {
+         conversation = conversationDTO.getConversation();
+         users = conversationDTO.getUsers();
+         conversationId = conversation.getConversationId();
+      } else {
+         Timber.w("Could not fetch ConversationDTO from intent.");
+      }
    }
 
    private void pickImageFromGallery() {
-      Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+      Intent intent = new Intent(
+         Intent.ACTION_PICK,
+         MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+      );
       galleryLauncher.launch(intent);
    }
 
@@ -222,39 +272,106 @@ public class ChatActivity extends BaseActivity {
       ContentValues values = new ContentValues();
       values.put(MediaStore.Images.Media.TITLE, "New Picture");
       values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
-      imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+      imageUri =
+      getContentResolver()
+         .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
       Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
       intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
       cameraLauncher.launch(intent);
    }
 
+   private void sendImage(Uri uri) throws IOException {
+      ImageService imageService = new ImageService(this, currentUser);
 
+      imageService.addPicture(
+         uri,
+         currentUser.getUserId(),
+         ImageConstans.TAG_MESSAGE,
+         conversationId,
+         new ImageService.ImageCallback<String>() {
+            @Override
+            public void onSuccess(String data) {
+               try {
+                  MessageEntry messageEntry = chatActivityHelper.sendMessage(
+                     data,
+                     MessageTypeConstants.IMAGE
+                  );
 
-private void sendImage(Uri uri) {
+                  adapter.addMessage(messageEntry);
+               } catch (Exception e) {
+                  throw new RuntimeException(e);
+               }
+            }
 
-   ImageService imageService = new ImageService(this, currentUser);
-
-   imageService.addPicture(uri, currentUser.getUserId(), ImageConstans.TAG_MESSAGE, conversationId, new ImageService.ImageCallback<String>() {
-      @Override
-      public void onSuccess(String data) {
-         try {
-
-            MessageEntry messageEntry = chatActivityHelper.sendMessage(
-                    data,
-                    MessageTypeConstants.IMAGE
-            );
-
-            adapter.addMessage(messageEntry);
-         } catch (Exception e) {
-            throw new RuntimeException(e);
+            @Override
+            public void onError(Throwable t) {}
          }
+      );
+   }
+
+   private void setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {
+      messageService.getMessagesByConversationId(
+         conversation.getConversationId(),
+         new MessageService.MessageCallback<List<MessageEntry>>() {
+            @Override
+            public void onSuccess(List<MessageEntry> results) {
+               results.sort(
+                  Comparator.comparingLong(MessageEntry::getTimestamp)
+               );
+
+               messageEntries = _prepareMessageList(results);
+               adapter.setMessageEntries(messageEntries);
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+         }
+      );
+
+      chatRecView.setAdapter(adapter);
+      chatRecView.setLayoutManager(new LinearLayoutManager(this));
+      chatRecView.scrollToPosition(adapter.getItemCount() - 1);
+   }
+
+   private String createDateObject(Long timestamp) {
+      DateFormat dateFormat = DateFormat.getDateInstance(
+         DateFormat.SHORT,
+         Locale.getDefault()
+      );
+      return dateFormat.format(new Date(timestamp));
+   }
+
+   private List<Object> _prepareMessageList(List<MessageEntry> messageEntries) {
+      List<Object> sortedList = new ArrayList<>();
+      long previousTimestamp = 0L;
+      for (MessageEntry messageEntry : messageEntries) {
+         if (
+            DateTimeUtil.isNewDay(
+               previousTimestamp,
+               messageEntry.getTimestamp()
+            )
+         ) {
+            sortedList.add(createDateObject(messageEntry.getTimestamp()));
+         }
+
+         sortedList.add(messageEntry);
+         previousTimestamp = messageEntry.getTimestamp();
+      }
+      return sortedList;
+   }
+
+   private boolean isNewMessageEntryNewDay(
+      Object prevMessage,
+      MessageEntry newMessage
+   ) {
+      if (prevMessage instanceof MessageEntry) {
+         return DateTimeUtil.isNewDay(
+            ((MessageEntry) prevMessage).getTimestamp(),
+            newMessage.getTimestamp()
+         );
       }
 
-      @Override
-      public void onError(Throwable t) {
-
-      }
-   });
-}
+      return false;
+   }
 }

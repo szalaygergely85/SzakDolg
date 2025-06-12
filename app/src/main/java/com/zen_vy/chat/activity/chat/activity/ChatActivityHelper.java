@@ -1,12 +1,8 @@
 package com.zen_vy.chat.activity.chat.activity;
 
-import android.icu.text.DateFormat;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.zen_vy.chat.activity.chat.adapter.ChatAdapter;
 import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
@@ -17,11 +13,8 @@ import com.zen_vy.chat.models.user.util.UserUtil;
 import com.zen_vy.chat.util.UUIDUtil;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ChatActivityHelper {
 
@@ -55,62 +48,6 @@ public class ChatActivityHelper {
 
       Format format = new SimpleDateFormat("HH:mm");
       return format.format(date);
-   }
-
-   public void setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {
-      messageService.getMessagesByConversationId(
-         conversation.getConversationId(),
-         new MessageService.MessageCallback<List<MessageEntry>>() {
-            @Override
-            public void onSuccess(List<MessageEntry> messageEntries) {
-               messageEntries.sort(
-                  Comparator.comparingLong(MessageEntry::getTimestamp)
-               );
-
-               adapter.setMessageEntries(_prepareMessageList(messageEntries));
-            }
-
-            @Override
-            public void onError(Throwable t) {}
-         }
-      );
-
-      chatRecView.setAdapter(adapter);
-      chatRecView.setLayoutManager(new LinearLayoutManager(context));
-      chatRecView.scrollToPosition(adapter.getItemCount() - 1);
-   }
-
-   private List<Object> _prepareMessageList(List<MessageEntry> messageEntries) {
-      List<Object> sortedList = new ArrayList<>();
-      long previousTimestamp = 0L;
-      for (MessageEntry messageEntry : messageEntries) {
-         if (isNewDay(previousTimestamp, messageEntry.getTimestamp())) {
-            DateFormat dateFormat = DateFormat.getDateInstance(
-               DateFormat.SHORT,
-               Locale.getDefault()
-            );
-
-            sortedList.add(
-               dateFormat.format(new Date(messageEntry.getTimestamp()))
-            );
-         }
-
-         sortedList.add(messageEntry);
-         previousTimestamp = messageEntry.getTimestamp();
-      }
-      return sortedList;
-   }
-
-   private boolean isNewDay(long previousTimestamp, long currentTimestamp) {
-      Date currentDate = new Date(currentTimestamp);
-      Date previousDate = new Date(previousTimestamp);
-
-      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-      String currentDateStr = dateFormat.format(currentDate);
-      String previousDateStr = dateFormat.format(previousDate);
-
-      return !currentDateStr.equals(previousDateStr);
    }
 
    public MessageEntry sendMessage(String content, int messageType) {

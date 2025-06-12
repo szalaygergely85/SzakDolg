@@ -21,36 +21,35 @@ public class MessageDatabaseUtil {
    }
 
    public void insertMessageEntry(MessageEntry message) {
-      if(!isExistingEntry(message)){
-      SQLiteDatabase db = dbHelper.getWritableDatabase();
-      try {
-         ContentValues values = new ContentValues();
-         values.put("messageId", message.getMessageId());
-         values.put("conversationId", message.getConversationId());
-         values.put("senderId", message.getSenderId());
-         values.put("timestamp", message.getTimestamp());
-         values.put("contentEncrypted", message.getContentEncrypted());
-         values.put("isRead", message.isRead());
-         values.put("type", message.getType());
-         values.put("content", message.getContent());
-         values.put("uUId", message.getUuId());
-         db.insertWithOnConflict(
-            dbHelper.TABLE_MESSAGE_ENTRY,
-            null,
-            values,
-            SQLiteDatabase.CONFLICT_IGNORE
-         );
-      } finally {
-         db.close();
-      }
+      if (!isExistingEntry(message)) {
+         SQLiteDatabase db = dbHelper.getWritableDatabase();
+         try {
+            ContentValues values = new ContentValues();
+            values.put("messageId", message.getMessageId());
+            values.put("conversationId", message.getConversationId());
+            values.put("senderId", message.getSenderId());
+            values.put("timestamp", message.getTimestamp());
+            values.put("contentEncrypted", message.getContentEncrypted());
+            values.put("isRead", message.isRead());
+            values.put("type", message.getType());
+            values.put("content", message.getContent());
+            values.put("uUId", message.getUuId());
+            db.insertWithOnConflict(
+               dbHelper.TABLE_MESSAGE_ENTRY,
+               null,
+               values,
+               SQLiteDatabase.CONFLICT_IGNORE
+            );
+         } finally {
+            db.close();
+         }
       }
    }
 
    private boolean isExistingEntry(MessageEntry message) {
-
       MessageEntry messageEntry = getMessageByUuid(message.getUuId());
 
-      if(messageEntry==null){
+      if (messageEntry == null) {
          return false;
       }
       return true;

@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.textfield.TextInputLayout;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.login.LoginActivity;
 import com.zen_vy.chat.activity.profile.ProfileActivity;
@@ -19,8 +20,6 @@ import com.zen_vy.chat.models.user.service.UserService;
 import com.zen_vy.chat.util.HashUtils;
 import com.zen_vy.chat.util.KeyStoreUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
-import com.google.android.material.textfield.TextInputLayout;
-
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,7 +55,6 @@ public class RegisterActivity extends AppCompatActivity {
 
       _initView();
       _setOnClickListeners();
-
    }
 
    protected void onStart() {
@@ -86,12 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
                pass2 = editPass2.getText().toString();
                displayName = editDisplayName.getText().toString();
                if (_validateValues(email, pass, pass2, displayName)) {
-                  registerUser(
-                     email,
-                     pass,
-                     pass2,
-                     displayName
-                  );
+                  registerUser(email, pass, pass2, displayName);
                }
             }
          }
@@ -157,66 +150,66 @@ public class RegisterActivity extends AppCompatActivity {
    }
 
    public void registerUser(
-           String email,
-           String pass,
-           String pass2,
-           String displayName) {
+      String email,
+      String pass,
+      String pass2,
+      String displayName
+   ) {
       String hashPass = HashUtils.hashPassword(pass);
       HashMap<String, String> keyPair = KeyStoreUtil.generateKeyPair();
 
       User user = new User(
-              displayName,
-              email,
-              hashPass,
-              keyPair.get("Public"),
-              UserConstans.STATUS_ACTIVE,
-              UserConstans.TAG_PENDING,
-              null
+         displayName,
+         email,
+         hashPass,
+         keyPair.get("Public"),
+         UserConstans.STATUS_ACTIVE,
+         UserConstans.TAG_PENDING,
+         null
       );
 
       userService.addUser(
-              user,
-              new UserService.LoginCallback<User>() {
-                 @Override
-                 public void onSuccess(User data) {
-                    KeyStoreUtil.writePrivateKeysToFile(
-                            RegisterActivity.this,
-                            keyPair.get("Private"),
-                            data
-                    );
+         user,
+         new UserService.LoginCallback<User>() {
+            @Override
+            public void onSuccess(User data) {
+               KeyStoreUtil.writePrivateKeysToFile(
+                  RegisterActivity.this,
+                  keyPair.get("Private"),
+                  data
+               );
 
-                    SharedPreferencesUtil.setStringPreference(
-                            RegisterActivity.this,
-                            SharedPreferencesConstants.USERTOKEN,
-                            data.getToken()
-                    );
-                    SharedPreferencesUtil.setStringPreference(
-                            RegisterActivity.this,
-                            SharedPreferencesConstants.USER_ID,
-                            data.getUserId().toString()
-                    );
-                    Intent intent = new Intent(
-                            RegisterActivity.this,
-                            ProfileActivity.class
-                    );
-                    intent.putExtra(
-                            IntentConstants.PROFILE_ACTION,
-                            ProfileConstants.ACCEPT_PROFILE
-                    );
-                     startActivity(intent);
-                 }
+               SharedPreferencesUtil.setStringPreference(
+                  RegisterActivity.this,
+                  SharedPreferencesConstants.USERTOKEN,
+                  data.getToken()
+               );
+               SharedPreferencesUtil.setStringPreference(
+                  RegisterActivity.this,
+                  SharedPreferencesConstants.USER_ID,
+                  data.getUserId().toString()
+               );
+               Intent intent = new Intent(
+                  RegisterActivity.this,
+                  ProfileActivity.class
+               );
+               intent.putExtra(
+                  IntentConstants.PROFILE_ACTION,
+                  ProfileConstants.ACCEPT_PROFILE
+               );
+               startActivity(intent);
+            }
 
-                 @Override
-                 public void onUserNotFound() {
-                    runOnUiThread(()->{
-                       editEmailLayout.setError("Email is already registered");
-                    });
+            @Override
+            public void onUserNotFound() {
+               runOnUiThread(() -> {
+                  editEmailLayout.setError("Email is already registered");
+               });
+            }
 
-                 }
-
-                 @Override
-                 public void onError(Throwable t) {}
-              }
+            @Override
+            public void onError(Throwable t) {}
+         }
       );
    }
 
@@ -226,5 +219,4 @@ public class RegisterActivity extends AppCompatActivity {
       Matcher matcher = pattern.matcher(email);
       return matcher.matches();
    }
-
 }

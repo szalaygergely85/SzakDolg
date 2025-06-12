@@ -75,7 +75,7 @@ public class UserDatabaseUtil {
                status,
                tags,
                authToken,
-                    lastUpdated
+               lastUpdated
             );
             users.add(user);
          }
@@ -128,7 +128,7 @@ public class UserDatabaseUtil {
                cursor.getColumnIndexOrThrow("authToken")
             );
             Long lastUpdated = cursor.getLong(
-                    cursor.getColumnIndexOrThrow("lastUpdated")
+               cursor.getColumnIndexOrThrow("lastUpdated")
             );
 
             return new User(
@@ -140,7 +140,7 @@ public class UserDatabaseUtil {
                status,
                tags,
                authToken,
-                    lastUpdated
+               lastUpdated
             );
          }
       } finally {
@@ -186,7 +186,7 @@ public class UserDatabaseUtil {
                status,
                tags,
                authToken,
-                    lastUpdated
+               lastUpdated
             );
             return user;
          }
@@ -220,7 +220,7 @@ public class UserDatabaseUtil {
    }
 
    public void insertUser(User user) {
-      if(_isInsertable(user)) {
+      if (_isInsertable(user)) {
          SQLiteDatabase db = dbHelper.getWritableDatabase();
 
          try {
@@ -235,10 +235,10 @@ public class UserDatabaseUtil {
             values.put("authToken", user.getToken());
 
             db.insertWithOnConflict(
-                    dbHelper.TABLE_USER_ENTRY,
-                    null,
-                    values,
-                    SQLiteDatabase.CONFLICT_REPLACE
+               dbHelper.TABLE_USER_ENTRY,
+               null,
+               values,
+               SQLiteDatabase.CONFLICT_REPLACE
             );
          } finally {
             db.close();
@@ -249,9 +249,13 @@ public class UserDatabaseUtil {
    private boolean _isInsertable(User user) {
       User localUser = getUserById(user.getUserId());
 
-         if(localUser == null || user.getLastUpdated()==null || localUser.getLastUpdated()< user.getLastUpdated()){
-            return true;
-         }
+      if (
+         localUser == null ||
+         user.getLastUpdated() == null ||
+         localUser.getLastUpdated() < user.getLastUpdated()
+      ) {
+         return true;
+      }
 
       return false;
    }

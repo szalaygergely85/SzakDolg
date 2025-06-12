@@ -7,10 +7,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.textfield.TextInputLayout;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.ForgotPasswordActivity;
 import com.zen_vy.chat.activity.register.RegisterActivity;
-import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -33,7 +33,8 @@ public class LoginActivity extends AppCompatActivity {
       _initView();
       _setOnClickListeners();
 
-      loginActivityHelper = new LoginActivityHelper(this, editMailLayout, editPassLayout);
+      loginActivityHelper =
+      new LoginActivityHelper(this, editMailLayout, editPassLayout);
    }
 
    @Override

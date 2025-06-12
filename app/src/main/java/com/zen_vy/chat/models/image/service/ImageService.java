@@ -2,8 +2,6 @@ package com.zen_vy.chat.models.image.service;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
-import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.models.image.ImageLocalHelper;
 import com.zen_vy.chat.models.image.constans.ImageConstans;
 import com.zen_vy.chat.models.image.db.ImageDatabaseUtil;
@@ -12,9 +10,9 @@ import com.zen_vy.chat.models.image.repository.ImageRepository;
 import com.zen_vy.chat.models.image.repository.ImageRepositoryImpl;
 import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.zen_vy.chat.models.user.entity.User;
-import com.zen_vy.chat.util.FileUtil;
 import com.zen_vy.chat.util.UUIDUtil;
 import java.io.File;
+import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -48,8 +46,7 @@ public class ImageService {
       String tags,
       Long conversationId,
       final ImageService.ImageCallback callback
-
-   ) {
+   ) throws IOException {
       String mimeType = ImageUtil.getMimeType(context, imageUri);
 
       if (mimeType != null && (mimeType.startsWith("image/"))) {
@@ -65,83 +62,105 @@ public class ImageService {
             ImageConstans.STATUS_PENDING,
             tags,
             uuid,
-                 conversationId
+            conversationId
          );
          ImageLocalHelper imageLocalHelper = new ImageLocalHelper();
-         imageLocalHelper.saveImageToDisk(
-            context,
-            currentUser,
-            imageEntity,
-            new ImageLocalHelper.ImageSaveCallback() {
-               @Override
-               public void onImageSaved(ImageEntity updatedImage) {
-                  Uri picUri = FileUtil.getUri(
-                     imageEntity.getFileName(),
-                     context
-                  );
 
-                  if (picUri != null) {
-                     File file = new File(picUri.getPath());
+         /*
+		Uri picUri = FileUtil.getUri(
+				imageEntity.getFileName(),
+				context
+		);*/
 
-                     if (file.exists()) {
-                        Log.d(
-                           AppConstants.LOG_TAG,
-                           "File exists at: " + file.getAbsolutePath()
-                        );
+         if (imageUri != null) {
+            File file = ImageUtil.getFileFromUri(context, imageUri);
 
-                        RequestBody requestFile = RequestBody.create(
-                           file,
-                           MediaType.get("multipart/form-data")
-                        );
+            RequestBody requestFile = RequestBody.create(
+               file,
+               MediaType.get("multipart/form-data")
+            );
 
-                        MultipartBody.Part body =
-                           MultipartBody.Part.createFormData(
-                              "image",
-                              file.getName(),
-                              requestFile
-                           );
+            MultipartBody.Part body = MultipartBody.Part.createFormData(
+               "image",
+               file.getName(),
+               requestFile
+            );
 
-                        imageRepository.uploadImage(
-                           body,
-                           imageEntity,
-                           currentUser.getToken(),
-                           new Callback<ResponseBody>() {
-                              @Override
-                              public void onResponse(
-                                 Call<ResponseBody> call,
-                                 Response<ResponseBody> response
-                              ) {
-                                 if (response.isSuccessful()) {
-                                    callback.onSuccess(imageEntity.getUuid());
-                                 } else {
-                                    callback.onError(
-                                       new Throwable(
-                                          "Failed to update Conversation"
-                                       )
-                                    );
-                                 }
-                              }
-
-                              @Override
-                              public void onFailure(
-                                 Call<ResponseBody> call,
-                                 Throwable throwable
-                              ) {}
-                           }
-                        );
+            imageRepository.uploadImage(
+               body,
+               imageEntity,
+               currentUser.getToken(),
+               new Callback<ResponseBody>() {
+                  @Override
+                  public void onResponse(
+                     Call<ResponseBody> call,
+                     Response<ResponseBody> response
+                  ) {
+                     if (response.isSuccessful()) {
+                        callback.onSuccess(imageEntity.getUuid());
                      } else {
-                        Log.e(AppConstants.LOG_TAG, "File does not exist.");
+                        callback.onError(
+                           new Throwable("Failed to update Conversation")
+                        );
                      }
                   }
-               }
 
-               @Override
-               public void onError(Exception e) {}
-            }
-         );
+                  @Override
+                  public void onFailure(
+                     Call<ResponseBody> call,
+                     Throwable throwable
+                  ) {}
+               }
+            );
+         }
+         /*
+
+		imageLocalHelper.saveImageToDisk(
+			context,
+			currentUser,
+			imageEntity,
+			new ImageLocalHelper.ImageSaveCallback() {
+			@Override
+			public void onImageSaved(ImageEntity updatedImage) {
+				Uri picUri = FileUtil.getUri(
+					imageEntity.getFileName(),
+					context
+				);
+
+				if (picUri != null) {
+					File file = new File(picUri.getPath());
+
+					if (file.exists()) {
+						Log.d(
+						AppConstants.LOG_TAG,
+						"File exists at: " + file.getAbsolutePath()
+						);
+
+						RequestBody requestFile = RequestBody.create(
+						file,
+						MediaType.get("multipart/form-data")
+						);
+
+						MultipartBody.Part body =
+						MultipartBody.Part.createFormData(
+							"image",
+							file.getName(),
+							requestFile
+						);
+
+
+					} else {
+						Log.e(AppConstants.LOG_TAG, "File does not exist.");
+					}
+				}
+			}
+
+			@Override
+			public void onError(Exception e) {}
+			}
+		);*/
       }
    }
-
 
    public ImageEntity getImageByUUID(String uuid) {
       return imageDatabaseUtil.getImageEntityByUuid(uuid);

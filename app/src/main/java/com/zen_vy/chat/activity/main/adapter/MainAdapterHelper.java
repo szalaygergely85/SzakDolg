@@ -21,7 +21,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import timber.log.Timber;
 
 public class MainAdapterHelper {
@@ -51,21 +50,19 @@ public class MainAdapterHelper {
          );
 
          GlideUrl glideUrl = new GlideUrl(
-                 imageUrl,
-                 new LazyHeaders.Builder()
-                         .addHeader("Authorization",  currentUser.getToken())
-                         .build()
+            imageUrl,
+            new LazyHeaders.Builder()
+               .addHeader("Authorization", currentUser.getToken())
+               .build()
          );
 
-
-            Glide
-                    .with(context)
-                    .load(glideUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.ic_blank_profile)
-                    .error(R.drawable.ic_blank_profile)
-                    .into(image);
-
+         Glide
+            .with(context)
+            .load(glideUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.ic_blank_profile)
+            .error(R.drawable.ic_blank_profile)
+            .into(image);
       }
    }
 

@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
 import com.zen_vy.chat.DTO.ContactsDTO;
 import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.R;
@@ -20,11 +23,6 @@ import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.models.contacts.ContactService;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationBarView;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,47 +47,40 @@ public class ContactsActivity extends BaseActivity {
       contactService = new ContactService(this, currentUser);
       conversationService = new ConversationService(this, currentUser);
 
-
-
       toolbar.setNavigationOnClickListener(v ->
          getOnBackPressedDispatcher().onBackPressed()
       );
 
-      if(Objects.equals(actionId, ContactsConstans.ACTION_SELECT)){
-          btnNewContact.setVisibility(View.GONE);
-        bottomNav.setVisibility(View.GONE);
-      }else {
+      if (Objects.equals(actionId, ContactsConstans.ACTION_SELECT)) {
+         btnNewContact.setVisibility(View.GONE);
+         bottomNav.setVisibility(View.GONE);
+      } else {
+         bottomNav.setSelectedItemId(R.id.nav_contact_main);
 
-          bottomNav.setSelectedItemId(R.id.nav_contact_main);
-
-          bottomNav.setOnItemSelectedListener(
-                  new NavigationBarView.OnItemSelectedListener() {
-                      @Override
-                      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                          Intent intent;
-                          switch (item.getItemId()) {
-                              case R.id.nav_messages_main:
-                                  intent = new Intent(ContactsActivity.this, MainActivity.class);
-                                  startActivity(intent);
-                                  break;
-
-                          }
-                          return false;
-                      }
+         bottomNav.setOnItemSelectedListener(
+            new NavigationBarView.OnItemSelectedListener() {
+               @Override
+               public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                  Intent intent;
+                  switch (item.getItemId()) {
+                     case R.id.nav_messages_main:
+                        intent =
+                        new Intent(ContactsActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        break;
                   }
-          );
+                  return false;
+               }
+            }
+         );
       }
-
    }
-
-
 
    @Override
    protected void onStart() {
       super.onStart();
 
       if (actionId.equals(ContactsConstans.ACTION_VIEW)) {
-
          toolbar.getMenu().clear();
          toolbar.setTitle("Contacts");
       }
@@ -130,11 +121,9 @@ public class ContactsActivity extends BaseActivity {
                   sortedList.add(contactsDTO);
                }
 
-               runOnUiThread(()->{
-                   contactsAdapter.setUsers(sortedList);
+               runOnUiThread(() -> {
+                  contactsAdapter.setUsers(sortedList);
                });
-
-
             }
 
             @Override
@@ -211,10 +200,9 @@ public class ContactsActivity extends BaseActivity {
       topAppBar = findViewById(R.id.select_contacts_Toolbar);
       btnNewContact = findViewById(R.id.btnConNew);
 
-       bottomNav = findViewById(R.id.bottom_nav_contacts);
+      bottomNav = findViewById(R.id.bottom_nav_contacts);
 
-
-       toolbar = findViewById(R.id.select_contacts_Toolbar);
+      toolbar = findViewById(R.id.select_contacts_Toolbar);
    }
 
    private BottomNavigationView bottomNav;

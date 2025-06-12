@@ -87,8 +87,6 @@ public class MessageRepositoryImpl implements MessageRepository {
    ) {
       messageDatabaseUtil.insertMessageEntry(messageEntry);
 
-
-
       messageApiService
          .addMessage(messageEntry, currentUser.getToken())
          .enqueue(
@@ -127,23 +125,29 @@ public class MessageRepositoryImpl implements MessageRepository {
       List<MessageEntry> messageEntries,
       Callback<List<MessageEntry>> callback
    ) {
-       messageApiService.addMessages(messageEntries, currentUser.getToken()).enqueue(new Callback<List<MessageEntry>>() {
-           @Override
-           public void onResponse(Call<List<MessageEntry>> call, Response<List<MessageEntry>> response) {
-               if (response.isSuccessful() && response.body() != null) {
-                   callback.onResponse(call, response);
+      messageApiService
+         .addMessages(messageEntries, currentUser.getToken())
+         .enqueue(
+            new Callback<List<MessageEntry>>() {
+               @Override
+               public void onResponse(
+                  Call<List<MessageEntry>> call,
+                  Response<List<MessageEntry>> response
+               ) {
+                  if (response.isSuccessful() && response.body() != null) {
+                     callback.onResponse(call, response);
+                  }
                }
 
-           }
-
-           @Override
-           public void onFailure(Call<List<MessageEntry>> call, Throwable throwable) {
-               callback.onFailure(
-                       call,
-                       throwable
-               );
-           }
-       });
+               @Override
+               public void onFailure(
+                  Call<List<MessageEntry>> call,
+                  Throwable throwable
+               ) {
+                  callback.onFailure(call, throwable);
+               }
+            }
+         );
    }
 
    @Override
@@ -152,7 +156,20 @@ public class MessageRepositoryImpl implements MessageRepository {
       Long conversationId,
       Callback<List<MessageEntry>> callback
    ) {
-
+      List<MessageEntry> localMessages =
+         messageDatabaseUtil.getAllMessageEntriesByConversationId(
+            conversationId
+         );
+      if (localMessages != null) {
+         if (
+            System.currentTimeMillis() -
+               localMessages.get(localMessages.size() - 1).getTimestamp() >
+            AppConstants.MESSAGE_SYNC_TIME
+         ) {
+            callback.onResponse(null, Response.success(localMessages));
+            return;
+         }
+      }
 
       messageApiService
          .getMessages(currentUser.getToken(), conversationId)

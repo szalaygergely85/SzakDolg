@@ -13,7 +13,6 @@ import com.zen_vy.chat.models.user.dbutil.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.retrofit.RetrofitClient;
 import com.zen_vy.chat.util.DateTimeUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -50,7 +49,6 @@ public class ConversationRepositoryImpl implements ConversationRepository {
       String token,
       Callback<Conversation> callback
    ) {
-
       conversationApiService
          .addConversation(conversation, token)
          .enqueue(
@@ -85,26 +83,32 @@ public class ConversationRepositoryImpl implements ConversationRepository {
       String token,
       Callback<ConversationDTO> callback
    ) {
+      List<Conversation> conversationList =
+         conversationDatabaseUtil.getAllConversations();
+      for (Conversation conversation : conversationList) {
+         if (localConversationExists(userIds, conversation)) {
+            getConversation(
+               conversation.getConversationId(),
+               token,
+               new Callback<ConversationDTO>() {
+                  @Override
+                  public void onResponse(
+                     Call<ConversationDTO> call,
+                     Response<ConversationDTO> response
+                  ) {
+                     callback.onResponse(call, response);
+                  }
 
-      List<Conversation> conversationList = conversationDatabaseUtil.getAllConversations();
-       for (Conversation conversation : conversationList) {
-           if (localConversationExists(userIds, conversation)) {
-               getConversation(conversation.getConversationId(), token, new Callback<ConversationDTO>() {
-                   @Override
-                   public void onResponse(Call<ConversationDTO> call, Response<ConversationDTO> response) {
-                       callback.onResponse(call, response);
-                   }
-
-                   @Override
-                   public void onFailure(Call<ConversationDTO> call, Throwable throwable) {
-
-                   }
-               });
-return;
-           }
-       }
-
-
+                  @Override
+                  public void onFailure(
+                     Call<ConversationDTO> call,
+                     Throwable throwable
+                  ) {}
+               }
+            );
+            return;
+         }
+      }
 
       conversationApiService
          .addConversationByUserId(userIds, token)
@@ -134,24 +138,28 @@ return;
          );
    }
 
-    private boolean localConversationExists(List<Long> userIds, Conversation conversation) {
-
-            if (conversation.getNumberOfParticipants() == userIds.size()){
-                List<ConversationParticipant> participants = conversationParticipantDatabaseUtil.getParticipantsByConversationId(conversation.getConversationId());
-                for (ConversationParticipant conversationParticipant: participants){
-                    if(!userIds.contains(conversationParticipant.getUserId())){
-                        return false;
-                    }
-                }
-
-            }else {
-                return false;
+   private boolean localConversationExists(
+      List<Long> userIds,
+      Conversation conversation
+   ) {
+      if (conversation.getNumberOfParticipants() == userIds.size()) {
+         List<ConversationParticipant> participants =
+            conversationParticipantDatabaseUtil.getParticipantsByConversationId(
+               conversation.getConversationId()
+            );
+         for (ConversationParticipant conversationParticipant : participants) {
+            if (!userIds.contains(conversationParticipant.getUserId())) {
+               return false;
             }
+         }
+      } else {
+         return false;
+      }
 
-   return true;
+      return true;
    }
 
-    @Override
+   @Override
    public void getConversation(
       Long id,
       String token,
@@ -159,7 +167,10 @@ return;
    ) {
       Conversation localConversation =
          conversationDatabaseUtil.getConversationById(id);
-      if (localConversation != null && DateTimeUtil.daysFromNow(localConversation.getLastUpdated())<1) {
+      if (
+         localConversation != null &&
+         DateTimeUtil.daysFromNow(localConversation.getLastUpdated()) < 1
+      ) {
          List<ConversationParticipant> conversationParticipants =
             conversationParticipantDatabaseUtil.getParticipantsByConversationId(
                localConversation.getConversationId()
@@ -173,7 +184,12 @@ return;
                if (user != null) {
                   users.add(user);
                } else {
-                  _getConversationDTOFromApi(id, token, callback, localConversation);
+                  _getConversationDTOFromApi(
+                     id,
+                     token,
+                     callback,
+                     localConversation
+                  );
                   break;
                }
             }
@@ -192,7 +208,12 @@ return;
                   )
                );
             } else {
-               _getConversationDTOFromApi(id, token, callback, localConversation);
+               _getConversationDTOFromApi(
+                  id,
+                  token,
+                  callback,
+                  localConversation
+               );
             }
          } else {
             _getConversationDTOFromApi(id, token, callback, localConversation);
@@ -207,9 +228,8 @@ return;
       String token,
       Callback<List<ConversationDTO>> callback
    ) {
-
-       //TODO csak kell majd az a updated tabla
-       /*
+      //TODO csak kell majd az a updated tabla
+      /*
 
 
 	List<Conversation> localConversations =
@@ -300,7 +320,8 @@ return;
       Long id,
       String token,
       Callback<ConversationDTO> callback,
-      Conversation localConversation) {
+      Conversation localConversation
+   ) {
       conversationApiService
          .getConversation(id, token)
          .enqueue(
@@ -311,15 +332,20 @@ return;
                   Response<ConversationDTO> response
                ) {
                   if (response.isSuccessful() && response.body() != null) {
-                        _insertConversationDTO(response.body(), localConversation);
+                     _insertConversationDTO(response.body(), localConversation);
                      callback.onResponse(call, response);
                   } else {
-                      ConversationDTO localDTO = buildLocalConversationDTO(id);
-                      if (localDTO != null) {
-                          callback.onResponse(null, Response.success(localDTO));
-                      } else {
-                          callback.onFailure(call, new Throwable("Failed to fetch conversation and build local DTO"));
-                      }
+                     ConversationDTO localDTO = buildLocalConversationDTO(id);
+                     if (localDTO != null) {
+                        callback.onResponse(null, Response.success(localDTO));
+                     } else {
+                        callback.onFailure(
+                           call,
+                           new Throwable(
+                              "Failed to fetch conversation and build local DTO"
+                           )
+                        );
+                     }
                   }
                }
 
@@ -328,29 +354,36 @@ return;
                   Call<ConversationDTO> call,
                   Throwable throwable
                ) {
-                   ConversationDTO localDTO = buildLocalConversationDTO(id);
-                   if (localDTO != null) {
-                       callback.onResponse(null, Response.success(localDTO));
-                   } else {
-                       callback.onFailure(call, new Throwable("Failed to fetch conversation and build local DTO"));
-                   }
+                  ConversationDTO localDTO = buildLocalConversationDTO(id);
+                  if (localDTO != null) {
+                     callback.onResponse(null, Response.success(localDTO));
+                  } else {
+                     callback.onFailure(
+                        call,
+                        new Throwable(
+                           "Failed to fetch conversation and build local DTO"
+                        )
+                     );
+                  }
                }
             }
          );
    }
 
-   private void _insertConversationDTO(ConversationDTO conversationDTO, Conversation localConversation) {
+   private void _insertConversationDTO(
+      ConversationDTO conversationDTO,
+      Conversation localConversation
+   ) {
       Conversation conversation = conversationDTO.getConversation();
       if (conversation != null) {
-          if(localConversation!=null) {
-              if (conversation.getLastUpdated() > localConversation.getLastUpdated())
-                  conversationDatabaseUtil.insertConversation(
-                          conversation
-                  );
-          }else {
-              conversationDatabaseUtil.insertConversation(
-                      conversation);
-          }
+         if (localConversation != null) {
+            if (
+               conversation.getLastUpdated() >
+               localConversation.getLastUpdated()
+            ) conversationDatabaseUtil.insertConversation(conversation);
+         } else {
+            conversationDatabaseUtil.insertConversation(conversation);
+         }
       }
 
       for (ConversationParticipant conversationParticipant : conversationDTO.getParticipants()) {
@@ -373,26 +406,36 @@ return;
       }
    }
 
-    private ConversationDTO buildLocalConversationDTO(Long conversationId) {
-        Conversation conversation = conversationDatabaseUtil.getConversationById(conversationId);
-        if (conversation == null) return null;
+   private ConversationDTO buildLocalConversationDTO(Long conversationId) {
+      Conversation conversation = conversationDatabaseUtil.getConversationById(
+         conversationId
+      );
+      if (conversation == null) return null;
 
-        List<ConversationParticipant> participants =
-                conversationParticipantDatabaseUtil.getParticipantsByConversationId(conversationId);
+      List<ConversationParticipant> participants =
+         conversationParticipantDatabaseUtil.getParticipantsByConversationId(
+            conversationId
+         );
 
-        if (participants == null) return null;
+      if (participants == null) return null;
 
-        List<User> users = new ArrayList<>();
-        for (ConversationParticipant participant : participants) {
-            User user = userDatabaseUtil.getUserById(participant.getUserId());
-            if (user == null) return null;
-            users.add(user);
-        }
+      List<User> users = new ArrayList<>();
+      for (ConversationParticipant participant : participants) {
+         User user = userDatabaseUtil.getUserById(participant.getUserId());
+         if (user == null) return null;
+         users.add(user);
+      }
 
-        MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(conversationId);
-        if (messageEntry == null) return null;
+      MessageEntry messageEntry = messageDatabaseUtil.getLatestMessageEntry(
+         conversationId
+      );
+      if (messageEntry == null) return null;
 
-        return new ConversationDTO(conversation, participants, users, messageEntry);
-    }
-
+      return new ConversationDTO(
+         conversation,
+         participants,
+         users,
+         messageEntry
+      );
+   }
 }

@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.button.MaterialButton;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.models.contacts.Contact;
 import com.zen_vy.chat.models.contacts.ContactService;
 import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.zen_vy.chat.models.user.entity.User;
-import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class SearchContactAdapter
          .with(context)
          .load(imageUrl)
          .placeholder(R.drawable.ic_blank_profile)
-              .diskCacheStrategy(DiskCacheStrategy.ALL)
+         .diskCacheStrategy(DiskCacheStrategy.ALL)
          .error(R.drawable.ic_blank_profile)
          .into(holder.imageView);
 

@@ -4,12 +4,15 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.models.image.constans.ImageConstans;
 import com.zen_vy.chat.models.image.entity.ImageEntity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ImageUtil {
 
@@ -93,5 +96,37 @@ public class ImageUtil {
          return serverUrl + uuid;
       }
       return null;
+   }
+
+   public static File getFileFromUri(Context context, Uri uri)
+      throws IOException {
+      InputStream inputStream = context
+         .getContentResolver()
+         .openInputStream(uri);
+      String fileName = "upload_image.jpg";
+      File tempFile = new File(context.getCacheDir(), fileName);
+      FileOutputStream outputStream = new FileOutputStream(tempFile);
+
+      byte[] buffer = new byte[1024];
+      int bytesRead;
+
+      while ((bytesRead = inputStream.read(buffer)) != -1) {
+         outputStream.write(buffer, 0, bytesRead);
+      }
+
+      inputStream.close();
+      outputStream.close();
+
+      return tempFile;
+   }
+
+   public static GlideUrl getGlideUrlWithTokenHeader(
+      String imageUrl,
+      String token
+   ) {
+      return new GlideUrl(
+         imageUrl,
+         new LazyHeaders.Builder().addHeader("Authorization", token).build()
+      );
    }
 }

@@ -11,6 +11,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ImageRepositoryImpl implements ImageRepository {
 
@@ -53,7 +54,9 @@ public class ImageRepositoryImpl implements ImageRepository {
                public void onFailure(
                   Call<ResponseBody> call,
                   Throwable throwable
-               ) {}
+               ) {
+                  Timber.w(throwable, call.toString());
+               }
             }
          );
    }

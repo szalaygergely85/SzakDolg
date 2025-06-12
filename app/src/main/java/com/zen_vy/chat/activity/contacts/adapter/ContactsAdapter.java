@@ -116,7 +116,7 @@ public class ContactsAdapter
             .with(context)
             .load(imageUrl)
             .placeholder(R.drawable.ic_blank_profile)
-                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .error(R.drawable.ic_blank_profile)
             .into(((ContactViewHolder) holder).profileImageView);
 

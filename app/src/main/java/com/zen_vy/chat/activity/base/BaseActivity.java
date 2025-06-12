@@ -1,29 +1,24 @@
 package com.zen_vy.chat.activity.base;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import android.Manifest;
-
 import com.zen_vy.chat.activity.login.LoginActivity;
 import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.models.user.dbutil.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
-
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +82,10 @@ public class BaseActivity extends AppCompatActivity {
    }
 
    private void preparePermissions() {
-      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+      if (
+         android.os.Build.VERSION.SDK_INT >=
+         android.os.Build.VERSION_CODES.TIRAMISU
+      ) {
          permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES);
          permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS);
       } else {
@@ -98,15 +96,18 @@ public class BaseActivity extends AppCompatActivity {
       permissionsToRequest.add(Manifest.permission.CAMERA);
       permissionsToRequest.add(Manifest.permission.RECORD_AUDIO);
    }
+
    private void requestNextPermission() {
       if (currentPermissionIndex < permissionsToRequest.size()) {
          String permission = permissionsToRequest.get(currentPermissionIndex);
-         if (ContextCompat.checkSelfPermission(this, permission)
-                 != PackageManager.PERMISSION_GRANTED) {
+         if (
+            ContextCompat.checkSelfPermission(this, permission) !=
+            PackageManager.PERMISSION_GRANTED
+         ) {
             ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{permission},
-                    PERMISSION_REQUEST_CODE
+               this,
+               new String[] { permission },
+               PERMISSION_REQUEST_CODE
             );
          } else {
             currentPermissionIndex++;
@@ -116,8 +117,11 @@ public class BaseActivity extends AppCompatActivity {
    }
 
    @Override
-   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                          @NonNull int[] grantResults) {
+   public void onRequestPermissionsResult(
+      int requestCode,
+      @NonNull String[] permissions,
+      @NonNull int[] grantResults
+   ) {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
       if (requestCode == PERMISSION_REQUEST_CODE) {
@@ -126,11 +130,9 @@ public class BaseActivity extends AppCompatActivity {
       }
    }
 
-
    protected String token;
    protected String userId;
    protected User currentUser;
-
 
    private final List<String> permissionsToRequest = new ArrayList<>();
    private int currentPermissionIndex = 0;

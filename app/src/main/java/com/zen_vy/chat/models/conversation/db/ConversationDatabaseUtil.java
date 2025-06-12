@@ -81,7 +81,7 @@ public class ConversationDatabaseUtil {
                timeStamp,
                creatorUserId,
                numberOfParticipants,
-                    lastUpdated
+               lastUpdated
             );
             conversations.add(conversation);
          } while (cursor.moveToNext());
@@ -98,7 +98,7 @@ public class ConversationDatabaseUtil {
          "timeStamp",
          "creatorUserId",
          "numberOfParticipants",
-              "lastUpdated"
+         "lastUpdated",
       };
       String selection = "conversationId = ?";
       String[] selectionArgs = { String.valueOf(conversationId) };
@@ -132,7 +132,7 @@ public class ConversationDatabaseUtil {
             cursor.getInt(cursor.getColumnIndexOrThrow("numberOfParticipants"))
          );
          conversation.setLastUpdated(
-                 cursor.getInt(cursor.getColumnIndexOrThrow("lastUpdated"))
+            cursor.getInt(cursor.getColumnIndexOrThrow("lastUpdated"))
          );
          cursor.close();
       }

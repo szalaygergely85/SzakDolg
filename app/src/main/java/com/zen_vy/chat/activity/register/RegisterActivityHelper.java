@@ -2,7 +2,6 @@ package com.zen_vy.chat.activity.register;
 
 import android.app.Activity;
 import android.content.Context;
-
 import com.zen_vy.chat.models.user.service.UserService;
 
 public class RegisterActivityHelper {
@@ -17,6 +16,4 @@ public class RegisterActivityHelper {
       this.activity = activity;
       this.userService = new UserService(context);
    }
-
-
 }

@@ -7,7 +7,6 @@ import com.zen_vy.chat.models.user.dbutil.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.retrofit.RetrofitClient;
 import com.zen_vy.chat.util.DateTimeUtil;
-
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -79,71 +78,72 @@ public class UserRepositoryImpl implements UserRepository {
       );
       User localUser = userDatabaseUtil.getUserById(userId);
       if (localUser != null) {
-
-          if (DateTimeUtil.daysFromNow(localUser.getLastUpdated())>1){
-              _getUserByIDApi(userId, currentUser, callback);
-          }else {
-              callback.onResponse(null, Response.success(localUser));
-          }
-      } else{
-              _getUserByIDApi(userId, currentUser, callback);
-          }
+         if (DateTimeUtil.daysFromNow(localUser.getLastUpdated()) > 1) {
+            _getUserByIDApi(userId, currentUser, callback);
+         } else {
+            callback.onResponse(null, Response.success(localUser));
+         }
+      } else {
+         _getUserByIDApi(userId, currentUser, callback);
       }
+   }
 
-private void _insertUserToDB(User currentUser, User user){
-    UserDatabaseUtil userDatabaseUtil =
-            new UserDatabaseUtil(context, currentUser);
-    userDatabaseUtil.insertUser(user);
-}
-    private void _getUserByIDApi(
-            Long userId,
-            User currentUser,
-            Callback<User> callback) {
-        _userApiService
-                .getUserById(userId, currentUser.getToken())
-                .enqueue(
-                        new Callback<User>() {
-                            @Override
-                            public void onResponse(
-                                    Call<User> call,
-                                    Response<User> response
-                            ) {
-                                if (response.isSuccessful()) {
-                                    User user = response.body();
-                                    if (user == null) {
-                                        callback.onFailure(
-                                                call,
-                                                new Throwable("No user Found")
-                                        );
-                                        return;
-                                    }
+   private void _insertUserToDB(User currentUser, User user) {
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
+         context,
+         currentUser
+      );
+      userDatabaseUtil.insertUser(user);
+   }
 
-                                    _insertUserToDB(currentUser, user);
+   private void _getUserByIDApi(
+      Long userId,
+      User currentUser,
+      Callback<User> callback
+   ) {
+      _userApiService
+         .getUserById(userId, currentUser.getToken())
+         .enqueue(
+            new Callback<User>() {
+               @Override
+               public void onResponse(
+                  Call<User> call,
+                  Response<User> response
+               ) {
+                  if (response.isSuccessful()) {
+                     User user = response.body();
+                     if (user == null) {
+                        callback.onFailure(
+                           call,
+                           new Throwable("No user Found")
+                        );
+                        return;
+                     }
 
-                                    callback.onResponse(call, response);
-                                } else {
-                                    callback.onFailure(
-                                            call,
-                                            new Throwable("Failed to fetch contact")
-                                    );
-                                }
-                            }
+                     _insertUserToDB(currentUser, user);
 
-                            @Override
-                            public void onFailure(Call<User> call, Throwable throwable) {
-                                callback.onFailure(
-                                        call,
-                                        new Throwable("Failed to fetch contact")
-                                );
-                            }
-                        }
-                );
+                     callback.onResponse(call, response);
+                  } else {
+                     callback.onFailure(
+                        call,
+                        new Throwable("Failed to fetch contact")
+                     );
+                  }
+               }
 
-    }
+               @Override
+               public void onFailure(Call<User> call, Throwable throwable) {
+                  callback.onFailure(
+                     call,
+                     new Throwable("Failed to fetch contact")
+                  );
+               }
+            }
+         );
+   }
 
    @Override
    public void getUserByToken(String token, Callback<User> callback) {
-
       _userApiService
          .getUserByToken(token)
          .enqueue(
@@ -188,22 +188,18 @@ private void _insertUserToDB(User currentUser, User user){
                public void onResponse(
                   Call<User> call,
                   Response<User> response
-               ) {if (response.isSuccessful()){
-                   if (response.body()!=null){
-                  User user = response.body();
+               ) {
+                  if (response.isSuccessful()) {
+                     if (response.body() != null) {
+                        User user = response.body();
 
-                     UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(
-                        context,
-                        user
-                     );
-                     userDatabaseUtil.insertUser(user);}
-
-
-
+                        UserDatabaseUtil userDatabaseUtil =
+                           new UserDatabaseUtil(context, user);
+                        userDatabaseUtil.insertUser(user);
+                     }
                   }
 
-                   callback.onResponse(call, response);
-
+                  callback.onResponse(call, response);
                }
 
                @Override
@@ -230,18 +226,17 @@ private void _insertUserToDB(User currentUser, User user){
                            new UserDatabaseUtil(context, userRemote);
                         userDatabaseUtil.insertUser(userRemote);
                      }
-
                   }
 
-                   callback.onResponse(call, response);
+                  callback.onResponse(call, response);
                }
 
                @Override
                public void onFailure(Call<User> call, Throwable throwable) {
-                   callback.onFailure(
-                           call,
-                           new Throwable("Failed to fetch contact")
-                   );
+                  callback.onFailure(
+                     call,
+                     new Throwable("Failed to fetch contact")
+                  );
                }
             }
          );
