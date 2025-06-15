@@ -16,7 +16,7 @@ public class ContactDatabaseUtil {
 
    public ContactDatabaseUtil(Context context, User currentUser) {
       this.dbHelper =
-      DatabaseHelper.getInstance(context, currentUser.getUserId().toString());
+      DatabaseHelper.getInstance(context, currentUser.getUuid());
    }
 
    public void insertContact(Contact contact) {

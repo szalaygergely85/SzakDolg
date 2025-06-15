@@ -118,15 +118,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       onCreate(db);
    }
 
-   private DatabaseHelper(Context context, String userId) {
-      super(context, userId + ".db", null, DATABASE_VERSION);
+   private DatabaseHelper(Context context, String uuid) {
+      super(context, uuid + ".db", null, DATABASE_VERSION);
    }
 
-   public static DatabaseHelper getInstance(Context context, String userId) {
+   public static DatabaseHelper getInstance(Context context, String uuid) {
       if (instance == null) {
          synchronized (DatabaseHelper.class) {
             if (instance == null) {
-               instance = new DatabaseHelper(context, userId);
+               instance = new DatabaseHelper(context, uuid);
             }
          }
       }

@@ -20,6 +20,8 @@ import com.zen_vy.chat.models.user.service.UserService;
 import com.zen_vy.chat.util.HashUtils;
 import com.zen_vy.chat.util.KeyStoreUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
+import com.zen_vy.chat.util.UUIDUtil;
+
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -158,6 +160,8 @@ public class RegisterActivity extends AppCompatActivity {
       String hashPass = HashUtils.hashPassword(pass);
       HashMap<String, String> keyPair = KeyStoreUtil.generateKeyPair();
 
+      String uuid = UserConstans.UUID_PREFIX + UUIDUtil.UUIDGenerator();
+
       User user = new User(
          displayName,
          email,
@@ -165,7 +169,8 @@ public class RegisterActivity extends AppCompatActivity {
          keyPair.get("Public"),
          UserConstans.STATUS_ACTIVE,
          UserConstans.TAG_PENDING,
-         null
+         null,
+              uuid
       );
 
       userService.addUser(

@@ -15,8 +15,8 @@ public class User implements Serializable {
    private String status;
    private String tags;
    private String token;
-
    private Long lastUpdated;
+   private String uuid;
 
    public User(
       Long userId,
@@ -27,18 +27,19 @@ public class User implements Serializable {
       String status,
       String tags,
       String token,
-      Long lastUpdated
+      Long lastUpdated,
+      String uuid
    ) {
       this.userId = userId;
       this.displayName = displayName;
       this.email = email;
-
       this.publicKey = publicKey;
       this.profilePictureUuid = profilePictureUuid;
       this.status = status;
       this.tags = tags;
       this.token = token;
       this.lastUpdated = lastUpdated;
+      this.uuid = uuid;
    }
 
    @Override
@@ -61,7 +62,8 @@ public class User implements Serializable {
       String publicKey,
       String status,
       String tags,
-      Long lastUpdated
+      Long lastUpdated,
+      String uuid
    ) {
       this.displayName = displayName;
       this.email = email;
@@ -70,6 +72,7 @@ public class User implements Serializable {
       this.status = status;
       this.tags = tags;
       this.lastUpdated = lastUpdated;
+      this.uuid = uuid;
    }
 
    public User(String displayName, String email, String password) {
@@ -163,5 +166,13 @@ public class User implements Serializable {
 
    public void setLastUpdated(Long lastUpdated) {
       this.lastUpdated = lastUpdated;
+   }
+
+   public String getUuid() {
+      return uuid;
+   }
+
+   public void setUuid(String uuid) {
+      this.uuid = uuid;
    }
 }

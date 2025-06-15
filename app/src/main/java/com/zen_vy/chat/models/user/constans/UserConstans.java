@@ -9,4 +9,7 @@ public class UserConstans {
 
    public static final String TAG_UPLOADED = "uploaded"; // For uploaded images
    public static final String TAG_PENDING = "pending";
+   public static final String UUID_PREFIX = "user_";
+
+
 }
