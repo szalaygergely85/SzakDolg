@@ -65,6 +65,8 @@ public class UserDatabaseUtil {
             String tags = cursor.getString(7);
             String authToken = cursor.getString(8);
             Long lastUpdated = cursor.getLong(9);
+            String uuid = cursor.getString(10);
+
 
             User user = new User(
                userId,
@@ -75,7 +77,8 @@ public class UserDatabaseUtil {
                status,
                tags,
                authToken,
-               lastUpdated
+               lastUpdated,
+                    uuid
             );
             users.add(user);
          }
@@ -95,7 +98,7 @@ public class UserDatabaseUtil {
       try {
          cursor =
          db.rawQuery(
-            "SELECT id, userId, displayName, email, publicKey, profilePictureUuid, status, tags, authToken, lastUpdated FROM " +
+            "SELECT id, userId, displayName, email, publicKey, profilePictureUuid, status, tags, authToken, lastUpdated, uuid FROM " +
             dbHelper.TABLE_USER_ENTRY +
             " WHERE authToken = ?",
             new String[] { token }
@@ -130,6 +133,9 @@ public class UserDatabaseUtil {
             Long lastUpdated = cursor.getLong(
                cursor.getColumnIndexOrThrow("lastUpdated")
             );
+            String uuid = cursor.getString(
+                    cursor.getColumnIndexOrThrow("uuid")
+            );
 
             return new User(
                userId,
@@ -140,7 +146,8 @@ public class UserDatabaseUtil {
                status,
                tags,
                authToken,
-               lastUpdated
+               lastUpdated,
+                    uuid
             );
          }
       } finally {
@@ -160,7 +167,7 @@ public class UserDatabaseUtil {
       try {
          cursor =
          db.rawQuery(
-            "SELECT id, displayName, email, publicKey, profilePictureUuid, status, tags, authToken, lastUpdated FROM " +
+            "SELECT id, displayName, email, publicKey, profilePictureUuid, status, tags, authToken, lastUpdated, uuid FROM " +
             dbHelper.TABLE_USER_ENTRY +
             " WHERE userId = ?",
             new String[] { String.valueOf(userId) }
@@ -176,6 +183,7 @@ public class UserDatabaseUtil {
             String tags = cursor.getString(6);
             String authToken = cursor.getString(7);
             Long lastUpdated = cursor.getLong(8);
+            String uuid = cursor.getString(9);
             // Initialize user object with all retrieved fields
             User user = new User(
                userId,
@@ -186,7 +194,8 @@ public class UserDatabaseUtil {
                status,
                tags,
                authToken,
-               lastUpdated
+               lastUpdated,
+                    uuid
             );
             return user;
          }

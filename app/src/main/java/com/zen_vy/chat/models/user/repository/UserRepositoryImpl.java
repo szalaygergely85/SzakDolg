@@ -170,12 +170,53 @@ public class UserRepositoryImpl implements UserRepository {
                }
 
                @Override
-               public void onFailure(Call<User> call, Throwable throwable) {}
+               public void onFailure(Call<User> call, Throwable throwable) {
+                   callback.onFailure(
+                           call,
+                           new Throwable("Failed to fetch contact")
+                   );
+               }
             }
          );
    }
 
    @Override
+   public void deleteUser(Long userId, String token, Callback<Void> callback){
+       _userApiService.deleteUser(userId, token).enqueue(new Callback<Void>() {
+           @Override
+           public void onResponse(Call<Void> call, Response<Void> response) {
+               callback.onResponse(call, response);
+           }
+
+           @Override
+           public void onFailure(Call<Void> call, Throwable throwable) {
+               callback.onFailure(
+                       call,
+                       new Throwable("Failed to delete User")
+               );
+           }
+       });
+   }
+
+    @Override
+    public void deleteUser(String email, String token, Callback<Void> callback) {
+        _userApiService.deleteUser(email, token).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                callback.onResponse(call, response);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable) {
+                callback.onFailure(
+                        call,
+                        new Throwable("Failed to delete User")
+                );
+            }
+        });
+    }
+
+    @Override
    public void getTokenByPasswordAndEmail(
       LoginRequest loginRequest,
       Callback<User> callback
@@ -203,7 +244,12 @@ public class UserRepositoryImpl implements UserRepository {
                }
 
                @Override
-               public void onFailure(Call<User> call, Throwable throwable) {}
+               public void onFailure(Call<User> call, Throwable throwable) {
+                   callback.onFailure(
+                           call,
+                           new Throwable("Failed to fetch contact")
+                   );
+               }
             }
          );
    }

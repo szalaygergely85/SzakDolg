@@ -189,10 +189,10 @@ public class RegisterActivity extends AppCompatActivity {
                   SharedPreferencesConstants.USERTOKEN,
                   data.getToken()
                );
-               SharedPreferencesUtil.setStringPreference(
+               SharedPreferencesUtil.setLongPreference(
                   RegisterActivity.this,
                   SharedPreferencesConstants.USER_ID,
-                  data.getUserId().toString()
+                  data.getUserId()
                );
                Intent intent = new Intent(
                   RegisterActivity.this,
@@ -208,7 +208,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onUserNotFound() {
                runOnUiThread(() -> {
-                  editEmailLayout.setError("Email is already registered");
+                  editEmailLayout.setError(getText(R.string.email_is_already_registered));
                });
             }
 

@@ -10,6 +10,10 @@ public interface UserRepository {
 
    void getUserByToken(String token, Callback<User> callback);
 
+   void deleteUser(Long userId, String token, Callback<Void> callback);
+
+   void deleteUser(String email, String token, Callback<Void> callback);
+
    void getTokenByPasswordAndEmail(
       LoginRequest loginRequest,
       Callback<User> callback
@@ -26,4 +30,5 @@ public interface UserRepository {
       String token,
       Callback<String> callback
    );
+
 }

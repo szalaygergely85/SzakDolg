@@ -94,7 +94,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "status TEXT, " +
       "tags TEXT, " +
       "authToken TEXT," +
-      "lastUpdated INTEGER" +
+      "lastUpdated INTEGER," +
+              "uuid TEXT" +
       ");";
 
    @Override

@@ -13,6 +13,8 @@
     <string name="display_name">Display Name</string>
     <string name="dont_have_an_account">Don\'t have an account?</string>
     <string name="email">Email</string>
+
+    <string name="email_is_already_registered">Email is already registered</string>
     <string name="email_invalid">Invalid email</string>
     <string name="email_is_required">Email is required</string>
     <string name="enter_password">Enter password</string>

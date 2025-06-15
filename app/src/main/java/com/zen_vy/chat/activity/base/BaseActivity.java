@@ -18,6 +18,8 @@ import com.zen_vy.chat.util.SharedPreferencesUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class BaseActivity extends AppCompatActivity {
 
    @Override
@@ -35,7 +37,7 @@ public class BaseActivity extends AppCompatActivity {
       );
 
       userId =
-      SharedPreferencesUtil.getStringPreference(
+      SharedPreferencesUtil.getLongPreference(
          this,
          SharedPreferencesConstants.USER_ID
       );
@@ -54,7 +56,7 @@ public class BaseActivity extends AppCompatActivity {
    }
 
    protected void navigateToLogin() {
-      Log.d(AppConstants.LOG_TAG, "Navigating to login...");
+      Timber.i( "Navigating to login...");
       Intent intent = new Intent(this, LoginActivity.class);
       intent.setFlags(
          Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -63,8 +65,8 @@ public class BaseActivity extends AppCompatActivity {
       finish();
    }
 
-   private User _getCurrentUser(String token, String userId) {
-      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(this, userId);
+   private User _getCurrentUser(String token, Long userId) {
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(this, userId.toString());
 
       return userDatabaseUtil.getCurrentUserByToken(token);
    }
@@ -131,7 +133,7 @@ public class BaseActivity extends AppCompatActivity {
    }
 
    protected String token;
-   protected String userId;
+   protected Long userId;
    protected User currentUser;
 
    private final List<String> permissionsToRequest = new ArrayList<>();
