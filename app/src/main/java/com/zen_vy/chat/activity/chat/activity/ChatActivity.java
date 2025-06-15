@@ -53,7 +53,6 @@ public class ChatActivity extends BaseActivity {
    private MyEditText edtMess;
    private ChatActivityHelper chatActivityHelper;
    private Toolbar mToolbar;
-   private ConversationService conversationService;
    private Conversation conversation;
    private List<User> users;
    private ActivityResultLauncher<Intent> galleryLauncher;
