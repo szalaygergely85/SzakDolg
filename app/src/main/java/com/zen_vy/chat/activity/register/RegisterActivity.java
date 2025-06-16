@@ -189,10 +189,10 @@ public class RegisterActivity extends AppCompatActivity {
                   SharedPreferencesConstants.USERTOKEN,
                   data.getToken()
                );
-               SharedPreferencesUtil.setLongPreference(
+               SharedPreferencesUtil.setStringPreference(
                   RegisterActivity.this,
-                  SharedPreferencesConstants.USER_ID,
-                  data.getUserId()
+                  SharedPreferencesConstants.UUID,
+                  data.getUuid()
                );
                Intent intent = new Intent(
                   RegisterActivity.this,

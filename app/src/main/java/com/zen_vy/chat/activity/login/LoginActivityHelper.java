@@ -47,8 +47,8 @@ public class LoginActivityHelper {
 
                SharedPreferencesUtil.setStringPreference(
                   context,
-                  SharedPreferencesConstants.USER_ID,
-                  user.getUserId().toString()
+                  SharedPreferencesConstants.UUID,
+                  user.getUuid()
                );
 
                Intent intent = new Intent(context, MainActivity.class);

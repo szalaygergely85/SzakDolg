@@ -36,18 +36,18 @@ public class BaseActivity extends AppCompatActivity {
          SharedPreferencesConstants.USERTOKEN
       );
 
-      userId =
-      SharedPreferencesUtil.getLongPreference(
+      uuid =
+      SharedPreferencesUtil.getStringPreference(
          this,
-         SharedPreferencesConstants.USER_ID
+         SharedPreferencesConstants.UUID
       );
 
       // Optionally handle cases where token or userId is missing
-      if (token == null || userId == null) {
+      if (token == null || uuid == null) {
          _deletePref();
          navigateToLogin();
       } else {
-         currentUser = _getCurrentUser(token, userId);
+         currentUser = _getCurrentUser(token, uuid);
          if (currentUser == null) {
             _deletePref();
             navigateToLogin();
@@ -65,8 +65,8 @@ public class BaseActivity extends AppCompatActivity {
       finish();
    }
 
-   private User _getCurrentUser(String token, Long userId) {
-      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(this, userId.toString());
+   private User _getCurrentUser(String token, String uuid) {
+      UserDatabaseUtil userDatabaseUtil = new UserDatabaseUtil(this, uuid);
 
       return userDatabaseUtil.getCurrentUserByToken(token);
    }
@@ -79,7 +79,7 @@ public class BaseActivity extends AppCompatActivity {
 
       SharedPreferencesUtil.deletePreference(
          this,
-         SharedPreferencesConstants.USER_ID
+         SharedPreferencesConstants.UUID
       );
    }
 
@@ -133,7 +133,7 @@ public class BaseActivity extends AppCompatActivity {
    }
 
    protected String token;
-   protected Long userId;
+   protected String  uuid;
    protected User currentUser;
 
    private final List<String> permissionsToRequest = new ArrayList<>();
