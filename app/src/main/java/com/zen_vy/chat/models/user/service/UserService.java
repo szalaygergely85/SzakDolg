@@ -182,36 +182,51 @@ public class UserService {
       );
    }
 
-    public void deleteUser(Long userId, String token, final UserService.UserCallback<Void> callback) {
-        userRepository.deleteUser(userId, token, new Callback<Void>() {
+   public void deleteUser(
+      Long userId,
+      String token,
+      final UserService.UserCallback<Void> callback
+   ) {
+      userRepository.deleteUser(
+         userId,
+         token,
+         new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                callback.onSuccess(response.body());
+               callback.onSuccess(response.body());
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable throwable) {
-                callback.onError(throwable);
+               callback.onError(throwable);
             }
-        });
-    }
-
-    public void deleteUser(String email, String token, final UserService.UserCallback<Void> callback) {
-        userRepository.deleteUser(email, token, new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                callback.onSuccess(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable throwable) {
-                callback.onError(throwable);
-            }
-        });
-
+         }
+      );
    }
 
-    public interface UserCallback<T> {
+   public void deleteUser(
+      String email,
+      String token,
+      final UserService.UserCallback<Void> callback
+   ) {
+      userRepository.deleteUser(
+         email,
+         token,
+         new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+               callback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable) {
+               callback.onError(throwable);
+            }
+         }
+      );
+   }
+
+   public interface UserCallback<T> {
       void onSuccess(T data);
       void onError(Throwable t);
    }

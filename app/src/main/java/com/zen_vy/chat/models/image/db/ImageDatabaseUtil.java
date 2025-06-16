@@ -13,8 +13,7 @@ public class ImageDatabaseUtil {
    private DatabaseHelper dbHelper;
 
    public ImageDatabaseUtil(Context context, User user) {
-      dbHelper =
-      DatabaseHelper.getInstance(context, user.getUuid());
+      dbHelper = DatabaseHelper.getInstance(context, user.getUuid());
    }
 
    public void deleteImageEntityByUuid(String uuid) {

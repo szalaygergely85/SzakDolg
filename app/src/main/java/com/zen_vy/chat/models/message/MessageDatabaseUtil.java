@@ -16,8 +16,7 @@ public class MessageDatabaseUtil {
    private DatabaseHelper dbHelper;
 
    public MessageDatabaseUtil(Context context, User user) {
-      dbHelper =
-      DatabaseHelper.getInstance(context, user.getUuid());
+      dbHelper = DatabaseHelper.getInstance(context, user.getUuid());
    }
 
    public void insertMessageEntry(MessageEntry message) {

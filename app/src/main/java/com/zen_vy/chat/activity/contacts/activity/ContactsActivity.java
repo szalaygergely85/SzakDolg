@@ -140,34 +140,32 @@ public class ContactsActivity extends BaseActivity {
             public boolean onMenuItemClick(@NonNull MenuItem item) {
                switch (item.getItemId()) {
                   case R.id.menu_start_conversation:
-                     if(!contactsAdapter.getSelectedUsers().isEmpty()) {
+                     if (!contactsAdapter.getSelectedUsers().isEmpty()) {
                         conversationService.addConversationByUserId(
-                                contactsAdapter.getSelectedUsers(),
-                                new ConversationService.ConversationCallback<
-                                        ConversationDTO
-                                        >() {
-                                   @Override
-                                   public void onSuccess(ConversationDTO data) {
-                                      Intent intent = new Intent(
-                                              ContactsActivity.this,
-                                              ChatActivity.class
-                                      );
-                                      intent.putExtra(
-                                              IntentConstants.CONVERSATION_ID,
-                                              data.getConversation().getConversationId()
-                                      );
-                                      intent.putExtra(
-                                              IntentConstants.CONVERSATION_DTO,
-                                              data
-                                      );
-                                      startActivity(intent);
+                           contactsAdapter.getSelectedUsers(),
+                           new ConversationService.ConversationCallback<
+                              ConversationDTO
+                           >() {
+                              @Override
+                              public void onSuccess(ConversationDTO data) {
+                                 Intent intent = new Intent(
+                                    ContactsActivity.this,
+                                    ChatActivity.class
+                                 );
+                                 intent.putExtra(
+                                    IntentConstants.CONVERSATION_ID,
+                                    data.getConversation().getConversationId()
+                                 );
+                                 intent.putExtra(
+                                    IntentConstants.CONVERSATION_DTO,
+                                    data
+                                 );
+                                 startActivity(intent);
+                              }
 
-                                   }
-
-                                   @Override
-                                   public void onError(Throwable t) {
-                                   }
-                                }
+                              @Override
+                              public void onError(Throwable t) {}
+                           }
                         );
                      }
                      return true; // Indicate that the click was handled

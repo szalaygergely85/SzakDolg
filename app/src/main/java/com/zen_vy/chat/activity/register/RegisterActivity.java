@@ -21,7 +21,6 @@ import com.zen_vy.chat.util.HashUtils;
 import com.zen_vy.chat.util.KeyStoreUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import com.zen_vy.chat.util.UUIDUtil;
-
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -170,7 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
          UserConstans.STATUS_ACTIVE,
          UserConstans.TAG_PENDING,
          null,
-              uuid
+         uuid
       );
 
       userService.addUser(
@@ -208,7 +207,9 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onUserNotFound() {
                runOnUiThread(() -> {
-                  editEmailLayout.setError(getText(R.string.email_is_already_registered));
+                  editEmailLayout.setError(
+                     getText(R.string.email_is_already_registered)
+                  );
                });
             }
 

@@ -67,7 +67,6 @@ public class UserDatabaseUtil {
             Long lastUpdated = cursor.getLong(9);
             String uuid = cursor.getString(10);
 
-
             User user = new User(
                userId,
                displayName,
@@ -78,7 +77,7 @@ public class UserDatabaseUtil {
                tags,
                authToken,
                lastUpdated,
-                    uuid
+               uuid
             );
             users.add(user);
          }
@@ -134,7 +133,7 @@ public class UserDatabaseUtil {
                cursor.getColumnIndexOrThrow("lastUpdated")
             );
             String uuid = cursor.getString(
-                    cursor.getColumnIndexOrThrow("uuid")
+               cursor.getColumnIndexOrThrow("uuid")
             );
 
             return new User(
@@ -147,7 +146,7 @@ public class UserDatabaseUtil {
                tags,
                authToken,
                lastUpdated,
-                    uuid
+               uuid
             );
          }
       } finally {
@@ -195,7 +194,7 @@ public class UserDatabaseUtil {
                tags,
                authToken,
                lastUpdated,
-                    uuid
+               uuid
             );
             return user;
          }

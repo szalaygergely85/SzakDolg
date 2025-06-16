@@ -45,10 +45,13 @@ public interface UserApiService {
 
    @DELETE("user/remove-user/id/{userId}")
    Call<Void> deleteUser(
-           @Path("userId") Long userId,
-           @Header("Authorization") String token
+      @Path("userId") Long userId,
+      @Header("Authorization") String token
    );
 
    @DELETE("user/remove-user/email/{email}")
-    Call<Void> deleteUser(@Path("email") String email, @Header("Authorization") String token);
+   Call<Void> deleteUser(
+      @Path("email") String email,
+      @Header("Authorization") String token
+   );
 }

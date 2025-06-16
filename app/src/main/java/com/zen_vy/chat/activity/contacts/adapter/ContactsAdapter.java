@@ -114,7 +114,10 @@ public class ContactsAdapter
 
          String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
 
-         GlideUrl glideUrl = ImageUtil.getGlideUrlWithTokenHeader(imageUrl, currentUser.getToken());
+         GlideUrl glideUrl = ImageUtil.getGlideUrlWithTokenHeader(
+            imageUrl,
+            currentUser.getToken()
+         );
 
          Glide
             .with(context)

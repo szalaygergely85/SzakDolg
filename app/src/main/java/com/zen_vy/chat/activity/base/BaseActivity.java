@@ -4,20 +4,17 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.zen_vy.chat.activity.login.LoginActivity;
-import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.models.user.dbutil.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import java.util.ArrayList;
 import java.util.List;
-
 import timber.log.Timber;
 
 public class BaseActivity extends AppCompatActivity {
@@ -56,7 +53,7 @@ public class BaseActivity extends AppCompatActivity {
    }
 
    protected void navigateToLogin() {
-      Timber.i( "Navigating to login...");
+      Timber.i("Navigating to login...");
       Intent intent = new Intent(this, LoginActivity.class);
       intent.setFlags(
          Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -133,7 +130,7 @@ public class BaseActivity extends AppCompatActivity {
    }
 
    protected String token;
-   protected String  uuid;
+   protected String uuid;
    protected User currentUser;
 
    private final List<String> permissionsToRequest = new ArrayList<>();

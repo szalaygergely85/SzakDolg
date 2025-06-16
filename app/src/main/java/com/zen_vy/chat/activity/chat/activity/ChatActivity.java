@@ -26,7 +26,6 @@ import com.zen_vy.chat.activity.base.BaseActivity;
 import com.zen_vy.chat.activity.chat.adapter.ChatAdapter;
 import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
-import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.image.constans.ImageConstans;
 import com.zen_vy.chat.models.image.service.ImageService;
 import com.zen_vy.chat.models.message.MessageService;

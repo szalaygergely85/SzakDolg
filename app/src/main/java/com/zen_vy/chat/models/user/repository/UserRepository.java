@@ -30,5 +30,4 @@ public interface UserRepository {
       String token,
       Callback<String> callback
    );
-
 }
