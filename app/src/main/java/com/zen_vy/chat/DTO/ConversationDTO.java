@@ -27,6 +27,8 @@ public class ConversationDTO implements Serializable {
       this.messageEntry = messageEntry;
    }
 
+   public ConversationDTO() {}
+
    public long getConversationId() {
       return conversation.getConversationId();
    }

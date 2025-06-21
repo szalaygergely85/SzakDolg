@@ -1,6 +1,7 @@
 package com.zen_vy.chat.activity.chat.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.chat.activity.ChatActivityHelper;
+import com.zen_vy.chat.activity.image.FullscreenImageActivity;
+import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
@@ -35,6 +38,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
    private final Context mContext;
    private List<Object> messageEntries = new ArrayList<>();
+
+   private ArrayList<String> imageUrls = new ArrayList<>();
 
    private final User currentUser;
 
@@ -56,9 +61,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    public void addMessage(MessageEntry messageEntry) {
       if (messageEntry != null) {
          messageEntries.add(getItemCount(), messageEntry);
-         notifyItemInserted(getItemCount() - 1);
+         notifyItemRangeChanged(getItemCount() - 2, 2);
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
+   }
+
+   public void setImageUrls(ArrayList<String> imageUrls) {
+      this.imageUrls = imageUrls;
    }
 
    @Override
@@ -284,30 +293,82 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          }
 
          if (holder instanceof ChatAdapter.InBoundImageHolder) {
-            GlideUrl glideUrl = getGlideUrl(messageEntry);
+            String imageUrl = ImageUtil.buildImageUrl(
+               messageEntry.getContent()
+            );
 
-            if (glideUrl != null) {
-               Glide
-                  .with(mContext)
-                  .load(glideUrl)
-                  .diskCacheStrategy(DiskCacheStrategy.ALL)
-                  .placeholder(R.drawable.ic_blank_profile)
-                  .error(R.drawable.ic_blank_profile)
-                  .into(((InBoundImageHolder) holder).inImageView);
-            }
+            GlideUrl glideUrl = ImageUtil.getGlideUrlWithTokenHeader(
+               imageUrl,
+               currentUser.getToken()
+            );
+
+            Glide
+               .with(mContext)
+               .load(glideUrl)
+               .diskCacheStrategy(DiskCacheStrategy.ALL)
+               .placeholder(R.drawable.ic_blank_profile)
+               .error(R.drawable.ic_blank_profile)
+               .into(((InBoundImageHolder) holder).inImageView);
+
+            ((InBoundImageHolder) holder).inImageView.setOnClickListener(
+                  new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                        Intent intent = new Intent(
+                           mContext,
+                           FullscreenImageActivity.class
+                        );
+                        intent.putStringArrayListExtra(
+                           IntentConstants.IMAGES,
+                           imageUrls
+                        );
+                        intent.putExtra(
+                           IntentConstants.IMAGE,
+                           messageEntry.getContent()
+                        );
+                        mContext.startActivity(intent);
+                     }
+                  }
+               );
          }
          if (holder instanceof ChatAdapter.OutBoundImageHolder) {
-            GlideUrl glideUrl = getGlideUrl(messageEntry);
+            String imageUrl = ImageUtil.buildImageUrl(
+               messageEntry.getContent()
+            );
 
-            if (glideUrl != null) {
-               Glide
-                  .with(mContext)
-                  .load(glideUrl)
-                  .diskCacheStrategy(DiskCacheStrategy.ALL)
-                  .placeholder(R.drawable.ic_blank_profile)
-                  .error(R.drawable.ic_blank_profile)
-                  .into(((OutBoundImageHolder) holder).outImageView);
-            }
+            GlideUrl glideUrl = ImageUtil.getGlideUrlWithTokenHeader(
+               imageUrl,
+               currentUser.getToken()
+            );
+
+            Glide
+               .with(mContext)
+               .load(glideUrl)
+               .diskCacheStrategy(DiskCacheStrategy.ALL)
+               .placeholder(R.drawable.ic_blank_profile)
+               .error(R.drawable.ic_blank_profile)
+               .into(((OutBoundImageHolder) holder).outImageView);
+
+            ((OutBoundImageHolder) holder).outImageView.setOnClickListener(
+                  new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                        Intent intent = new Intent(
+                           mContext,
+                           FullscreenImageActivity.class
+                        );
+                        intent.putStringArrayListExtra(
+                           IntentConstants.IMAGES,
+                           imageUrls
+                        );
+                        intent.putExtra(
+                           IntentConstants.IMAGE,
+                           messageEntry.getContent()
+                        );
+                        mContext.startActivity(intent);
+                     }
+                  }
+               );
          }
       }
    }
@@ -323,15 +384,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          notifyDataSetChanged();
          chatRecView.scrollToPosition(getItemCount() - 1);
       }
-   }
-
-   private GlideUrl getGlideUrl(MessageEntry messageEntry) {
-      String imageUrl = ImageUtil.buildImageUrl(messageEntry.getContent());
-
-      return ImageUtil.getGlideUrlWithTokenHeader(
-         imageUrl,
-         currentUser.getToken()
-      );
    }
 
    static class DateViewHolder extends RecyclerView.ViewHolder {

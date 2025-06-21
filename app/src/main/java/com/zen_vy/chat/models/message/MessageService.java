@@ -201,6 +201,23 @@ public class MessageService extends BaseService {
       messageDatabaseUtil.setMessagesAsReadByConversationId(conversationId);
    }
 
+   public void deleteMessage(
+      MessageEntry messageEntry,
+      final MessageCallback<List<MessageEntry>> callback
+   ) {
+      messageRepository.deleteMessage(
+         currentUser.getToken(),
+         messageEntry.getUuId(),
+         new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {}
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable) {}
+         }
+      );
+   }
+
    public interface MessageCallback<T> {
       void onSuccess(T data);
       void onError(Throwable t);

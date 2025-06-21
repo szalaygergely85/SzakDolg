@@ -61,6 +61,8 @@ public class ChatActivity extends BaseActivity {
 
    private List<Object> messageEntries;
 
+   private ArrayList<String> imageUrls = new ArrayList<>();
+
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -184,6 +186,7 @@ public class ChatActivity extends BaseActivity {
    protected void onStart() {
       super.onStart();
 
+      //TODO need to check here already downloaded messages.
       chatActivityHelper.setMessagesRead();
    }
 
@@ -320,6 +323,7 @@ public class ChatActivity extends BaseActivity {
 
                messageEntries = _prepareMessageList(results);
                adapter.setMessageEntries(messageEntries);
+               adapter.setImageUrls(imageUrls);
             }
 
             @Override
@@ -354,6 +358,9 @@ public class ChatActivity extends BaseActivity {
          }
 
          sortedList.add(messageEntry);
+         if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
+            imageUrls.add(messageEntry.getContent());
+         }
          previousTimestamp = messageEntry.getTimestamp();
       }
       return sortedList;

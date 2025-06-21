@@ -26,4 +26,10 @@ public interface MessageRepository {
       Long conversationId,
       Callback<List<MessageEntry>> callback
    );
+
+   public void deleteMessage(
+      String token,
+      String messageUuid,
+      Callback<Void> callback
+   );
 }

@@ -151,6 +151,28 @@ public class MessageRepositoryImpl implements MessageRepository {
    }
 
    @Override
+   public void deleteMessage(
+      String token,
+      String messageUuid,
+      Callback<Void> callback
+   ) {
+      messageApiService
+         .deleteMessageByUuid(token, messageUuid)
+         .enqueue(
+            new Callback<Void>() {
+               @Override
+               public void onResponse(
+                  Call<Void> call,
+                  Response<Void> response
+               ) {}
+
+               @Override
+               public void onFailure(Call<Void> call, Throwable throwable) {}
+            }
+         );
+   }
+
+   @Override
    public void getMessages(
       String token,
       Long conversationId,
@@ -160,10 +182,10 @@ public class MessageRepositoryImpl implements MessageRepository {
          messageDatabaseUtil.getAllMessageEntriesByConversationId(
             conversationId
          );
-      if (localMessages != null) {
+      if (!localMessages.isEmpty()) {
          if (
             System.currentTimeMillis() -
-               localMessages.get(localMessages.size() - 1).getTimestamp() >
+               localMessages.get(localMessages.size() - 1).getTimestamp() <
             AppConstants.MESSAGE_SYNC_TIME
          ) {
             callback.onResponse(null, Response.success(localMessages));

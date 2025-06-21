@@ -1,59 +1,6 @@
 <project version="4">
-  <component name="DesignSurface">
-    <option name="filePathToZoomLevelMap">
-      <map>
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable-anydpi/ic_add_contact.xml" value="0.192" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable-anydpi/ic_add_message.xml" value="0.194" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable-anydpi/ic_blank_profile.xml" value="0.192" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable-anydpi/ic_contact_search.xml" value="0.192" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.194" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.1945" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable/ic_menu_contact.xml" value="0.2555" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable/ic_menu_logout.xml" value="0.1945" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable/ic_menu_profile.xml" value="0.2555" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable/shape_bg_incoming_bubble.xml" value="0.309" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/drawable/shape_bg_outgoing_bubble.xml" value="0.3095" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_about.xml" value="0.2453125" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_change_pass.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_chat.xml" value="0.25" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_contacts.xml" value="0.18645833333333334" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_forgot_password.xml" value="0.5" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_login.xml" value="0.33" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_main.xml" value="0.3729166666666667" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_message_board_actvitiy.xml" value="0.5" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_profile.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_register.xml" value="0.22" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/activity_search_contacts.xml" value="0.25" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/chat_item.xml" value="0.33" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/contact_item.xml" value="0.33" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/contact_search_item.xml" value="0.33" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/fragmant_messag_board.xml" value="0.18645833333333334" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/message_board_item.xml" value="0.33" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/nav_draw_header.xml" value="0.19701086956521738" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/switch_item.xml" value="0.21458333333333332" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/layout/switch_layout.xml" value="0.21458333333333332" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/menu/nav_drawer_menu.xml" value="0.33" />
-        <entry key="..\:/Users/Gege/AndroidStudioProjects/SzakDolg/app/src/main/res/menu/nav_menu.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_change_pass.xml" value="0.33" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_chat.xml" value="0.24322916666666666" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_contacts.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_forgot_password.xml" value="0.24322916666666666" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_login.xml" value="0.24322916666666666" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_main.xml" value="0.24322916666666666" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_message_board_actvitiy.xml" value="0.24322916666666666" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_profile.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_register.xml" value="0.24322916666666666" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/activity_search_contacts.xml" value="0.2504528985507246" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/chat_item.xml" value="0.24322916666666666" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/contact_item.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/contact_search_item.xml" value="0.33" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/message_board_item.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/layout/switch_layout.xml" value="0.24322916666666666" />
-        <entry key="..\:/Users/Gergelysz/StudioProjects/SzakDolg/app/src/main/res/menu/nav_menu.xml" value="0.17760416666666667" />
-      </map>
-    </option>
-  </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -1,4 +1,4 @@
-package com.zen_vy.chat;
+package com.zen_vy.chat.testhelpers;
 
 import android.content.Context;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
@@ -6,7 +6,6 @@ import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.service.UserService;
 import com.zen_vy.chat.util.RandomUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
-import timber.log.Timber;
 
 public class TestUtil {
 
@@ -17,20 +16,17 @@ public class TestUtil {
 
    public static final String TEST_TOKEN = "test_123456";
 
-   public static void deleteUser(Long userId, Context context) {
-      UserService userService = new UserService(context);
-      userService.deleteUser(
-         userId,
-         TEST_UUID,
-         new UserService.UserCallback<Void>() {
-            @Override
-            public void onSuccess(Void data) {
-               Timber.i("TestUser deleted");
-            }
+   private static final Long TEST_ID = 9999L;
 
-            @Override
-            public void onError(Throwable t) {}
-         }
+   public static void deleteSharedPreferences(Context context) {
+      SharedPreferencesUtil.deletePreference(
+         context,
+         SharedPreferencesConstants.USERTOKEN
+      );
+
+      SharedPreferencesUtil.deletePreference(
+         context,
+         SharedPreferencesConstants.UUID
       );
    }
 
@@ -71,29 +67,28 @@ public class TestUtil {
       return addUser(email, RandomUtil.getRandomString(6), context);
    }
 
+   public static User getTestUser() {
+      User user = new User(
+         TEST_DISPLAY_NAME,
+         TEST_EMAIL,
+         RandomUtil.getRandomString(6),
+         RandomUtil.getRandomString(6),
+         RandomUtil.getRandomString(6),
+         RandomUtil.getRandomString(6),
+         RandomUtil.getRandomLong(),
+         TEST_UUID
+      );
+      user.setToken(TEST_TOKEN);
+      user.setUserId(TEST_ID);
+      return user;
+   }
+
    public static String createRandomEmail() {
       return (
          RandomUtil.getRandomString(5) +
          "@" +
          RandomUtil.getRandomString(3) +
          ".com"
-      );
-   }
-
-   public static void deleteUser(String email, Context context) {
-      UserService userService = new UserService(context);
-      userService.deleteUser(
-         email,
-         TEST_UUID,
-         new UserService.UserCallback<Void>() {
-            @Override
-            public void onSuccess(Void data) {
-               Timber.i("TestUser deleted");
-            }
-
-            @Override
-            public void onError(Throwable t) {}
-         }
       );
    }
 
@@ -128,4 +123,6 @@ public class TestUtil {
       );
       Thread.sleep(1000);
    }
+
+   public static void addConversation() {}
 }

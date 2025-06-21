@@ -18,9 +18,10 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.google.android.material.textfield.TextInputLayout;
 import com.zen_vy.chat.R;
-import com.zen_vy.chat.TestUtil;
 import com.zen_vy.chat.activity.register.RegisterActivity;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
+import com.zen_vy.chat.testhelpers.ApiHelper;
+import com.zen_vy.chat.testhelpers.TestUtil;
 import com.zen_vy.chat.util.RandomUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import org.hamcrest.Description;
@@ -203,7 +204,7 @@ public class RegisterActivityTest {
             )
          );
 
-      TestUtil.deleteUser(email, context);
+      ApiHelper.deleteUser(email, context);
    }
 
    @Test
@@ -233,7 +234,7 @@ public class RegisterActivityTest {
       );
       assert token != null && !token.isEmpty();
 
-      TestUtil.deleteUser(userId, context);
+      ApiHelper.deleteUser(userId, context);
    }
 
    private Matcher<View> hasTextInputLayoutErrorText(

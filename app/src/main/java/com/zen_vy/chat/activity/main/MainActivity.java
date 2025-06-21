@@ -399,6 +399,11 @@ public class MainActivity extends BaseActivity {
          );
       }
    };
+
+   public void setConversationService(ConversationService service) {
+      this.conversationService = service;
+   }
+
    private DrawerLayout drawerLayout;
    private LinearLayout emptyLayout;
    private MainAdapter mainAdapter;

@@ -75,14 +75,15 @@
        android:layout_gravity="center_horizontal"
        android:src="@drawable/ic_messages" />
 
-   <TextView
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_gravity="center_horizontal"
-       android:layout_marginTop="16dp"
-       android:text="@string/looks_quite_here_say_hi_to_someone"
-       android:textColor="@color/textSecondary"
-       android:textSize="16sp" />
+    <TextView
+        android:id="@+id/txtEmptyMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="@string/looks_quite_here_say_hi_to_someone"
+        android:textColor="@color/textSecondary"
+        android:textSize="16sp" />
 </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

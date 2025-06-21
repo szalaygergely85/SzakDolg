@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.google.android.material.button.MaterialButton;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.models.contacts.Contact;
@@ -55,9 +56,14 @@ public class SearchContactAdapter
       holder.txtName.setText(user.getDisplayName());
 
       String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());
+
+      GlideUrl glideUrl = ImageUtil.getGlideUrlWithTokenHeader(
+         imageUrl,
+         currentUser.getToken()
+      );
       Glide
          .with(context)
-         .load(imageUrl)
+         .load(glideUrl)
          .placeholder(R.drawable.ic_blank_profile)
          .diskCacheStrategy(DiskCacheStrategy.ALL)
          .error(R.drawable.ic_blank_profile)

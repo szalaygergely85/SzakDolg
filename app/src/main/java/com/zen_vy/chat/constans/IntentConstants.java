@@ -11,4 +11,6 @@ public class IntentConstants {
    public static final String CONTACTS_ACTION = "contacts_action";
    public static final String PROFILE_ACTION = "profile_action";
    public static final String CONTACT = "contact";
+   public static final String IMAGES = "images";
+   public static final String IMAGE = "image";
 }
