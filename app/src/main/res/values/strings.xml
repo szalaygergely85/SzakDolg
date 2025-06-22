@@ -57,4 +57,9 @@
     <string name="send_a_message">Send a message</string>
     <string name="search">Search...</string>
     <string name="searchbar_hint">Search...</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="download">Download</string>
+    <string name="close">Close</string>
+    <string name="sent_image">Sent image</string>
 </resources>

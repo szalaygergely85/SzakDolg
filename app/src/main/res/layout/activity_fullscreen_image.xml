@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fullscreenContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,54 +9,60 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="60dp"/>
 
     <!-- Close Button (Top-Left) -->
     <ImageButton
         android:id="@+id/btnClose"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         android:layout_gravity="top|start"
         android:background="?android:selectableItemBackgroundBorderless"
-        android:contentDescription="Close"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:tint="@android:color/white" />
+        android:contentDescription="@string/close"
+        android:src="@drawable/ic_close"
+        android:scaleType="fitCenter"
+        app:tint="@color/textSecondary" />
 
     <!-- Download Button (Top-Right) -->
     <ImageButton
         android:id="@+id/btnDownload"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         android:layout_gravity="top|end"
         android:background="?android:selectableItemBackgroundBorderless"
-        android:contentDescription="Download"
-        android:src="@android:drawable/ic_menu_save"
-        android:tint="@android:color/white" />
+        android:contentDescription="@string/download"
+        android:src="@drawable/ic_download"
+        android:scaleType="fitCenter"
+        app:tint="@color/textSecondary" />
 
     <!-- Left Button -->
     <ImageButton
         android:id="@+id/btnLeft"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_gravity="center_vertical|start"
-        android:layout_marginStart="8dp"
+
         android:background="?android:selectableItemBackgroundBorderless"
-        android:contentDescription="Previous"
-        android:src="@android:drawable/ic_media_previous"
-        android:tint="@android:color/white" />
+        android:contentDescription="@string/previous"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_arrow_left"
+        app:tint="@color/textSecondary" />
 
     <!-- Right Button -->
     <ImageButton
         android:id="@+id/btnRight"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="8dp"
+
         android:background="?android:selectableItemBackgroundBorderless"
-        android:contentDescription="Next"
-        android:src="@android:drawable/ic_media_next"
-        android:tint="@android:color/white" />
+        android:contentDescription="@string/next"
+        android:src="@drawable/ic_arrow_right"
+        android:scaleType="fitCenter"
+        app:tint="@color/textSecondary" />
 
 </FrameLayout>

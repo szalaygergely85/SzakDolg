@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:id="@+id/image_message_out"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:gravity="end"
     android:padding="8dp">
 
-    <!-- Image bubble -->
+
+
     <ImageView
         android:id="@+id/sentImageView"
         android:layout_width="180dp"
-        android:layout_height="240dp"
-        android:scaleType="centerCrop"
+        android:layout_height="wrap_content"
         android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:background="@drawable/bg_chat_grey"
-        android:contentDescription="Sent image" />
+        android:contentDescription="@string/sent_image"
+        android:clipToOutline="true" />
+
+    <TextView
+        android:id="@+id/chatImageTimeOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10.21"
+        />
 
 
 </LinearLayout>
