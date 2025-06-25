@@ -43,76 +43,13 @@ public class ChatActivityHelper {
       this.messageService = new MessageService(context, currentUser);
    }
 
-   public String getTime(Long time) {
-      Date date = new Date(time);
 
-      Format format = new SimpleDateFormat("HH:mm");
-      return format.format(date);
-   }
 
-   public MessageEntry sendMessage(String content, int messageType) {
-      MessageEntry messageEntry = new MessageEntry(
-         null,
-         conversation.getConversationId(),
-         currentUser.getUserId(),
-         System.currentTimeMillis(),
-         null,
-         false,
-         messageType,
-         content,
-         UUIDUtil.UUIDGenerator(),
-         false
-      );
 
-      MessageService messageService = new MessageService(context, currentUser);
-      messageService.addMessage(
-         messageEntry,
-         new MessageService.MessageCallback<MessageEntry>() {
-            @Override
-            public void onSuccess(MessageEntry data) {
-               Log.i(
-                  AppConstants.LOG_TAG,
-                  "Message sent to: " + messageEntry.getConversationId()
-               );
-            }
 
-            @Override
-            public void onError(Throwable t) {}
-         }
-      );
 
-      return messageEntry;
-   }
 
-   public void setToolbarTitle(Toolbar mToolbar) {
-      String conversationName = conversation.getConversationName();
-      if (conversationName != null) {
-         mToolbar.setTitle(conversation.getConversationName());
-      } else {
-         mToolbar.setTitle(_createTitleWithUsernames(users));
-      }
-   }
 
-   private String _createTitleWithUsernames(List<User> users) {
-      String title = "";
-      for (User user : UserUtil.removeCurrentUserFromList(
-         users,
-         currentUser.getUserId()
-      )) {
-         if (users.indexOf(user) == 0) {
-            title = user.getDisplayName();
-         } else {
-            title += " " + user.getDisplayName();
-         }
-      }
-      return title;
-   }
-
-   public void setMessagesRead() {
-      messageService.setMessagesAsReadByConversationId(
-         conversation.getConversationId()
-      );
-   }
    /*
 public void _startRepeatingTask() {
 	runnable =

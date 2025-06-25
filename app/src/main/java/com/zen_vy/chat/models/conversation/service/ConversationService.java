@@ -11,6 +11,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ConversationService {
 
@@ -154,7 +155,30 @@ public class ConversationService {
       );
    }
 
-   public interface ConversationCallback<T> {
+    public void deleteConversation(
+        Long conversationId,
+        String token,
+        final ConversationService.ConversationCallback<Void> callback){
+        conversationRepository.deleteConversation(conversationId,
+                token, new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Timber.i("Conversation with id: %s is deleted", conversationId);
+                            callback.onSuccess(response.body());
+                        }else {
+                            callback.onError(new Throwable(response.message()));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable throwable) {
+                        Timber.w(throwable, "Could not delete conversation: %s", conversationId );
+                    }
+                });
+    }
+
+    public interface ConversationCallback<T> {
       void onSuccess(T data);
       void onError(Throwable t);
    }

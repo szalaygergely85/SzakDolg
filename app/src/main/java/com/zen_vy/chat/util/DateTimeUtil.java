@@ -1,5 +1,6 @@
 package com.zen_vy.chat.util;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -41,5 +42,12 @@ public class DateTimeUtil {
       String previousDateStr = dateFormat.format(previousDate);
 
       return !currentDateStr.equals(previousDateStr);
+   }
+
+   public static String getHHmm(Long time) {
+      Date date = new Date(time);
+
+      Format format = new SimpleDateFormat("HH:mm");
+      return format.format(date);
    }
 }

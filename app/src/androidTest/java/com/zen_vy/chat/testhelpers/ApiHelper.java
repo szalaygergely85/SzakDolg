@@ -4,6 +4,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.constans.AppConstants;
+import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.message.MessageService;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
@@ -166,4 +167,19 @@ public class ApiHelper {
          }
       );
    }
+
+    public static void deleteConversation(long conversationId, User testUser, Context context) {
+       ConversationService conversationService = new ConversationService(context, testUser);
+       conversationService.deleteConversation(conversationId, testUser.getToken(), new ConversationService.ConversationCallback<Void>() {
+           @Override
+           public void onSuccess(Void data) {
+
+           }
+
+           @Override
+           public void onError(Throwable t) {
+
+           }
+       });
+    }
 }

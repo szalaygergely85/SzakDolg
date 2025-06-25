@@ -10,6 +10,7 @@ import android.icu.text.DateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,6 +25,7 @@ import com.zen_vy.chat.MyEditText;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.base.BaseActivity;
 import com.zen_vy.chat.activity.chat.adapter.ChatAdapter;
+import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.image.constans.ImageConstans;
@@ -32,7 +34,10 @@ import com.zen_vy.chat.models.message.MessageService;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
+import com.zen_vy.chat.models.user.util.UserUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
+import com.zen_vy.chat.util.UUIDUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -50,7 +55,6 @@ public class ChatActivity extends BaseActivity {
    private ImageView imgSend;
    private ImageView imgAttach;
    private MyEditText edtMess;
-   private ChatActivityHelper chatActivityHelper;
    private Toolbar mToolbar;
    private Conversation conversation;
    private List<User> users;
@@ -81,15 +85,12 @@ public class ChatActivity extends BaseActivity {
 
       _setListeners();
 
-      chatActivityHelper =
-      new ChatActivityHelper(this, conversation, currentUser, users);
-
       adapter =
-      new ChatAdapter(this, currentUser, chatRecView, chatActivityHelper);
+      new ChatAdapter(this, currentUser, chatRecView);
 
       setMessageBoard(chatRecView, adapter);
 
-      chatActivityHelper.setToolbarTitle(mToolbar);
+      _setToolbarTitle(mToolbar);
 
       galleryLauncher =
       registerForActivityResult(
@@ -187,7 +188,13 @@ public class ChatActivity extends BaseActivity {
       super.onStart();
 
       //TODO need to check here already downloaded messages.
-      chatActivityHelper.setMessagesRead();
+      setMessagesRead();
+   }
+
+   public void setMessagesRead() {
+      messageService.setMessagesAsReadByConversationId(
+              conversation.getConversationId()
+      );
    }
 
    @Override
@@ -233,7 +240,7 @@ public class ChatActivity extends BaseActivity {
                String content = edtMess.getText().toString();
                if (!content.isEmpty()) {
                   try {
-                     MessageEntry messageEntry = chatActivityHelper.sendMessage(
+                     MessageEntry messageEntry = _sendMessage(
                         content,
                         MessageTypeConstants.MESSAGE
                      );
@@ -294,7 +301,7 @@ public class ChatActivity extends BaseActivity {
             @Override
             public void onSuccess(String data) {
                try {
-                  MessageEntry messageEntry = chatActivityHelper.sendMessage(
+                  MessageEntry messageEntry = _sendMessage(
                      data,
                      MessageTypeConstants.IMAGE
                   );
@@ -379,4 +386,62 @@ public class ChatActivity extends BaseActivity {
 
       return false;
    }
+
+   private void _setToolbarTitle(Toolbar mToolbar) {
+      String conversationName = conversation.getConversationName();
+      if (conversationName != null) {
+         mToolbar.setTitle(conversation.getConversationName());
+      } else {
+         mToolbar.setTitle(_createTitleWithUsernames(users));
+      }
+   }
+   private String _createTitleWithUsernames(List<User> users) {
+      String title = "";
+      for (User user : UserUtil.removeCurrentUserFromList(
+              users,
+              currentUser.getUserId()
+      )) {
+         if (users.indexOf(user) == 0) {
+            title = user.getDisplayName();
+         } else {
+            title += " " + user.getDisplayName();
+         }
+      }
+      return title;
+   }
+
+   private MessageEntry _sendMessage(String content, int messageType) {
+      MessageEntry messageEntry = new MessageEntry(
+              null,
+              conversation.getConversationId(),
+              currentUser.getUserId(),
+              System.currentTimeMillis(),
+              null,
+              false,
+              messageType,
+              content,
+              UUIDUtil.UUIDGenerator(),
+              false
+      );
+
+      MessageService messageService = new MessageService(this, currentUser);
+      messageService.addMessage(
+              messageEntry,
+              new MessageService.MessageCallback<MessageEntry>() {
+                 @Override
+                 public void onSuccess(MessageEntry data) {
+                    Timber.i(
+                            "Message sent to: %s", messageEntry.getConversationId()
+                    );
+                 }
+
+                 @Override
+                 public void onError(Throwable t) {}
+              }
+      );
+
+      return messageEntry;
+   }
+
+
 }

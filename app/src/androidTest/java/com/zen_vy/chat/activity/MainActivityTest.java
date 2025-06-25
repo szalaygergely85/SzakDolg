@@ -118,5 +118,6 @@ public class MainActivityTest {
 
       ApiHelper.deleteUser(testUser2.getEmail(), context);
       ApiHelper.deleteMessage(lastMessage, context, testUser);
+      ApiHelper.deleteConversation(conversationDTO.getConversationId(), testUser, context);
    }
 }

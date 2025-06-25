@@ -6,6 +6,7 @@ import com.zen_vy.chat.models.conversation.entity.ConversationParticipant;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -54,5 +55,11 @@ public interface ConversationApiService {
    @GET("conversation/get-conversations")
    Call<List<ConversationDTO>> getAllConversation(
       @Header("Authorization") String token
+   );
+
+   @DELETE("conversation/remove-conversation/{conversationId}")
+   Call<Void> deleteConversation(
+           @Path("conversationId") Long conversationId,
+           @Header("Authorization") String token
    );
 }

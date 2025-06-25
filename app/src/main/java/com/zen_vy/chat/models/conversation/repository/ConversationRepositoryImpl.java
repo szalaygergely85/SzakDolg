@@ -18,6 +18,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class ConversationRepositoryImpl implements ConversationRepository {
 
@@ -437,5 +438,21 @@ public class ConversationRepositoryImpl implements ConversationRepository {
          users,
          messageEntry
       );
+   }
+
+   @Override
+   public void deleteConversation(Long conversationId, String token, Callback<Void> callback) {
+         conversationApiService.deleteConversation(conversationId, token).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+               callback.onResponse(call, response);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable) {
+
+            }
+         });
    }
 }

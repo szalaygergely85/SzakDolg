@@ -23,7 +23,10 @@ import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
+import com.zen_vy.chat.util.DateTimeUtil;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,18 +47,17 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    private final User currentUser;
 
    private RecyclerView chatRecView;
-   private ChatActivityHelper chatActivityHelper;
 
    public ChatAdapter(
       Context mContext,
       User user,
-      RecyclerView chatRecView,
-      ChatActivityHelper chatActivityHelper
+      RecyclerView chatRecView
+
    ) {
       this.mContext = mContext;
       this.currentUser = user;
       this.chatRecView = chatRecView;
-      this.chatActivityHelper = chatActivityHelper;
+
    }
 
    public void addMessage(MessageEntry messageEntry) {
@@ -186,7 +188,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                   messageEntry.getContent()
                );
             ((InboundTextViewHolder) holder).txtTimeIn.setText(
-                  chatActivityHelper.getTime(messageEntry.getTimestamp())
+                    DateTimeUtil.getHHmm(messageEntry.getTimestamp())
                );
 
             ViewGroup.MarginLayoutParams params =
@@ -264,7 +266,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                );
 
             ((OutboundTextViewHolder) holder).txtTimeOut.setText(
-                  chatActivityHelper.getTime(messageEntry.getTimestamp())
+                  DateTimeUtil.getHHmm(messageEntry.getTimestamp())
                );
 
             if (position < getItemCount() - 1) {
@@ -293,6 +295,17 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          }
 
          if (holder instanceof ChatAdapter.InBoundImageHolder) {
+
+            ((InBoundImageHolder) holder).txtTime.setText(DateTimeUtil.getHHmm(messageEntry.getTimestamp()));
+
+            Glide
+                    .with(mContext)
+                    .load(glideProfileUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_blank_profile)
+                    .error(R.drawable.ic_blank_profile)
+                    .into(((InBoundImageHolder) holder).inProfileImage);
+
             String imageUrl = ImageUtil.buildImageUrl(
                messageEntry.getContent()
             );
@@ -332,6 +345,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                );
          }
          if (holder instanceof ChatAdapter.OutBoundImageHolder) {
+
+            ((OutBoundImageHolder) holder).txtTime.setText(DateTimeUtil.getHHmm(messageEntry.getTimestamp()));
+
             String imageUrl = ImageUtil.buildImageUrl(
                messageEntry.getContent()
             );
@@ -417,9 +433,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
       private final ImageView outImageView;
 
+      private final TextView txtTime;
+
       OutBoundImageHolder(View itemView) {
          super(itemView);
          outImageView = itemView.findViewById(R.id.sentImageView);
+         txtTime = itemView.findViewById(R.id.chatImageTimeOut);
       }
    }
 
@@ -427,9 +446,16 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
       private final ImageView inImageView;
 
+      private final ImageView inProfileImage;
+
+      private final TextView txtTime;
+
       InBoundImageHolder(View itemView) {
          super(itemView);
          inImageView = itemView.findViewById(R.id.receivedImageView);
+         inProfileImage = itemView.findViewById(R.id.profilePicIn);
+         txtTime = itemView.findViewById(R.id.chatImageTimeIn);
+
       }
    }
 

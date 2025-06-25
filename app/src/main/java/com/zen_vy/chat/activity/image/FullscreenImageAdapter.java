@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -20,16 +22,21 @@ public class FullscreenImageAdapter
    private final List<String> imageUrls;
    private final Context context;
 
+   private ImageButton btnLeft, btnRight;
    private final User currentUser;
 
    public FullscreenImageAdapter(
       Context context,
       List<String> imageUrls,
-      User currentUser
+      User currentUser,
+      ImageButton btnLeft,
+      ImageButton btnRight
    ) {
       this.context = context;
       this.imageUrls = imageUrls;
       this.currentUser = currentUser;
+      this.btnLeft = btnLeft;
+      this.btnRight = btnRight;
    }
 
    static class ImageViewHolder extends RecyclerView.ViewHolder {
@@ -56,6 +63,7 @@ public class FullscreenImageAdapter
 
    @Override
    public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
+
       String imageUrl = ImageUtil.buildImageUrl(imageUrls.get(position));
 
       GlideUrl glideUrl = ImageUtil.getGlideUrlWithTokenHeader(

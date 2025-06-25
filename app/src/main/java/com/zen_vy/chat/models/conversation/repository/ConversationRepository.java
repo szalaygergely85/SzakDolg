@@ -28,4 +28,7 @@ public interface ConversationRepository {
       String token,
       Callback<List<ConversationDTO>> callback
    );
+
+   void deleteConversation(Long conversationId,
+                      String token,Callback<Void> callback);
 }
