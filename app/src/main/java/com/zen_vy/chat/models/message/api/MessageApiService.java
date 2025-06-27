@@ -32,6 +32,7 @@ public interface MessageApiService {
       @Header("Authorization") String token
    );
 
+
    @GET("message/new-message")
    Call<List<MessageEntry>> getNewMessages(
       @Header("Authorization") String token
@@ -49,12 +50,11 @@ public interface MessageApiService {
       @Query("conversationId") Long conversationId
    );
 
-   @GET("message/validate")
-   Call<ArrayList<MessageEntry>> getMessagesAndCompareWithLocal(
-      @Query("count") Long count,
-      @Header("Authorization") String token
+   @GET("message/get-messages/not-delivered")
+   Call<List<MessageEntry>> getNotDeliveredMessages(
+           @Header("Authorization") String token
    );
 
    @PATCH("message/mark-as-downloaded")
-   Call<String> markMessagesAsDownloaded(@Body List<Long> messageIds);
+   Call<Void> markMessagesAsDownloaded(@Header("Authorization") String token, @Body List<String> messageUuids);
 }

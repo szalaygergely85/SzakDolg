@@ -2,10 +2,15 @@ package com.zen_vy.chat.testhelpers;
 
 import android.content.Context;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
+import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
+import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.service.UserService;
+import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.RandomUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
+
+import java.io.IOException;
 
 public class TestUtil {
 
@@ -90,6 +95,33 @@ public class TestUtil {
          RandomUtil.getRandomString(3) +
          ".com"
       );
+   }
+
+   public static MessageEntry getRandomMessage(Long conversationId, Long userId){
+       return new MessageEntry(
+               conversationId,
+               userId,
+               DateTimeUtil.now(),
+               RandomUtil.getRandomString(15),
+               MessageTypeConstants.MESSAGE,
+               RandomUtil.getRandomString(5)
+       );
+
+   }
+
+   public static User getRandomUser() throws IOException {
+       return
+               new User(
+                       RandomUtil.getRandomString(5),
+                       TestUtil.createRandomEmail(),
+                       RandomUtil.getRandomString(5),
+                       RandomUtil.getRandomString(5),
+                       null,
+                       null,
+                       RandomUtil.getRandomLong(),
+                       RandomUtil.getRandomString(5)
+
+       );
    }
 
    public static void performLogin(Context context)

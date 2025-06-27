@@ -8,8 +8,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.hamcrest.Matchers.equalTo;
+
 import android.content.Context;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
@@ -39,6 +42,9 @@ public class MainActivityTest {
 
    private User testUser;
 
+   private User testUser2;
+   private User testUser3;
+
    @Rule
    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
       android.Manifest.permission.CAMERA,
@@ -51,15 +57,17 @@ public class MainActivityTest {
    @Before
    public void setUp() throws InterruptedException, IOException {
       context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-
       TestUtil.performLogin(context);
-
       testUser = ApiHelper.getUserByToken(TestUtil.TEST_TOKEN);
+      testUser2 = ApiHelper.addUser(TestUtil.getRandomUser());
+      testUser3 = ApiHelper.addUser(TestUtil.getRandomUser());
    }
 
    @After
    public void cleanUp() {
       TestUtil.deleteSharedPreferences(context);
+      ApiHelper.deleteUser(testUser2.getEmail(), context);
+      ApiHelper.deleteUser(testUser3.getEmail(), context);
    }
 
    @Test
@@ -74,20 +82,7 @@ public class MainActivityTest {
    }
 
    @Test
-   public void testWithConversations() throws IOException {
-      User testUser2 = ApiHelper.addUser(
-         new User(
-            RandomUtil.getRandomString(5),
-            TestUtil.createRandomEmail(),
-            RandomUtil.getRandomString(5),
-            RandomUtil.getRandomString(5),
-            null,
-            null,
-            RandomUtil.getRandomLong(),
-            RandomUtil.getRandomString(5)
-         )
-      );
-
+   public void testConversationWithTwoParticipant() throws IOException {
       List<Long> userIds = Arrays.asList(
          testUser.getUserId(),
          testUser2.getUserId()
@@ -98,26 +93,76 @@ public class MainActivityTest {
       );
 
       MessageEntry lastMessage = ApiHelper.addMessage(
-         new MessageEntry(
-            conversationDTO.getConversationId(),
-            testUser2.getUserId(),
-            DateTimeUtil.now(),
-            "Test Message",
-            MessageTypeConstants.MESSAGE,
-            RandomUtil.getRandomString(5)
-         ),
+              TestUtil.getRandomMessage(conversationDTO.getConversationId(), testUser2.getUserId())
+         ,
          testUser.getToken()
       );
+      try {
+         ActivityScenario.launch(MainActivity.class);
 
-      ActivityScenario.launch(MainActivity.class);
+         onView(withId(R.id.messageBoardRecView))
+                 .perform(scrollTo(hasDescendant(withText(lastMessage.getContentEncrypted()))));
 
-      onView(withId(R.id.messageBoardRecView))
-         .perform(scrollTo(hasDescendant(withText("Test Message"))));
+         onView(withText(lastMessage.getContentEncrypted())).check(matches(isDisplayed()));
+         onView(withId(R.id.main_item_not_read))
+                 .check(matches(withText(equalTo("1"))));
 
-      onView(withText("Test Message")).check(matches(isDisplayed()));
+      }
+      finally {
+         ApiHelper.deleteMessage(lastMessage, context, testUser);
+         ApiHelper.deleteConversation(conversationDTO.getConversationId(), testUser, context);
+      }
 
-      ApiHelper.deleteUser(testUser2.getEmail(), context);
-      ApiHelper.deleteMessage(lastMessage, context, testUser);
-      ApiHelper.deleteConversation(conversationDTO.getConversationId(), testUser, context);
+   }
+
+   @Test
+   public void testConversationWithThreeParticipant() throws IOException {
+      List<Long> userIds = Arrays.asList(
+              testUser.getUserId(),
+              testUser2.getUserId(),
+              testUser3.getUserId()
+      );
+      ConversationDTO conversationDTO = ApiHelper.addConversationByUserIds(
+              userIds,
+              testUser.getToken()
+      );
+
+      MessageEntry firstMessage = ApiHelper.addMessage(
+              TestUtil.getRandomMessage(conversationDTO.getConversationId(), testUser.getUserId())
+              ,
+              testUser.getToken()
+      );
+      MessageEntry secondMessage = ApiHelper.addMessage(
+              TestUtil.getRandomMessage(conversationDTO.getConversationId(), testUser3.getUserId())
+              ,
+              testUser.getToken()
+      );
+
+
+      MessageEntry lastMessage = ApiHelper.addMessage(
+              TestUtil.getRandomMessage(conversationDTO.getConversationId(), testUser2.getUserId())
+              ,
+              testUser.getToken()
+      );
+      try {
+         ActivityScenario.launch(MainActivity.class);
+
+         onView(withId(R.id.messageBoardRecView))
+                 .perform(scrollTo(hasDescendant(withText(lastMessage.getContentEncrypted()))));
+
+         onView(withText(lastMessage.getContentEncrypted())).check(matches(isDisplayed()));
+
+         //Todo fix bug here
+         onView(withId(R.id.main_item_not_read))
+                 .check(matches(withText(equalTo("2"))));
+      }
+      finally {
+         ApiHelper.deleteMessage(firstMessage, context, testUser);
+         ApiHelper.deleteMessage(secondMessage, context, testUser);
+         ApiHelper.deleteMessage(lastMessage, context, testUser);
+         ApiHelper.deleteConversation(conversationDTO.getConversationId(), testUser, context);
+      }
+
+
    }
 }

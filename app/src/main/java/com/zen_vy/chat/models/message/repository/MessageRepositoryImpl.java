@@ -98,10 +98,12 @@ public class MessageRepositoryImpl implements MessageRepository {
                ) {
                   if (response.isSuccessful() && response.body() != null) {
                      MessageEntry messageEntry = response.body();
-
-                     messageEntry.setUploaded(true);
+                    //Because of tests able to add other users messages
+                     if(messageEntry.getSenderId()==currentUser.getUserId()){
+                         messageEntry.setUploaded(true);
                      _decryptMessage(messageEntry);
                      messageDatabaseUtil.updateMessageEntry(messageEntry);
+                     }
                      callback.onResponse(call, response);
                   } else {
                      callback.onFailure(
@@ -150,7 +152,12 @@ public class MessageRepositoryImpl implements MessageRepository {
          );
    }
 
-   @Override
+    @Override
+    public void setMessageDownloaded(String token, List<String> messageUuids, Callback<Void> callback) {
+        messageApiService.markMessagesAsDownloaded(token, messageUuids);
+    }
+
+    @Override
    public void deleteMessage(
       String token,
       String messageUuid,
@@ -178,21 +185,6 @@ public class MessageRepositoryImpl implements MessageRepository {
       Long conversationId,
       Callback<List<MessageEntry>> callback
    ) {
-      List<MessageEntry> localMessages =
-         messageDatabaseUtil.getAllMessageEntriesByConversationId(
-            conversationId
-         );
-      if (!localMessages.isEmpty()) {
-         if (
-            System.currentTimeMillis() -
-               localMessages.get(localMessages.size() - 1).getTimestamp() <
-            AppConstants.MESSAGE_SYNC_TIME
-         ) {
-            callback.onResponse(null, Response.success(localMessages));
-            return;
-         }
-      }
-
       messageApiService
          .getMessages(currentUser.getToken(), conversationId)
          .enqueue(
@@ -229,7 +221,12 @@ public class MessageRepositoryImpl implements MessageRepository {
          );
    }
 
-   private void _decryptMessage(MessageEntry messageEntry) {
+    @Override
+    public void getPendingMessages(String token, Callback<List<MessageEntry>> callback) {
+        messageApiService.getNotDeliveredMessages(token).enqueue(callback);
+    }
+
+    private void _decryptMessage(MessageEntry messageEntry) {
       messageEntry.setContent(messageEntry.getContentEncrypted());
       //messageEntry.setContent(EncryptionHelper.decrypt(messageEntry.getContentEncrypted(), currentUser.getPublicKey()));
    }

@@ -41,6 +41,7 @@ import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.image.util.ImageUtil;
+import com.zen_vy.chat.models.message.MessageService;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import com.zen_vy.chat.websocket.WebSocketService;
@@ -74,6 +75,9 @@ public class MainActivity extends BaseActivity {
       mainAdapter = new MainAdapter(this, currentUser, messageBoardRecView);
 
       _startingWebSocketService();
+
+      MessageService messageService = new MessageService(this, currentUser);
+      messageService.getPendingMessages();
    }
 
    @Override
