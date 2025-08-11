@@ -63,7 +63,13 @@ public class WebSocketService extends Service {
    private static final int PONG_TIMEOUT_MS = 40000;
 
    private long currentPingIntervalMs = 30000; // Start with 30 seconds
-   private static final long MAX_PING_INTERVAL_MS = 120000; // Max 2 minutes
+   private static final long MAX_PING_INTERVAL_MS = 120000;
+
+   private static boolean isRunning = false;
+
+   public static boolean isServiceRunning() {
+      return isRunning;
+   }
 
    public class LocalBinder extends Binder {
 
@@ -76,11 +82,14 @@ public class WebSocketService extends Service {
       return instance;
    }
 
+
+
    @Override
    public void onCreate() {
       super.onCreate();
       instance = this;
       context = getApplicationContext();
+      isRunning = true;
       Timber.i("Starting WebSocketService");
    }
 
@@ -88,6 +97,7 @@ public class WebSocketService extends Service {
    public void onTaskRemoved(Intent rootIntent) {
       super.onTaskRemoved(rootIntent);
 
+      isRunning = false;
       // Restart the service
       Intent restartServiceIntent = new Intent(
          getApplicationContext(),
@@ -295,6 +305,9 @@ public class WebSocketService extends Service {
    @Override
    public void onDestroy() {
       super.onDestroy();
+
+      isRunning = false;
+
       if (webSocket != null) {
          webSocket.close(1000, null);
       }
@@ -418,7 +431,7 @@ public class WebSocketService extends Service {
       // Process the notification
    }
 
-   private void sendMessageBroadcast(MessageEntry message) {
+   public void sendMessageBroadcast(MessageEntry message) {
       Intent intent = new Intent(
          "com.example.szakdolg.models.message.entity.MessageBroadCast"
       );

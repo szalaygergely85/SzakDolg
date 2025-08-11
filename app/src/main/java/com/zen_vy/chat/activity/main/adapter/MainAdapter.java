@@ -19,6 +19,8 @@ import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.util.UserUtil;
+import com.zen_vy.chat.util.DateTimeUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,10 +107,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
          mainAdapterHelper.getConversationTitle(conversation, otherUsers)
       );
 
-      holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry));
+
+      holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry, UserUtil.getUserByID(users, messageEntry.getSenderId())));
 
       holder.txtTime.setText(
-         mainAdapterHelper.getTime(messageEntry.getTimestamp())
+         DateTimeUtil.getMessageTime(messageEntry.getTimestamp())
       );
 
       mainAdapterHelper.setImageView(otherUsers, holder.image);
@@ -183,7 +186,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
       public ViewHolder(@NonNull View itemView) {
          super(itemView);
          image = itemView.findViewById(R.id.mesBrdImage);
-         txtName = itemView.findViewById(R.id.mesBrdName);
+         txtName = itemView.findViewById(R.id.main_item_disp_name);
          txtMessage = itemView.findViewById(R.id.mesBrdMessage);
          parent = itemView.findViewById(R.id.parent);
          txtTime = itemView.findViewById(R.id.main_item_last_msg_time);

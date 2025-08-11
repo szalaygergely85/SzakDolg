@@ -9,10 +9,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
@@ -25,7 +25,8 @@ import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.testhelpers.ApiHelper;
 import com.zen_vy.chat.testhelpers.TestUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
-import com.zen_vy.chat.util.RandomUtil;
+import com.zen_vy.chat.websocket.WebSocketService;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -104,8 +105,10 @@ public class MainActivityTest {
                  .perform(scrollTo(hasDescendant(withText(lastMessage.getContentEncrypted()))));
 
          onView(withText(lastMessage.getContentEncrypted())).check(matches(isDisplayed()));
-         onView(withId(R.id.main_item_not_read))
-                 .check(matches(withText(equalTo("1"))));
+         onView(withId(R.id.main_item_not_read)).check(matches(withText(equalTo("1"))));
+         onView(withId(R.id.main_item_last_msg_time)).check(matches(withText(equalTo(DateTimeUtil.getMessageTime(lastMessage.getTimestamp())))));
+         onView(withId(R.id.main_item_disp_name)).check(matches(withText(equalTo(testUser2.getDisplayName()))));
+
 
       }
       finally {
@@ -152,9 +155,10 @@ public class MainActivityTest {
 
          onView(withText(lastMessage.getContentEncrypted())).check(matches(isDisplayed()));
 
-         //Todo fix bug here
+
          onView(withId(R.id.main_item_not_read))
                  .check(matches(withText(equalTo("2"))));
+         onView(withId(R.id.main_item_last_msg_time)).check(matches(withText(equalTo(DateTimeUtil.getMessageTime(lastMessage.getTimestamp())))));
       }
       finally {
          ApiHelper.deleteMessage(firstMessage, context, testUser);
@@ -162,7 +166,119 @@ public class MainActivityTest {
          ApiHelper.deleteMessage(lastMessage, context, testUser);
          ApiHelper.deleteConversation(conversationDTO.getConversationId(), testUser, context);
       }
+   }
 
+      @Test
+      public void testConversationWithImageReceived() throws IOException {
+         List<Long> userIds = Arrays.asList(
+                 testUser.getUserId(),
+                 testUser2.getUserId()
+         );
+         ConversationDTO conversationDTO = ApiHelper.addConversationByUserIds(
+                 userIds,
+                 testUser.getToken()
+         );
+
+         MessageEntry lastMessage = ApiHelper.addMessage(
+                 TestUtil.getRandomMessage(conversationDTO.getConversationId(), testUser2.getUserId(), MessageTypeConstants.IMAGE)
+                 ,
+                 testUser.getToken()
+         );
+      try {
+         ActivityScenario.launch(MainActivity.class);
+         onView(withText("Received image from: " + testUser2.getDisplayName())).check(matches(isDisplayed()));
+
+      }finally {
+         ApiHelper.deleteMessage(lastMessage, context, testUser);
+         ApiHelper.deleteConversation(conversationDTO.getConversationId(), testUser, context);
+      }
+
+      }
+
+   @Test
+   public void testConversationArrivingWithBroadcastReceiver() throws IOException, InterruptedException {
+      ActivityScenario.launch(MainActivity.class);
+
+      assertTrue("WebSocketService should be running", WebSocketService.isServiceRunning());
+
+
+      Thread.sleep(1500);
+
+      List<Long> userIds = Arrays.asList(
+              testUser.getUserId(),
+              testUser2.getUserId()
+      );
+      ConversationDTO conversationDTO = ApiHelper.addConversationByUserIds(
+              userIds,
+              testUser.getToken()
+      );
+
+      MessageEntry lastMessage = ApiHelper.addMessage(
+              TestUtil.getRandomMessage(conversationDTO.getConversationId(), testUser2.getUserId())
+              ,
+              testUser.getToken()
+      );
+      try {
+
+         WebSocketService wsService = WebSocketService.getInstance();
+         wsService.sendMessageBroadcast(lastMessage);
+
+
+         Thread.sleep(1500);
+         onView(withText(lastMessage.getContentEncrypted())).check(matches(isDisplayed()));
+
+      }finally {
+         ApiHelper.deleteMessage(lastMessage, context, testUser);
+         ApiHelper.deleteConversation(conversationDTO.getConversationId(), testUser, context);
+      }
 
    }
+
+   @Test
+   public void testConversationArrivingWithBroadcastReceiverExistingConversation() throws IOException, InterruptedException {
+      ActivityScenario.launch(MainActivity.class);
+
+      assertTrue("WebSocketService should be running", WebSocketService.isServiceRunning());
+
+
+      Thread.sleep(1500);
+
+      List<Long> userIds = Arrays.asList(
+              testUser.getUserId(),
+              testUser2.getUserId()
+      );
+      ConversationDTO conversationDTO = ApiHelper.addConversationByUserIds(
+              userIds,
+              testUser.getToken()
+      );
+
+      ApiHelper.addMessage(
+              TestUtil.getRandomMessage(conversationDTO.getConversationId(), testUser2.getUserId())
+              ,
+              testUser.getToken()
+      );
+
+      MessageEntry lastMessage = ApiHelper.addMessage(
+              TestUtil.getRandomMessage(conversationDTO.getConversationId(), testUser2.getUserId())
+              ,
+              testUser.getToken()
+      );
+      try {
+         ActivityScenario.launch(MainActivity.class);
+
+         WebSocketService wsService = WebSocketService.getInstance();
+         wsService.sendMessageBroadcast(lastMessage);
+
+
+         Thread.sleep(1500);
+         onView(withText(lastMessage.getContentEncrypted())).check(matches(isDisplayed()));
+
+      }finally {
+         ApiHelper.deleteMessage(lastMessage, context, testUser);
+         ApiHelper.deleteConversation(conversationDTO.getConversationId(), testUser, context);
+      }
+
+   }
+
+
 }

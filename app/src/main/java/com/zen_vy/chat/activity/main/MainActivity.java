@@ -45,6 +45,8 @@ import com.zen_vy.chat.models.message.MessageService;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import com.zen_vy.chat.websocket.WebSocketService;
+
+import java.util.ArrayList;
 import java.util.List;
 import timber.log.Timber;
 
@@ -78,6 +80,15 @@ public class MainActivity extends BaseActivity {
 
       MessageService messageService = new MessageService(this, currentUser);
       messageService.getPendingMessages();
+
+      LocalBroadcastManager
+              .getInstance(this)
+              .registerReceiver(
+                      broadcastReceiver,
+                      new IntentFilter(
+                              "com.example.szakdolg.models.message.entity.MessageBroadCast"
+                      )
+              );
    }
 
    @Override
@@ -124,10 +135,11 @@ public class MainActivity extends BaseActivity {
             public void onSuccess(List<ConversationDTO> conversationList) {
                runOnUiThread(() -> {
                   if (conversationList != null && !conversationList.isEmpty()) {
-                     _validateConversation(conversationList);
+                     conversationDTOList.addAll(conversationList);
+                     _validateConversation(conversationDTOList);
                      emptyLayout.setVisibility(View.GONE);
                      withItemsLayout.setVisibility(View.VISIBLE);
-                     mainAdapter.setConversationList(conversationList);
+                     mainAdapter.setConversationList(conversationDTOList);
                   } else {
                      emptyLayout.setVisibility(View.VISIBLE);
                      withItemsLayout.setVisibility(View.GONE);
@@ -393,7 +405,18 @@ public class MainActivity extends BaseActivity {
                public void onSuccess(ConversationDTO conversation) {
                   conversation.setMessageEntry(message);
                   runOnUiThread(() -> {
-                     mainAdapter.updateConversationDTO(conversation);
+                     if(mainAdapter.getItemCount()==0) {
+
+                        conversationDTOList.add(conversation);
+                        _validateConversation(conversationDTOList);
+
+                        emptyLayout.setVisibility(View.GONE);
+                        withItemsLayout.setVisibility(View.VISIBLE);
+
+                        mainAdapter.setConversationList(conversationDTOList);
+                     }else{
+                        mainAdapter.updateConversationDTO(conversation);
+                     }
                   });
                }
 
@@ -407,7 +430,7 @@ public class MainActivity extends BaseActivity {
    public void setConversationService(ConversationService service) {
       this.conversationService = service;
    }
-
+   private List<ConversationDTO> conversationDTOList = new ArrayList<>();
    private DrawerLayout drawerLayout;
    private LinearLayout emptyLayout;
    private MainAdapter mainAdapter;

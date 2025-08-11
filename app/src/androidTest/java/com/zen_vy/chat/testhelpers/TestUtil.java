@@ -98,16 +98,19 @@ public class TestUtil {
    }
 
    public static MessageEntry getRandomMessage(Long conversationId, Long userId){
-       return new MessageEntry(
-               conversationId,
-               userId,
-               DateTimeUtil.now(),
-               RandomUtil.getRandomString(15),
-               MessageTypeConstants.MESSAGE,
-               RandomUtil.getRandomString(5)
-       );
-
+       return getRandomMessage(conversationId, userId, MessageTypeConstants.MESSAGE);
    }
+
+    public static MessageEntry getRandomMessage(long conversationId, Long userId, int type) {
+        return new MessageEntry(
+                conversationId,
+                userId,
+                DateTimeUtil.now(),
+                RandomUtil.getRandomString(15),
+                type,
+                RandomUtil.getRandomString(5)
+        );
+    }
 
    public static User getRandomUser() throws IOException {
        return
@@ -157,4 +160,6 @@ public class TestUtil {
    }
 
    public static void addConversation() {}
+
+
 }

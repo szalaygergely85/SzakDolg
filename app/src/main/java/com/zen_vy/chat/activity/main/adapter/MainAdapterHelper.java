@@ -90,10 +90,10 @@ public class MainAdapterHelper {
       }
    }
 
-   public String getContent(MessageEntry messageEntry) {
+   public String getContent(MessageEntry messageEntry, User sender) {
       if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
          String decryptedContentString = null;
-
+         messageEntry.setContent(messageEntry.getContentEncrypted());
          if (messageEntry.getContent() != null) {
             if (isSenderLoggedUser(messageEntry)) {
                return "You: " + messageEntry.getContent();
@@ -116,58 +116,12 @@ public class MainAdapterHelper {
          }
       }
       if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
-         return "Image received";
+         return "Received image from: " + sender.getDisplayName() ;
       }
       return null;
    }
 
-   public String getTime(Long timestamp) {
-      // Convert timestamp to Date
-      Date date = new Date(timestamp);
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(date);
 
-      // Get current time for comparison
-      Calendar now = Calendar.getInstance();
-
-      // Formatter for today (hours and minutes)
-      SimpleDateFormat todayFormat = new SimpleDateFormat(
-         "HH:mm",
-         Locale.getDefault()
-      );
-
-      // Formatter for day of the week (e.g., "Monday")
-      SimpleDateFormat dayFormat = new SimpleDateFormat(
-         "EEEE",
-         Locale.getDefault()
-      );
-
-      // Formatter for full date (e.g., "MMM dd, yyyy")
-      SimpleDateFormat dateFormat = new SimpleDateFormat(
-         "MMM dd, yyyy",
-         Locale.getDefault()
-      );
-
-      // Check if it's today
-      if (
-         now.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
-         now.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)
-      ) {
-         // Return hours and minutes if it's today
-         return todayFormat.format(date);
-      }
-      // Check if it's within the last week
-      else if (
-         now.getTimeInMillis() - calendar.getTimeInMillis() <
-         7 * 24 * 60 * 60 * 1000
-      ) {
-         // Return day of the week if it's within the last 7 days
-         return dayFormat.format(date);
-      } else {
-         // Otherwise, return full date
-         return dateFormat.format(date);
-      }
-   }
 
    private boolean isSenderLoggedUser(MessageEntry messageEntry) {
       return currentUser.getUserId().equals(messageEntry.getSenderId());
@@ -176,4 +130,5 @@ public class MainAdapterHelper {
    public int getCountByNotReadMsg(Long conversationId) {
       return messageService.getCountByNotReadMsg(conversationId);
    }
+
 }
