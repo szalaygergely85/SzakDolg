@@ -16,11 +16,11 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.chat.activity.ChatActivity;
 import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.constans.IntentConstants;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.message.MessageDatabaseUtil;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
@@ -81,8 +81,6 @@ public class WebSocketService extends Service {
    public static WebSocketService getInstance() {
       return instance;
    }
-
-
 
    @Override
    public void onCreate() {

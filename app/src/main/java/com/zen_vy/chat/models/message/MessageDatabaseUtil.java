@@ -10,6 +10,7 @@ import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
+import timber.log.Timber;
 
 public class MessageDatabaseUtil {
 
@@ -22,26 +23,23 @@ public class MessageDatabaseUtil {
    public void insertMessageEntry(MessageEntry message) {
       if (!isExistingEntry(message)) {
          SQLiteDatabase db = dbHelper.getWritableDatabase();
-         try {
-            ContentValues values = new ContentValues();
-            values.put("messageId", message.getMessageId());
-            values.put("conversationId", message.getConversationId());
-            values.put("senderId", message.getSenderId());
-            values.put("timestamp", message.getTimestamp());
-            values.put("contentEncrypted", message.getContentEncrypted());
-            values.put("isRead", message.isRead());
-            values.put("type", message.getType());
-            values.put("content", message.getContent());
-            values.put("uUId", message.getUuId());
-            db.insertWithOnConflict(
-               dbHelper.TABLE_MESSAGE_ENTRY,
-               null,
-               values,
-               SQLiteDatabase.CONFLICT_IGNORE
-            );
-         } finally {
-            db.close();
-         }
+
+         ContentValues values = new ContentValues();
+         values.put("messageId", message.getMessageId());
+         values.put("conversationId", message.getConversationId());
+         values.put("senderId", message.getSenderId());
+         values.put("timestamp", message.getTimestamp());
+         values.put("contentEncrypted", message.getContentEncrypted());
+         values.put("isRead", message.isRead());
+         values.put("type", message.getType());
+         values.put("content", message.getContent());
+         values.put("uUId", message.getUuId());
+         db.insertWithOnConflict(
+            dbHelper.TABLE_MESSAGE_ENTRY,
+            null,
+            values,
+            SQLiteDatabase.CONFLICT_IGNORE
+         );
       }
    }
 
@@ -98,7 +96,6 @@ public class MessageDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
       }
 
       return latestMessage;
@@ -146,7 +143,6 @@ public class MessageDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
       }
 
       return messages;
@@ -242,7 +238,6 @@ public class MessageDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
       }
 
       return uuids;
@@ -256,7 +251,6 @@ public class MessageDatabaseUtil {
       cursor.moveToFirst();
       Long count = cursor.getLong(0);
       cursor.close();
-      db.close();
       return count;
    }
 
@@ -289,8 +283,6 @@ public class MessageDatabaseUtil {
          }
       } catch (Exception e) {
          Log.e("DatabaseError", "Failed to update message entry", e);
-      } finally {
-         db.close(); // Ensure the database is closed to avoid leaks
       }
    }
 
@@ -302,8 +294,8 @@ public class MessageDatabaseUtil {
             "messageId = ?",
             new String[] { String.valueOf(messageId) }
          );
-      } finally {
-         db.close();
+      } catch (Exception e) {
+         Timber.e(e);
       }
    }
 
@@ -365,8 +357,6 @@ public class MessageDatabaseUtil {
             "Failed to retrieve message by uUId: " + uuid,
             e
          );
-      } finally {
-         db.close(); // Ensure the database is closed to avoid leaks
       }
 
       return message;

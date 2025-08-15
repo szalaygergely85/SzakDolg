@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -63,7 +62,6 @@ public class FullscreenImageAdapter
 
    @Override
    public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-
       String imageUrl = ImageUtil.buildImageUrl(imageUrls.get(position));
 
       GlideUrl glideUrl = ImageUtil.getGlideUrlWithTokenHeader(

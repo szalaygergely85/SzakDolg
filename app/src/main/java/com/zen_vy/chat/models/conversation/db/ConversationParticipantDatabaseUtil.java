@@ -9,6 +9,7 @@ import com.zen_vy.chat.models.conversation.entity.ConversationParticipant;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
+import timber.log.Timber;
 
 public class ConversationParticipantDatabaseUtil {
 
@@ -27,13 +28,16 @@ public class ConversationParticipantDatabaseUtil {
       values.put("conversationId", participant.getConversationId());
       values.put("userId", participant.getUserId());
 
-      db.insertWithOnConflict(
-         dbHelper.TABLE_CONVERSATION_PARTICIPANTS,
-         null,
-         values,
-         SQLiteDatabase.CONFLICT_REPLACE
-      );
-      db.close();
+      try {
+         db.insertWithOnConflict(
+            dbHelper.TABLE_CONVERSATION_PARTICIPANTS,
+            null,
+            values,
+            SQLiteDatabase.CONFLICT_REPLACE
+         );
+      } catch (Exception e) {
+         Timber.e(e);
+      }
    }
 
    public List<ConversationParticipant> getParticipantsByConversationId(

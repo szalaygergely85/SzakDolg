@@ -1,6 +1,6 @@
 package com.zen_vy.chat.models.conversation.repository;
 
-import com.zen_vy.chat.DTO.ConversationDTO;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import java.util.List;
 import retrofit2.Callback;
@@ -29,6 +29,9 @@ public interface ConversationRepository {
       Callback<List<ConversationDTO>> callback
    );
 
-   void deleteConversation(Long conversationId,
-                      String token,Callback<Void> callback);
+   void deleteConversation(
+      Long conversationId,
+      String token,
+      Callback<Void> callback
+   );
 }

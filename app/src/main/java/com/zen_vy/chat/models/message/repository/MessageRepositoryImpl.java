@@ -98,11 +98,13 @@ public class MessageRepositoryImpl implements MessageRepository {
                ) {
                   if (response.isSuccessful() && response.body() != null) {
                      MessageEntry messageEntry = response.body();
-                    //Because of tests able to add other users messages
-                     if(messageEntry.getSenderId()==currentUser.getUserId()){
-                         messageEntry.setUploaded(true);
-                     _decryptMessage(messageEntry);
-                     messageDatabaseUtil.updateMessageEntry(messageEntry);
+                     //Because of tests able to add other users messages
+                     if (
+                        messageEntry.getSenderId() == currentUser.getUserId()
+                     ) {
+                        messageEntry.setUploaded(true);
+                        _decryptMessage(messageEntry);
+                        messageDatabaseUtil.updateMessageEntry(messageEntry);
                      }
                      callback.onResponse(call, response);
                   } else {
@@ -152,12 +154,16 @@ public class MessageRepositoryImpl implements MessageRepository {
          );
    }
 
-    @Override
-    public void setMessageDownloaded(String token, List<String> messageUuids, Callback<Void> callback) {
-        messageApiService.markMessagesAsDownloaded(token, messageUuids);
-    }
+   @Override
+   public void setMessageDownloaded(
+      String token,
+      List<String> messageUuids,
+      Callback<Void> callback
+   ) {
+      messageApiService.markMessagesAsDownloaded(token, messageUuids);
+   }
 
-    @Override
+   @Override
    public void deleteMessage(
       String token,
       String messageUuid,
@@ -221,12 +227,15 @@ public class MessageRepositoryImpl implements MessageRepository {
          );
    }
 
-    @Override
-    public void getPendingMessages(String token, Callback<List<MessageEntry>> callback) {
-        messageApiService.getNotDeliveredMessages(token).enqueue(callback);
-    }
+   @Override
+   public void getPendingMessages(
+      String token,
+      Callback<List<MessageEntry>> callback
+   ) {
+      messageApiService.getNotDeliveredMessages(token).enqueue(callback);
+   }
 
-    private void _decryptMessage(MessageEntry messageEntry) {
+   private void _decryptMessage(MessageEntry messageEntry) {
       messageEntry.setContent(messageEntry.getContentEncrypted());
       //messageEntry.setContent(EncryptionHelper.decrypt(messageEntry.getContentEncrypted(), currentUser.getPublicKey()));
    }

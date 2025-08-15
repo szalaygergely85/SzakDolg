@@ -6,10 +6,11 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-
 import androidx.appcompat.widget.AppCompatImageView;
 
-public class ZoomableImageView extends AppCompatImageView implements ScaleGestureDetector.OnScaleGestureListener {
+public class ZoomableImageView
+   extends AppCompatImageView
+   implements ScaleGestureDetector.OnScaleGestureListener {
 
    private final ScaleGestureDetector scaleDetector;
    private final Matrix baseMatrix = new Matrix();
@@ -44,7 +45,12 @@ public class ZoomableImageView extends AppCompatImageView implements ScaleGestur
       float factor = newScale / scaleFactor;
       scaleFactor = newScale;
 
-      drawMatrix.postScale(factor, factor, detector.getFocusX(), detector.getFocusY());
+      drawMatrix.postScale(
+         factor,
+         factor,
+         detector.getFocusX(),
+         detector.getFocusY()
+      );
       setImageMatrix(drawMatrix);
       return true;
    }
@@ -62,7 +68,7 @@ public class ZoomableImageView extends AppCompatImageView implements ScaleGestur
    @Override
    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
       super.onSizeChanged(w, h, oldw, oldh);
-      post(this::fitImageToView);  // Defer until layout is ready
+      post(this::fitImageToView); // Defer until layout is ready
    }
 
    private void fitImageToView() {
@@ -74,9 +80,17 @@ public class ZoomableImageView extends AppCompatImageView implements ScaleGestur
       float drawableWidth = drawable.getIntrinsicWidth();
       float drawableHeight = drawable.getIntrinsicHeight();
 
-      if (drawableWidth == 0 || drawableHeight == 0 || viewWidth == 0 || viewHeight == 0) return;
+      if (
+         drawableWidth == 0 ||
+         drawableHeight == 0 ||
+         viewWidth == 0 ||
+         viewHeight == 0
+      ) return;
 
-      float scale = Math.min(viewWidth / drawableWidth, viewHeight / drawableHeight);
+      float scale = Math.min(
+         viewWidth / drawableWidth,
+         viewHeight / drawableHeight
+      );
       float dx = (viewWidth - drawableWidth * scale) / 2f;
       float dy = (viewHeight - drawableHeight * scale) / 2f;
 

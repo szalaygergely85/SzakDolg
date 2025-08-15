@@ -13,7 +13,6 @@ import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.base.BaseActivity;
 import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.image.util.ImageUtil;
-
 import java.util.ArrayList;
 import timber.log.Timber;
 
@@ -47,34 +46,43 @@ public class FullscreenImageActivity extends BaseActivity {
          return;
       }
 
-      adapter = new FullscreenImageAdapter(this, imageUrls, currentUser, btnLeft, btnRight);
+      adapter =
+      new FullscreenImageAdapter(
+         this,
+         imageUrls,
+         currentUser,
+         btnLeft,
+         btnRight
+      );
 
       viewPager.setAdapter(adapter);
 
       viewPager.setCurrentItem(imageUrls.indexOf(currentImageUrl));
 
-      viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-         @Override
-         public void onPageSelected(int position) {
-            super.onPageSelected(position);
+      viewPager.registerOnPageChangeCallback(
+         new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+               super.onPageSelected(position);
 
-            int itemCount = adapter.getItemCount();
+               int itemCount = adapter.getItemCount();
 
-            if (itemCount < 2) {
-               btnLeft.setVisibility(View.GONE);
-               btnRight.setVisibility(View.GONE);
-            } else if (position == 0) {
-               btnLeft.setVisibility(View.GONE);
-               btnRight.setVisibility(View.VISIBLE);
-            } else if (position == itemCount - 1) {
-               btnLeft.setVisibility(View.VISIBLE);
-               btnRight.setVisibility(View.GONE);
-            } else {
-               btnLeft.setVisibility(View.VISIBLE);
-               btnRight.setVisibility(View.VISIBLE);
+               if (itemCount < 2) {
+                  btnLeft.setVisibility(View.GONE);
+                  btnRight.setVisibility(View.GONE);
+               } else if (position == 0) {
+                  btnLeft.setVisibility(View.GONE);
+                  btnRight.setVisibility(View.VISIBLE);
+               } else if (position == itemCount - 1) {
+                  btnLeft.setVisibility(View.VISIBLE);
+                  btnRight.setVisibility(View.GONE);
+               } else {
+                  btnLeft.setVisibility(View.VISIBLE);
+                  btnRight.setVisibility(View.VISIBLE);
+               }
             }
          }
-      });
+      );
 
       // Button listeners
       btnClose.setOnClickListener(v -> finish());
@@ -94,21 +102,30 @@ public class FullscreenImageActivity extends BaseActivity {
       });
 
       btnDownload.setOnClickListener(v -> {
-
-         String imageUrl = ImageUtil.buildImageUrl(imageUrls.get(viewPager.getCurrentItem()));
+         String imageUrl = ImageUtil.buildImageUrl(
+            imageUrls.get(viewPager.getCurrentItem())
+         );
          String fileName = "image_" + System.currentTimeMillis() + ".jpg";
 
-         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(imageUrl));
+         DownloadManager.Request request = new DownloadManager.Request(
+            Uri.parse(imageUrl)
+         );
          request.setTitle("Downloading image");
          request.setDescription("Saving image...");
-         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, fileName);
+         request.setNotificationVisibility(
+            DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+         );
+         request.setDestinationInExternalPublicDir(
+            Environment.DIRECTORY_PICTURES,
+            fileName
+         );
          request.setAllowedOverMetered(true);
          request.setAllowedOverRoaming(true);
 
-         DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+         DownloadManager downloadManager = (DownloadManager) getSystemService(
+            Context.DOWNLOAD_SERVICE
+         );
          downloadManager.enqueue(request);
-
       });
    }
 }

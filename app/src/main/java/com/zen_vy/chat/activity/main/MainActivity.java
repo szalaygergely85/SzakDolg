@@ -29,7 +29,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
-import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.base.BaseActivity;
 import com.zen_vy.chat.activity.contacts.activity.ContactsActivity;
@@ -39,13 +38,13 @@ import com.zen_vy.chat.activity.profile.ProfileActivity;
 import com.zen_vy.chat.activity.profile.ProfileConstants;
 import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.zen_vy.chat.models.message.MessageService;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import com.zen_vy.chat.websocket.WebSocketService;
-
 import java.util.ArrayList;
 import java.util.List;
 import timber.log.Timber;
@@ -82,13 +81,13 @@ public class MainActivity extends BaseActivity {
       messageService.getPendingMessages();
 
       LocalBroadcastManager
-              .getInstance(this)
-              .registerReceiver(
-                      broadcastReceiver,
-                      new IntentFilter(
-                              "com.example.szakdolg.models.message.entity.MessageBroadCast"
-                      )
-              );
+         .getInstance(this)
+         .registerReceiver(
+            broadcastReceiver,
+            new IntentFilter(
+               "com.example.szakdolg.models.message.entity.MessageBroadCast"
+            )
+         );
    }
 
    @Override
@@ -405,8 +404,7 @@ public class MainActivity extends BaseActivity {
                public void onSuccess(ConversationDTO conversation) {
                   conversation.setMessageEntry(message);
                   runOnUiThread(() -> {
-                     if(mainAdapter.getItemCount()==0) {
-
+                     if (mainAdapter.getItemCount() == 0) {
                         conversationDTOList.add(conversation);
                         _validateConversation(conversationDTOList);
 
@@ -414,7 +412,7 @@ public class MainActivity extends BaseActivity {
                         withItemsLayout.setVisibility(View.VISIBLE);
 
                         mainAdapter.setConversationList(conversationDTOList);
-                     }else{
+                     } else {
                         mainAdapter.updateConversationDTO(conversation);
                      }
                   });
@@ -430,6 +428,7 @@ public class MainActivity extends BaseActivity {
    public void setConversationService(ConversationService service) {
       this.conversationService = service;
    }
+
    private List<ConversationDTO> conversationDTOList = new ArrayList<>();
    private DrawerLayout drawerLayout;
    private LinearLayout emptyLayout;

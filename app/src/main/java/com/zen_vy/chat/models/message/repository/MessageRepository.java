@@ -28,8 +28,8 @@ public interface MessageRepository {
    );
 
    public void getPendingMessages(
-           String token,
-           Callback<List<MessageEntry>> callback
+      String token,
+      Callback<List<MessageEntry>> callback
    );
 
    public void deleteMessage(
@@ -38,7 +38,9 @@ public interface MessageRepository {
       Callback<Void> callback
    );
 
-   void setMessageDownloaded(      String token,
-                                   List<String> messageUuids,
-                                   Callback<Void> callback);
+   void setMessageDownloaded(
+      String token,
+      List<String> messageUuids,
+      Callback<Void> callback
+   );
 }

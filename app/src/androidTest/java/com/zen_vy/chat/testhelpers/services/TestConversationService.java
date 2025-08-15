@@ -1,7 +1,7 @@
 package com.zen_vy.chat.testhelpers.services;
 
 import android.content.Context;
-import com.zen_vy.chat.DTO.ConversationDTO;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.List;

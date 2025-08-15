@@ -5,19 +5,16 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testConversationWithThreeParticipant()">
+      <SelectionState runConfigName="testConversationOfTwo()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="MainActivityTest">
+      <SelectionState runConfigName="Tests in 'com.zen_vy.chat'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testConversationArrivingWithBroadcastReceiver()">
+      <SelectionState runConfigName="testSendMessages()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testConversationWithTwoParticipant()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testConversationArrivingWithBroadcastReceiverExistingConversation()">
+      <SelectionState runConfigName="testSendMessages() (1)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

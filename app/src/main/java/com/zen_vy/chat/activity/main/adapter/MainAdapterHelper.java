@@ -16,11 +16,7 @@ import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.util.UserUtil;
 import com.zen_vy.chat.util.EncryptionHelper;
 import com.zen_vy.chat.util.KeyStoreUtil;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import timber.log.Timber;
 
 public class MainAdapterHelper {
@@ -116,12 +112,10 @@ public class MainAdapterHelper {
          }
       }
       if (messageEntry.getType() == MessageTypeConstants.IMAGE) {
-         return "Received image from: " + sender.getDisplayName() ;
+         return "Received image from: " + sender.getDisplayName();
       }
       return null;
    }
-
-
 
    private boolean isSenderLoggedUser(MessageEntry messageEntry) {
       return currentUser.getUserId().equals(messageEntry.getSenderId());
@@ -130,5 +124,4 @@ public class MainAdapterHelper {
    public int getCountByNotReadMsg(Long conversationId) {
       return messageService.getCountByNotReadMsg(conversationId);
    }
-
 }

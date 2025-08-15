@@ -1,6 +1,6 @@
 package com.zen_vy.chat.models.conversation.api;
 
-import com.zen_vy.chat.DTO.ConversationDTO;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.conversation.entity.ConversationParticipant;
 import java.util.List;
@@ -59,7 +59,7 @@ public interface ConversationApiService {
 
    @DELETE("conversation/remove-conversation/{conversationId}")
    Call<Void> deleteConversation(
-           @Path("conversationId") Long conversationId,
-           @Header("Authorization") String token
+      @Path("conversationId") Long conversationId,
+      @Header("Authorization") String token
    );
 }

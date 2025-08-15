@@ -1,19 +1,10 @@
 package com.zen_vy.chat.activity.chat.activity;
 
-import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.message.MessageService;
-import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
-import com.zen_vy.chat.models.user.util.UserUtil;
-import com.zen_vy.chat.util.UUIDUtil;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class ChatActivityHelper {
@@ -42,14 +33,6 @@ public class ChatActivityHelper {
 
       this.messageService = new MessageService(context, currentUser);
    }
-
-
-
-
-
-
-
-
    /*
 public void _startRepeatingTask() {
 	runnable =

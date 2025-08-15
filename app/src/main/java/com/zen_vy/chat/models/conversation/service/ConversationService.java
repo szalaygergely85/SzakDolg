@@ -1,7 +1,7 @@
 package com.zen_vy.chat.models.conversation.service;
 
 import android.content.Context;
-import com.zen_vy.chat.DTO.ConversationDTO;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.db.ConversationDatabaseUtil;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.conversation.repository.ConversationRepository;
@@ -155,30 +155,41 @@ public class ConversationService {
       );
    }
 
-    public void deleteConversation(
-        Long conversationId,
-        String token,
-        final ConversationService.ConversationCallback<Void> callback){
-        conversationRepository.deleteConversation(conversationId,
-                token, new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            Timber.i("Conversation with id: %s is deleted", conversationId);
-                            callback.onSuccess(response.body());
-                        }else {
-                            callback.onError(new Throwable(response.message()));
-                        }
-                    }
+   public void deleteConversation(
+      Long conversationId,
+      String token,
+      final ConversationService.ConversationCallback<Void> callback
+   ) {
+      conversationRepository.deleteConversation(
+         conversationId,
+         token,
+         new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+               if (response.isSuccessful()) {
+                  Timber.i(
+                     "Conversation with id: %s is deleted",
+                     conversationId
+                  );
+                  callback.onSuccess(response.body());
+               } else {
+                  callback.onError(new Throwable(response.message()));
+               }
+            }
 
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable throwable) {
-                        Timber.w(throwable, "Could not delete conversation: %s", conversationId );
-                    }
-                });
-    }
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable) {
+               Timber.w(
+                  throwable,
+                  "Could not delete conversation: %s",
+                  conversationId
+               );
+            }
+         }
+      );
+   }
 
-    public interface ConversationCallback<T> {
+   public interface ConversationCallback<T> {
       void onSuccess(T data);
       void onError(Throwable t);
    }

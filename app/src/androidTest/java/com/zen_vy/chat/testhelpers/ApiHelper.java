@@ -2,8 +2,8 @@ package com.zen_vy.chat.testhelpers;
 
 import android.content.Context;
 import com.google.gson.Gson;
-import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.constans.AppConstants;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
 import com.zen_vy.chat.models.message.MessageService;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
@@ -168,18 +168,25 @@ public class ApiHelper {
       );
    }
 
-    public static void deleteConversation(long conversationId, User testUser, Context context) {
-       ConversationService conversationService = new ConversationService(context, testUser);
-       conversationService.deleteConversation(conversationId, testUser.getToken(), new ConversationService.ConversationCallback<Void>() {
-           @Override
-           public void onSuccess(Void data) {
+   public static void deleteConversation(
+      long conversationId,
+      User testUser,
+      Context context
+   ) {
+      ConversationService conversationService = new ConversationService(
+         context,
+         testUser
+      );
+      conversationService.deleteConversation(
+         conversationId,
+         testUser.getToken(),
+         new ConversationService.ConversationCallback<Void>() {
+            @Override
+            public void onSuccess(Void data) {}
 
-           }
-
-           @Override
-           public void onError(Throwable t) {
-
-           }
-       });
-    }
+            @Override
+            public void onError(Throwable t) {}
+         }
+      );
+   }
 }

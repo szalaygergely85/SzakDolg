@@ -1,7 +1,11 @@
 package com.zen_vy.chat.util;
 
+import android.icu.text.DateFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -42,34 +46,34 @@ public class DateTimeUtil {
 
       // Formatter for today (hours and minutes)
       SimpleDateFormat todayFormat = new SimpleDateFormat(
-              "HH:mm",
-              Locale.getDefault()
+         "HH:mm",
+         Locale.getDefault()
       );
 
       // Formatter for day of the week (e.g., "Monday")
       SimpleDateFormat dayFormat = new SimpleDateFormat(
-              "EEEE",
-              Locale.getDefault()
+         "EEEE",
+         Locale.getDefault()
       );
 
       // Formatter for full date (e.g., "MMM dd, yyyy")
       SimpleDateFormat dateFormat = new SimpleDateFormat(
-              "MMM dd, yyyy",
-              Locale.getDefault()
+         "MMM dd, yyyy",
+         Locale.getDefault()
       );
 
       // Check if it's today
       if (
-              now.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
-                      now.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)
+         now.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
+         now.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)
       ) {
          // Return hours and minutes if it's today
          return todayFormat.format(date);
       }
       // Check if it's within the last week
       else if (
-              now.getTimeInMillis() - calendar.getTimeInMillis() <
-                      7 * 24 * 60 * 60 * 1000
+         now.getTimeInMillis() - calendar.getTimeInMillis() <
+         7 * 24 * 60 * 60 * 1000
       ) {
          // Return day of the week if it's within the last 7 days
          return dayFormat.format(date);
@@ -99,5 +103,28 @@ public class DateTimeUtil {
 
       Format format = new SimpleDateFormat("HH:mm");
       return format.format(date);
+   }
+
+   /**
+    * Creates a timestamp in milliseconds for the given date and time.
+    */
+   public static long toMillis(
+      int year,
+      int month,
+      int day,
+      int hour,
+      int minute
+   ) {
+      LocalDateTime ldt = LocalDateTime.of(year, month, day, hour, minute);
+      ZonedDateTime zdt = ldt.atZone(ZoneId.systemDefault());
+      return zdt.toInstant().toEpochMilli();
+   }
+
+   public static String toShortDateFormat(Long timestamp) {
+      DateFormat dateFormat = DateFormat.getDateInstance(
+         DateFormat.SHORT,
+         Locale.getDefault()
+      );
+      return dateFormat.format(new Date(timestamp));
    }
 }

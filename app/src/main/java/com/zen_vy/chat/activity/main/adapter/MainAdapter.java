@@ -11,16 +11,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.chat.activity.ChatActivity;
 import com.zen_vy.chat.constans.IntentConstants;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.util.UserUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,8 +106,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
          mainAdapterHelper.getConversationTitle(conversation, otherUsers)
       );
 
-
-      holder.txtMessage.setText(mainAdapterHelper.getContent(messageEntry, UserUtil.getUserByID(users, messageEntry.getSenderId())));
+      holder.txtMessage.setText(
+         mainAdapterHelper.getContent(
+            messageEntry,
+            UserUtil.getUserByID(users, messageEntry.getSenderId())
+         )
+      );
 
       holder.txtTime.setText(
          DateTimeUtil.getMessageTime(messageEntry.getTimestamp())

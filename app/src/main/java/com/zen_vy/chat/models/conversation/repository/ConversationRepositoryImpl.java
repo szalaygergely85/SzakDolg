@@ -1,7 +1,7 @@
 package com.zen_vy.chat.models.conversation.repository;
 
 import android.content.Context;
-import com.zen_vy.chat.DTO.ConversationDTO;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.api.ConversationApiService;
 import com.zen_vy.chat.models.conversation.db.ConversationDatabaseUtil;
 import com.zen_vy.chat.models.conversation.db.ConversationParticipantDatabaseUtil;
@@ -18,7 +18,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class ConversationRepositoryImpl implements ConversationRepository {
 
@@ -441,18 +440,26 @@ public class ConversationRepositoryImpl implements ConversationRepository {
    }
 
    @Override
-   public void deleteConversation(Long conversationId, String token, Callback<Void> callback) {
-         conversationApiService.deleteConversation(conversationId, token).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+   public void deleteConversation(
+      Long conversationId,
+      String token,
+      Callback<Void> callback
+   ) {
+      conversationApiService
+         .deleteConversation(conversationId, token)
+         .enqueue(
+            new Callback<Void>() {
+               @Override
+               public void onResponse(
+                  Call<Void> call,
+                  Response<Void> response
+               ) {
+                  callback.onResponse(call, response);
+               }
 
-               callback.onResponse(call, response);
+               @Override
+               public void onFailure(Call<Void> call, Throwable throwable) {}
             }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable throwable) {
-
-            }
-         });
+         );
    }
 }

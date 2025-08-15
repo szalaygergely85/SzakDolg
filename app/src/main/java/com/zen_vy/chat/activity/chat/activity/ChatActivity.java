@@ -6,11 +6,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.icu.text.DateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.activity.result.ActivityResultLauncher;
@@ -20,13 +18,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.zen_vy.chat.DTO.ConversationDTO;
 import com.zen_vy.chat.MyEditText;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.base.BaseActivity;
 import com.zen_vy.chat.activity.chat.adapter.ChatAdapter;
-import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.constans.IntentConstants;
+import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.image.constans.ImageConstans;
 import com.zen_vy.chat.models.image.service.ImageService;
@@ -37,13 +34,10 @@ import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.util.UserUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.UUIDUtil;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import timber.log.Timber;
 
@@ -85,8 +79,7 @@ public class ChatActivity extends BaseActivity {
 
       _setListeners();
 
-      adapter =
-      new ChatAdapter(this, currentUser, chatRecView);
+      adapter = new ChatAdapter(this, currentUser, chatRecView);
 
       setMessageBoard(chatRecView, adapter);
 
@@ -137,7 +130,7 @@ public class ChatActivity extends BaseActivity {
                ) {
                   if (
                      messageEntries.size() == 0 ||
-                     !isNewMessageEntryNewDay(
+                     !_isNewMessageEntryNewDay(
                         messageEntries.get(messageEntries.size() - 1),
                         message
                      )
@@ -148,7 +141,7 @@ public class ChatActivity extends BaseActivity {
                      chatRecView.scrollToPosition(lastMessagePosition);
                   } else {
                      messageEntries.add(
-                        createDateObject(message.getTimestamp())
+                        DateTimeUtil.toShortDateFormat(message.getTimestamp())
                      );
                      messageEntries.add(message);
 
@@ -193,7 +186,7 @@ public class ChatActivity extends BaseActivity {
 
    public void setMessagesRead() {
       messageService.setMessagesAsReadByConversationId(
-              conversation.getConversationId()
+         conversation.getConversationId()
       );
    }
 
@@ -343,14 +336,6 @@ public class ChatActivity extends BaseActivity {
       chatRecView.scrollToPosition(adapter.getItemCount() - 1);
    }
 
-   private String createDateObject(Long timestamp) {
-      DateFormat dateFormat = DateFormat.getDateInstance(
-         DateFormat.SHORT,
-         Locale.getDefault()
-      );
-      return dateFormat.format(new Date(timestamp));
-   }
-
    private List<Object> _prepareMessageList(List<MessageEntry> messageEntries) {
       List<Object> sortedList = new ArrayList<>();
       long previousTimestamp = 0L;
@@ -361,7 +346,9 @@ public class ChatActivity extends BaseActivity {
                messageEntry.getTimestamp()
             )
          ) {
-            sortedList.add(createDateObject(messageEntry.getTimestamp()));
+            sortedList.add(
+               DateTimeUtil.toShortDateFormat(messageEntry.getTimestamp())
+            );
          }
 
          sortedList.add(messageEntry);
@@ -373,7 +360,7 @@ public class ChatActivity extends BaseActivity {
       return sortedList;
    }
 
-   private boolean isNewMessageEntryNewDay(
+   private boolean _isNewMessageEntryNewDay(
       Object prevMessage,
       MessageEntry newMessage
    ) {
@@ -395,11 +382,12 @@ public class ChatActivity extends BaseActivity {
          mToolbar.setTitle(_createTitleWithUsernames(users));
       }
    }
+
    private String _createTitleWithUsernames(List<User> users) {
       String title = "";
       for (User user : UserUtil.removeCurrentUserFromList(
-              users,
-              currentUser.getUserId()
+         users,
+         currentUser.getUserId()
       )) {
          if (users.indexOf(user) == 0) {
             title = user.getDisplayName();
@@ -412,36 +400,35 @@ public class ChatActivity extends BaseActivity {
 
    private MessageEntry _sendMessage(String content, int messageType) {
       MessageEntry messageEntry = new MessageEntry(
-              null,
-              conversation.getConversationId(),
-              currentUser.getUserId(),
-              System.currentTimeMillis(),
-              null,
-              false,
-              messageType,
-              content,
-              UUIDUtil.UUIDGenerator(),
-              false
+         null,
+         conversation.getConversationId(),
+         currentUser.getUserId(),
+         System.currentTimeMillis(),
+         null,
+         false,
+         messageType,
+         content,
+         UUIDUtil.UUIDGenerator(),
+         false
       );
 
       MessageService messageService = new MessageService(this, currentUser);
       messageService.addMessage(
-              messageEntry,
-              new MessageService.MessageCallback<MessageEntry>() {
-                 @Override
-                 public void onSuccess(MessageEntry data) {
-                    Timber.i(
-                            "Message sent to: %s", messageEntry.getConversationId()
-                    );
-                 }
+         messageEntry,
+         new MessageService.MessageCallback<MessageEntry>() {
+            @Override
+            public void onSuccess(MessageEntry data) {
+               Timber.i(
+                  "Message sent to: %s",
+                  messageEntry.getConversationId()
+               );
+            }
 
-                 @Override
-                 public void onError(Throwable t) {}
-              }
+            @Override
+            public void onError(Throwable t) {}
+         }
       );
 
       return messageEntry;
    }
-
-
 }

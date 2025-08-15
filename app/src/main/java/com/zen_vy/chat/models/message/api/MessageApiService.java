@@ -1,7 +1,6 @@
 package com.zen_vy.chat.models.message.api;
 
 import com.zen_vy.chat.models.message.entity.MessageEntry;
-import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,7 +31,6 @@ public interface MessageApiService {
       @Header("Authorization") String token
    );
 
-
    @GET("message/new-message")
    Call<List<MessageEntry>> getNewMessages(
       @Header("Authorization") String token
@@ -52,9 +50,12 @@ public interface MessageApiService {
 
    @GET("message/get-messages/not-delivered")
    Call<List<MessageEntry>> getNotDeliveredMessages(
-           @Header("Authorization") String token
+      @Header("Authorization") String token
    );
 
    @PATCH("message/mark-as-downloaded")
-   Call<Void> markMessagesAsDownloaded(@Header("Authorization") String token, @Body List<String> messageUuids);
+   Call<Void> markMessagesAsDownloaded(
+      @Header("Authorization") String token,
+      @Body List<String> messageUuids
+   );
 }

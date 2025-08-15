@@ -2,13 +2,11 @@ package com.zen_vy.chat.models.message;
 
 import android.content.Context;
 import com.zen_vy.chat.activity.base.BaseService;
-import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.message.repository.MessageRepository;
 import com.zen_vy.chat.models.message.repository.MessageRepositoryImpl;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.websocket.WebSocketService;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONException;
@@ -151,82 +149,97 @@ public class MessageService extends BaseService {
       );
    }
 
-   public void getPendingMessages(){
-       messageRepository.getPendingMessages(currentUser.getToken(), new Callback<List<MessageEntry>>() {
-           @Override
-           public void onResponse(Call<List<MessageEntry>> call, Response<List<MessageEntry>> response) {
-                if(response.isSuccessful()){
-                   List<MessageEntry> messages = response.body();
-                   if (!messages.isEmpty()){
-                       List<String> uuids = new ArrayList<>();
-                       for (MessageEntry messageEntry : messages){
-                           messageDatabaseUtil.insertMessageEntry(messageEntry);
-                           uuids.add(messageEntry.getUuId());
-                       }
-                       messageRepository.setMessageDownloaded(currentUser.getToken(), uuids, new Callback<Void>() {
+   public void getPendingMessages() {
+      messageRepository.getPendingMessages(
+         currentUser.getToken(),
+         new Callback<List<MessageEntry>>() {
+            @Override
+            public void onResponse(
+               Call<List<MessageEntry>> call,
+               Response<List<MessageEntry>> response
+            ) {
+               if (response.isSuccessful()) {
+                  List<MessageEntry> messages = response.body();
+                  if (!messages.isEmpty()) {
+                     List<String> uuids = new ArrayList<>();
+                     for (MessageEntry messageEntry : messages) {
+                        messageDatabaseUtil.insertMessageEntry(messageEntry);
+                        uuids.add(messageEntry.getUuId());
+                     }
+                     messageRepository.setMessageDownloaded(
+                        currentUser.getToken(),
+                        uuids,
+                        new Callback<Void>() {
                            @Override
-                           public void onResponse(Call<Void> call, Response<Void> response) {
-                               Timber.i("%s are set to downloaded", uuids.toString());
+                           public void onResponse(
+                              Call<Void> call,
+                              Response<Void> response
+                           ) {
+                              Timber.i(
+                                 "%s are set to downloaded",
+                                 uuids.toString()
+                              );
                            }
 
                            @Override
-                           public void onFailure(Call<Void> call, Throwable throwable) {
+                           public void onFailure(
+                              Call<Void> call,
+                              Throwable throwable
+                           ) {}
+                        }
+                     );
+                  }
+               }
+            }
 
-                           }
-                       });
-                   }
-                }
-           }
-
-           @Override
-           public void onFailure(Call<List<MessageEntry>> call, Throwable throwable) {
-
-           }
-       });
+            @Override
+            public void onFailure(
+               Call<List<MessageEntry>> call,
+               Throwable throwable
+            ) {}
+         }
+      );
    }
 
    public void getMessagesByConversationId(
       Long conversationId,
       final MessageCallback<List<MessageEntry>> callback
    ) {
+      getPendingMessages();
 
-       getPendingMessages();
+      List<MessageEntry> localMessages =
+         messageDatabaseUtil.getAllMessageEntriesByConversationId(
+            conversationId
+         );
+      if (localMessages.isEmpty()) {
+         messageRepository.getMessages(
+            currentUser.getToken(),
+            conversationId,
+            new Callback<List<MessageEntry>>() {
+               @Override
+               public void onResponse(
+                  Call<List<MessageEntry>> call,
+                  Response<List<MessageEntry>> response
+               ) {
+                  if (response.isSuccessful()) {
+                     callback.onSuccess(response.body());
+                  } else {
+                     callback.onError(
+                        new Throwable("Failed to update contact")
+                     );
+                  }
+               }
 
-       List<MessageEntry> localMessages =
-               messageDatabaseUtil.getAllMessageEntriesByConversationId(
-                       conversationId
-               );
-       if (!localMessages.isEmpty()) {
-           messageRepository.getMessages(
-                   currentUser.getToken(),
-                   conversationId,
-                   new Callback<List<MessageEntry>>() {
-                       @Override
-                       public void onResponse(
-                               Call<List<MessageEntry>> call,
-                               Response<List<MessageEntry>> response
-                       ) {
-                           if (response.isSuccessful()) {
-                               callback.onSuccess(response.body());
-                           } else {
-                               callback.onError(new Throwable("Failed to update contact"));
-                           }
-                       }
-
-                       @Override
-                       public void onFailure(
-                               Call<List<MessageEntry>> call,
-                               Throwable throwable
-                       ) {
-                           callback.onError(throwable);
-                       }
-                   }
-           );
-       }
-
-
-
-
+               @Override
+               public void onFailure(
+                  Call<List<MessageEntry>> call,
+                  Throwable throwable
+               ) {
+                  callback.onError(throwable);
+               }
+            }
+         );
+      }
    }
 
    private boolean _isMessageExists(String messageUuid) {

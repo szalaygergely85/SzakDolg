@@ -1,6 +1,9 @@
 package com.zen_vy.chat.testhelpers;
 
 import android.content.Context;
+import android.view.View;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.matcher.BoundedMatcher;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
@@ -9,8 +12,9 @@ import com.zen_vy.chat.models.user.service.UserService;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.RandomUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
-
 import java.io.IOException;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 public class TestUtil {
 
@@ -97,42 +101,78 @@ public class TestUtil {
       );
    }
 
-   public static MessageEntry getRandomMessage(Long conversationId, Long userId){
-       return getRandomMessage(conversationId, userId, MessageTypeConstants.MESSAGE);
+   public static MessageEntry getRandomMessage(
+      Long conversationId,
+      Long userId
+   ) {
+      return getRandomMessage(
+         conversationId,
+         userId,
+         MessageTypeConstants.MESSAGE
+      );
    }
 
-    public static MessageEntry getRandomMessage(long conversationId, Long userId, int type) {
-        return new MessageEntry(
-                conversationId,
-                userId,
-                DateTimeUtil.now(),
-                RandomUtil.getRandomString(15),
-                type,
-                RandomUtil.getRandomString(5)
-        );
-    }
+   public static MessageEntry getRandomMessage(
+      long conversationId,
+      Long userId,
+      int type
+   ) {
+      return getRandomMessage(conversationId, userId, DateTimeUtil.now(), type);
+   }
+
+   public static MessageEntry getRandomMessage(
+      long conversationId,
+      Long userId,
+      long timestamp,
+      int type
+   ) {
+      return new MessageEntry(
+         conversationId,
+         userId,
+         timestamp,
+         RandomUtil.getRandomString(15),
+         type,
+         RandomUtil.getRandomString(5)
+      );
+   }
 
    public static User getRandomUser() throws IOException {
-       return
-               new User(
-                       RandomUtil.getRandomString(5),
-                       TestUtil.createRandomEmail(),
-                       RandomUtil.getRandomString(5),
-                       RandomUtil.getRandomString(5),
-                       null,
-                       null,
-                       RandomUtil.getRandomLong(),
-                       RandomUtil.getRandomString(5)
+      return getRandomUser(
+         TestUtil.createRandomEmail(),
+         RandomUtil.getRandomString(5)
+      );
+   }
 
-       );
+   public static User getRandomUser(String email, String password)
+      throws IOException {
+      return new User(
+         RandomUtil.getRandomString(5),
+         email,
+         password,
+         RandomUtil.getRandomString(5),
+         null,
+         null,
+         RandomUtil.getRandomLong(),
+         RandomUtil.getRandomString(5)
+      );
    }
 
    public static void performLogin(Context context)
       throws InterruptedException {
+      performLogin(context, TEST_EMAIL, TEST_PASSWORD);
+   }
+
+   public static void addConversation() {}
+
+   public static void performLogin(
+      Context context,
+      String email,
+      String password
+   ) throws InterruptedException {
       UserService userService = new UserService(context);
       userService.getTokenByPasswordAndEmail(
-         TEST_PASSWORD,
-         TEST_EMAIL,
+         password,
+         email,
          new UserService.LoginCallback<User>() {
             @Override
             public void onSuccess(User data) {
@@ -159,7 +199,36 @@ public class TestUtil {
       Thread.sleep(1000);
    }
 
-   public static void addConversation() {}
+   public static User createRandomUserAndLogIn(Context context)
+      throws InterruptedException, IOException {
+      String email = TestUtil.createRandomEmail();
+      String password = RandomUtil.getRandomString(6);
+      User user = ApiHelper.addUser(getRandomUser(email, password));
+      performLogin(context, email, password);
+      return user;
+   }
 
+   public static Matcher<View> atPosition(
+      int position,
+      Matcher<View> itemMatcher
+   ) {
+      return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
+         @Override
+         public void describeTo(Description description) {
+            description.appendText("has item at position " + position + ": ");
+            itemMatcher.describeTo(description);
+         }
 
+         @Override
+         protected boolean matchesSafely(RecyclerView recyclerView) {
+            RecyclerView.ViewHolder viewHolder =
+               recyclerView.findViewHolderForAdapterPosition(position);
+            if (viewHolder == null) {
+               // Item not displayed
+               return false;
+            }
+            return itemMatcher.matches(viewHolder.itemView);
+         }
+      };
+   }
 }

@@ -1,10 +1,11 @@
-package com.zen_vy.chat.DTO;
+package com.zen_vy.chat.models.contacts.dto;
 
 import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.conversation.entity.ConversationParticipant;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationDTO implements Serializable {
@@ -17,14 +18,39 @@ public class ConversationDTO implements Serializable {
 
    public ConversationDTO(
       Conversation conversation,
-      List<ConversationParticipant> participants,
+      List<ConversationParticipant> conversationParticipants,
       List<User> users,
       MessageEntry messageEntry
    ) {
       this.conversation = conversation;
-      this.participants = participants;
       this.users = users;
       this.messageEntry = messageEntry;
+
+      this.participants = conversationParticipants;
+   }
+
+   public ConversationDTO(
+      Conversation conversation,
+      List<User> users,
+      MessageEntry messageEntry
+   ) {
+      new ConversationDTO(
+         conversation,
+         getParticipantList(),
+         users,
+         messageEntry
+      );
+   }
+
+   private List<ConversationParticipant> getParticipantList() {
+      List<ConversationParticipant> conversationParticipantList =
+         new ArrayList<>();
+      for (User user : users) {
+         conversationParticipantList.add(
+            new ConversationParticipant(getConversationId(), user.getUserId())
+         );
+      }
+      return conversationParticipantList;
    }
 
    public ConversationDTO() {}
