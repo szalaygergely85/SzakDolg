@@ -104,8 +104,23 @@ public class ChatActivityTest {
 
             String message = RandomUtil.getRandomString(5);
             _sendMessage(message);
+            long timestamp = System.currentTimeMillis();
 
-            //TODO BUG found, doesnt add new date before first message...
+            onView(withId(R.id.recViewChat))
+                    .check(
+                            matches(
+                                    TestUtil.atPosition(
+                                            0,
+                                            hasDescendant(
+                                                    withText(
+                                                            DateTimeUtil.toShortDateFormat(timestamp)
+                                                    )
+                                            )
+                                    )
+                            )
+                    );
+
+
 
             onView(withId(R.id.recViewChat))
                     .check(
@@ -113,24 +128,32 @@ public class ChatActivityTest {
                                     TestUtil.atPosition(
                                             1,
                                             hasDescendant(
-                                                    withText(
-                                                            DateTimeUtil.toShortDateFormat(System.currentTimeMillis())
+                                                    allOf(
+                                                            withId(R.id.chatTextFrMe),
+                                                            withText(message) // your expected message
                                                     )
                                             )
                                     )
                             )
                     );
 
+
+
+
+
+
             onView(withId(R.id.recViewChat))
                     .check(
                             matches(
                                     TestUtil.atPosition(
-                                            2,
+                                            1,
                                             hasDescendant(
                                                     allOf(
-                                                            withId(R.id.chatTextFrMe),
-                                                            withText(message) // your expected message
+                                                            withId(R.id.chatTextTimeOut),
+                                                            withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE),
+                                                            withText(DateTimeUtil.getHHmm(timestamp))
                                                     )
+
                                             )
                                     )
                             )
@@ -157,22 +180,33 @@ public class ChatActivityTest {
                     .check(
                             matches(
                                     TestUtil.atPosition(
-                                            1,
+                                            2,
                                             hasDescendant(
                                                     allOf(
                                                             withId(R.id.chatTextTimeOut),
-                                                            withEffectiveVisibility(ViewMatchers.Visibility.GONE)
+                                                            withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE),
+                                                            withText(DateTimeUtil.getHHmm(timestamp))
                                                     )
+
                                             )
                                     )
                             )
                     );
+
             _sendMessage("");
 
-            onView(TestUtil.atPosition(2, ViewMatchers.isDisplayed()))
+            onView(TestUtil.atPosition(3, ViewMatchers.isDisplayed()))
                     .check(doesNotExist());
 
+            for (int i=0; i<20; i++){
+                _sendMessage(RandomUtil.getRandomString(5));
+            }
 
+            onView(withId(R.id.recViewChat))
+                    .check(matches(TestUtil.atPosition(
+                            22,
+                            isDisplayed()
+                    )));
 
 
         } catch (IOException e) {
