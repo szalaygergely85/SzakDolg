@@ -10,8 +10,7 @@ public class Device {
 
    public Device() {}
 
-   public Device(long deviceId, long userId, String deviceToken) {
-      this.deviceId = deviceId;
+   public Device(long userId, String deviceToken) {
       this.userId = userId;
       this.deviceToken = deviceToken;
    }

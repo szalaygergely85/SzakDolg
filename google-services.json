@@ -7,75 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:207775361489:android:94391fab6282ed9df1d8f0",
+        "mobilesdk_app_id": "1:207775361489:android:71ed3b02415fbad9f1d8f0",
         "android_client_info": {
-          "package_name": "com.example.hello"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "207775361489-58uoc3u4c42jar507eaq8ilit50n584p.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAdTCU7cX3CmnV7xmlxuLnBTGD7BiED7yg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "207775361489-58uoc3u4c42jar507eaq8ilit50n584p.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:207775361489:android:4b1b809a99e1f167f1d8f0",
-        "android_client_info": {
-          "package_name": "com.example.messenger"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "207775361489-dt0ivch7n6qgav3qk77dqair2u0q6r3f.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.messenger",
-            "certificate_hash": "abe3908ff9e0415ed05f0f987003011bbe94e8fe"
-          }
-        },
-        {
-          "client_id": "207775361489-58uoc3u4c42jar507eaq8ilit50n584p.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAdTCU7cX3CmnV7xmlxuLnBTGD7BiED7yg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "207775361489-58uoc3u4c42jar507eaq8ilit50n584p.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:207775361489:android:c25c55f6e695da68f1d8f0",
-        "android_client_info": {
-          "package_name": "com.example.szakdolg"
+          "package_name": "com.zen_vy.chat"
         }
       },
       "oauth_client": [

@@ -29,6 +29,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.base.BaseActivity;
 import com.zen_vy.chat.activity.contacts.activity.ContactsActivity;
@@ -40,6 +41,8 @@ import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.conversation.service.ConversationService;
+import com.zen_vy.chat.models.device.Device;
+import com.zen_vy.chat.models.device.DeviceService;
 import com.zen_vy.chat.models.image.util.ImageUtil;
 import com.zen_vy.chat.models.message.MessageService;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
@@ -72,6 +75,8 @@ public class MainActivity extends BaseActivity {
       _setBottomNavMenu();
 
       conversationService = new ConversationService(this, currentUser);
+
+      deviceService = new DeviceService(this, currentUser);
 
       mainAdapter = new MainAdapter(this, currentUser, messageBoardRecView);
 
@@ -127,6 +132,8 @@ public class MainActivity extends BaseActivity {
       _setListeners();
 
       _setNightMode();
+
+      _sendFCMDeviceToken();
 
       conversationService.getAllConversations(
          new ConversationService.ConversationCallback<List<ConversationDTO>>() {
@@ -185,6 +192,36 @@ public class MainActivity extends BaseActivity {
       } else {
          profileImageHeader.setImageResource(R.drawable.ic_blank_profile);
       }
+   }
+
+   private void _sendFCMDeviceToken() {
+      FirebaseMessaging
+         .getInstance()
+         .getToken()
+         .addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+               Timber.w(
+                  task.getException(),
+                  "Fetching FCM registration token failed"
+               );
+            }
+            String fcmToken = task.getResult();
+
+            Device device = new Device(currentUser.getUserId(), fcmToken);
+
+            deviceService.addDevice(
+               device,
+               new DeviceService.DeviceCallback<Device>() {
+                  @Override
+                  public void onSuccess(Device data) {
+                     Timber.i("Fetching FCM registration token is success");
+                  }
+
+                  @Override
+                  public void onError(Throwable t) {}
+               }
+            );
+         });
    }
 
    private void _setNightMode() {
@@ -430,6 +467,8 @@ public class MainActivity extends BaseActivity {
    }
 
    private List<ConversationDTO> conversationDTOList = new ArrayList<>();
+
+   private DeviceService deviceService;
    private DrawerLayout drawerLayout;
    private LinearLayout emptyLayout;
    private MainAdapter mainAdapter;

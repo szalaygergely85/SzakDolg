@@ -34,6 +34,8 @@ import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.util.UserUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.UUIDUtil;
+import com.zen_vy.chat.websocket.WebSocketService;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -60,6 +62,7 @@ public class ChatActivity extends BaseActivity {
       _getIntentExtras();
 
       _setListeners();
+
 
       adapter = new ChatAdapter(this, currentUser, chatRecView);
 
@@ -124,7 +127,12 @@ public class ChatActivity extends BaseActivity {
    protected void onStart() {
       super.onStart();
 
-      //TODO need to check here already downloaded messages.
+
+      if (!WebSocketService.isServiceRunning()) {
+         _startingWebSocketService();
+      }
+
+
       setMessagesRead();
    }
 
@@ -343,7 +351,7 @@ public class ChatActivity extends BaseActivity {
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               String content = edtMess.getText().toString();
+               String content = String.valueOf(edtMess.getText());
                if (!content.isEmpty()) {
                   try {
                      MessageEntry messageEntry = _sendMessage(
@@ -399,6 +407,13 @@ public class ChatActivity extends BaseActivity {
       }
    }
 
+   private void _startingWebSocketService() {
+      Intent serviceIntent = new Intent(this, WebSocketService.class);
+      serviceIntent.putExtra(IntentConstants.CURRENT_USER, currentUser);
+      serviceIntent.putExtra(IntentConstants.USER_TOKEN, token);
+      startService(serviceIntent);
+   }
+
    private ChatAdapter adapter;
    private Long conversationId;
    private RecyclerView chatRecView;
@@ -413,7 +428,7 @@ public class ChatActivity extends BaseActivity {
    private Uri imageUri;
    private MessageService messageService;
 
-   private List<Object> messageEntries;
+   private List<Object> messageEntries = new ArrayList<>();
 
    private ArrayList<String> imageUrls = new ArrayList<>();
 

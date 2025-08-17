@@ -202,7 +202,6 @@ public class UserDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
       }
 
       return null;

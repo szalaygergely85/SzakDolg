@@ -211,7 +211,7 @@ public class MessageService extends BaseService {
          messageDatabaseUtil.getAllMessageEntriesByConversationId(
             conversationId
          );
-      if (localMessages.isEmpty()) {
+     // if (localMessages.isEmpty()) {
          messageRepository.getMessages(
             currentUser.getToken(),
             conversationId,
@@ -239,7 +239,7 @@ public class MessageService extends BaseService {
                }
             }
          );
-      }
+      //}
    }
 
    private boolean _isMessageExists(String messageUuid) {
