@@ -1,7 +1,6 @@
 package com.zen_vy.chat.websocket;
 
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -92,51 +91,23 @@ public class WebSocketService extends Service {
    }
 
    @Override
-   public void onTaskRemoved(Intent rootIntent) {
-      super.onTaskRemoved(rootIntent);
-
-      isRunning = false;
-      // Restart the service
-      Intent restartServiceIntent = new Intent(
-         getApplicationContext(),
-         WebSocketService.class
-      );
-      restartServiceIntent.setPackage(getPackageName());
-      startForegroundService(restartServiceIntent);
-   }
-
-   @Override
    public IBinder onBind(Intent intent) {
-      return binder;
+      return null;
    }
 
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
-      startForegroundNotification();
-
       userToken = intent.getStringExtra(IntentConstants.USER_TOKEN);
       currentUser =
       (User) intent.getSerializableExtra(IntentConstants.CURRENT_USER);
 
       connectToWebSocket();
+
       return START_STICKY;
    }
 
    public void sendMessage(String message) {
       webSocket.send(message);
-   }
-
-   private void startForegroundNotification() {
-      createNotificationChannel();
-      Notification notification = new NotificationCompat.Builder(
-         this,
-         "SERVICE_CHANNEL"
-      ) // <-- FIXED HERE
-         .setContentTitle("WebSocket Service")
-         .setContentText("Maintaining WebSocket connection")
-         .setSmallIcon(R.drawable.ic_chat)
-         .build();
-      startForeground(1, notification);
    }
 
    private void createNotificationChannel() {
@@ -192,8 +163,6 @@ public class WebSocketService extends Service {
                   isConnected = true;
                   isConnecting = false;
                   startPingPong();
-                  // Connection established
-
                }
 
                @Override

@@ -377,7 +377,7 @@ public class MainActivity extends BaseActivity {
       Intent serviceIntent = new Intent(this, WebSocketService.class);
       serviceIntent.putExtra(IntentConstants.CURRENT_USER, currentUser);
       serviceIntent.putExtra(IntentConstants.USER_TOKEN, token);
-      startForegroundService(serviceIntent);
+      startService(serviceIntent);
    }
 
    private void _validateConversation(List<ConversationDTO> conversationList) {
