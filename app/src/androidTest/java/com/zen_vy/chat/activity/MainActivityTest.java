@@ -1,9 +1,6 @@
 package com.zen_vy.chat.activity;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollTo;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
@@ -27,7 +24,6 @@ import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.testhelpers.ApiHelper;
 import com.zen_vy.chat.testhelpers.TestUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
-import com.zen_vy.chat.util.RandomUtil;
 import com.zen_vy.chat.websocket.WebSocketService;
 import java.io.IOException;
 import java.util.Arrays;
@@ -85,7 +81,6 @@ public class MainActivityTest {
       onView(withId(R.id.btnNewConv)).check(matches(isDisplayed()));
       onView(withId(R.id.bottom_nav_main)).check(matches(isDisplayed()));
    }
-
 
    @Test
    public void testConversationWithTwoParticipant() throws IOException {
@@ -347,6 +342,4 @@ public class MainActivityTest {
          );
       }
    }
-
-
 }

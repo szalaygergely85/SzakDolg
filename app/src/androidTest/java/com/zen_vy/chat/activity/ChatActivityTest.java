@@ -12,7 +12,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibilit
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.chat.activity.ChatActivity;
-import com.zen_vy.chat.activity.main.MainActivity;
 import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
@@ -34,7 +32,6 @@ import com.zen_vy.chat.testhelpers.ApiHelper;
 import com.zen_vy.chat.testhelpers.TestUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.RandomUtil;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,145 +77,133 @@ public class ChatActivityTest {
       ApiHelper.deleteUser(testUser3.getEmail(), context);
    }
 
-    @Test
-    public void testSendMessages(){
-        ConversationDTO conversationDTO = new ConversationDTO();
+   @Test
+   public void testSendMessages() {
+      ConversationDTO conversationDTO = new ConversationDTO();
 
-        try {
-            List<Long> userIds = Arrays.asList(
-                    testUser.getUserId(),
-                    testUser2.getUserId()
+      try {
+         List<Long> userIds = Arrays.asList(
+            testUser.getUserId(),
+            testUser2.getUserId()
+         );
+         conversationDTO =
+         ApiHelper.addConversationByUserIds(userIds, testUser.getToken());
+
+         Intent intent = new Intent(
+            ApplicationProvider.getApplicationContext(),
+            ChatActivity.class
+         );
+         intent.putExtra(IntentConstants.CONVERSATION_DTO, conversationDTO);
+
+         ActivityScenario<ChatActivity> scenario = ActivityScenario.launch(
+            intent
+         );
+
+         String message = RandomUtil.getRandomString(5);
+         _sendMessage(message);
+         long timestamp = System.currentTimeMillis();
+
+         onView(withId(R.id.recViewChat))
+            .check(
+               matches(
+                  TestUtil.atPosition(
+                     0,
+                     hasDescendant(
+                        withText(DateTimeUtil.toShortDateFormat(timestamp))
+                     )
+                  )
+               )
             );
-            conversationDTO =
-                    ApiHelper.addConversationByUserIds(userIds, testUser.getToken());
 
-            Intent intent = new Intent(
-                    ApplicationProvider.getApplicationContext(),
-                    ChatActivity.class
+         onView(withId(R.id.recViewChat))
+            .check(
+               matches(
+                  TestUtil.atPosition(
+                     1,
+                     hasDescendant(
+                        allOf(
+                           withId(R.id.chatTextFrMe),
+                           withText(message) // your expected message
+                        )
+                     )
+                  )
+               )
             );
-            intent.putExtra(IntentConstants.CONVERSATION_DTO, conversationDTO);
 
-            ActivityScenario<ChatActivity> scenario = ActivityScenario.launch(
-                    intent
+         onView(withId(R.id.recViewChat))
+            .check(
+               matches(
+                  TestUtil.atPosition(
+                     1,
+                     hasDescendant(
+                        allOf(
+                           withId(R.id.chatTextTimeOut),
+                           withEffectiveVisibility(
+                              ViewMatchers.Visibility.VISIBLE
+                           ),
+                           withText(DateTimeUtil.getHHmm(timestamp))
+                        )
+                     )
+                  )
+               )
             );
 
-            String message = RandomUtil.getRandomString(5);
-            _sendMessage(message);
-            long timestamp = System.currentTimeMillis();
+         _sendMessage(RandomUtil.getRandomString(100000));
 
-            onView(withId(R.id.recViewChat))
-                    .check(
-                            matches(
-                                    TestUtil.atPosition(
-                                            0,
-                                            hasDescendant(
-                                                    withText(
-                                                            DateTimeUtil.toShortDateFormat(timestamp)
-                                                    )
-                                            )
-                                    )
-                            )
-                    );
-
-
-
-            onView(withId(R.id.recViewChat))
-                    .check(
-                            matches(
-                                    TestUtil.atPosition(
-                                            1,
-                                            hasDescendant(
-                                                    allOf(
-                                                            withId(R.id.chatTextFrMe),
-                                                            withText(message) // your expected message
-                                                    )
-                                            )
-                                    )
-                            )
-                    );
-
-
-
-
-
-
-            onView(withId(R.id.recViewChat))
-                    .check(
-                            matches(
-                                    TestUtil.atPosition(
-                                            1,
-                                            hasDescendant(
-                                                    allOf(
-                                                            withId(R.id.chatTextTimeOut),
-                                                            withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE),
-                                                            withText(DateTimeUtil.getHHmm(timestamp))
-                                                    )
-
-                                            )
-                                    )
-                            )
-                    );
-
-            _sendMessage(RandomUtil.getRandomString(100000));
-
-            onView(withId(R.id.recViewChat))
-                    .check(
-                            matches(
-                                    TestUtil.atPosition(
-                                            1,
-                                            hasDescendant(
-                                                    allOf(
-                                                            withId(R.id.chatTextTimeOut),
-                                                            withEffectiveVisibility(ViewMatchers.Visibility.GONE)
-                                                    )
-                                            )
-                                    )
-                            )
-                    );
-
-            onView(withId(R.id.recViewChat))
-                    .check(
-                            matches(
-                                    TestUtil.atPosition(
-                                            2,
-                                            hasDescendant(
-                                                    allOf(
-                                                            withId(R.id.chatTextTimeOut),
-                                                            withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE),
-                                                            withText(DateTimeUtil.getHHmm(timestamp))
-                                                    )
-
-                                            )
-                                    )
-                            )
-                    );
-
-            _sendMessage("");
-
-            onView(TestUtil.atPosition(3, ViewMatchers.isDisplayed()))
-                    .check(doesNotExist());
-
-            for (int i=0; i<20; i++){
-                _sendMessage(RandomUtil.getRandomString(5));
-            }
-
-            onView(withId(R.id.recViewChat))
-                    .check(matches(TestUtil.atPosition(
-                            22,
-                            isDisplayed()
-                    )));
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            ApiHelper.deleteConversation(
-                    conversationDTO.getConversationId(),
-                    testUser,
-                    context
+         onView(withId(R.id.recViewChat))
+            .check(
+               matches(
+                  TestUtil.atPosition(
+                     1,
+                     hasDescendant(
+                        allOf(
+                           withId(R.id.chatTextTimeOut),
+                           withEffectiveVisibility(ViewMatchers.Visibility.GONE)
+                        )
+                     )
+                  )
+               )
             );
-        }
-    }
+
+         onView(withId(R.id.recViewChat))
+            .check(
+               matches(
+                  TestUtil.atPosition(
+                     2,
+                     hasDescendant(
+                        allOf(
+                           withId(R.id.chatTextTimeOut),
+                           withEffectiveVisibility(
+                              ViewMatchers.Visibility.VISIBLE
+                           ),
+                           withText(DateTimeUtil.getHHmm(timestamp))
+                        )
+                     )
+                  )
+               )
+            );
+
+         _sendMessage("");
+
+         onView(TestUtil.atPosition(3, ViewMatchers.isDisplayed()))
+            .check(doesNotExist());
+
+         for (int i = 0; i < 20; i++) {
+            _sendMessage(RandomUtil.getRandomString(5));
+         }
+
+         onView(withId(R.id.recViewChat))
+            .check(matches(TestUtil.atPosition(22, isDisplayed())));
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      } finally {
+         ApiHelper.deleteConversation(
+            conversationDTO.getConversationId(),
+            testUser,
+            context
+         );
+      }
+   }
 
    @Test
    public void testEmptyUiElements() throws IOException {
@@ -269,10 +254,10 @@ public class ChatActivityTest {
          conversationDTO =
          ApiHelper.addConversationByUserIds(userIds, testUser.getToken());
 
-
-         _setUpMessagesForTwo(conversationDTO.getConversationId(), messageEntries);
-
-
+         _setUpMessagesForTwo(
+            conversationDTO.getConversationId(),
+            messageEntries
+         );
 
          conversationDTO.setMessageEntry(messageEntries.getFirst());
 
@@ -286,14 +271,11 @@ public class ChatActivityTest {
             intent
          );
 
-          _assertsForTwo(messageEntries);
-
-
-
+         _assertsForTwo(messageEntries);
       } catch (Exception e) {
          throw new RuntimeException(e);
       } finally {
-        // ApiHelper.deleteMessage(lastMessage, context, testUser);
+         // ApiHelper.deleteMessage(lastMessage, context, testUser);
          ApiHelper.deleteConversation(
             conversationDTO.getConversationId(),
             testUser,
@@ -302,158 +284,176 @@ public class ChatActivityTest {
       }
    }
 
-    private void _assertsForTwo(List<MessageEntry> messageEntries) {
-
-        onView(withId(R.id.recViewChat))
-                .check(
-                        matches(
-                                TestUtil.atPosition(
-                                        0,
-                                        hasDescendant(
-                                                withText(
-                                                        DateTimeUtil.toShortDateFormat(messageEntries.getFirst().getTimestamp())
-                                                )
-                                        )
-                                )
+   private void _assertsForTwo(List<MessageEntry> messageEntries) {
+      onView(withId(R.id.recViewChat))
+         .check(
+            matches(
+               TestUtil.atPosition(
+                  0,
+                  hasDescendant(
+                     withText(
+                        DateTimeUtil.toShortDateFormat(
+                           messageEntries.getFirst().getTimestamp()
                         )
-                );
+                     )
+                  )
+               )
+            )
+         );
 
-        onView(withId(R.id.recViewChat))
-                .check(
-                        matches(
-                                TestUtil.atPosition(
-                                        3,
-                                        hasDescendant(
-                                                withText(
-                                                        DateTimeUtil.toShortDateFormat(messageEntries.get(2).getTimestamp())
-                                                )
-                                        )
-                                )
+      onView(withId(R.id.recViewChat))
+         .check(
+            matches(
+               TestUtil.atPosition(
+                  3,
+                  hasDescendant(
+                     withText(
+                        DateTimeUtil.toShortDateFormat(
+                           messageEntries.get(2).getTimestamp()
                         )
-                );
+                     )
+                  )
+               )
+            )
+         );
 
-        onView(withId(R.id.recViewChat))
-                .check(
-                        matches(
-                                TestUtil.atPosition(
-                                        6,
-                                        hasDescendant(
-                                                withText(
-                                                        DateTimeUtil.toShortDateFormat(messageEntries.get(4).getTimestamp())
-                                                )
-                                        )
-                                )
+      onView(withId(R.id.recViewChat))
+         .check(
+            matches(
+               TestUtil.atPosition(
+                  6,
+                  hasDescendant(
+                     withText(
+                        DateTimeUtil.toShortDateFormat(
+                           messageEntries.get(4).getTimestamp()
                         )
-                );
+                     )
+                  )
+               )
+            )
+         );
 
-        onView(withId(R.id.recViewChat))
-                .check(
-                        matches(
-                                TestUtil.atPosition(
-                                        1,
-                                        hasDescendant(
-                                                allOf(
-                                                        withId(R.id.chatTextFrMe),
-                                                        withText(messageEntries.getFirst().getContentEncrypted()) // your expected message
-                                                )
-                                        )
-                                )
+      onView(withId(R.id.recViewChat))
+         .check(
+            matches(
+               TestUtil.atPosition(
+                  1,
+                  hasDescendant(
+                     allOf(
+                        withId(R.id.chatTextFrMe),
+                        withText(
+                           messageEntries.getFirst().getContentEncrypted()
+                        ) // your expected message
+                     )
+                  )
+               )
+            )
+         );
+
+      onView(withId(R.id.recViewChat))
+         .check(
+            matches(
+               TestUtil.atPosition(
+                  1,
+                  hasDescendant(
+                     allOf(
+                        withId(R.id.chatTextTimeOut),
+                        withEffectiveVisibility(ViewMatchers.Visibility.GONE)
+                     )
+                  )
+               )
+            )
+         );
+
+      onView(withId(R.id.recViewChat))
+         .check(
+            matches(
+               TestUtil.atPosition(
+                  2,
+                  hasDescendant(
+                     allOf(
+                        withId(R.id.chatTextTimeOut),
+                        withEffectiveVisibility(
+                           ViewMatchers.Visibility.VISIBLE
+                        ),
+                        withText(
+                           DateTimeUtil.getHHmm(
+                              messageEntries.get(1).getTimestamp()
+                           )
                         )
-                );
-
-        onView(withId(R.id.recViewChat))
-                .check(
-                        matches(
-                                TestUtil.atPosition(
-                                        1,
-                                        hasDescendant(
-                                                allOf(
-                                                        withId(R.id.chatTextTimeOut),
-                                                        withEffectiveVisibility(ViewMatchers.Visibility.GONE)
-                                                )
-                                        )
-                                )
-                        )
-                );
-
-        onView(withId(R.id.recViewChat))
-                .check(
-                        matches(
-                                TestUtil.atPosition(
-                                        2,
-                                        hasDescendant(
-                                                allOf(
-                                                        withId(R.id.chatTextTimeOut),
-                                                        withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE),
-                                                        withText(DateTimeUtil.getHHmm(messageEntries.get(1).getTimestamp()))
-                                                )
-                                        )
-                                )
-                        )
-                );
-    }
-
-    private void _setUpMessagesForTwo(long conversationId, List<MessageEntry> messageEntries) throws IOException {
-
-      messageEntries.add(
-              ApiHelper.addMessage(
-                      TestUtil.getRandomMessage(
-                              conversationId,
-                              testUser.getUserId(),
-                              DateTimeUtil.toMillis(2025, 8, 12, 12, 1),
-                              MessageTypeConstants.MESSAGE
-                      ),
-                      testUser.getToken()
-              ));
-      messageEntries.add(
-              ApiHelper.addMessage(
-                      TestUtil.getRandomMessage(
-                              conversationId,
-                              testUser.getUserId(),
-                              DateTimeUtil.toMillis(2025, 8, 12, 12, 2),
-                              MessageTypeConstants.MESSAGE
-                      ),
-                      testUser.getToken()
-              ));
-      messageEntries.add(
-              ApiHelper.addMessage(
-                      TestUtil.getRandomMessage(
-                              conversationId,
-                              testUser.getUserId(),
-                              DateTimeUtil.toMillis(2025, 8, 13, 12, 5),
-                              MessageTypeConstants.MESSAGE
-                      ),
-                      testUser.getToken()
-              ));
-      messageEntries.add(
-              ApiHelper.addMessage(
-                      TestUtil.getRandomMessage(
-                              conversationId,
-                              testUser2.getUserId(),
-                              DateTimeUtil.toMillis(2025, 8, 13, 12, 6),
-                              MessageTypeConstants.MESSAGE
-                      ),
-                      testUser.getToken()
-              ));
-
-       messageEntries.add(
-               ApiHelper.addMessage(
-                       TestUtil.getRandomMessage(
-                               conversationId,
-                               testUser2.getUserId(),
-                               DateTimeUtil.toMillis(2025, 8, 14, 12, 6),
-                               MessageTypeConstants.MESSAGE
-                       ),
-                       testUser.getToken()
-               ));
-
+                     )
+                  )
+               )
+            )
+         );
    }
 
-    private void _sendMessage(String text){
-        onView(withId(R.id.edtChatMes))
-                .perform(replaceText(text), closeSoftKeyboard());
+   private void _setUpMessagesForTwo(
+      long conversationId,
+      List<MessageEntry> messageEntries
+   ) throws IOException {
+      messageEntries.add(
+         ApiHelper.addMessage(
+            TestUtil.getRandomMessage(
+               conversationId,
+               testUser.getUserId(),
+               DateTimeUtil.toMillis(2025, 8, 12, 12, 1),
+               MessageTypeConstants.MESSAGE
+            ),
+            testUser.getToken()
+         )
+      );
+      messageEntries.add(
+         ApiHelper.addMessage(
+            TestUtil.getRandomMessage(
+               conversationId,
+               testUser.getUserId(),
+               DateTimeUtil.toMillis(2025, 8, 12, 12, 2),
+               MessageTypeConstants.MESSAGE
+            ),
+            testUser.getToken()
+         )
+      );
+      messageEntries.add(
+         ApiHelper.addMessage(
+            TestUtil.getRandomMessage(
+               conversationId,
+               testUser.getUserId(),
+               DateTimeUtil.toMillis(2025, 8, 13, 12, 5),
+               MessageTypeConstants.MESSAGE
+            ),
+            testUser.getToken()
+         )
+      );
+      messageEntries.add(
+         ApiHelper.addMessage(
+            TestUtil.getRandomMessage(
+               conversationId,
+               testUser2.getUserId(),
+               DateTimeUtil.toMillis(2025, 8, 13, 12, 6),
+               MessageTypeConstants.MESSAGE
+            ),
+            testUser.getToken()
+         )
+      );
 
-        onView(withId(R.id.imgSend))
-                .perform(click());
-    }
+      messageEntries.add(
+         ApiHelper.addMessage(
+            TestUtil.getRandomMessage(
+               conversationId,
+               testUser2.getUserId(),
+               DateTimeUtil.toMillis(2025, 8, 14, 12, 6),
+               MessageTypeConstants.MESSAGE
+            ),
+            testUser.getToken()
+         )
+      );
+   }
+
+   private void _sendMessage(String text) {
+      onView(withId(R.id.edtChatMes))
+         .perform(replaceText(text), closeSoftKeyboard());
+
+      onView(withId(R.id.imgSend)).perform(click());
+   }
 }

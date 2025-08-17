@@ -105,7 +105,7 @@ public class ChatActivity extends BaseActivity {
       LocalBroadcastManager
          .getInstance(this)
          .registerReceiver(
-                 _messageReceiver,
+            _messageReceiver,
             new IntentFilter(
                "com.example.szakdolg.models.message.entity.MessageBroadCast"
             )
@@ -139,20 +139,17 @@ public class ChatActivity extends BaseActivity {
       super.onDestroy();
    }
 
-
-   private void _addNewMessageToEntries(MessageEntry message){
+   private void _addNewMessageToEntries(MessageEntry message) {
       if (
-              messageEntries.isEmpty() ||
-                      _isNewMessageEntryNewDay(
-                              messageEntries.get(messageEntries.size() - 1),
-                              message
-                      )
+         messageEntries.isEmpty() ||
+         _isNewMessageEntryNewDay(
+            messageEntries.get(messageEntries.size() - 1),
+            message
+         )
       ) {
-
          messageEntries.add(
-                 DateTimeUtil.toShortDateFormat(message.getTimestamp())
+            DateTimeUtil.toShortDateFormat(message.getTimestamp())
          );
-
       }
 
       messageEntries.add(message);
@@ -160,7 +157,6 @@ public class ChatActivity extends BaseActivity {
       int lastMessagePosition = adapter.getItemCount() - 1;
       adapter.notifyItemRangeChanged(lastMessagePosition - 1, 2);
       chatRecView.scrollToPosition(lastMessagePosition);
-
    }
 
    private void _captureImageWithCamera() {
@@ -168,14 +164,13 @@ public class ChatActivity extends BaseActivity {
       values.put(MediaStore.Images.Media.TITLE, "New Picture");
       values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
       imageUri =
-              getContentResolver()
-                      .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+      getContentResolver()
+         .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
       Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
       intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
       cameraLauncher.launch(intent);
    }
-
 
    private String _createTitleWithUsernames(List<User> users) {
       String title = "";
@@ -194,7 +189,7 @@ public class ChatActivity extends BaseActivity {
 
    private void _getIntentExtras() {
       ConversationDTO conversationDTO = (ConversationDTO) this.getIntent()
-              .getSerializableExtra(IntentConstants.CONVERSATION_DTO);
+         .getSerializableExtra(IntentConstants.CONVERSATION_DTO);
       if (conversationDTO != null) {
          conversation = conversationDTO.getConversation();
          users = conversationDTO.getUsers();
@@ -213,13 +208,13 @@ public class ChatActivity extends BaseActivity {
    }
 
    private boolean _isNewMessageEntryNewDay(
-           Object prevMessage,
-           MessageEntry newMessage
+      Object prevMessage,
+      MessageEntry newMessage
    ) {
       if (prevMessage instanceof MessageEntry) {
          return DateTimeUtil.isNewDay(
-                 ((MessageEntry) prevMessage).getTimestamp(),
-                 newMessage.getTimestamp()
+            ((MessageEntry) prevMessage).getTimestamp(),
+            newMessage.getTimestamp()
          );
       }
 
@@ -228,25 +223,24 @@ public class ChatActivity extends BaseActivity {
 
    private void _pickImageFromGallery() {
       Intent intent = new Intent(
-              Intent.ACTION_PICK,
-              MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+         Intent.ACTION_PICK,
+         MediaStore.Images.Media.EXTERNAL_CONTENT_URI
       );
       galleryLauncher.launch(intent);
    }
-
 
    private List<Object> _prepareMessageList(List<MessageEntry> messageEntries) {
       List<Object> sortedList = new ArrayList<>();
       long previousTimestamp = 0L;
       for (MessageEntry messageEntry : messageEntries) {
          if (
-                 DateTimeUtil.isNewDay(
-                         previousTimestamp,
-                         messageEntry.getTimestamp()
-                 )
+            DateTimeUtil.isNewDay(
+               previousTimestamp,
+               messageEntry.getTimestamp()
+            )
          ) {
             sortedList.add(
-                    DateTimeUtil.toShortDateFormat(messageEntry.getTimestamp())
+               DateTimeUtil.toShortDateFormat(messageEntry.getTimestamp())
             );
          }
 
@@ -263,28 +257,28 @@ public class ChatActivity extends BaseActivity {
       ImageService imageService = new ImageService(this, currentUser);
 
       imageService.addPicture(
-              uri,
-              currentUser.getUserId(),
-              ImageConstans.TAG_MESSAGE,
-              conversationId,
-              new ImageService.ImageCallback<String>() {
-                 @Override
-                 public void onSuccess(String data) {
-                    try {
-                       MessageEntry messageEntry = _sendMessage(
-                               data,
-                               MessageTypeConstants.IMAGE
-                       );
+         uri,
+         currentUser.getUserId(),
+         ImageConstans.TAG_MESSAGE,
+         conversationId,
+         new ImageService.ImageCallback<String>() {
+            @Override
+            public void onSuccess(String data) {
+               try {
+                  MessageEntry messageEntry = _sendMessage(
+                     data,
+                     MessageTypeConstants.IMAGE
+                  );
 
-                       _addNewMessageToEntries(messageEntry);
-                    } catch (Exception e) {
-                       throw new RuntimeException(e);
-                    }
-                 }
+                  _addNewMessageToEntries(messageEntry);
+               } catch (Exception e) {
+                  throw new RuntimeException(e);
+               }
+            }
 
-                 @Override
-                 public void onError(Throwable t) {}
-              }
+            @Override
+            public void onError(Throwable t) {}
+         }
       );
    }
 
@@ -322,73 +316,73 @@ public class ChatActivity extends BaseActivity {
       return messageEntry;
    }
 
-
    private void _setListeners() {
       imgAttach.setOnClickListener(
-              new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                    String[] options = { "Choose from Gallery", "Take Photo" };
-                    new AlertDialog.Builder(ChatActivity.this)
-                            .setTitle("Attach Image")
-                            .setItems(
-                                    options,
-                                    (dialog, which) -> {
-                                       if (which == 0) {
-                                          _pickImageFromGallery();
-                                       } else {
-                                          _captureImageWithCamera();
-                                       }
-                                    }
-                            )
-                            .show();
-                 }
-              }
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               String[] options = { "Choose from Gallery", "Take Photo" };
+               new AlertDialog.Builder(ChatActivity.this)
+                  .setTitle("Attach Image")
+                  .setItems(
+                     options,
+                     (dialog, which) -> {
+                        if (which == 0) {
+                           _pickImageFromGallery();
+                        } else {
+                           _captureImageWithCamera();
+                        }
+                     }
+                  )
+                  .show();
+            }
+         }
       );
 
       imgSend.setOnClickListener(
-              new View.OnClickListener() {
-                 @Override
-                 public void onClick(View view) {
-                    String content = edtMess.getText().toString();
-                    if (!content.isEmpty()) {
-                       try {
-                          MessageEntry messageEntry = _sendMessage(
-                                  content,
-                                  MessageTypeConstants.MESSAGE
-                          );
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               String content = edtMess.getText().toString();
+               if (!content.isEmpty()) {
+                  try {
+                     MessageEntry messageEntry = _sendMessage(
+                        content,
+                        MessageTypeConstants.MESSAGE
+                     );
 
-                          edtMess.getText().clear();
-                          _addNewMessageToEntries(messageEntry);
-                       } catch (Exception e) {
-                          throw new RuntimeException(e);
-                       }
-                    }
-                 }
-              }
+                     edtMess.getText().clear();
+                     _addNewMessageToEntries(messageEntry);
+                  } catch (Exception e) {
+                     throw new RuntimeException(e);
+                  }
+               }
+            }
+         }
       );
    }
 
-
-
-   private void _setMessageBoard(RecyclerView chatRecView, ChatAdapter adapter) {
+   private void _setMessageBoard(
+      RecyclerView chatRecView,
+      ChatAdapter adapter
+   ) {
       messageService.getMessagesByConversationId(
-              conversation.getConversationId(),
-              new MessageService.MessageCallback<List<MessageEntry>>() {
-                 @Override
-                 public void onSuccess(List<MessageEntry> results) {
-                    results.sort(
-                            Comparator.comparingLong(MessageEntry::getTimestamp)
-                    );
+         conversation.getConversationId(),
+         new MessageService.MessageCallback<List<MessageEntry>>() {
+            @Override
+            public void onSuccess(List<MessageEntry> results) {
+               results.sort(
+                  Comparator.comparingLong(MessageEntry::getTimestamp)
+               );
 
-                    messageEntries = _prepareMessageList(results);
-                    adapter.setMessageEntries(messageEntries);
-                    adapter.setImageUrls(imageUrls);
-                 }
+               messageEntries = _prepareMessageList(results);
+               adapter.setMessageEntries(messageEntries);
+               adapter.setImageUrls(imageUrls);
+            }
 
-                 @Override
-                 public void onError(Throwable t) {}
-              }
+            @Override
+            public void onError(Throwable t) {}
+         }
       );
 
       chatRecView.setAdapter(adapter);
@@ -404,8 +398,6 @@ public class ChatActivity extends BaseActivity {
          mToolbar.setTitle(_createTitleWithUsernames(users));
       }
    }
-
-
 
    private ChatAdapter adapter;
    private Long conversationId;
@@ -429,12 +421,12 @@ public class ChatActivity extends BaseActivity {
       @Override
       public void onReceive(Context context, Intent intent) {
          MessageEntry message = (MessageEntry) intent.getSerializableExtra(
-                 "message"
+            "message"
          );
          runOnUiThread(() -> {
             if (message != null) {
                if (
-                       Objects.equals(message.getConversationId(), conversationId)
+                  Objects.equals(message.getConversationId(), conversationId)
                ) {
                   _addNewMessageToEntries(message);
                }
@@ -442,5 +434,4 @@ public class ChatActivity extends BaseActivity {
          });
       }
    };
-
 }
