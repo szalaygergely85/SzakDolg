@@ -211,34 +211,32 @@ public class MessageService extends BaseService {
          messageDatabaseUtil.getAllMessageEntriesByConversationId(
             conversationId
          );
-     // if (localMessages.isEmpty()) {
-         messageRepository.getMessages(
-            currentUser.getToken(),
-            conversationId,
-            new Callback<List<MessageEntry>>() {
-               @Override
-               public void onResponse(
-                  Call<List<MessageEntry>> call,
-                  Response<List<MessageEntry>> response
-               ) {
-                  if (response.isSuccessful()) {
-                     callback.onSuccess(response.body());
-                  } else {
-                     callback.onError(
-                        new Throwable("Failed to update contact")
-                     );
-                  }
-               }
-
-               @Override
-               public void onFailure(
-                  Call<List<MessageEntry>> call,
-                  Throwable throwable
-               ) {
-                  callback.onError(throwable);
+      // if (localMessages.isEmpty()) {
+      messageRepository.getMessages(
+         currentUser.getToken(),
+         conversationId,
+         new Callback<List<MessageEntry>>() {
+            @Override
+            public void onResponse(
+               Call<List<MessageEntry>> call,
+               Response<List<MessageEntry>> response
+            ) {
+               if (response.isSuccessful()) {
+                  callback.onSuccess(response.body());
+               } else {
+                  callback.onError(new Throwable("Failed to update contact"));
                }
             }
-         );
+
+            @Override
+            public void onFailure(
+               Call<List<MessageEntry>> call,
+               Throwable throwable
+            ) {
+               callback.onError(throwable);
+            }
+         }
+      );
       //}
    }
 

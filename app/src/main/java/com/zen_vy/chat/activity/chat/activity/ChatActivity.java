@@ -35,7 +35,6 @@ import com.zen_vy.chat.models.user.util.UserUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.UUIDUtil;
 import com.zen_vy.chat.websocket.WebSocketService;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -62,7 +61,6 @@ public class ChatActivity extends BaseActivity {
       _getIntentExtras();
 
       _setListeners();
-
 
       adapter = new ChatAdapter(this, currentUser, chatRecView);
 
@@ -127,11 +125,9 @@ public class ChatActivity extends BaseActivity {
    protected void onStart() {
       super.onStart();
 
-
       if (!WebSocketService.isServiceRunning()) {
          _startingWebSocketService();
       }
-
 
       setMessagesRead();
    }
