@@ -1,5 +1,6 @@
 package com.zen_vy.chat.firebase;
 
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,6 +13,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.main.MainActivity;
+
+import java.util.List;
 import java.util.Map;
 import timber.log.Timber;
 
@@ -70,6 +73,9 @@ public class MyFirebaseService extends FirebaseMessagingService {
          notificationManager.createNotificationChannel(channel);
       }
 
+      if(!isAppInForeground()){
+
+
       // Create notification
       NotificationCompat.Builder builder = new NotificationCompat.Builder(
          this,
@@ -115,5 +121,28 @@ public class MyFirebaseService extends FirebaseMessagingService {
          (int) System.currentTimeMillis(),
          builder.build()
       );
+      }
+   }
+
+   private boolean isAppInForeground() {
+      ActivityManager activityManager = (ActivityManager) getSystemService(
+              Context.ACTIVITY_SERVICE
+      );
+      List<ActivityManager.RunningAppProcessInfo> appProcesses =
+              activityManager.getRunningAppProcesses();
+      if (appProcesses == null) {
+         return false;
+      }
+      final String packageName = getPackageName();
+      for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+         if (
+                 appProcess.importance ==
+                         ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+                         appProcess.processName.equals(packageName)
+         ) {
+            return true;
+         }
+      }
+      return false;
    }
 }

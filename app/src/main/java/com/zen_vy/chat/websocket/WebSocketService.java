@@ -103,40 +103,13 @@ public class WebSocketService extends Service {
 
       connectToWebSocket();
 
-      return START_STICKY;
+      return START_NOT_STICKY;
    }
 
    public void sendMessage(String message) {
       webSocket.send(message);
    }
 
-   private void createNotificationChannel() {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-         NotificationChannel serviceChannel = new NotificationChannel(
-            "SERVICE_CHANNEL",
-            "WebSocket Service",
-            NotificationManager.IMPORTANCE_LOW
-         );
-         serviceChannel.setDescription("Notification for WebSocket Service");
-
-         NotificationChannel messageChannel = new NotificationChannel(
-            "MESSAGE_CHANNEL",
-            "Message Notifications",
-            NotificationManager.IMPORTANCE_HIGH
-         );
-         messageChannel.setDescription(
-            "Notifications for incoming chat messages"
-         );
-
-         NotificationManager manager = getSystemService(
-            NotificationManager.class
-         );
-         if (manager != null) {
-            manager.createNotificationChannel(serviceChannel);
-            manager.createNotificationChannel(messageChannel);
-         }
-      }
-   }
 
    private void connectToWebSocket() {
       if (isConnecting) {
@@ -373,11 +346,6 @@ public class WebSocketService extends Service {
       if (isAppInForeground()) {
          sendMessageBroadcast(messageEntry);
          Log.e(AppConstants.LOG_TAG, messageEntry.toString());
-      } else {
-         showIncomingMessageNotification(
-            messageEntry.getContent(),
-            messageEntry.getConversationId()
-         );
       }
       if (messageEntry != null) {
          String message =
@@ -393,11 +361,6 @@ public class WebSocketService extends Service {
       }
    }
 
-   private void handleNotification(String notification) {
-      Log.e("WebSocket", "Notification received: " + notification);
-      // Process the notification
-   }
-
    public void sendMessageBroadcast(MessageEntry message) {
       Intent intent = new Intent(
          "com.example.szakdolg.models.message.entity.MessageBroadCast"
@@ -406,28 +369,9 @@ public class WebSocketService extends Service {
       LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
    }
 
-   private boolean isAppInForeground() {
-      ActivityManager activityManager = (ActivityManager) getSystemService(
-         Context.ACTIVITY_SERVICE
-      );
-      List<ActivityManager.RunningAppProcessInfo> appProcesses =
-         activityManager.getRunningAppProcesses();
-      if (appProcesses == null) {
-         return false;
-      }
-      final String packageName = getPackageName();
-      for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-         if (
-            appProcess.importance ==
-               ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
-            appProcess.processName.equals(packageName)
-         ) {
-            return true;
-         }
-      }
-      return false;
-   }
 
+
+   /*
    private void showIncomingMessageNotification(
       String messageText,
       long conversationId
@@ -477,5 +421,27 @@ public class WebSocketService extends Service {
             public void onError(Throwable t) {}
          }
       );
+   }*/
+
+   private boolean isAppInForeground() {
+      ActivityManager activityManager = (ActivityManager) getSystemService(
+              Context.ACTIVITY_SERVICE
+      );
+      List<ActivityManager.RunningAppProcessInfo> appProcesses =
+              activityManager.getRunningAppProcesses();
+      if (appProcesses == null) {
+         return false;
+      }
+      final String packageName = getPackageName();
+      for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+         if (
+                 appProcess.importance ==
+                         ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+                         appProcess.processName.equals(packageName)
+         ) {
+            return true;
+         }
+      }
+      return false;
    }
 }

@@ -135,6 +135,8 @@ public class MainActivity extends BaseActivity {
 
       _sendFCMDeviceToken();
 
+      conversationDTOList = new ArrayList<>();
+
       conversationService.getAllConversations(
          new ConversationService.ConversationCallback<List<ConversationDTO>>() {
             @Override
@@ -466,7 +468,7 @@ public class MainActivity extends BaseActivity {
       this.conversationService = service;
    }
 
-   private List<ConversationDTO> conversationDTOList = new ArrayList<>();
+   private List<ConversationDTO> conversationDTOList;
 
    private DeviceService deviceService;
    private DrawerLayout drawerLayout;
