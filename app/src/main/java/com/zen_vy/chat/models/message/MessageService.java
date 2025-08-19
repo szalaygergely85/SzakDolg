@@ -250,12 +250,12 @@ public class MessageService extends BaseService {
    }
 
    public int getCountByNotReadMsg(Long conversationId) {
-      int notReadedCount =
+      int notReadCount =
          messageDatabaseUtil.getUnreadMessageCountByConversationId(
-            conversationId
+            conversationId, currentUser.getUserId()
          );
-      Timber.i("Getting getCountByNotReadMsg and it is: " + notReadedCount);
-      return notReadedCount;
+      Timber.i("Getting getCountByNotReadMsg and it is: " + notReadCount);
+      return notReadCount;
    }
 
    public void setMessagesAsReadByConversationId(Long conversationId) {

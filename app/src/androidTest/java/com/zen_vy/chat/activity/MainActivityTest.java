@@ -151,13 +151,6 @@ public class MainActivityTest {
          testUser.getToken()
       );
 
-      MessageEntry firstMessage = ApiHelper.addMessage(
-         TestUtil.getRandomMessage(
-            conversationDTO.getConversationId(),
-            testUser.getUserId()
-         ),
-         testUser.getToken()
-      );
       MessageEntry secondMessage = ApiHelper.addMessage(
          TestUtil.getRandomMessage(
             conversationDTO.getConversationId(),
@@ -199,7 +192,7 @@ public class MainActivityTest {
                )
             );
       } finally {
-         ApiHelper.deleteMessage(firstMessage, context, testUser);
+
          ApiHelper.deleteMessage(secondMessage, context, testUser);
          ApiHelper.deleteMessage(lastMessage, context, testUser);
          ApiHelper.deleteConversation(

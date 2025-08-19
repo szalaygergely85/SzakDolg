@@ -352,30 +352,26 @@ public class MessageDatabaseUtil {
             );
          }
       } catch (Exception e) {
-         Log.e(
-            "DatabaseError",
-            "Failed to retrieve message by uUId: " + uuid,
-            e
-         );
+          Timber.tag("DatabaseError").e(e, "Failed to retrieve message by uUId: %s", uuid);
       }
 
       return message;
    }
 
-   public int getUnreadMessageCountByConversationId(Long conversationId) {
+   public int getUnreadMessageCountByConversationId(long conversationId, long userId) {
       int unreadCount = 0;
 
       // Try-with-resources ensures resources are closed automatically
       try (
          SQLiteDatabase db = dbHelper.getReadableDatabase();
          Cursor cursor = db.query(
-            "MessageEntry", // Table name
-            new String[] { "COUNT(*) AS unreadCount" }, // Columns to fetch
-            "conversationId = ? AND isRead = 0", // WHERE clause
-            new String[] { String.valueOf(conversationId) }, // WHERE arguments
-            null, // GROUP BY
-            null, // HAVING
-            null // ORDER BY
+                 "MessageEntry", // Table name
+                 new String[] { "COUNT(*) AS unreadCount" }, // Columns to fetch
+                 "conversationId = ? AND isRead = 0 AND senderId != ?", // WHERE clause
+                 new String[] { String.valueOf(conversationId), String.valueOf(userId) }, // WHERE arguments
+                 null, // GROUP BY
+                 null, // HAVING
+                 null  // ORDER BY
          )
       ) {
          if (cursor != null && cursor.moveToFirst()) {
@@ -383,7 +379,7 @@ public class MessageDatabaseUtil {
             cursor.getInt(cursor.getColumnIndexOrThrow("unreadCount"));
          }
       } catch (Exception e) {
-         e.printStackTrace(); // Logging exceptions; consider using a logger
+         Timber.tag("DatabaseError").e(e, "Failed to retrieve messages");
       }
 
       return unreadCount;
