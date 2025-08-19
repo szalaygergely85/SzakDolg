@@ -62,4 +62,6 @@
     <string name="download">Download</string>
     <string name="close">Close</string>
     <string name="sent_image">Sent image</string>
+    <string name="add_new_contact">Add new Contact</string>
+    <string name="search_contact">Search Contact</string>
 </resources>

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,9 +33,7 @@ import java.util.Objects;
 
 public class ContactsActivity extends BaseActivity {
 
-   private String actionId;
 
-   private MaterialToolbar toolbar;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +50,19 @@ public class ContactsActivity extends BaseActivity {
       toolbar.setNavigationOnClickListener(v ->
          getOnBackPressedDispatcher().onBackPressed()
       );
-
+      RelativeLayout.LayoutParams params =
+              (RelativeLayout.LayoutParams) btnNewContact.getLayoutParams();
       if (Objects.equals(actionId, ContactsConstans.ACTION_SELECT)) {
-         btnNewContact.setVisibility(View.GONE);
          bottomNav.setVisibility(View.GONE);
+
+         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+         params.removeRule(RelativeLayout.ABOVE);
+
+
       } else {
+         params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+         params.addRule(RelativeLayout.ABOVE, R.id.bottom_nav_contacts);
+
          bottomNav.setSelectedItemId(R.id.nav_contact_main);
 
          bottomNav.setOnItemSelectedListener(
@@ -74,6 +82,8 @@ public class ContactsActivity extends BaseActivity {
             }
          );
       }
+
+      btnNewContact.setLayoutParams(params);
    }
 
    @Override
@@ -134,7 +144,7 @@ public class ContactsActivity extends BaseActivity {
       selectContactsRecView.setAdapter(contactsAdapter);
       selectContactsRecView.setLayoutManager(new LinearLayoutManager(this));
 
-      topAppBar.setOnMenuItemClickListener(
+      toolbar.setOnMenuItemClickListener(
          new MaterialToolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(@NonNull MenuItem item) {
@@ -176,7 +186,7 @@ public class ContactsActivity extends BaseActivity {
          }
       );
 
-      if (actionId.equals(ContactsConstans.ACTION_VIEW)) {
+
          btnNewContact.setOnClickListener(
             new View.OnClickListener() {
                @Override
@@ -193,12 +203,12 @@ public class ContactsActivity extends BaseActivity {
                }
             }
          );
-      }
+
+
    }
 
    private void _initView() {
       selectContactsRecView = findViewById(R.id.selectContactsRecView);
-      topAppBar = findViewById(R.id.select_contacts_Toolbar);
       btnNewContact = findViewById(R.id.btnConNew);
 
       bottomNav = findViewById(R.id.bottom_nav_contacts);
@@ -212,8 +222,12 @@ public class ContactsActivity extends BaseActivity {
    private ConversationService conversationService;
    private ContactsAdapter contactsAdapter;
    private RecyclerView selectContactsRecView;
-   private MaterialToolbar topAppBar;
+
+   private String actionId;
+
+   private MaterialToolbar toolbar;
 
    private FloatingActionButton btnNewContact;
+
    private List<Long> contacts = new ArrayList<>();
 }
