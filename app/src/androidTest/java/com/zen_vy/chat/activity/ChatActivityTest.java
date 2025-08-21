@@ -106,7 +106,7 @@ public class ChatActivityTest {
          onView(withId(R.id.recViewChat))
             .check(
                matches(
-                  TestUtil.atPosition(
+                  RecycleViewTestHelper.atPosition(
                      0,
                      hasDescendant(
                         withText(DateTimeUtil.toShortDateFormat(timestamp))
@@ -118,7 +118,7 @@ public class ChatActivityTest {
          onView(withId(R.id.recViewChat))
             .check(
                matches(
-                  TestUtil.atPosition(
+                       RecycleViewTestHelper.atPosition(
                      1,
                      hasDescendant(
                         allOf(
@@ -133,7 +133,7 @@ public class ChatActivityTest {
          onView(withId(R.id.recViewChat))
             .check(
                matches(
-                  TestUtil.atPosition(
+                       RecycleViewTestHelper.atPosition(
                      1,
                      hasDescendant(
                         allOf(
@@ -153,7 +153,7 @@ public class ChatActivityTest {
          onView(withId(R.id.recViewChat))
             .check(
                matches(
-                  TestUtil.atPosition(
+                       RecycleViewTestHelper.atPosition(
                      1,
                      hasDescendant(
                         allOf(
@@ -168,7 +168,7 @@ public class ChatActivityTest {
          onView(withId(R.id.recViewChat))
             .check(
                matches(
-                  TestUtil.atPosition(
+                       RecycleViewTestHelper.atPosition(
                      2,
                      hasDescendant(
                         allOf(
@@ -185,7 +185,7 @@ public class ChatActivityTest {
 
          _sendMessage("");
 
-         onView(TestUtil.atPosition(3, ViewMatchers.isDisplayed()))
+         onView(RecycleViewTestHelper.atPosition(3, ViewMatchers.isDisplayed()))
             .check(doesNotExist());
 
          for (int i = 0; i < 20; i++) {
@@ -193,7 +193,7 @@ public class ChatActivityTest {
          }
 
          onView(withId(R.id.recViewChat))
-            .check(matches(TestUtil.atPosition(22, isDisplayed())));
+            .check(matches(RecycleViewTestHelper.atPosition(22, isDisplayed())));
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
@@ -288,7 +288,7 @@ public class ChatActivityTest {
       onView(withId(R.id.recViewChat))
          .check(
             matches(
-               TestUtil.atPosition(
+                    RecycleViewTestHelper.atPosition(
                   0,
                   hasDescendant(
                      withText(
@@ -304,7 +304,7 @@ public class ChatActivityTest {
       onView(withId(R.id.recViewChat))
          .check(
             matches(
-               TestUtil.atPosition(
+                    RecycleViewTestHelper.atPosition(
                   3,
                   hasDescendant(
                      withText(
@@ -320,7 +320,7 @@ public class ChatActivityTest {
       onView(withId(R.id.recViewChat))
          .check(
             matches(
-               TestUtil.atPosition(
+                    RecycleViewTestHelper.atPosition(
                   6,
                   hasDescendant(
                      withText(
@@ -336,7 +336,7 @@ public class ChatActivityTest {
       onView(withId(R.id.recViewChat))
          .check(
             matches(
-               TestUtil.atPosition(
+                    RecycleViewTestHelper.atPosition(
                   1,
                   hasDescendant(
                      allOf(
@@ -353,7 +353,7 @@ public class ChatActivityTest {
       onView(withId(R.id.recViewChat))
          .check(
             matches(
-               TestUtil.atPosition(
+                    RecycleViewTestHelper.atPosition(
                   1,
                   hasDescendant(
                      allOf(
@@ -368,7 +368,7 @@ public class ChatActivityTest {
       onView(withId(R.id.recViewChat))
          .check(
             matches(
-               TestUtil.atPosition(
+                    RecycleViewTestHelper.atPosition(
                   2,
                   hasDescendant(
                      allOf(

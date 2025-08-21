@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1F5BF3</color>         <!-- Same bold blue -->
-    <color name="colorPrimaryDark">#0D3D91</color>     <!-- Deep Blue -->
-    <color name="colorAccent">#00A5FF</color>          <!-- Sky Blue Accent -->
+    <!-- Primary brand colors -->
+    <color name="colorPrimary">#121212</color>          <!-- Dark background -->
+    <color name="colorPrimaryDark">#000000</color>      <!-- Even darker -->
+    <color name="colorAccent">#4DB6AC</color>           <!-- Teal accent stays -->
 
     <!-- Backgrounds -->
-    <color name="background">#121212</color>           <!-- Dark BG -->
-    <color name="cardBackground">#1E1E1E</color>        <!-- Dark Card -->
-    <color name="surface">#2A2A2A</color>              <!-- Slightly lighter for surfaces -->
+    <color name="background">#121212</color>            <!-- Dark gray bg -->
+    <color name="cardBackground">#1E1E1E</color>        <!-- Cards slightly lighter -->
+    <color name="surface">#1E1E1E</color>               <!-- Same as cards -->
 
-    <!-- Text Colors -->
-    <color name="textPrimary">#FFFFFF</color>          <!-- White Text -->
-    <color name="textSecondary">#B0B0B0</color>        <!-- Soft Gray -->
-    <color name="textOnPrimary">#FFFFFF</color>        <!-- White on Blue -->
+    <!-- Text -->
+    <color name="textPrimary">#FFFFFF</color>           <!-- White text -->
+    <color name="textSecondary">#B3B3B3</color>         <!-- Light gray secondary -->
+    <color name="textOnPrimary">#FFFFFF</color>         <!-- White on dark buttons -->
 
     <!-- Icons / Dividers -->
-    <color name="iconColor">#CCCCCC</color>
-    <color name="dividerColor">#444444</color>
+    <color name="iconColor">#B3B3B3</color>             <!-- Muted gray -->
+    <color name="dividerColor">#333333</color>          <!-- Subtle divider -->
 
-    <!-- Button States -->
-    <color name="buttonPrimary">#1F5BF3</color>
-    <color name="buttonSecondary">#333333</color>
+    <!-- Buttons -->
+    <color name="buttonPrimary">#1F5BF3</color>         <!-- Keep your blue -->
+    <color name="buttonSecondary">#2C2C2C</color>       <!-- Dark secondary -->
     <color name="buttonText">#FFFFFF</color>
 
     <!-- Status Colors -->
-    <color name="success">#81C784</color>
-    <color name="warning">#FFD54F</color>
-    <color name="error">#E57373</color>
+    <color name="success">#4CAF50</color>               <!-- Keep same (good contrast) -->
+    <color name="warning">#FFC107</color>
+    <color name="error">#F44336</color>
 
     <!-- Extras -->
-    <color name="grayLight">#888888</color>
-    <color name="grayDark">#AAAAAA</color>
+    <color name="grayLight">#666666</color>
+    <color name="grayDark">#1E1E1E</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="bottom_nav_active">#66FFFFFF</color>   <!-- Brighter than in light mode -->
 </resources>

@@ -208,27 +208,5 @@ public class TestUtil {
       return user;
    }
 
-   public static Matcher<View> atPosition(
-      int position,
-      Matcher<View> itemMatcher
-   ) {
-      return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
-         @Override
-         public void describeTo(Description description) {
-            description.appendText("has item at position " + position + ": ");
-            itemMatcher.describeTo(description);
-         }
 
-         @Override
-         protected boolean matchesSafely(RecyclerView recyclerView) {
-            RecyclerView.ViewHolder viewHolder =
-               recyclerView.findViewHolderForAdapterPosition(position);
-            if (viewHolder == null) {
-               // Item not displayed
-               return false;
-            }
-            return itemMatcher.matches(viewHolder.itemView);
-         }
-      };
-   }
 }

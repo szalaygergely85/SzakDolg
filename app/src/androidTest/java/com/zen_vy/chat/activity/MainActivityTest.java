@@ -1,10 +1,14 @@
 package com.zen_vy.chat.activity;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollTo;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.equalTo;
@@ -12,6 +16,8 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
@@ -237,16 +243,40 @@ public class MainActivityTest {
    }
 
    @Test
-   public void testConversationArrivingWithBroadcastReceiver()
-      throws IOException, InterruptedException {
+   public void testConversationOpeningAndReadingMessages() throws IOException {
+      List<Long> userIds = Arrays.asList(
+              testUser.getUserId(),
+              testUser2.getUserId()
+      );
+      ConversationDTO conversationDTO = ApiHelper.addConversationByUserIds(
+              userIds,
+              testUser.getToken()
+      );
+      for (int i=0; i<15; i++){
+         ApiHelper.addMessage(
+                 TestUtil.getRandomMessage(
+                         conversationDTO.getConversationId(),
+                         testUser2.getUserId()
+                 ),
+                 testUser.getToken()
+         );
+      }
+
       ActivityScenario.launch(MainActivity.class);
 
-      assertTrue(
-         "WebSocketService should be running",
-         WebSocketService.isServiceRunning()
-      );
+      onView(withId(R.id.messageBoardRecView))
+              .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-      Thread.sleep(1500);
+      pressBack();
+      
+      onView(withId(R.id.main_item_not_read))
+              .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+
+   }
+
+   @Test
+   public void testConversationArrivingWithBroadcastReceiver()
+      throws IOException, InterruptedException {
 
       List<Long> userIds = Arrays.asList(
          testUser.getUserId(),
@@ -264,6 +294,13 @@ public class MainActivityTest {
          ),
          testUser.getToken()
       );
+      ActivityScenario.launch(MainActivity.class);
+      assertTrue(
+              "WebSocketService should be running",
+              WebSocketService.isServiceRunning()
+      );
+
+
       try {
          WebSocketService wsService = WebSocketService.getInstance();
          wsService.sendMessageBroadcast(lastMessage);

@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-08-18T20:42:10.734864300Z">
+        <DropdownSelection timestamp="2025-08-20T20:17:38.367074348Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Gege\.android\avd\Medium_Phone.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/me/.android/avd/Medium_Phone.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -16,13 +16,10 @@
       <SelectionState runConfigName="Tests in 'com.zen_vy.chat'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testSendMessages()">
+      <SelectionState runConfigName="testConversationArrivingWithBroadcastReceiver()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testSendMessages() (1)">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testConversationWithThreeParticipant()">
+      <SelectionState runConfigName="testConversationOpeningAndReadingMessages()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
