@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group
         android:id="@+id/grp1"
         android:checkableBehavior="none">
         <item
             android:id="@+id/main_dark_theme"
-            android:title="@string/dark_theme"
             android:icon="@drawable/ic_settings_brightness"
+            android:title="@string/dark_theme"
             app:actionLayout="@layout/switch_item" />
-    <item
-        android:id="@+id/nav_item1"
-        android:title="@string/account"
-        android:icon="@drawable/ic_account_box"/>
-    <item
-        android:id="@+id/nav_item2"
-        android:title="@string/privacy"
-        android:icon="@drawable/ic_privacy"/>
+<!--        <item-->
+<!--            android:id="@+id/nav_item1"-->
+<!--            android:icon="@drawable/ic_account_box"-->
+<!--            android:title="@string/account" />-->
+<!--        <item-->
+<!--            android:id="@+id/nav_item2"-->
+<!--            android:icon="@drawable/ic_privacy"-->
+<!--            android:title="@string/privacy" />-->
     </group>
     <group
         android:id="@+id/grp2"
         android:checkableBehavior="none">
         <item
             android:id="@+id/notification_menu"
-            android:title="@string/notification"
-            android:icon="@drawable/ic_notification_active"/>
+            android:icon="@drawable/ic_notification_active"
+            android:title="@string/notifications"
+            app:actionLayout="@layout/switch_item" />
     </group>
     <group
         android:id="@+id/grp3"
-        android:checkableBehavior="none"
-        >
-            <item android:id="@+id/main_sign_out"
-                android:icon="@drawable/ic_logout"
-                android:title="@string/sign_out"/>
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/main_sign_out"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/sign_out" />
     </group>
 </menu>

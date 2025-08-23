@@ -2,6 +2,9 @@ package com.zen_vy.chat.activity.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.google.android.material.textfield.TextInputLayout;
 import com.zen_vy.chat.activity.main.MainActivity;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
@@ -39,6 +42,19 @@ public class LoginActivityHelper {
             @Override
             public void onSuccess(User user) {
                String token = user.getToken();
+
+
+
+                if (!SharedPreferencesUtil.containsPreference(context, SharedPreferencesConstants.NOTIFICATIONS)) {
+                    SharedPreferencesUtil.setBoolean(context,
+                            SharedPreferencesConstants.NOTIFICATIONS,
+                            true
+                    );
+
+                }
+
+
+
                SharedPreferencesUtil.setStringPreference(
                   context,
                   SharedPreferencesConstants.USERTOKEN,

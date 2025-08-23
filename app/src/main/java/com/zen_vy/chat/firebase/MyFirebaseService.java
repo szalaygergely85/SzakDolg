@@ -13,6 +13,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.main.MainActivity;
+import com.zen_vy.chat.constans.SharedPreferencesConstants;
+import com.zen_vy.chat.util.SharedPreferencesUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -52,7 +54,9 @@ public class MyFirebaseService extends FirebaseMessagingService {
          String text = data.get("content");
 
          Timber.i("Message from %s: %s", title, text);
-         showNotification(title, text);
+         if(SharedPreferencesUtil.getBooleanPreferences(this, SharedPreferencesConstants.NOTIFICATIONS)) {
+            showNotification(title, text);
+         }
       }
    }
 

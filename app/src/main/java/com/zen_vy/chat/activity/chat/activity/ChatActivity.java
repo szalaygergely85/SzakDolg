@@ -60,6 +60,8 @@ public class ChatActivity extends BaseActivity {
 
       _getIntentExtras();
 
+      setMessagesRead();
+
       _setListeners();
 
       adapter = new ChatAdapter(this, currentUser, chatRecView);
@@ -129,7 +131,7 @@ public class ChatActivity extends BaseActivity {
          _startingWebSocketService();
       }
 
-      setMessagesRead();
+
    }
 
    public void setMessagesRead() {
@@ -160,7 +162,7 @@ public class ChatActivity extends BaseActivity {
 
       int lastMessagePosition = adapter.getItemCount() - 1;
       adapter.notifyItemRangeChanged(lastMessagePosition - 1, 2);
-      chatRecView.scrollToPosition(lastMessagePosition);
+      chatRecView.post(() -> chatRecView.scrollToPosition(lastMessagePosition));
    }
 
    private void _captureImageWithCamera() {
@@ -293,7 +295,7 @@ public class ChatActivity extends BaseActivity {
          currentUser.getUserId(),
          System.currentTimeMillis(),
          null,
-         false,
+         true,
          messageType,
          content,
          UUIDUtil.UUIDGenerator(),
@@ -370,6 +372,12 @@ public class ChatActivity extends BaseActivity {
       RecyclerView chatRecView,
       ChatAdapter adapter
    ) {
+
+      LinearLayoutManager layoutManager = new LinearLayoutManager(ChatActivity.this);
+      layoutManager.setStackFromEnd(true); // keeps list pinned to bottom
+      chatRecView.setLayoutManager(layoutManager);
+      chatRecView.setAdapter(adapter);
+
       messageService.getMessagesByConversationId(
          conversation.getConversationId(),
          new MessageService.MessageCallback<List<MessageEntry>>() {
@@ -380,8 +388,14 @@ public class ChatActivity extends BaseActivity {
                );
 
                messageEntries = _prepareMessageList(results);
+
                adapter.setMessageEntries(messageEntries);
+
                adapter.setImageUrls(imageUrls);
+
+               setMessagesRead();
+
+               chatRecView.post(() -> chatRecView.scrollToPosition(adapter.getItemCount() - 1));
             }
 
             @Override
@@ -389,9 +403,7 @@ public class ChatActivity extends BaseActivity {
          }
       );
 
-      chatRecView.setAdapter(adapter);
-      chatRecView.setLayoutManager(new LinearLayoutManager(this));
-      chatRecView.scrollToPosition(adapter.getItemCount() - 1);
+
    }
 
    private void _setToolbarTitle(Toolbar mToolbar) {

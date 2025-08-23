@@ -4,10 +4,21 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import com.zen_vy.chat.constans.SharedPreferencesConstants;
 
 public class SharedPreferencesUtil {
 
    private static final String PREF_NAME = "MyAppPrefs";
+
+   public static boolean containsPreference(Context context, String key){
+
+      SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                if (prefs.contains(key)) {
+                   return true;}
+return false;
+   }
 
    public static String getStringPreference(Context context, String key) {
       SharedPreferences sharedPreferences = context.getSharedPreferences(

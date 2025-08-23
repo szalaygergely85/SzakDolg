@@ -51,14 +51,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       this.chatRecView = chatRecView;
    }
 
-   public void addMessage(MessageEntry messageEntry) {
-      if (messageEntry != null) {
-         messageEntries.add(getItemCount(), messageEntry);
-         notifyItemRangeChanged(getItemCount() - 2, 2);
-         chatRecView.scrollToPosition(getItemCount() - 1);
-      }
-   }
-
    public void setImageUrls(ArrayList<String> imageUrls) {
       this.imageUrls = imageUrls;
    }
@@ -391,7 +383,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       if (messageEntries != null) {
          this.messageEntries = messageEntries;
          notifyDataSetChanged();
-         chatRecView.scrollToPosition(getItemCount() - 1);
+        // chatRecView.post(() -> chatRecView.scrollToPosition(getItemCount() - 1));
       }
    }
 

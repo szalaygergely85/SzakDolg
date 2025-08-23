@@ -243,7 +243,7 @@ public class MainActivityTest {
    }
 
    @Test
-   public void testConversationOpeningAndReadingMessages() throws IOException {
+   public void testConversationOpeningAndReadingMessages() throws IOException, InterruptedException {
       List<Long> userIds = Arrays.asList(
               testUser.getUserId(),
               testUser2.getUserId()
@@ -262,11 +262,14 @@ public class MainActivityTest {
          );
       }
 
+      Thread.sleep(2000);
+
       ActivityScenario.launch(MainActivity.class);
 
       onView(withId(R.id.messageBoardRecView))
               .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
+      Thread.sleep(2000);
       pressBack();
       
       onView(withId(R.id.main_item_not_read))

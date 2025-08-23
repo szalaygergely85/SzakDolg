@@ -10,4 +10,6 @@ public class SharedPreferencesConstants {
    public static final String CACHE_EXPIRE = "cache_date";
 
    public static final String DARK_MODE = "dark_mode";
+
+   public static final String NOTIFICATIONS = "notifications";
 }
