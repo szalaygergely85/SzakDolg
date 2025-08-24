@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,12 +67,12 @@ public class ProfileActivity extends BaseActivity {
       chatToolbar = findViewById(R.id.chatToolbar);
 
       //TODO once do status...
-       /*
+      /*
 
-      profeditStatus = findViewById(R.id.profeditStatus);
-      iconEditStatus = findViewById(R.id.iconEditStatus);
+	profeditStatus = findViewById(R.id.profeditStatus);
+	iconEditStatus = findViewById(R.id.iconEditStatus);
 
-        */
+		*/
       iconEditPic = findViewById(R.id.iconEditPic);
 
       continueButton = findViewById(R.id.profBtnContinue);
@@ -102,17 +101,17 @@ public class ProfileActivity extends BaseActivity {
          deleteContact.setVisibility(View.VISIBLE);
          sendMessage.setVisibility(View.VISIBLE);
 
-      //   iconEditStatus.setVisibility(View.GONE);
-      //   iconEditPic.setVisibility(View.GONE);
+         //   iconEditStatus.setVisibility(View.GONE);
+         //   iconEditPic.setVisibility(View.GONE);
 
-       //  profeditStatus.setInputType(InputType.TYPE_NULL);
+         //  profeditStatus.setInputType(InputType.TYPE_NULL);
 
          continueButton.setVisibility(View.GONE);
       } else {
          user = currentUser;
          deleteContact.setVisibility(View.GONE);
          sendMessage.setVisibility(View.GONE);
-   //      profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
+         //      profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
 
          _addListeners();
          if (action.equals(ProfileConstants.ACCEPT_PROFILE)) {
@@ -129,12 +128,12 @@ public class ProfileActivity extends BaseActivity {
       );
 
       /*
-      String status = user.getStatus();
-      if (status.isEmpty()) {
-         profeditStatus.setText("Tap to set a status...");
-      } else {
-         profeditStatus.setText("Status");
-      }
+	String status = user.getStatus();
+	if (status.isEmpty()) {
+		profeditStatus.setText("Tap to set a status...");
+	} else {
+		profeditStatus.setText("Status");
+	}
 */
       //Set image
 
@@ -167,7 +166,6 @@ Glide.with(this)
    @Override
    protected void onStart() {
       super.onStart();
-
    }
 
    private void _addListeners() {
@@ -181,75 +179,73 @@ Glide.with(this)
       );
 
       continueButton.setOnClickListener(
-              new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                    Intent intent = new Intent(
-                            ProfileActivity.this,
-                            MainActivity.class
-                    );
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(
+                  ProfileActivity.this,
+                  MainActivity.class
+               );
 
-                    startActivity(intent);
-                 }
-              }
+               startActivity(intent);
+            }
+         }
       );
 
       deleteContact.setOnClickListener(
-              new View.OnClickListener() {
-                 @Override
-                 public void onClick(View view) {
-                    contactService.deleteContact(
-                            contact,
-                            new ContactService.ContactCallback<Void>() {
-                               @Override
-                               public void onSuccess(Void data) {}
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               contactService.deleteContact(
+                  contact,
+                  new ContactService.ContactCallback<Void>() {
+                     @Override
+                     public void onSuccess(Void data) {}
 
-                               @Override
-                               public void onError(Throwable t) {}
-                            }
-                    );
+                     @Override
+                     public void onError(Throwable t) {}
+                  }
+               );
 
-                    finish();
-                 }
-              }
+               finish();
+            }
+         }
       );
 
       sendMessage.setOnClickListener(
-              new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                    List<Long> participants = new ArrayList<>();
-                    participants.add(currentUser.getUserId());
-                    participants.add(user.getUserId());
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               List<Long> participants = new ArrayList<>();
+               participants.add(currentUser.getUserId());
+               participants.add(user.getUserId());
 
-                    conversationService.addConversationByUserId(
-                            participants,
-                            new ConversationService.ConversationCallback<
-                                    ConversationDTO
-                                    >() {
-                               @Override
-                               public void onSuccess(ConversationDTO data) {
-                                  Intent intent = new Intent(
-                                          ProfileActivity.this,
-                                          ChatActivity.class
-                                  );
-                                  intent.putExtra(
-                                          IntentConstants.CONVERSATION_ID,
-                                          data.getConversation().getConversationId()
-                                  );
-                                  intent.putExtra(IntentConstants.CONVERSATION_DTO, data);
-                                  startActivity(intent);
-                               }
+               conversationService.addConversationByUserId(
+                  participants,
+                  new ConversationService.ConversationCallback<
+                     ConversationDTO
+                  >() {
+                     @Override
+                     public void onSuccess(ConversationDTO data) {
+                        Intent intent = new Intent(
+                           ProfileActivity.this,
+                           ChatActivity.class
+                        );
+                        intent.putExtra(
+                           IntentConstants.CONVERSATION_ID,
+                           data.getConversation().getConversationId()
+                        );
+                        intent.putExtra(IntentConstants.CONVERSATION_DTO, data);
+                        startActivity(intent);
+                     }
 
-                               @Override
-                               public void onError(Throwable t) {}
-                            }
-                    );
-                 }
-              }
+                     @Override
+                     public void onError(Throwable t) {}
+                  }
+               );
+            }
+         }
       );
-
-
    }
 
    public void openImageChooser() {

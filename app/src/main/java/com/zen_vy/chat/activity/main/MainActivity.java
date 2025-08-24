@@ -73,8 +73,6 @@ public class MainActivity extends BaseActivity {
 
       _initView();
 
-
-
       _setBottomNavMenu();
 
       conversationService = new ConversationService(this, currentUser);
@@ -138,33 +136,30 @@ public class MainActivity extends BaseActivity {
 
       _setListeners();
 
-
-
       _sendFCMDeviceToken();
 
       conversationDTOList = new ArrayList<>();
 
       conversationService.getAllConversations(
-              new ConversationService.ConversationCallback<List<ConversationDTO>>() {
-                 @Override
-                 public void onSuccess(List<ConversationDTO> conversationList) {
-                    runOnUiThread(() -> {
-                       if (conversationList != null && !conversationList.isEmpty()) {
-                          conversationDTOList.clear(); // clear old list
-                          conversationDTOList.addAll(conversationList);
-                          _validateConversation(conversationDTOList);
-                          emptyLayout.setVisibility(View.GONE);
-                          withItemsLayout.setVisibility(View.VISIBLE);
-                          mainAdapter.setConversationList(conversationDTOList);
-                       } else {
-                          emptyLayout.setVisibility(View.VISIBLE);
-                          withItemsLayout.setVisibility(View.GONE);
-                       }
-                    });
-                 }
+         new ConversationService.ConversationCallback<List<ConversationDTO>>() {
+            @Override
+            public void onSuccess(List<ConversationDTO> conversationList) {
+               runOnUiThread(() -> {
+                  if (conversationList != null && !conversationList.isEmpty()) {
+                     conversationDTOList.clear(); // clear old list
+                     conversationDTOList.addAll(conversationList);
+                     _validateConversation(conversationDTOList);
+                     emptyLayout.setVisibility(View.GONE);
+                     withItemsLayout.setVisibility(View.VISIBLE);
+                     mainAdapter.setConversationList(conversationDTOList);
+                  } else {
+                     emptyLayout.setVisibility(View.VISIBLE);
+                     withItemsLayout.setVisibility(View.GONE);
+                  }
+               });
+            }
 
-
-                 @Override
+            @Override
             public void onError(Throwable t) {
                Timber.e(t);
                runOnUiThread(() -> {
@@ -235,10 +230,10 @@ public class MainActivity extends BaseActivity {
          });
    }
 
-   private void  _setNotifcations(){
+   private void _setNotifcations() {
       boolean notifications = SharedPreferencesUtil.getBooleanPreferences(
-              this,
-              SharedPreferencesConstants.NOTIFICATIONS
+         this,
+         SharedPreferencesConstants.NOTIFICATIONS
       );
 
       switchNotifications.setChecked(notifications);
@@ -278,9 +273,10 @@ public class MainActivity extends BaseActivity {
       switchTheme = themeItem.getActionView().findViewById(R.id.switch_item);
 
       MenuItem notificationItem = navigationView
-              .getMenu()
-              .findItem(R.id.notification_menu);
-      switchNotifications = notificationItem.getActionView().findViewById(R.id.switch_item);
+         .getMenu()
+         .findItem(R.id.notification_menu);
+      switchNotifications =
+      notificationItem.getActionView().findViewById(R.id.switch_item);
 
       headerView = navigationView.getHeaderView(0); // Get the header view
 
@@ -335,17 +331,21 @@ public class MainActivity extends BaseActivity {
          }
       });
 
-      switchNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-         @Override
-         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            SharedPreferencesUtil.setBoolean(
-                    MainActivity.this,
-                    SharedPreferencesConstants.NOTIFICATIONS,
-                    b
-            );
+      switchNotifications.setOnCheckedChangeListener(
+         new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(
+               CompoundButton compoundButton,
+               boolean b
+            ) {
+               SharedPreferencesUtil.setBoolean(
+                  MainActivity.this,
+                  SharedPreferencesConstants.NOTIFICATIONS,
+                  b
+               );
+            }
          }
-
-      });
+      );
 
       profileImageHeader.setOnClickListener(
          new View.OnClickListener() {

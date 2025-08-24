@@ -9,7 +9,7 @@ import com.zen_vy.chat.models.conversation.entity.Conversation;
 import com.zen_vy.chat.models.conversation.entity.ConversationParticipant;
 import com.zen_vy.chat.models.message.MessageDatabaseUtil;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
-import com.zen_vy.chat.models.user.dbutil.UserDatabaseUtil;
+import com.zen_vy.chat.models.user.db.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.retrofit.RetrofitClient;
 import com.zen_vy.chat.util.DateTimeUtil;

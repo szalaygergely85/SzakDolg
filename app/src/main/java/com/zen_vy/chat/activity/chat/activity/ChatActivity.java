@@ -130,8 +130,6 @@ public class ChatActivity extends BaseActivity {
       if (!WebSocketService.isServiceRunning()) {
          _startingWebSocketService();
       }
-
-
    }
 
    public void setMessagesRead() {
@@ -372,8 +370,9 @@ public class ChatActivity extends BaseActivity {
       RecyclerView chatRecView,
       ChatAdapter adapter
    ) {
-
-      LinearLayoutManager layoutManager = new LinearLayoutManager(ChatActivity.this);
+      LinearLayoutManager layoutManager = new LinearLayoutManager(
+         ChatActivity.this
+      );
       layoutManager.setStackFromEnd(true); // keeps list pinned to bottom
       chatRecView.setLayoutManager(layoutManager);
       chatRecView.setAdapter(adapter);
@@ -395,15 +394,15 @@ public class ChatActivity extends BaseActivity {
 
                setMessagesRead();
 
-               chatRecView.post(() -> chatRecView.scrollToPosition(adapter.getItemCount() - 1));
+               chatRecView.post(() ->
+                  chatRecView.scrollToPosition(adapter.getItemCount() - 1)
+               );
             }
 
             @Override
             public void onError(Throwable t) {}
          }
       );
-
-
    }
 
    private void _setToolbarTitle(Toolbar mToolbar) {

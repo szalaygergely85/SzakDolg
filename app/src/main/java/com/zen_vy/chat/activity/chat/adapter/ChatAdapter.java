@@ -383,7 +383,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       if (messageEntries != null) {
          this.messageEntries = messageEntries;
          notifyDataSetChanged();
-        // chatRecView.post(() -> chatRecView.scrollToPosition(getItemCount() - 1));
+         // chatRecView.post(() -> chatRecView.scrollToPosition(getItemCount() - 1));
       }
    }
 

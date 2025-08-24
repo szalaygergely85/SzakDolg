@@ -3,7 +3,7 @@ package com.zen_vy.chat.models.contacts;
 import android.content.Context;
 import com.zen_vy.chat.DTO.ContactsDTO;
 import com.zen_vy.chat.models.contacts.db.ContactDatabaseUtil;
-import com.zen_vy.chat.models.user.dbutil.UserDatabaseUtil;
+import com.zen_vy.chat.models.user.db.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.retrofit.RetrofitClient;
 import java.util.List;

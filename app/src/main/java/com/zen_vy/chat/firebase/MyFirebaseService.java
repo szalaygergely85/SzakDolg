@@ -15,7 +15,6 @@ import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.main.MainActivity;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
-
 import java.util.List;
 import java.util.Map;
 import timber.log.Timber;
@@ -54,7 +53,12 @@ public class MyFirebaseService extends FirebaseMessagingService {
          String text = data.get("content");
 
          Timber.i("Message from %s: %s", title, text);
-         if(SharedPreferencesUtil.getBooleanPreferences(this, SharedPreferencesConstants.NOTIFICATIONS)) {
+         if (
+            SharedPreferencesUtil.getBooleanPreferences(
+               this,
+               SharedPreferencesConstants.NOTIFICATIONS
+            )
+         ) {
             showNotification(title, text);
          }
       }
@@ -77,22 +81,20 @@ public class MyFirebaseService extends FirebaseMessagingService {
          notificationManager.createNotificationChannel(channel);
       }
 
-      if(!isAppInForeground()){
+      if (!isAppInForeground()) {
+         // Create notification
+         NotificationCompat.Builder builder = new NotificationCompat.Builder(
+            this,
+            channelId
+         )
+            .setSmallIcon(R.drawable.icon_zenvy) // put an icon in res/drawable
+            .setContentTitle(title)
+            .setContentText(message)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-
-      // Create notification
-      NotificationCompat.Builder builder = new NotificationCompat.Builder(
-         this,
-         channelId
-      )
-         .setSmallIcon(R.drawable.icon_zenvy) // put an icon in res/drawable
-         .setContentTitle(title)
-         .setContentText(message)
-         .setAutoCancel(true)
-         .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-      //TODO open convenrsation
-      /*
+         //TODO open convenrsation
+         /*
 		Intent intent = new Intent(context, ChatActivity.class);
 		intent.putExtra(IntentConstants.CONVERSATION_DTO, data);
 		intent.setFlags(
@@ -109,40 +111,40 @@ public class MyFirebaseService extends FirebaseMessagingService {
 		);
 */
 
-      // Optional: open MainActivity when clicked
-      Intent intent = new Intent(this, MainActivity.class);
-      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      PendingIntent pendingIntent = PendingIntent.getActivity(
-         this,
-         0,
-         intent,
-         PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE
-      );
-      builder.setContentIntent(pendingIntent);
+         // Optional: open MainActivity when clicked
+         Intent intent = new Intent(this, MainActivity.class);
+         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+         PendingIntent pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE
+         );
+         builder.setContentIntent(pendingIntent);
 
-      // Show it
-      notificationManager.notify(
-         (int) System.currentTimeMillis(),
-         builder.build()
-      );
+         // Show it
+         notificationManager.notify(
+            (int) System.currentTimeMillis(),
+            builder.build()
+         );
       }
    }
 
    private boolean isAppInForeground() {
       ActivityManager activityManager = (ActivityManager) getSystemService(
-              Context.ACTIVITY_SERVICE
+         Context.ACTIVITY_SERVICE
       );
       List<ActivityManager.RunningAppProcessInfo> appProcesses =
-              activityManager.getRunningAppProcesses();
+         activityManager.getRunningAppProcesses();
       if (appProcesses == null) {
          return false;
       }
       final String packageName = getPackageName();
       for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
          if (
-                 appProcess.importance ==
-                         ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
-                         appProcess.processName.equals(packageName)
+            appProcess.importance ==
+               ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+            appProcess.processName.equals(packageName)
          ) {
             return true;
          }

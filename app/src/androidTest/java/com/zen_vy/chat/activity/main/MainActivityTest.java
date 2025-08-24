@@ -7,7 +7,6 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollTo;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -22,12 +21,12 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 import com.zen_vy.chat.R;
+import com.zen_vy.chat.helpers.ApiHelper;
+import com.zen_vy.chat.helpers.TestUtil;
 import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
-import com.zen_vy.chat.helpers.ApiHelper;
-import com.zen_vy.chat.helpers.TestUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.websocket.WebSocketService;
 import java.io.IOException;
@@ -197,7 +196,6 @@ public class MainActivityTest {
                )
             );
       } finally {
-
          ApiHelper.deleteMessage(secondMessage, context, testUser);
          ApiHelper.deleteMessage(lastMessage, context, testUser);
          ApiHelper.deleteConversation(
@@ -242,22 +240,23 @@ public class MainActivityTest {
    }
 
    @Test
-   public void testConversationOpeningAndReadingMessages() throws IOException, InterruptedException {
+   public void testConversationOpeningAndReadingMessages()
+      throws IOException, InterruptedException {
       List<Long> userIds = Arrays.asList(
-              testUser.getUserId(),
-              testUser2.getUserId()
+         testUser.getUserId(),
+         testUser2.getUserId()
       );
       ConversationDTO conversationDTO = ApiHelper.addConversationByUserIds(
-              userIds,
-              testUser.getToken()
+         userIds,
+         testUser.getToken()
       );
-      for (int i=0; i<15; i++){
+      for (int i = 0; i < 15; i++) {
          ApiHelper.addMessage(
-                 TestUtil.getRandomMessage(
-                         conversationDTO.getConversationId(),
-                         testUser2.getUserId()
-                 ),
-                 testUser.getToken()
+            TestUtil.getRandomMessage(
+               conversationDTO.getConversationId(),
+               testUser2.getUserId()
+            ),
+            testUser.getToken()
          );
       }
 
@@ -266,20 +265,18 @@ public class MainActivityTest {
       ActivityScenario.launch(MainActivity.class);
 
       onView(withId(R.id.messageBoardRecView))
-              .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+         .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
       Thread.sleep(2000);
       pressBack();
-      
-      onView(withId(R.id.main_item_not_read))
-              .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
 
+      onView(withId(R.id.main_item_not_read))
+         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
    }
 
    @Test
    public void testConversationArrivingWithBroadcastReceiver()
       throws IOException, InterruptedException {
-
       List<Long> userIds = Arrays.asList(
          testUser.getUserId(),
          testUser2.getUserId()
@@ -298,10 +295,9 @@ public class MainActivityTest {
       );
       ActivityScenario.launch(MainActivity.class);
       assertTrue(
-              "WebSocketService should be running",
-              WebSocketService.isServiceRunning()
+         "WebSocketService should be running",
+         WebSocketService.isServiceRunning()
       );
-
 
       try {
          WebSocketService wsService = WebSocketService.getInstance();

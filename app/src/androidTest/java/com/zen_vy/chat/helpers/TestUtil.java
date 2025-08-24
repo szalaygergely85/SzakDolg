@@ -1,7 +1,6 @@
 package com.zen_vy.chat.helpers;
 
 import android.content.Context;
-
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
@@ -203,6 +202,4 @@ public class TestUtil {
       performLogin(context, email, password);
       return user;
    }
-
-
 }

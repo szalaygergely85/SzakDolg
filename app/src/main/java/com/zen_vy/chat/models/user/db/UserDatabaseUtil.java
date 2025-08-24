@@ -1,4 +1,4 @@
-package com.zen_vy.chat.models.user.dbutil;
+package com.zen_vy.chat.models.user.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,6 +9,8 @@ import com.zen_vy.chat.database.DatabaseHelper;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class UserDatabaseUtil {
 
@@ -159,7 +161,7 @@ public class UserDatabaseUtil {
       return null; // Return null if no user found with the given token
    }
 
-   public User getUserById(Long userId) {
+   public User getUserById(long userId) {
       SQLiteDatabase db = dbHelper.getReadableDatabase();
       Cursor cursor = null;
 
@@ -295,22 +297,16 @@ public class UserDatabaseUtil {
 
          // Update the user record where userId matches
          int rowsAffected = db.update(
-            dbHelper.TABLE_USER_ENTRY,
+                 DatabaseHelper.TABLE_USER_ENTRY,
             values,
             "userId = ?",
             new String[] { user.getUserId().toString() }
          );
 
          if (rowsAffected == 0) {
-            Log.e(
-               "UserDatabaseUtil",
-               "No user found with ID: " + user.getUserId()
-            );
+             Timber.tag("UserDatabaseUtil").e("No user found with ID: " + user.getUserId());
          } else {
-            Log.i(
-               "UserDatabaseUtil",
-               "User updated successfully: " + user.getUserId()
-            );
+             Timber.tag("UserDatabaseUtil").i("User updated successfully: " + user.getUserId());
          }
       } finally {
          db.close();

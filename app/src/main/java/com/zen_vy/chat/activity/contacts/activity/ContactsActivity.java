@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,8 +32,6 @@ import java.util.Objects;
 
 public class ContactsActivity extends BaseActivity {
 
-
-
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -51,14 +48,12 @@ public class ContactsActivity extends BaseActivity {
          getOnBackPressedDispatcher().onBackPressed()
       );
       RelativeLayout.LayoutParams params =
-              (RelativeLayout.LayoutParams) btnNewContact.getLayoutParams();
+         (RelativeLayout.LayoutParams) btnNewContact.getLayoutParams();
       if (Objects.equals(actionId, ContactsConstans.ACTION_SELECT)) {
          bottomNav.setVisibility(View.GONE);
 
          params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
          params.removeRule(RelativeLayout.ABOVE);
-
-
       } else {
          params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
          params.addRule(RelativeLayout.ABOVE, R.id.bottom_nav_contacts);
@@ -186,25 +181,22 @@ public class ContactsActivity extends BaseActivity {
          }
       );
 
-
-         btnNewContact.setOnClickListener(
-            new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                  Intent intent = new Intent(
-                     ContactsActivity.this,
-                     SearchContactsActivity.class
-                  );
-                  intent.putExtra(
-                     SharedPreferencesConstants.CURRENT_USER,
-                     currentUser
-                  );
-                  startActivity(intent);
-               }
+      btnNewContact.setOnClickListener(
+         new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               Intent intent = new Intent(
+                  ContactsActivity.this,
+                  SearchContactsActivity.class
+               );
+               intent.putExtra(
+                  SharedPreferencesConstants.CURRENT_USER,
+                  currentUser
+               );
+               startActivity(intent);
             }
-         );
-
-
+         }
+      );
    }
 
    private void _initView() {

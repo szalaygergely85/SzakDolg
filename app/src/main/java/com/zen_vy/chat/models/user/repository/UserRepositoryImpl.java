@@ -3,7 +3,7 @@ package com.zen_vy.chat.models.user.repository;
 import android.content.Context;
 import com.zen_vy.chat.DTO.LoginRequest;
 import com.zen_vy.chat.models.user.api.UserApiService;
-import com.zen_vy.chat.models.user.dbutil.UserDatabaseUtil;
+import com.zen_vy.chat.models.user.db.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.retrofit.RetrofitClient;
 import com.zen_vy.chat.util.DateTimeUtil;

@@ -4,20 +4,14 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.MenuItem;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.google.android.material.navigation.NavigationView;
-import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.login.LoginActivity;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
-import com.zen_vy.chat.models.user.dbutil.UserDatabaseUtil;
+import com.zen_vy.chat.models.user.db.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import java.util.ArrayList;
@@ -62,11 +56,13 @@ public class BaseActivity extends AppCompatActivity {
 
    private void _applyTheme() {
       boolean isNightMode = SharedPreferencesUtil.getBooleanPreferences(
-              this,
-              SharedPreferencesConstants.DARK_MODE
+         this,
+         SharedPreferencesConstants.DARK_MODE
       );
       if (isNightMode) {
-         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+         AppCompatDelegate.setDefaultNightMode(
+            AppCompatDelegate.MODE_NIGHT_YES
+         );
       } else {
          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
       }
@@ -148,7 +144,6 @@ public class BaseActivity extends AppCompatActivity {
          requestNextPermission();
       }
    }
-
 
    protected String token;
    protected String uuid;
