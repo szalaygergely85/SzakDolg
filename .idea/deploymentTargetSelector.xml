@@ -16,15 +16,6 @@
       <SelectionState runConfigName="Tests in 'com.zen_vy.chat'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testConversationOpeningAndReadingMessages()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testConversationArrivingWithBroadcastReceiverExistingConversation()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testArrivingMessages()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
     </selectionStates>
   </component>
 </project>

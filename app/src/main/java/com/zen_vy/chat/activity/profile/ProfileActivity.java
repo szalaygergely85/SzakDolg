@@ -67,8 +67,13 @@ public class ProfileActivity extends BaseActivity {
 
       chatToolbar = findViewById(R.id.chatToolbar);
 
+      //TODO once do status...
+       /*
+
       profeditStatus = findViewById(R.id.profeditStatus);
       iconEditStatus = findViewById(R.id.iconEditStatus);
+
+        */
       iconEditPic = findViewById(R.id.iconEditPic);
 
       continueButton = findViewById(R.id.profBtnContinue);
@@ -97,17 +102,17 @@ public class ProfileActivity extends BaseActivity {
          deleteContact.setVisibility(View.VISIBLE);
          sendMessage.setVisibility(View.VISIBLE);
 
-         iconEditStatus.setVisibility(View.GONE);
-         iconEditPic.setVisibility(View.GONE);
+      //   iconEditStatus.setVisibility(View.GONE);
+      //   iconEditPic.setVisibility(View.GONE);
 
-         profeditStatus.setInputType(InputType.TYPE_NULL);
+       //  profeditStatus.setInputType(InputType.TYPE_NULL);
 
          continueButton.setVisibility(View.GONE);
       } else {
          user = currentUser;
          deleteContact.setVisibility(View.GONE);
          sendMessage.setVisibility(View.GONE);
-         profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
+   //      profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
 
          _addListeners();
          if (action.equals(ProfileConstants.ACCEPT_PROFILE)) {
@@ -123,13 +128,14 @@ public class ProfileActivity extends BaseActivity {
          getOnBackPressedDispatcher().onBackPressed()
       );
 
+      /*
       String status = user.getStatus();
       if (status.isEmpty()) {
          profeditStatus.setText("Tap to set a status...");
       } else {
          profeditStatus.setText("Status");
       }
-
+*/
       //Set image
 
       String imageUrl = ImageUtil.buildProfileImageUrl(user.getUserId());

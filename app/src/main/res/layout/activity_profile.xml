@@ -87,62 +87,64 @@
 
 
     <!-- Status Card with Edit Icon -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardStatus"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        app:layout_constraintTop_toBottomOf="@id/profilePicContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            >
+    <!--
+   <com.google.android.material.card.MaterialCardView
+       android:id="@+id/cardStatus"
+       android:layout_width="0dp"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="12dp"
+       android:layout_marginStart="32dp"
+       android:layout_marginEnd="32dp"
+       app:cardCornerRadius="12dp"
+       app:cardElevation="2dp"
+       android:clickable="true"
+       android:foreground="?attr/selectableItemBackground"
+       app:layout_constraintTop_toBottomOf="@id/profilePicContainer"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent">
 
-            <EditText
-                android:id="@+id/profeditStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="Tap to set a status..."
-                android:textColor="@color/textPrimary"
-                android:textSize="14sp" />
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:paddingHorizontal="12dp"
+           >
 
-            <ImageView
-                android:id="@+id/iconEditStatus"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:padding="4dp"
-                android:src="@drawable/ic_edit"
-                app:tint="@color/textPrimary" />
-        </RelativeLayout>
-    </com.google.android.material.card.MaterialCardView>
+           <EditText
+               android:id="@+id/profeditStatus"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_alignParentStart="true"
+               android:layout_centerVertical="true"
+               android:text="Tap to set a status..."
+               android:textColor="@color/textPrimary"
+               android:textSize="14sp" />
 
+           <ImageView
+               android:id="@+id/iconEditStatus"
+               android:layout_width="25dp"
+               android:layout_height="25dp"
+               android:layout_alignParentEnd="true"
+               android:layout_centerVertical="true"
+               android:padding="4dp"
+               android:src="@drawable/ic_edit"
+               app:tint="@color/textPrimary" />
+       </RelativeLayout>
+   </com.google.android.material.card.MaterialCardView>
+-->
 
-    <Button
-        android:id="@+id/profBtnSendMsg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send Message"
-        android:textSize="14sp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@id/cardStatus"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+   <Button
+       android:id="@+id/profBtnSendMsg"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Send Message"
+       android:textSize="14sp"
+       android:layout_marginTop="30dp"
+       app:layout_constraintTop_toBottomOf="@id/profilePicContainer"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Delete Contact Button -->
+   <!-- Delete Contact Button -->
     <Button
         android:id="@+id/profBtnDeleteContact"
         android:layout_width="wrap_content"
@@ -161,7 +163,7 @@
         android:text="Continue"
         android:textSize="14sp"
         android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@id/cardStatus"
+        app:layout_constraintTop_toBottomOf="@id/profilePicContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

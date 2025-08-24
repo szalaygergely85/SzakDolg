@@ -13,8 +13,8 @@ android {
         applicationId "com.zen_vy.chat"
         minSdk 26
         targetSdk 35
-        versionCode 17
-        versionName "1.25 alpha"
+        versionCode 19
+        versionName "1.27 alpha"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     testOptions {
