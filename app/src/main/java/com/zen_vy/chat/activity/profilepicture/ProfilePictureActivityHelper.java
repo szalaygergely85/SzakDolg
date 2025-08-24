@@ -15,6 +15,7 @@ import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.service.UserService;
 import java.io.IOException;
 
+@Deprecated
 public class ProfilePictureActivityHelper {
 
    private Context context;

@@ -1,4 +1,4 @@
-package com.zen_vy.chat.activity;
+package com.zen_vy.chat.activity.main;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
@@ -22,13 +22,12 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 import com.zen_vy.chat.R;
-import com.zen_vy.chat.activity.main.MainActivity;
 import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
-import com.zen_vy.chat.testhelpers.ApiHelper;
-import com.zen_vy.chat.testhelpers.TestUtil;
+import com.zen_vy.chat.helpers.ApiHelper;
+import com.zen_vy.chat.helpers.TestUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.websocket.WebSocketService;
 import java.io.IOException;

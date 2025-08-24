@@ -1,4 +1,4 @@
-package com.zen_vy.chat.activity;
+package com.zen_vy.chat.helpers;
 
 import android.view.View;
 

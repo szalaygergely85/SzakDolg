@@ -1,4 +1,4 @@
-package com.zen_vy.chat.activity;
+package com.zen_vy.chat.activity.login;
 
 import androidx.test.filters.MediumTest;
 

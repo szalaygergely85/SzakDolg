@@ -1,4 +1,4 @@
-package com.zen_vy.chat.activity;
+package com.zen_vy.chat.activity.register;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -18,10 +18,9 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.google.android.material.textfield.TextInputLayout;
 import com.zen_vy.chat.R;
-import com.zen_vy.chat.activity.register.RegisterActivity;
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
-import com.zen_vy.chat.testhelpers.ApiHelper;
-import com.zen_vy.chat.testhelpers.TestUtil;
+import com.zen_vy.chat.helpers.ApiHelper;
+import com.zen_vy.chat.helpers.TestUtil;
 import com.zen_vy.chat.util.RandomUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import org.hamcrest.Description;

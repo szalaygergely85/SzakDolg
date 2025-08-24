@@ -109,7 +109,7 @@ public class ProfileActivity extends BaseActivity {
          sendMessage.setVisibility(View.GONE);
          profeditStatus.setInputType(InputType.TYPE_CLASS_TEXT);
 
-         addEditProfileImageListener();
+         _addListeners();
          if (action.equals(ProfileConstants.ACCEPT_PROFILE)) {
             continueButton.setVisibility(View.VISIBLE);
          } else {
@@ -162,77 +162,9 @@ Glide.with(this)
    protected void onStart() {
       super.onStart();
 
-      continueButton.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Intent intent = new Intent(
-                  ProfileActivity.this,
-                  MainActivity.class
-               );
-
-               startActivity(intent);
-            }
-         }
-      );
-
-      deleteContact.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               contactService.deleteContact(
-                  contact,
-                  new ContactService.ContactCallback<Void>() {
-                     @Override
-                     public void onSuccess(Void data) {}
-
-                     @Override
-                     public void onError(Throwable t) {}
-                  }
-               );
-
-               finish();
-            }
-         }
-      );
-
-      sendMessage.setOnClickListener(
-         new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               List<Long> participants = new ArrayList<>();
-               participants.add(currentUser.getUserId());
-               participants.add(user.getUserId());
-
-               conversationService.addConversationByUserId(
-                  participants,
-                  new ConversationService.ConversationCallback<
-                     ConversationDTO
-                  >() {
-                     @Override
-                     public void onSuccess(ConversationDTO data) {
-                        Intent intent = new Intent(
-                           ProfileActivity.this,
-                           ChatActivity.class
-                        );
-                        intent.putExtra(
-                           IntentConstants.CONVERSATION_ID,
-                           data.getConversation().getConversationId()
-                        );
-                        intent.putExtra(IntentConstants.CONVERSATION_DTO, data);
-                        startActivity(intent);
-                     }
-
-                     @Override
-                     public void onError(Throwable t) {}
-                  }
-               );
-            }
-         }
-      );
    }
 
-   private void addEditProfileImageListener() {
+   private void _addListeners() {
       profPic.setOnClickListener(
          new View.OnClickListener() {
             @Override
@@ -241,6 +173,77 @@ Glide.with(this)
             }
          }
       );
+
+      continueButton.setOnClickListener(
+              new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                    Intent intent = new Intent(
+                            ProfileActivity.this,
+                            MainActivity.class
+                    );
+
+                    startActivity(intent);
+                 }
+              }
+      );
+
+      deleteContact.setOnClickListener(
+              new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+                    contactService.deleteContact(
+                            contact,
+                            new ContactService.ContactCallback<Void>() {
+                               @Override
+                               public void onSuccess(Void data) {}
+
+                               @Override
+                               public void onError(Throwable t) {}
+                            }
+                    );
+
+                    finish();
+                 }
+              }
+      );
+
+      sendMessage.setOnClickListener(
+              new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                    List<Long> participants = new ArrayList<>();
+                    participants.add(currentUser.getUserId());
+                    participants.add(user.getUserId());
+
+                    conversationService.addConversationByUserId(
+                            participants,
+                            new ConversationService.ConversationCallback<
+                                    ConversationDTO
+                                    >() {
+                               @Override
+                               public void onSuccess(ConversationDTO data) {
+                                  Intent intent = new Intent(
+                                          ProfileActivity.this,
+                                          ChatActivity.class
+                                  );
+                                  intent.putExtra(
+                                          IntentConstants.CONVERSATION_ID,
+                                          data.getConversation().getConversationId()
+                                  );
+                                  intent.putExtra(IntentConstants.CONVERSATION_DTO, data);
+                                  startActivity(intent);
+                               }
+
+                               @Override
+                               public void onError(Throwable t) {}
+                            }
+                    );
+                 }
+              }
+      );
+
+
    }
 
    public void openImageChooser() {

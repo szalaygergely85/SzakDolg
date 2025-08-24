@@ -1,4 +1,4 @@
-package com.zen_vy.chat.activity;
+package com.zen_vy.chat.activity.chat;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -22,16 +22,19 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 import com.zen_vy.chat.R;
+import com.zen_vy.chat.helpers.RecycleViewTestHelper;
 import com.zen_vy.chat.activity.chat.activity.ChatActivity;
 import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.contacts.dto.ConversationDTO;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
-import com.zen_vy.chat.testhelpers.ApiHelper;
-import com.zen_vy.chat.testhelpers.TestUtil;
+import com.zen_vy.chat.helpers.ApiHelper;
+import com.zen_vy.chat.helpers.TestUtil;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.RandomUtil;
+import com.zen_vy.chat.websocket.WebSocketService;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +54,7 @@ public class ChatActivityTest {
    private User testUser2;
    private User testUser3;
 
-   @Rule
+    @Rule
    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
       android.Manifest.permission.CAMERA,
       android.Manifest.permission.RECORD_AUDIO,
@@ -62,6 +65,8 @@ public class ChatActivityTest {
 
    @Before
    public void setUp() throws InterruptedException, IOException {
+
+
       context = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
       testUser = TestUtil.createRandomUserAndLogIn(context);
@@ -76,6 +81,82 @@ public class ChatActivityTest {
       ApiHelper.deleteUser(testUser2.getEmail(), context);
       ApiHelper.deleteUser(testUser3.getEmail(), context);
    }
+
+    @Test
+    public void testArrivingMessages() {
+        ConversationDTO conversationDTO = new ConversationDTO();
+
+        try {
+            List<Long> userIds = Arrays.asList(
+                    testUser.getUserId(),
+                    testUser2.getUserId()
+            );
+            conversationDTO =
+                    ApiHelper.addConversationByUserIds(userIds, testUser.getToken());
+
+            Intent intent = new Intent(
+                    ApplicationProvider.getApplicationContext(),
+                    ChatActivity.class
+            );
+            intent.putExtra(IntentConstants.CONVERSATION_DTO, conversationDTO);
+
+            ActivityScenario<ChatActivity> scenario = ActivityScenario.launch(
+                    intent
+            );
+
+            MessageEntry firstMessage = ApiHelper.addMessage(
+                    TestUtil.getRandomMessage(
+                            conversationDTO.getConversationId(),
+                            testUser2.getUserId()
+                    ),
+                    testUser.getToken()
+            );
+
+            WebSocketService wsService = WebSocketService.getInstance();
+            wsService.sendMessageBroadcast(firstMessage);
+            Thread.sleep(1500);
+
+
+            //TODO need to do encytptiooon....
+            onView(withId(R.id.recViewChat))
+                    .check(
+                            matches(
+                                    RecycleViewTestHelper.atPosition(
+                                            0,
+                                            hasDescendant(
+                                                    withText(
+                                                            DateTimeUtil.toShortDateFormat(
+                                                                    firstMessage.getTimestamp()
+                                                            )
+                                                    )
+                                            )
+                                    )
+                            )
+                    );
+
+
+            onView(withId(R.id.recViewChat))
+                    .check(
+                            matches(
+                                    RecycleViewTestHelper.atPosition(
+                                            1,
+                                            hasDescendant(
+                                                    allOf(
+                                                            withId(R.id.chatTextFrMe),
+                                                            withText(
+                                                                    firstMessage.getContentEncrypted()
+                                                            ) // your expected message
+                                                    )
+                                            )
+                                    )
+                            )
+                    );
+
+
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
    @Test
    public void testSendMessages() {

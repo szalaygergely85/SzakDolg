@@ -1,9 +1,7 @@
-package com.zen_vy.chat.testhelpers;
+package com.zen_vy.chat.helpers;
 
 import android.content.Context;
-import android.view.View;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.matcher.BoundedMatcher;
+
 import com.zen_vy.chat.constans.SharedPreferencesConstants;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
@@ -13,8 +11,6 @@ import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.RandomUtil;
 import com.zen_vy.chat.util.SharedPreferencesUtil;
 import java.io.IOException;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 
 public class TestUtil {
 

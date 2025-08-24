@@ -1,4 +1,4 @@
-package com.zen_vy.chat.testhelpers;
+package com.zen_vy.chat.helpers;
 
 import android.content.Context;
 import com.google.gson.Gson;
