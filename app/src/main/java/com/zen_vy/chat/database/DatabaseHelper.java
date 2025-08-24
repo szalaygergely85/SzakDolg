@@ -11,11 +11,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
    public static final String TABLE_CONTACT = "Contact";
    public static final String TABLE_CONVERSATION_PARTICIPANTS =
-      "conversation_participants";
+      "Conversation_participants";
    public static final String TABLE_CONVERSATIONS = "Conversations";
    public static final String TABLE_IMAGE = "Image";
    public static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
    public static final String TABLE_USER_ENTRY = "UserEntry";
+
+   public static final String TABLE_KEYS = "Keys";
+
+   private static final String CREATE_TABLE_KEYS =
+      "CREATE TABLE " +
+      TABLE_KEYS +
+      " (" +
+      "keyId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "userId INTEGER NOT NULL, " +
+      "keyText TEXT NOT NULL" +
+      ");";
 
    private static final String CREATE_TABLE_CONTACT =
       "CREATE TABLE " +
@@ -106,6 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL(CREATE_TABLE_CONVERSATION_PARTICIPANTS);
       db.execSQL(CREATE_TABLE_CONVERSATIONS);
       db.execSQL(CREATE_TABLE_IMAGE);
+      db.execSQL(CREATE_TABLE_KEYS);
    }
 
    @Override
@@ -116,6 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATION_PARTICIPANTS);
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATIONS);
       db.execSQL("DROP TABLE IF EXISTS " + TABLE_IMAGE);
+      db.execSQL("DROP TABLE IF EXISTS " + TABLE_KEYS);
       onCreate(db);
    }
 
