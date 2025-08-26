@@ -37,7 +37,7 @@ public class MessageService extends BaseService {
       String encryptedContentString = null;
       //TODO ENCYPTION
       //messageEntry.setContentEncrypted(EncryptionHelper.encrypt(messageEntry.getContent(), currentUser.getPublicKey()));
-      messageEntry.setContentEncrypted(messageEntry.getContent());
+
 
       WebSocketService wsService = WebSocketService.getInstance();
 
@@ -49,9 +49,11 @@ public class MessageService extends BaseService {
             json.put("conversationId", messageEntry.getConversationId());
             json.put("uuid", messageEntry.getUuId());
             json.put("timestamp", messageEntry.getTimestamp());
-            json.put("contentEncrypted", messageEntry.getContentEncrypted());
+            json.put("content", messageEntry.getContent());
+             json.put("encrypted", messageEntry.isEncrypted());
 
-            wsService.sendMessage(json.toString());
+
+             wsService.sendMessage(json.toString());
             messageDatabaseUtil.insertMessageEntry(messageEntry);
             callback.onSuccess(messageEntry); // Assume WebSocket worked
          } catch (JSONException e) {

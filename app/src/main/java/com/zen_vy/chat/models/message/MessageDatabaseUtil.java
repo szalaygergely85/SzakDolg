@@ -29,10 +29,10 @@ public class MessageDatabaseUtil {
          values.put("conversationId", message.getConversationId());
          values.put("senderId", message.getSenderId());
          values.put("timestamp", message.getTimestamp());
-         values.put("contentEncrypted", message.getContentEncrypted());
+         values.put("content", message.getContent());
+         values.put("isEncrypted", message.isEncrypted());
          values.put("isRead", message.isRead());
          values.put("type", message.getType());
-         values.put("content", message.getContent());
          values.put("uUId", message.getUuId());
          db.insertWithOnConflict(
             dbHelper.TABLE_MESSAGE_ENTRY,
@@ -70,10 +70,11 @@ public class MessageDatabaseUtil {
             Long convId = cursor.getLong(2); // Assuming conversationId is the second column
             Long senderId = cursor.getLong(3); // Assuming senderId is the third column
             Long timestamp = cursor.getLong(4); // Assuming timestamp is the fourth column
-            String contentEncrypted = cursor.getString(5); // Assuming content is the fifth column
-            boolean isRead = cursor.getInt(6) > 0; // Assuming isRead is the sixth column
-            int type = cursor.getInt(7); // Assuming type is the seventh column
-            String content = cursor.getString(8); // Assuming contentSenderVersion is the eighth column
+            String content = cursor.getString(5); // Assuming content is the fifth column
+            boolean isEncrypted = cursor.getInt(6) > 0; // Assuming isRead is the sixth column
+            boolean isRead = cursor.getInt(7) > 0; // Assuming isRead is the sixth column
+            int type = cursor.getInt(8); // Assuming type is the seventh column
+
             String uuid = cursor.getString(9);
             boolean isUploaded = cursor.getInt(10) > 0;
 
@@ -84,10 +85,10 @@ public class MessageDatabaseUtil {
                convId,
                senderId,
                timestamp,
-               contentEncrypted,
                isRead,
                type,
                content,
+               isEncrypted,
                uuid,
                isUploaded
             );
@@ -123,10 +124,14 @@ public class MessageDatabaseUtil {
             message.setTimestamp(
                cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
             );
-            message.setContentEncrypted(
+            message.setContent(
                cursor.getString(
-                  cursor.getColumnIndexOrThrow("contentEncrypted")
+                  cursor.getColumnIndexOrThrow("content")
                )
+            );
+            message.setEncrypted(
+                    cursor.getInt(
+                            cursor.getColumnIndexOrThrow("isEncrypted")) == 1
             );
             message.setRead(
                cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
@@ -134,9 +139,7 @@ public class MessageDatabaseUtil {
             message.setType(
                cursor.getInt(cursor.getColumnIndexOrThrow("type"))
             );
-            message.setContent(
-               cursor.getString(cursor.getColumnIndexOrThrow("content"))
-            );
+
             messages.add(message);
          }
       } finally {
@@ -183,19 +186,20 @@ public class MessageDatabaseUtil {
                message.setTimestamp(
                   cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
                );
-               message.setContentEncrypted(
+               message.setContent(
                   cursor.getString(
-                     cursor.getColumnIndexOrThrow("contentEncrypted")
+                     cursor.getColumnIndexOrThrow("content")
                   )
                );
+               message.setEncrypted(
+                       cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
+               );
+
                message.setRead(
                   cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
                ); // SQLite BOOLEAN mapped as INTEGER
                message.setType(
                   cursor.getInt(cursor.getColumnIndexOrThrow("type"))
-               );
-               message.setContent(
-                  cursor.getString(cursor.getColumnIndexOrThrow("content"))
                );
                message.setUploaded(
                   cursor.getInt(cursor.getColumnIndexOrThrow("isUploaded")) == 1
@@ -263,10 +267,10 @@ public class MessageDatabaseUtil {
          values.put("conversationId", message.getConversationId());
          values.put("senderId", message.getSenderId());
          values.put("timestamp", message.getTimestamp());
-         values.put("contentEncrypted", message.getContentEncrypted());
+         values.put("content", message.getContent());
+         values.put("isEncrypted", message.isRead() ? 1 : 0); // Convert boolean to SQLite-compatible integer
          values.put("isRead", message.isRead() ? 1 : 0); // Convert boolean to SQLite-compatible integer
          values.put("type", message.getType());
-         values.put("content", message.getContent());
          values.put("isUploaded", message.isUploaded() ? 1 : 0); // Handle isUploaded column
 
          // Perform update using uUId as the unique identifier
@@ -330,20 +334,21 @@ public class MessageDatabaseUtil {
             message.setTimestamp(
                cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
             );
-            message.setContentEncrypted(
+            message.setContent(
                cursor.getString(
-                  cursor.getColumnIndexOrThrow("contentEncrypted")
+                  cursor.getColumnIndexOrThrow("content")
                )
             );
+            message.setEncrypted(
+                    cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
+            ); // SQLite BOOLEAN
             message.setRead(
                cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
             ); // SQLite BOOLEAN
             message.setType(
                cursor.getInt(cursor.getColumnIndexOrThrow("type"))
             );
-            message.setContent(
-               cursor.getString(cursor.getColumnIndexOrThrow("content"))
-            );
+
             message.setUploaded(
                cursor.getInt(cursor.getColumnIndexOrThrow("isUploaded")) == 1
             ); // SQLite BOOLEAN

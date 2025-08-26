@@ -19,15 +19,15 @@ public class MessageEntry implements Serializable {
    private Long timestamp;
 
    @Expose
-   private String contentEncrypted;
+   private String content;
+
+   @Expose
+   private boolean encrypted;
 
    private boolean isRead;
 
    @Expose
    private int type;
-
-   @Expose
-   private String content;
 
    @Expose
    private String uuid;
@@ -64,14 +64,6 @@ public class MessageEntry implements Serializable {
 
    public void setTimestamp(Long timestamp) {
       this.timestamp = timestamp;
-   }
-
-   public String getContentEncrypted() {
-      return contentEncrypted;
-   }
-
-   public void setContentEncrypted(String contentEncrypted) {
-      this.contentEncrypted = contentEncrypted;
    }
 
    public boolean isRead() {
@@ -114,28 +106,44 @@ public class MessageEntry implements Serializable {
       isUploaded = uploaded;
    }
 
+   public boolean isEncrypted() {
+      return encrypted;
+   }
+
+   public void setEncrypted(boolean encrypted) {
+      this.encrypted = encrypted;
+   }
+
+   public String getUuid() {
+      return uuid;
+   }
+
+   public void setUuid(String uuid) {
+      this.uuid = uuid;
+   }
+
    public MessageEntry() {}
 
    public MessageEntry(
-      Long messageId,
       Long conversationId,
       Long senderId,
       Long timestamp,
-      String contentEncrypted,
-      boolean isRead,
-      int type,
       String content,
+      boolean encrypted,
+      int type,
       String uuid
    ) {
-      this.messageId = messageId;
-      this.conversationId = conversationId;
-      this.senderId = senderId;
-      this.timestamp = timestamp;
-      this.contentEncrypted = contentEncrypted;
-      this.isRead = isRead;
-      this.type = type;
-      this.content = content;
-      this.uuid = uuid;
+      this(
+         null,
+         conversationId,
+         senderId,
+         timestamp,
+         false,
+         type,
+              content,
+              encrypted,
+         uuid
+      );
    }
 
    public MessageEntry(
@@ -143,10 +151,35 @@ public class MessageEntry implements Serializable {
       Long conversationId,
       Long senderId,
       Long timestamp,
-      String contentEncrypted,
       boolean isRead,
       int type,
       String content,
+      boolean encrypted,
+      String uuid
+   ) {
+      this(
+         messageId,
+         conversationId,
+         senderId,
+         timestamp,
+         isRead,
+         type,
+         content,
+              encrypted,
+         uuid,
+         false
+      );
+   }
+
+   public MessageEntry(
+      Long messageId,
+      Long conversationId,
+      Long senderId,
+      Long timestamp,
+      boolean isRead,
+      int type,
+      String content,
+      boolean encrypted,
       String uuid,
       boolean isUploaded
    ) {
@@ -154,31 +187,12 @@ public class MessageEntry implements Serializable {
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
-      this.contentEncrypted = contentEncrypted;
       this.isRead = isRead;
       this.type = type;
       this.content = content;
+      this.encrypted = encrypted;
       this.uuid = uuid;
       this.isUploaded = isUploaded;
-   }
-
-   public MessageEntry(
-      Long conversationId,
-      Long senderId,
-      Long timestamp,
-      String contentEncrypted,
-      int type,
-      String uuid
-   ) {
-      this.conversationId = conversationId;
-      this.senderId = senderId;
-      this.timestamp = timestamp;
-      this.contentEncrypted = contentEncrypted;
-      this.isRead = false;
-      this.type = type;
-      this.content = null;
-      this.uuid = uuid;
-      this.isUploaded = true;
    }
 
    public String getJSON() {

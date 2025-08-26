@@ -89,7 +89,7 @@ public class MainAdapterHelper {
    public String getContent(MessageEntry messageEntry, User sender) {
       if (messageEntry.getType() == MessageTypeConstants.MESSAGE) {
          String decryptedContentString = null;
-         messageEntry.setContent(messageEntry.getContentEncrypted());
+
          if (messageEntry.getContent() != null) {
             if (isSenderLoggedUser(messageEntry)) {
                return "You: " + messageEntry.getContent();

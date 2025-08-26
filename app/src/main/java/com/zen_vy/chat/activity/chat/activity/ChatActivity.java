@@ -292,10 +292,10 @@ public class ChatActivity extends BaseActivity {
          conversation.getConversationId(),
          currentUser.getUserId(),
          System.currentTimeMillis(),
-         null,
          true,
          messageType,
          content,
+         false,
          UUIDUtil.UUIDGenerator(),
          false
       );

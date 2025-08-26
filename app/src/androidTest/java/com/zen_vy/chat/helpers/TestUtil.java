@@ -126,6 +126,7 @@ public class TestUtil {
          userId,
          timestamp,
          RandomUtil.getRandomString(15),
+         false,
          type,
          RandomUtil.getRandomString(5)
       );

@@ -312,9 +312,12 @@ public class WebSocketService extends Service {
          : null;
 
       int mType = jsonObject.has("type") ? jsonObject.getInt("type") : 0;
-      String contentEncrypted = jsonObject.has("contentEncrypted")
-         ? jsonObject.getString("contentEncrypted")
+      String content = jsonObject.has("content")
+         ? jsonObject.getString("content")
          : null;
+
+      boolean encrypted = jsonObject.has("encrypted") && jsonObject.getBoolean("encrypted");
+
       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
          context,
          currentUser
@@ -323,31 +326,30 @@ public class WebSocketService extends Service {
          conversationId,
          senderId,
          timestamp,
-         contentEncrypted,
+         content,
+         encrypted,
          mType,
          uuid
       );
 
       //TODO encryption
-      messageEntry.setContent(contentEncrypted);
+      messageEntry.setContent(content);
 
       messageDatabaseUtil.insertMessageEntry(messageEntry);
       if (isAppInForeground()) {
          sendMessageBroadcast(messageEntry);
-         Log.e(AppConstants.LOG_TAG, messageEntry.toString());
+          Timber.tag(AppConstants.LOG_TAG).e(messageEntry.toString());
       }
-      if (messageEntry != null) {
-         String message =
-            "{\"type\": " +
-            MessageTypeConstants.ARRIVAL_CONFIRMATION +
-            ", \"uuid\": \"" +
-            uuid +
-            "\", \"userId\": \"" +
-            currentUser.getUserId() +
-            "\"}";
-         Log.e(AppConstants.LOG_TAG, message);
-         sendMessage(message);
-      }
+       String message =
+               "{\"type\": " +
+                       MessageTypeConstants.ARRIVAL_CONFIRMATION +
+                       ", \"uuid\": \"" +
+                       uuid +
+                       "\", \"userId\": \"" +
+                       currentUser.getUserId() +
+                       "\"}";
+       Timber.e(message);
+       sendMessage(message);
    }
 
    public void sendMessageBroadcast(MessageEntry message) {

@@ -286,9 +286,6 @@ public class ConversationRepositoryImpl implements ConversationRepository {
                            MessageEntry messageEntry =
                               conversationDTO.getMessageEntry();
                            if (messageEntry != null) {
-                              messageEntry.setContent(
-                                 messageEntry.getContentEncrypted()
-                              );
                               _insertConversationDTO(conversationDTO, null);
                            }
                         }

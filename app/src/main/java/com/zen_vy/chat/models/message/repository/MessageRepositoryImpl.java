@@ -236,7 +236,7 @@ public class MessageRepositoryImpl implements MessageRepository {
    }
 
    private void _decryptMessage(MessageEntry messageEntry) {
-      messageEntry.setContent(messageEntry.getContentEncrypted());
+      messageEntry.setContent(messageEntry.getContent());
       //messageEntry.setContent(EncryptionHelper.decrypt(messageEntry.getContentEncrypted(), currentUser.getPublicKey()));
    }
 }

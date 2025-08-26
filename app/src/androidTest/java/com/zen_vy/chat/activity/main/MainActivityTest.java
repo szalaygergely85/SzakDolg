@@ -113,11 +113,11 @@ public class MainActivityTest {
          onView(withId(R.id.messageBoardRecView))
             .perform(
                scrollTo(
-                  hasDescendant(withText(lastMessage.getContentEncrypted()))
+                  hasDescendant(withText(lastMessage.getContent()))
                )
             );
 
-         onView(withText(lastMessage.getContentEncrypted()))
+         onView(withText(lastMessage.getContent()))
             .check(matches(isDisplayed()));
          onView(withId(R.id.main_item_not_read))
             .check(matches(withText(equalTo("1"))));
@@ -176,11 +176,11 @@ public class MainActivityTest {
          onView(withId(R.id.messageBoardRecView))
             .perform(
                scrollTo(
-                  hasDescendant(withText(lastMessage.getContentEncrypted()))
+                  hasDescendant(withText(lastMessage.getContent()))
                )
             );
 
-         onView(withText(lastMessage.getContentEncrypted()))
+         onView(withText(lastMessage.getContent()))
             .check(matches(isDisplayed()));
 
          onView(withId(R.id.main_item_not_read))
@@ -304,7 +304,7 @@ public class MainActivityTest {
          wsService.sendMessageBroadcast(lastMessage);
 
          Thread.sleep(1500);
-         onView(withText(lastMessage.getContentEncrypted()))
+         onView(withText(lastMessage.getContent()))
             .check(matches(isDisplayed()));
       } finally {
          ApiHelper.deleteMessage(lastMessage, context, testUser);
@@ -359,7 +359,7 @@ public class MainActivityTest {
          wsService.sendMessageBroadcast(lastMessage);
 
          Thread.sleep(1500);
-         onView(withText(lastMessage.getContentEncrypted()))
+         onView(withText(lastMessage.getContent()))
             .check(matches(isDisplayed()));
       } finally {
          ApiHelper.deleteMessage(lastMessage, context, testUser);

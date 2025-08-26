@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
    private static volatile DatabaseHelper instance;
-   private static final int DATABASE_VERSION = 1;
+   private static final int DATABASE_VERSION = 3;
 
    public static final String TABLE_CONTACT = "Contact";
    public static final String TABLE_CONVERSATION_PARTICIPANTS =
@@ -84,10 +84,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "conversationId INTEGER NOT NULL, " +
       "senderId INTEGER NOT NULL, " +
       "timestamp INTEGER NOT NULL, " +
-      "contentEncrypted TEXT, " +
+      "content TEXT, " +
+      "isEncrypted BOOLEAN NOT NULL, " +
       "isRead BOOLEAN NOT NULL, " +
       "type INTEGER NOT NULL, " +
-      "content TEXT," +
       "uUId TEXT NOT NULL," +
       "isUploaded BOOLEAN DEFAULT false" +
       ");";
@@ -122,14 +122,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
    @Override
    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-      db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACT);
-      db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGE_ENTRY);
-      db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_ENTRY);
-      db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATION_PARTICIPANTS);
-      db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONVERSATIONS);
-      db.execSQL("DROP TABLE IF EXISTS " + TABLE_IMAGE);
-      db.execSQL("DROP TABLE IF EXISTS " + TABLE_KEYS);
-      onCreate(db);
+      if (oldVersion < 3) {
+         // 1. Rename old table
+         db.execSQL(
+            "ALTER TABLE " +
+            TABLE_MESSAGE_ENTRY +
+            " RENAME TO MessageEntry_old;"
+         );
+
+         // 2. Create the new table with updated schema
+         db.execSQL(CREATE_TABLE_MESSAGE_ENTRY);
+
+         // 3. Copy over the data
+         db.execSQL(
+            "INSERT INTO " +
+            TABLE_MESSAGE_ENTRY +
+            " (messageId, conversationId, senderId, timestamp, content, isEncrypted, isRead, type, uUId, isUploaded) " +
+            "SELECT messageId, conversationId, senderId, timestamp, " +
+            "COALESCE(contentEncrypted, content) as content, " + // merge both into content
+            "CASE WHEN contentEncrypted IS NOT NULL THEN 1 ELSE 0 END as isEncrypted, " +
+            "isRead, type, uUId, isUploaded " +
+            "FROM MessageEntry_old;"
+         );
+
+         // 4. Drop old table
+         db.execSQL("DROP TABLE MessageEntry_old;");
+      }
    }
 
    private DatabaseHelper(Context context, String uuid) {

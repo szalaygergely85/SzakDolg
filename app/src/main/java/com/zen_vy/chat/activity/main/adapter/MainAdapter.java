@@ -83,8 +83,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
       if (
          messageEntry == null ||
-         ((messageEntry.getContentEncrypted() == null) &&
-            messageEntry.getContent() == null)
+            messageEntry.getContent() == null
       ) {
          holder.itemView.setVisibility(View.GONE);
          return;

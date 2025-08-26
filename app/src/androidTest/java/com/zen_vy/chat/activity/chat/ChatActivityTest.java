@@ -111,7 +111,7 @@ public class ChatActivityTest {
 
          WebSocketService wsService = WebSocketService.getInstance();
          wsService.sendMessageBroadcast(firstMessage);
-         Thread.sleep(1500);
+         Thread.sleep(2000);
 
          //TODO need to do encytptiooon....
          onView(withId(R.id.recViewChat))
@@ -137,8 +137,8 @@ public class ChatActivityTest {
                      1,
                      hasDescendant(
                         allOf(
-                           withId(R.id.chatTextFrMe),
-                           withText(firstMessage.getContentEncrypted()) // your expected message
+                           withId(R.id.chatText),
+                           withText(firstMessage.getContent()) // your expected message
                         )
                      )
                   )
@@ -416,7 +416,7 @@ public class ChatActivityTest {
                      allOf(
                         withId(R.id.chatTextFrMe),
                         withText(
-                           messageEntries.getFirst().getContentEncrypted()
+                           messageEntries.getFirst().getContent()
                         ) // your expected message
                      )
                   )
