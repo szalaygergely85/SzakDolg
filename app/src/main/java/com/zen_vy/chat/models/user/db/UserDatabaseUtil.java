@@ -4,12 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import com.zen_vy.chat.database.DatabaseHelper;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
-
 import timber.log.Timber;
 
 public class UserDatabaseUtil {
@@ -42,7 +40,7 @@ public class UserDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
+
       }
       return userIds;
    }
@@ -87,7 +85,7 @@ public class UserDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
+
       }
       return users;
    }
@@ -155,7 +153,7 @@ public class UserDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
+
       }
 
       return null; // Return null if no user found with the given token
@@ -200,10 +198,8 @@ public class UserDatabaseUtil {
             );
             return user;
          }
-      } finally {
-         if (cursor != null) {
-            cursor.close();
-         }
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
 
       return null;
@@ -219,12 +215,10 @@ public class UserDatabaseUtil {
          if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
          }
-      } finally {
-         if (cursor != null) {
-            cursor.close();
-         }
-         db.close();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
+
       return count;
    }
 
@@ -249,8 +243,8 @@ public class UserDatabaseUtil {
                values,
                SQLiteDatabase.CONFLICT_REPLACE
             );
-         } finally {
-            db.close();
+         } catch (Exception e) {
+            throw new RuntimeException(e);
          }
       }
    }
@@ -258,15 +252,9 @@ public class UserDatabaseUtil {
    private boolean _isInsertable(User user) {
       User localUser = getUserById(user.getUserId());
 
-      if (
-         localUser == null ||
-         user.getLastUpdated() == null ||
-         localUser.getLastUpdated() < user.getLastUpdated()
-      ) {
-         return true;
-      }
-
-      return false;
+       return localUser == null ||
+               user.getLastUpdated() == null ||
+               localUser.getLastUpdated() < user.getLastUpdated();
    }
 
    public void deleteUser(int userId) {
@@ -297,19 +285,23 @@ public class UserDatabaseUtil {
 
          // Update the user record where userId matches
          int rowsAffected = db.update(
-                 DatabaseHelper.TABLE_USER_ENTRY,
+            DatabaseHelper.TABLE_USER_ENTRY,
             values,
             "userId = ?",
             new String[] { user.getUserId().toString() }
          );
 
          if (rowsAffected == 0) {
-             Timber.tag("UserDatabaseUtil").e("No user found with ID: " + user.getUserId());
+            Timber
+               .tag("UserDatabaseUtil")
+               .e("No user found with ID: " + user.getUserId());
          } else {
-             Timber.tag("UserDatabaseUtil").i("User updated successfully: " + user.getUserId());
+            Timber
+               .tag("UserDatabaseUtil")
+               .i("User updated successfully: " + user.getUserId());
          }
-      } finally {
-         db.close();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 }
