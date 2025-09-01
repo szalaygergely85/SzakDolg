@@ -15,9 +15,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
    public static final String TABLE_CONVERSATIONS = "Conversations";
    public static final String TABLE_IMAGE = "Image";
    public static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
+
+   public static final String TABLE_MESSAGE_STATUS = "MessageStatus";
    public static final String TABLE_USER_ENTRY = "UserEntry";
 
    public static final String TABLE_KEYS = "Keys";
+
+   private static final String CREATE_TABLE_MESSAGE_STATUS =
+           "CREATE TABLE " +
+                   TABLE_MESSAGE_STATUS +
+                   " (" +
+                   "messageStatusId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                   "uuid TEXT NOT NULL," +
+                   "messageStatusType TEXT NOT NULL" +
+                   ");";
 
    private static final String CREATE_TABLE_KEYS =
       "CREATE TABLE " +
@@ -113,6 +124,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
    public void onCreate(SQLiteDatabase db) {
       db.execSQL(CREATE_TABLE_CONTACT);
       db.execSQL(CREATE_TABLE_MESSAGE_ENTRY);
+      db.execSQL(CREATE_TABLE_MESSAGE_STATUS);
       db.execSQL(CREATE_TABLE_USER_ENTRY);
       db.execSQL(CREATE_TABLE_CONVERSATION_PARTICIPANTS);
       db.execSQL(CREATE_TABLE_CONVERSATIONS);

@@ -14,7 +14,7 @@ import timber.log.Timber;
 
 public class MessageDatabaseUtil {
 
-   private DatabaseHelper dbHelper;
+   private final DatabaseHelper dbHelper;
 
    public MessageDatabaseUtil(Context context, User user) {
       dbHelper = DatabaseHelper.getInstance(context, user.getUuid());

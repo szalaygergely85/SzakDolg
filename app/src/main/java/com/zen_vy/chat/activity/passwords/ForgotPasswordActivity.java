@@ -16,23 +16,20 @@ import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.login.LoginActivity;
 import com.zen_vy.chat.models.user.service.UserService;
 
+import java.io.IOException;
+
 public class ForgotPasswordActivity extends AppCompatActivity {
    private EditText email;
    private Button send;
    TextView tvBackToLogin;
 
-   private UserService userService;
+   private final UserService userService = new UserService(this);
    public void initView() {
       email = findViewById(R.id.edtFrgtEmail);
       send = findViewById(R.id.btnForgetSend);
      tvBackToLogin = findViewById(R.id.tvBackToLogin);
    }
 
-   @Override
-   public boolean onSupportNavigateUp() {
-
-      return super.onSupportNavigateUp();
-   }
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +55,27 @@ public class ForgotPasswordActivity extends AppCompatActivity {
          new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    userService.forgotPassword(String.valueOf(email.getText()), new UserService.UserCallback<Void>() {
+                       @Override
+                       public void onSuccess(Void data) {
+                          Intent intent = new Intent(
+                                  ForgotPasswordActivity.this,
+                                  LoginActivity.class
+                          );
+                          startActivity(intent);
+                          finish();
+                       }
 
-               Intent intent = new Intent(
-                       ForgotPasswordActivity.this,
-                       LoginActivity.class
-               );
-               startActivity(intent);
-               finish();
+                       @Override
+                       public void onError(Throwable t) {
+
+                       }
+                    });
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
          }
       );
