@@ -3,6 +3,7 @@
 
     <string name="action_notification">action_notification</string>
     <string name="already_have_an_account">Already have an account?</string>
+    <string name="back_to_login">Back to Login</string>
     <string name="change_password">Change Password</string>
     <string name="confirm_password">Confirm password</string>
     <string name="confirm_password_is_required">Confirm password is required</string>
@@ -35,12 +36,13 @@
     <string name="passwords_dont_match">Passwords don’t match</string>
     <string name="password_too_short">Password too short</string>
     <string name="password_is_required">Password is required</string>
-    <string name="please_add_your_email">Please add your email address. We will send an email to change password</string>
+    <string name="please_add_your_email"> Please enter your email address. We’ll send you a link to reset your password.</string>
     <string name="profile">Profile</string>
     <string name="register">Register</string>
     <string name="search_for_users">Search for users</string>
     <string name="send">Send</string>
     <string name="send_message">Send Message</string>
+    <string name="send_reset_link">Send Reset Link</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_up">Sign Up</string>

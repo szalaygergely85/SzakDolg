@@ -265,8 +265,8 @@ public class UserDatabaseUtil {
             "userId = ?",
             new String[] { String.valueOf(userId) }
          );
-      } finally {
-         db.close();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 

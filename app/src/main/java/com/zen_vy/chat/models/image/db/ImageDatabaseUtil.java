@@ -20,8 +20,8 @@ public class ImageDatabaseUtil {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       try {
          db.delete("Image", "uuid = ?", new String[] { uuid });
-      } finally {
-         db.close();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 
@@ -82,11 +82,10 @@ public class ImageDatabaseUtil {
       } catch (Exception e) {
          // Handle the exception (e.g., log it)
          e.printStackTrace();
-      } finally {
-         if (db != null && db.isOpen()) {
-            db.close(); // Ensure the database is closed
-         }
+      } catch (Throwable e) {
+         throw new RuntimeException(e);
       }
+
 
       return imageEntity;
    }
@@ -107,8 +106,8 @@ public class ImageDatabaseUtil {
          values.put("tags", image.getTags());
          values.put("uuid", image.getUuid());
          db.insert("Image", null, values);
-      } finally {
-         db.close();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 
@@ -133,8 +132,8 @@ public class ImageDatabaseUtil {
             "id = ?",
             new String[] { String.valueOf(image.getId()) }
          );
-      } finally {
-         db.close();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 }

@@ -133,9 +133,8 @@ public class ContactDatabaseUtil {
             );
          }
          db.setTransactionSuccessful();
-      } finally {
-         db.endTransaction();
-         db.close();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 }

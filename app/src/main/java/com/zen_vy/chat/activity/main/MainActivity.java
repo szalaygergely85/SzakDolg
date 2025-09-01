@@ -1,6 +1,7 @@
 package com.zen_vy.chat.activity.main;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -111,6 +112,12 @@ public class MainActivity extends BaseActivity {
    @Override
    protected void onResume() {
       super.onResume();
+
+      NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+      if (notificationManager != null) {
+         notificationManager.cancelAll();
+      }
+
       LocalBroadcastManager
          .getInstance(this)
          .registerReceiver(

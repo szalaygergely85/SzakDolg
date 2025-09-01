@@ -62,13 +62,13 @@
             android:name=".activity.chat.activity.NewChatActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.ChangePassActivity"
+            android:name=".activity.passwords.ChangePassActivity"
             android:exported="false" />
         <activity
             android:name=".activity.profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.ForgotPasswordActivity"
+            android:name=".activity.passwords.ForgotPasswordActivity"
             android:exported="true" />
         <activity
             android:name=".activity.contacts.activity.SearchContactsActivity"

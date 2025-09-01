@@ -5,6 +5,8 @@ import com.zen_vy.chat.DTO.LoginRequest;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.models.user.repository.UserRepository;
 import com.zen_vy.chat.models.user.repository.UserRepositoryImpl;
+
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.List;
 import retrofit2.Call;
@@ -224,6 +226,20 @@ public class UserService {
             }
          }
       );
+   }
+
+   public void forgotPassword(String email,  final UserService.UserCallback<Void> callback) throws IOException {
+       userRepository.forgotPassword(email, new Callback<Void>() {
+           @Override
+           public void onResponse(Call<Void> call, Response<Void> response) {
+               callback.onSuccess(response.body());
+           }
+
+           @Override
+           public void onFailure(Call<Void> call, Throwable throwable) {
+               callback.onError(throwable);
+           }
+       });
    }
 
    public interface UserCallback<T> {

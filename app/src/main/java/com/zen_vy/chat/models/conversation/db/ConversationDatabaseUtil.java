@@ -37,7 +37,7 @@ public class ConversationDatabaseUtil {
          values,
          SQLiteDatabase.CONFLICT_REPLACE
       );
-      db.close();
+
    }
 
    public void insertConversationParticipant(
@@ -53,7 +53,7 @@ public class ConversationDatabaseUtil {
       values.put("userId", participant.getUserId());
 
       db.insert(dbHelper.TABLE_CONVERSATION_PARTICIPANTS, null, values);
-      db.close();
+
    }
 
    // Method to get all conversations
@@ -136,7 +136,7 @@ public class ConversationDatabaseUtil {
          cursor.close();
       }
 
-      db.close();
+
       return conversation;
    }
 
@@ -187,7 +187,7 @@ public class ConversationDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
+
       }
       return count;
    }
@@ -200,7 +200,7 @@ public class ConversationDatabaseUtil {
       cursor.moveToFirst();
       Long count = cursor.getLong(0);
       cursor.close();
-      db.close();
+
       return count;
    }
 
@@ -235,7 +235,7 @@ public class ConversationDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-         db.close();
+
       }
       return participants;
    }

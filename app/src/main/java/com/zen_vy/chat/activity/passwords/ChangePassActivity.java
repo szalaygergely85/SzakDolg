@@ -1,4 +1,4 @@
-package com.zen_vy.chat.activity;
+package com.zen_vy.chat.activity.passwords;
 
 import android.content.Intent;
 import android.os.Bundle;

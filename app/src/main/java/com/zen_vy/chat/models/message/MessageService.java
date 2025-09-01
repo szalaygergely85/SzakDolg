@@ -6,6 +6,7 @@ import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.message.repository.MessageRepository;
 import com.zen_vy.chat.models.message.repository.MessageRepositoryImpl;
 import com.zen_vy.chat.models.user.entity.User;
+import com.zen_vy.chat.websocket.MessageFactory;
 import com.zen_vy.chat.websocket.WebSocketService;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,20 +44,21 @@ public class MessageService extends BaseService {
 
       if (wsService != null && wsService.isConnected()) {
          try {
-            JSONObject json = new JSONObject();
-            json.put("type", messageEntry.getType());
-            json.put("senderId", messageEntry.getSenderId());
-            json.put("conversationId", messageEntry.getConversationId());
-            json.put("uuid", messageEntry.getUuId());
-            json.put("timestamp", messageEntry.getTimestamp());
-            json.put("content", messageEntry.getContent());
-             json.put("encrypted", messageEntry.isEncrypted());
+            String messageString = MessageFactory.textMessage(
+                     messageEntry.getUuId(),
+                     messageEntry.getSenderId(),
+                     messageEntry.getConversationId(),
+                     messageEntry.getTimestamp(),
+                     messageEntry.getContent(),
+                     messageEntry.isEncrypted()
+
+                     );
 
 
-             wsService.sendMessage(json.toString());
+             wsService.sendMessage(messageString);
             messageDatabaseUtil.insertMessageEntry(messageEntry);
             callback.onSuccess(messageEntry); // Assume WebSocket worked
-         } catch (JSONException e) {
+         } catch (Exception e) {
             Timber.e(e);
             callback.onError(e);
          }

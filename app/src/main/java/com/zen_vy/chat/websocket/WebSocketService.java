@@ -93,7 +93,7 @@ public class WebSocketService extends Service {
 
       connectToWebSocket();
 
-      return START_NOT_STICKY;
+      return START_STICKY;
    }
 
    public void sendMessage(String message) {
@@ -136,6 +136,10 @@ public class WebSocketService extends Service {
                      int type = jsonObject.getInt("type");
 
                      switch (type) {
+                        case MessageTypeConstants.READ_CONFIRMATION:
+                        case MessageTypeConstants.ARRIVAL_CONFIRMATION:
+                           handleStatus(jsonObject);
+                           break;
                         case MessageTypeConstants.ERROR:
                            handleError(jsonObject);
                            break;
@@ -186,6 +190,10 @@ public class WebSocketService extends Service {
       }
    }
 
+   private void handleStatus(JSONObject jsonObject) throws JSONException {
+      Timber.i(jsonObject.getString("type"));
+   }
+
    public boolean isConnected() {
       return isConnected;
    }
@@ -201,10 +209,9 @@ public class WebSocketService extends Service {
          @Override
          public void run() {
             if (webSocket != null && isConnected) {
-               String pingMessage =
-                  "{\"type\": " + MessageTypeConstants.PING + "}";
-               webSocket.send(pingMessage);
+               String pingMessage = MessageFactory.pingMessage(null, currentUser.getUserId());
 
+               webSocket.send(pingMessage);
                startPongTimeout();
 
                Timber.i("Sending ping message");
@@ -298,8 +305,8 @@ public class WebSocketService extends Service {
    private void handleMessage(JSONObject jsonObject) throws JSONException {
       Timber.i("Message received: %s", jsonObject);
 
-      Long senderId = jsonObject.has("senderId")
-         ? jsonObject.getLong("senderId")
+      Long senderId = jsonObject.has("userId")
+         ? jsonObject.getLong("userId")
          : null;
       Long conversationId = jsonObject.has("conversationId")
          ? jsonObject.getLong("conversationId")
@@ -338,16 +345,9 @@ public class WebSocketService extends Service {
       messageDatabaseUtil.insertMessageEntry(messageEntry);
       if (isAppInForeground()) {
          sendMessageBroadcast(messageEntry);
-          Timber.tag(AppConstants.LOG_TAG).e(messageEntry.toString());
+          Timber.e(messageEntry.toString());
       }
-       String message =
-               "{\"type\": " +
-                       MessageTypeConstants.ARRIVAL_CONFIRMATION +
-                       ", \"uuid\": \"" +
-                       uuid +
-                       "\", \"userId\": \"" +
-                       currentUser.getUserId() +
-                       "\"}";
+       String message = MessageFactory.arrivalConfirmation(uuid, currentUser.getUserId());
        Timber.e(message);
        sendMessage(message);
    }

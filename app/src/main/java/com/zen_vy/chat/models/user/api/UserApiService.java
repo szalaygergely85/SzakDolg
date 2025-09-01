@@ -1,6 +1,7 @@
 package com.zen_vy.chat.models.user.api;
 
 import com.zen_vy.chat.DTO.LoginRequest;
+import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.List;
 import retrofit2.Call;
@@ -11,6 +12,7 @@ import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface UserApiService {
    @GET("user/id/{userId}")
@@ -53,5 +55,10 @@ public interface UserApiService {
    Call<Void> deleteUser(
       @Path("email") String email,
       @Header("Authorization") String token
+   );
+
+   @POST("user/forgot-password")
+   Call<Void> forgotPassword(
+           @Query("email") String email
    );
 }

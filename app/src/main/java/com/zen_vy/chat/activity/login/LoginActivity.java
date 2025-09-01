@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
 import com.zen_vy.chat.R;
-import com.zen_vy.chat.activity.ForgotPasswordActivity;
+import com.zen_vy.chat.activity.passwords.ForgotPasswordActivity;
 import com.zen_vy.chat.activity.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {

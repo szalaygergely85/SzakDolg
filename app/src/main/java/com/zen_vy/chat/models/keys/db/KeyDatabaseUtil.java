@@ -57,8 +57,8 @@ public class KeyDatabaseUtil {
             values,
             SQLiteDatabase.CONFLICT_REPLACE
          );
-      } finally {
-         db.close();
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 }
