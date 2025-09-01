@@ -415,9 +415,7 @@ public class ChatActivityTest {
                   hasDescendant(
                      allOf(
                         withId(R.id.chatTextFrMe),
-                        withText(
-                           messageEntries.getFirst().getContent()
-                        ) // your expected message
+                        withText(messageEntries.getFirst().getContent()) // your expected message
                      )
                   )
                )

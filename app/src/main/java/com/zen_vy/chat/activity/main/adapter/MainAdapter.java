@@ -81,10 +81,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
          currentUser.getUserId()
       );
 
-      if (
-         messageEntry == null ||
-            messageEntry.getContent() == null
-      ) {
+      if (messageEntry == null || messageEntry.getContent() == null) {
          holder.itemView.setVisibility(View.GONE);
          return;
       }

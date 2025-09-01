@@ -37,7 +37,6 @@ public class ConversationDatabaseUtil {
          values,
          SQLiteDatabase.CONFLICT_REPLACE
       );
-
    }
 
    public void insertConversationParticipant(
@@ -53,7 +52,6 @@ public class ConversationDatabaseUtil {
       values.put("userId", participant.getUserId());
 
       db.insert(dbHelper.TABLE_CONVERSATION_PARTICIPANTS, null, values);
-
    }
 
    // Method to get all conversations
@@ -136,7 +134,6 @@ public class ConversationDatabaseUtil {
          cursor.close();
       }
 
-
       return conversation;
    }
 
@@ -187,7 +184,6 @@ public class ConversationDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-
       }
       return count;
    }
@@ -235,7 +231,6 @@ public class ConversationDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-
       }
       return participants;
    }

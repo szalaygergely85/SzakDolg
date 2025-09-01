@@ -1,7 +1,6 @@
 package com.zen_vy.chat.models.user.api;
 
 import com.zen_vy.chat.DTO.LoginRequest;
-import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.List;
 import retrofit2.Call;
@@ -58,7 +57,5 @@ public interface UserApiService {
    );
 
    @POST("user/forgot-password")
-   Call<Void> forgotPassword(
-           @Query("email") String email
-   );
+   Call<Void> forgotPassword(@Query("email") String email);
 }

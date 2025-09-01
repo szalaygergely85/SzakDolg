@@ -209,7 +209,10 @@ public class WebSocketService extends Service {
          @Override
          public void run() {
             if (webSocket != null && isConnected) {
-               String pingMessage = MessageFactory.pingMessage(null, currentUser.getUserId());
+               String pingMessage = MessageFactory.pingMessage(
+                  null,
+                  currentUser.getUserId()
+               );
 
                webSocket.send(pingMessage);
                startPongTimeout();
@@ -323,7 +326,8 @@ public class WebSocketService extends Service {
          ? jsonObject.getString("content")
          : null;
 
-      boolean encrypted = jsonObject.has("encrypted") && jsonObject.getBoolean("encrypted");
+      boolean encrypted =
+         jsonObject.has("encrypted") && jsonObject.getBoolean("encrypted");
 
       MessageDatabaseUtil messageDatabaseUtil = new MessageDatabaseUtil(
          context,
@@ -345,11 +349,14 @@ public class WebSocketService extends Service {
       messageDatabaseUtil.insertMessageEntry(messageEntry);
       if (isAppInForeground()) {
          sendMessageBroadcast(messageEntry);
-          Timber.e(messageEntry.toString());
+         Timber.e(messageEntry.toString());
       }
-       String message = MessageFactory.arrivalConfirmation(uuid, currentUser.getUserId());
-       Timber.e(message);
-       sendMessage(message);
+      String message = MessageFactory.arrivalConfirmation(
+         uuid,
+         currentUser.getUserId()
+      );
+      Timber.e(message);
+      sendMessage(message);
    }
 
    public void sendMessageBroadcast(MessageEntry message) {

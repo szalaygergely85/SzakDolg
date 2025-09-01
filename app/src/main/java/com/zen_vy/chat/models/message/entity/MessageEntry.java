@@ -34,6 +34,16 @@ public class MessageEntry implements Serializable {
 
    private boolean isUploaded;
 
+   private MessageStatus messageStatus;
+
+   public MessageStatus getMessageStatus() {
+      return messageStatus;
+   }
+
+   public void setMessageStatus(MessageStatus messageStatus) {
+      this.messageStatus = messageStatus;
+   }
+
    public Long getMessageId() {
       return messageId;
    }
@@ -140,8 +150,8 @@ public class MessageEntry implements Serializable {
          timestamp,
          false,
          type,
-              content,
-              encrypted,
+         content,
+         encrypted,
          uuid
       );
    }
@@ -165,7 +175,7 @@ public class MessageEntry implements Serializable {
          isRead,
          type,
          content,
-              encrypted,
+         encrypted,
          uuid,
          false
       );

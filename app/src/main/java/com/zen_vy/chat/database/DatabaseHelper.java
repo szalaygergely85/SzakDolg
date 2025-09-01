@@ -22,13 +22,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
    public static final String TABLE_KEYS = "Keys";
 
    private static final String CREATE_TABLE_MESSAGE_STATUS =
-           "CREATE TABLE " +
-                   TABLE_MESSAGE_STATUS +
-                   " (" +
-                   "messageStatusId INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                   "uuid TEXT NOT NULL," +
-                   "messageStatusType TEXT NOT NULL" +
-                   ");";
+      "CREATE TABLE " +
+      TABLE_MESSAGE_STATUS +
+      " (" +
+      "messageStatusId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      "uuid TEXT NOT NULL," +
+      "messageStatusType TEXT NOT NULL" +
+      ");";
 
    private static final String CREATE_TABLE_KEYS =
       "CREATE TABLE " +

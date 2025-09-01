@@ -7,7 +7,6 @@ import com.zen_vy.chat.models.user.db.UserDatabaseUtil;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.retrofit.RetrofitClient;
 import com.zen_vy.chat.util.DateTimeUtil;
-
 import java.io.IOException;
 import java.util.List;
 import retrofit2.Call;
@@ -305,26 +304,34 @@ public class UserRepositoryImpl implements UserRepository {
          );
    }
 
-    @Override
-    public void forgotPassword(String email, Callback<Void> callback) throws IOException {
-        _userApiService.forgotPassword(email).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                callback.onResponse(call, response);
-                Timber.i("Password reset email sent");
-            }
+   @Override
+   public void forgotPassword(String email, Callback<Void> callback)
+      throws IOException {
+      _userApiService
+         .forgotPassword(email)
+         .enqueue(
+            new Callback<Void>() {
+               @Override
+               public void onResponse(
+                  Call<Void> call,
+                  Response<Void> response
+               ) {
+                  callback.onResponse(call, response);
+                  Timber.i("Password reset email sent");
+               }
 
-            @Override
-            public void onFailure(Call<Void> call, Throwable throwable) {
-                callback.onFailure(
-                        call,
-                        new Throwable("Failed to fetch contact")
-                );
+               @Override
+               public void onFailure(Call<Void> call, Throwable throwable) {
+                  callback.onFailure(
+                     call,
+                     new Throwable("Failed to fetch contact")
+                  );
+               }
             }
-        });
-    }
+         );
+   }
 
-    @Override
+   @Override
    public void getPublicKeyByUserId(
       Long userId,
       String token,

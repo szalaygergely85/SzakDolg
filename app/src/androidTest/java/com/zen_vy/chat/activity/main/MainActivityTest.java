@@ -112,9 +112,7 @@ public class MainActivityTest {
 
          onView(withId(R.id.messageBoardRecView))
             .perform(
-               scrollTo(
-                  hasDescendant(withText(lastMessage.getContent()))
-               )
+               scrollTo(hasDescendant(withText(lastMessage.getContent())))
             );
 
          onView(withText(lastMessage.getContent()))
@@ -175,9 +173,7 @@ public class MainActivityTest {
 
          onView(withId(R.id.messageBoardRecView))
             .perform(
-               scrollTo(
-                  hasDescendant(withText(lastMessage.getContent()))
-               )
+               scrollTo(hasDescendant(withText(lastMessage.getContent())))
             );
 
          onView(withText(lastMessage.getContent()))

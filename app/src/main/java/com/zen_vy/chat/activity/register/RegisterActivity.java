@@ -45,7 +45,6 @@ public class RegisterActivity extends AppCompatActivity {
    private String pass2;
    private String displayName;
 
-
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);

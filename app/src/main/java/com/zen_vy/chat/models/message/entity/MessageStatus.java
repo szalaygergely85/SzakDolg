@@ -1,34 +1,46 @@
 package com.zen_vy.chat.models.message.entity;
 
-import java.util.Objects;
-
 public class MessageStatus {
-    private Long messageStatusId;
-    private String uuid;
 
-    private MessageStatusType messageStatusType;
+   private Long messageStatusId;
+   private String uuid;
 
-    public MessageStatus(Long messageStatusId, String uuid,  MessageStatusType messageStatusType) {
-        this.messageStatusId = messageStatusId;
-        this.uuid = uuid;
+   private MessageStatusType messageStatusType;
 
-        this.messageStatusType = messageStatusType;
-    }
+   public MessageStatus(
+      Long messageStatusId,
+      String uuid,
+      MessageStatusType messageStatusType
+   ) {
+      this.messageStatusId = messageStatusId;
+      this.uuid = uuid;
 
-    public String getUuid() {
-        return uuid;
-    }
+      this.messageStatusType = messageStatusType;
+   }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+   public String getUuid() {
+      return uuid;
+   }
 
-    public MessageStatusType getMessageStatusType() {
-        return messageStatusType;
-    }
+   public void setUuid(String uuid) {
+      this.uuid = uuid;
+   }
 
-    public void setMessageStatusType(MessageStatusType messageStatusType) {
-        this.messageStatusType = messageStatusType;
-    }
+   public MessageStatusType getMessageStatusType() {
+      return messageStatusType;
+   }
 
+   public void setMessageStatusType(MessageStatusType messageStatusType) {
+      this.messageStatusType = messageStatusType;
+   }
+
+   public Long getMessageStatusId() {
+      return messageStatusId;
+   }
+
+   public void setMessageStatusId(Long messageStatusId) {
+      this.messageStatusId = messageStatusId;
+   }
+
+   public MessageStatus() {}
 }

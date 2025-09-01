@@ -113,7 +113,8 @@ public class MainActivity extends BaseActivity {
    protected void onResume() {
       super.onResume();
 
-      NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+      NotificationManager notificationManager =
+         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
       if (notificationManager != null) {
          notificationManager.cancelAll();
       }

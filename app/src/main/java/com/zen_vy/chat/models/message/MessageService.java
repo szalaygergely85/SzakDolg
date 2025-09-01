@@ -10,8 +10,6 @@ import com.zen_vy.chat.websocket.MessageFactory;
 import com.zen_vy.chat.websocket.WebSocketService;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONException;
-import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,23 +37,20 @@ public class MessageService extends BaseService {
       //TODO ENCYPTION
       //messageEntry.setContentEncrypted(EncryptionHelper.encrypt(messageEntry.getContent(), currentUser.getPublicKey()));
 
-
       WebSocketService wsService = WebSocketService.getInstance();
 
       if (wsService != null && wsService.isConnected()) {
          try {
             String messageString = MessageFactory.textMessage(
-                     messageEntry.getUuId(),
-                     messageEntry.getSenderId(),
-                     messageEntry.getConversationId(),
-                     messageEntry.getTimestamp(),
-                     messageEntry.getContent(),
-                     messageEntry.isEncrypted()
+               messageEntry.getUuId(),
+               messageEntry.getSenderId(),
+               messageEntry.getConversationId(),
+               messageEntry.getTimestamp(),
+               messageEntry.getContent(),
+               messageEntry.isEncrypted()
+            );
 
-                     );
-
-
-             wsService.sendMessage(messageString);
+            wsService.sendMessage(messageString);
             messageDatabaseUtil.insertMessageEntry(messageEntry);
             callback.onSuccess(messageEntry); // Assume WebSocket worked
          } catch (Exception e) {

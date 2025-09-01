@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import com.zen_vy.chat.database.DatabaseHelper;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
+import com.zen_vy.chat.models.message.entity.MessageStatus;
+import com.zen_vy.chat.models.message.entity.MessageStatusType;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,13 +127,10 @@ public class MessageDatabaseUtil {
                cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
             );
             message.setContent(
-               cursor.getString(
-                  cursor.getColumnIndexOrThrow("content")
-               )
+               cursor.getString(cursor.getColumnIndexOrThrow("content"))
             );
             message.setEncrypted(
-                    cursor.getInt(
-                            cursor.getColumnIndexOrThrow("isEncrypted")) == 1
+               cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
             );
             message.setRead(
                cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
@@ -156,6 +155,13 @@ public class MessageDatabaseUtil {
    ) {
       List<MessageEntry> messages = new ArrayList<>();
 
+      String sql =
+              "SELECT m.*, " +
+                      "s.messageStatusType " +
+                      "FROM MessageEntry m " +
+                      "LEFT JOIN MessageStatus s ON m.uuid = s.uuid " +
+                      "WHERE m.conversationId = ?";
+
       // Try-with-resources ensures that resources are closed automatically
       try (
          SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -171,6 +177,9 @@ public class MessageDatabaseUtil {
       ) {
          if (cursor != null) {
             while (cursor.moveToNext()) {
+
+
+
                MessageEntry message = new MessageEntry();
 
                // Assign values from the cursor to the message object
@@ -187,12 +196,11 @@ public class MessageDatabaseUtil {
                   cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
                );
                message.setContent(
-                  cursor.getString(
-                     cursor.getColumnIndexOrThrow("content")
-                  )
+                  cursor.getString(cursor.getColumnIndexOrThrow("content"))
                );
                message.setEncrypted(
-                       cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
+                  cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) ==
+                  1
                );
 
                message.setRead(
@@ -205,6 +213,14 @@ public class MessageDatabaseUtil {
                   cursor.getInt(cursor.getColumnIndexOrThrow("isUploaded")) == 1
                );
 
+               MessageStatus status = new MessageStatus();
+               if (!cursor.isNull(cursor.getColumnIndexOrThrow("messageStatusType"))) {
+                  status = new MessageStatus();
+                  status.setMessageStatusType(
+                          MessageStatusType.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("messageStatusType")))
+                  );
+               }
+               message.setMessageStatus(status);
                messages.add(message);
             }
          }
@@ -335,12 +351,10 @@ public class MessageDatabaseUtil {
                cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
             );
             message.setContent(
-               cursor.getString(
-                  cursor.getColumnIndexOrThrow("content")
-               )
+               cursor.getString(cursor.getColumnIndexOrThrow("content"))
             );
             message.setEncrypted(
-                    cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
+               cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
             ); // SQLite BOOLEAN
             message.setRead(
                cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1

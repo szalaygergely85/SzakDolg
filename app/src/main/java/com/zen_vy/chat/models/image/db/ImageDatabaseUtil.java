@@ -86,7 +86,6 @@ public class ImageDatabaseUtil {
          throw new RuntimeException(e);
       }
 
-
       return imageEntity;
    }
 

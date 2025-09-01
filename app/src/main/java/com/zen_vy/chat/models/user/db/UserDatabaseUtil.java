@@ -40,7 +40,6 @@ public class UserDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-
       }
       return userIds;
    }
@@ -85,7 +84,6 @@ public class UserDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-
       }
       return users;
    }
@@ -153,7 +151,6 @@ public class UserDatabaseUtil {
          if (cursor != null) {
             cursor.close();
          }
-
       }
 
       return null; // Return null if no user found with the given token
@@ -252,9 +249,11 @@ public class UserDatabaseUtil {
    private boolean _isInsertable(User user) {
       User localUser = getUserById(user.getUserId());
 
-       return localUser == null ||
-               user.getLastUpdated() == null ||
-               localUser.getLastUpdated() < user.getLastUpdated();
+      return (
+         localUser == null ||
+         user.getLastUpdated() == null ||
+         localUser.getLastUpdated() < user.getLastUpdated()
+      );
    }
 
    public void deleteUser(int userId) {
