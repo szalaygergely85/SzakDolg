@@ -47,18 +47,18 @@ public class MessageStatusDatabaseUtil {
       return db.update(
          "message_status",
          values,
-         "messageStatusId = ?",
-         new String[] { String.valueOf(status.getMessageStatusId()) }
+         "uuid = ?",
+         new String[] { String.valueOf(status.getUuid()) }
       );
    }
 
    // Delete
-   public int delete(long id) {
+   public int delete(String uuid) {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       return db.delete(
          "message_status",
-         "messageStatusId = ?",
-         new String[] { String.valueOf(id) }
+         "uuid = ?",
+         new String[] { uuid }
       );
    }
 
