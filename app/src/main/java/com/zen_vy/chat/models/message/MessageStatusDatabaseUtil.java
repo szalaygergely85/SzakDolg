@@ -9,7 +9,9 @@ import com.zen_vy.chat.models.message.entity.MessageStatus;
 import com.zen_vy.chat.models.message.entity.MessageStatusType;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MessageStatusDatabaseUtil {
 
@@ -22,107 +24,224 @@ public class MessageStatusDatabaseUtil {
    public void insertMessageStatus(MessageStatus messageStatus) {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+      MessageStatus localMessageStatus = getMessageStatus(messageStatus.getUuid());
+      long rowId = 0;
+
+      if(localMessageStatus!= null){
+         rowId = localMessageStatus.getMessageStatusId();
+      }else {
+         ContentValues values = new ContentValues();
+         values.put("uuid", messageStatus.getUuid());
+
+
+        rowId = db.insertWithOnConflict(
+                 dbHelper.TABLE_MESSAGE_STATUS,
+                 null,
+                 values,
+                 SQLiteDatabase.CONFLICT_REPLACE
+         );
+      }
+
+      for (Map.Entry<Long, Boolean> entry : messageStatus.getDeliveredStatuses().entrySet()) {
+
+         ContentValues valuesDelivered = new ContentValues();
+         valuesDelivered.put("messageStatusId", rowId);
+         valuesDelivered.put("userId", entry.getKey());
+         valuesDelivered.put("delivered", entry.getValue());
+         db.insertWithOnConflict(
+                 dbHelper.TABLE_MESSAGE_STATUS_DELIVERED,
+                 null,
+                 valuesDelivered,
+                 SQLiteDatabase.CONFLICT_REPLACE
+         );
+      }
+
+      for (Map.Entry<Long, MessageStatusType> entry : messageStatus.getUserStatuses().entrySet()) {
+
+         ContentValues valuesUser = new ContentValues();
+         valuesUser.put("messageStatusId", rowId);
+         valuesUser.put("userId", entry.getKey());
+         valuesUser.put("status",  entry.getValue().name());
+         db.insertWithOnConflict(
+                 dbHelper.TABLE_MESSAGE_STATUS_USER,
+                 null,
+                 valuesUser,
+                 SQLiteDatabase.CONFLICT_REPLACE
+         );
+      }
+
+   }
+
+   public void updateMessageStatus(MessageStatus messageStatus) {
+      SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+      // --- Update base table ---
       ContentValues values = new ContentValues();
       values.put("uuid", messageStatus.getUuid());
-      MessageStatusType messageStatusType =
-         messageStatus.getMessageStatusType();
-      values.put("messageStatusType", messageStatusType.name());
 
-      db.insertWithOnConflict(
-         dbHelper.TABLE_MESSAGE_STATUS,
-         null,
-         values,
-         SQLiteDatabase.CONFLICT_REPLACE
+      db.update(
+              dbHelper.TABLE_MESSAGE_STATUS,
+              values,
+              "uuid = ?",
+              new String[]{messageStatus.getUuid()}
       );
+
+      // --- Remove old delivered statuses ---
+      db.delete(
+              dbHelper.TABLE_MESSAGE_STATUS_DELIVERED,
+              "uuid = ?",
+              new String[]{messageStatus.getUuid()}
+      );
+
+      // --- Insert new delivered statuses ---
+      for (Map.Entry<Long, Boolean> entry : messageStatus.getDeliveredStatuses().entrySet()) {
+         ContentValues valuesDelivered = new ContentValues();
+         valuesDelivered.put("uuid", messageStatus.getUuid());
+         valuesDelivered.put("userId", entry.getKey());
+         valuesDelivered.put("delivered", entry.getValue() ? 1 : 0);
+         db.insertWithOnConflict(
+                 dbHelper.TABLE_MESSAGE_STATUS_DELIVERED,
+                 null,
+                 valuesDelivered,
+                 SQLiteDatabase.CONFLICT_REPLACE
+         );
+      }
+
+      // --- Remove old user statuses ---
+      db.delete(
+              dbHelper.TABLE_MESSAGE_STATUS_USER,
+              "uuid = ?",
+              new String[]{messageStatus.getUuid()}
+      );
+
+      // --- Insert new user statuses ---
+      for (Map.Entry<Long, MessageStatusType> entry : messageStatus.getUserStatuses().entrySet()) {
+         ContentValues valuesUser = new ContentValues();
+         valuesUser.put("uuid", messageStatus.getUuid());
+         valuesUser.put("userId", entry.getKey());
+         valuesUser.put("status", entry.getValue().name());
+         db.insertWithOnConflict(
+                 dbHelper.TABLE_MESSAGE_STATUS_USER,
+                 null,
+                 valuesUser,
+                 SQLiteDatabase.CONFLICT_REPLACE
+         );
+      }
    }
 
-   // Update
-   public int update(MessageStatus status) {
+   public void deleteMessageStatus(String uuid) {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
-      ContentValues values = new ContentValues();
-      values.put("uuid", status.getUuid());
-      MessageStatusType messageStatusType = status.getMessageStatusType();
-      values.put("messageStatusType", messageStatusType.name());
 
-      return db.update(
-         "message_status",
-         values,
-         "uuid = ?",
-         new String[] { String.valueOf(status.getUuid()) }
+      // Delete children first
+      db.delete(
+              dbHelper.TABLE_MESSAGE_STATUS_DELIVERED,
+              "uuid = ?",
+              new String[]{uuid}
+      );
+
+      db.delete(
+              dbHelper.TABLE_MESSAGE_STATUS_USER,
+              "uuid = ?",
+              new String[]{uuid}
+      );
+
+      // Delete parent
+      db.delete(
+              dbHelper.TABLE_MESSAGE_STATUS,
+              "uuid = ?",
+              new String[]{uuid}
       );
    }
 
-   // Delete
-   public int delete(String uuid) {
-      SQLiteDatabase db = dbHelper.getWritableDatabase();
-      return db.delete(
-         "message_status",
-         "uuid = ?",
-         new String[] { uuid }
-      );
-   }
-
-   // Get single
-   public MessageStatus get(String uuid) {
+   public MessageStatus getMessageStatus(String uuid) {
       SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+      // Query base message status
       Cursor cursor = db.query(
-         "message_status",
-         new String[] { "messageStatusId", "uuid", "messageStatusType" },
-         "uuid = ?",
-         new String[] { String.valueOf(uuid) },
-         null,
-         null,
-         null
+              dbHelper.TABLE_MESSAGE_STATUS,
+              new String[]{"uuid, messageStatusId"},
+              "uuid = ?",
+              new String[]{uuid},
+              null,
+              null,
+              null
       );
 
-      if (cursor.moveToFirst()) {
-         MessageStatus status = new MessageStatus();
-         status.setMessageStatusId(
-            cursor.getLong(cursor.getColumnIndexOrThrow("messageStatusId"))
+      MessageStatus messageStatus = null;
+
+      if (cursor != null && cursor.moveToFirst()) {
+         messageStatus = new MessageStatus();
+         messageStatus.setMessageStatusId(cursor.getLong(cursor.getColumnIndexOrThrow("messageStatusId")));
+         messageStatus.setUuid(cursor.getString(cursor.getColumnIndexOrThrow("uuid")));
+
+         // --- Delivered Statuses ---
+         Map<Long, Boolean> deliveredStatuses = new HashMap<>();
+         Cursor deliveredCursor = db.query(
+                 dbHelper.TABLE_MESSAGE_STATUS_DELIVERED,
+                 new String[]{"userId", "delivered"},
+                 "messageStatusId = ?",
+                 new String[]{String.valueOf(messageStatus.getMessageStatusId())},
+                 null, null, null
          );
-         status.setUuid(cursor.getString(cursor.getColumnIndexOrThrow("uuid")));
-         status.setMessageStatusType(
-            MessageStatusType.valueOf(
-               cursor.getString(
-                  cursor.getColumnIndexOrThrow("messageStatusType")
-               )
-            )
+         if (deliveredCursor != null) {
+            while (deliveredCursor.moveToNext()) {
+               long userId = deliveredCursor.getLong(deliveredCursor.getColumnIndexOrThrow("userId"));
+               boolean delivered = deliveredCursor.getInt(deliveredCursor.getColumnIndexOrThrow("delivered")) == 1;
+               deliveredStatuses.put(userId, delivered);
+            }
+            deliveredCursor.close();
+         }
+         messageStatus.setDeliveredStatuses(deliveredStatuses);
+
+         // --- User Statuses ---
+         Map<Long, MessageStatusType> userStatuses = new HashMap<>();
+         Cursor userCursor = db.query(
+                 dbHelper.TABLE_MESSAGE_STATUS_USER,
+                 new String[]{"userId", "status"},
+                 "messageStatusId = ?",
+                 new String[]{String.valueOf(messageStatus.getMessageStatusId())},
+                 null, null, null
          );
-         cursor.close();
-         return status;
+         if (userCursor != null) {
+            while (userCursor.moveToNext()) {
+               long userId = userCursor.getLong(userCursor.getColumnIndexOrThrow("userId"));
+               String statusStr = userCursor.getString(userCursor.getColumnIndexOrThrow("status"));
+               MessageStatusType status = MessageStatusType.valueOf(statusStr);
+               userStatuses.put(userId, status);
+            }
+            userCursor.close();
+         }
+         messageStatus.setUserStatuses(userStatuses);
       }
 
-       cursor.close();
-      return null;
+      if (cursor != null) cursor.close();
+
+      return messageStatus;
    }
 
-   // Get all
-   public List<MessageStatus> getAll() {
+   public List<MessageStatus> getAllMessageStatuses() {
+      List<MessageStatus> messageStatuses = new ArrayList<>();
       SQLiteDatabase db = dbHelper.getReadableDatabase();
-      List<MessageStatus> list = new ArrayList<>();
-      Cursor cursor = db.rawQuery("SELECT * FROM message_status", null);
 
-      if (cursor.moveToFirst()) {
-         do {
-            MessageStatus status = new MessageStatus();
-            status.setMessageStatusId(
-               cursor.getLong(cursor.getColumnIndexOrThrow("messageStatusId"))
-            );
-            status.setUuid(
-               cursor.getString(cursor.getColumnIndexOrThrow("uuid"))
-            );
-            status.setMessageStatusType(
-               MessageStatusType.valueOf(
-                  cursor.getString(
-                     cursor.getColumnIndexOrThrow("messageStatusType")
-                  )
-               )
-            );
-            list.add(status);
-         } while (cursor.moveToNext());
+      Cursor cursor = db.query(
+              dbHelper.TABLE_MESSAGE_STATUS,
+              new String[]{"uuid"},
+              null, null, null, null, null
+      );
+
+      if (cursor != null) {
+         while (cursor.moveToNext()) {
+            String uuid = cursor.getString(cursor.getColumnIndexOrThrow("uuid"));
+            MessageStatus status = getMessageStatus(uuid);
+            if (status != null) {
+               messageStatuses.add(status);
+            }
+         }
+         cursor.close();
       }
 
-      cursor.close();
-      return list;
+      return messageStatuses;
    }
+
+
 }

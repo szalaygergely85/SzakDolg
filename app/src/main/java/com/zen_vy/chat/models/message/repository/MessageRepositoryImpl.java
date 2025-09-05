@@ -1,8 +1,11 @@
 package com.zen_vy.chat.models.message.repository;
 
 import android.content.Context;
+
+import com.zen_vy.chat.DTO.MessageDTO;
 import com.zen_vy.chat.constans.AppConstants;
 import com.zen_vy.chat.models.message.MessageDatabaseUtil;
+import com.zen_vy.chat.models.message.MessageStatusDatabaseUtil;
 import com.zen_vy.chat.models.message.api.MessageApiService;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
@@ -17,12 +20,14 @@ public class MessageRepositoryImpl implements MessageRepository {
    private final Context context;
    private final User currentUser;
    private final MessageDatabaseUtil messageDatabaseUtil;
+   private final MessageStatusDatabaseUtil messageStatusDatabaseUtil;
    private final MessageApiService messageApiService;
 
    public MessageRepositoryImpl(Context context, User currentUser) {
       this.context = context;
       this.currentUser = currentUser;
       this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
+      this.messageStatusDatabaseUtil = new MessageStatusDatabaseUtil(context, currentUser);
       this.messageApiService =
       RetrofitClient.getRetrofitInstance().create(MessageApiService.class);
    }
@@ -189,22 +194,23 @@ public class MessageRepositoryImpl implements MessageRepository {
    public void getMessages(
       String token,
       Long conversationId,
-      Callback<List<MessageEntry>> callback
+      Callback<List<MessageDTO>> callback
    ) {
       messageApiService
          .getMessages(currentUser.getToken(), conversationId)
          .enqueue(
-            new Callback<List<MessageEntry>>() {
+            new Callback<List<MessageDTO>>() {
                @Override
                public void onResponse(
-                  Call<List<MessageEntry>> call,
-                  Response<List<MessageEntry>> response
+                  Call<List<MessageDTO>> call,
+                  Response<List<MessageDTO>> response
                ) {
                   if (response.isSuccessful() && response.body() != null) {
-                     for (MessageEntry messageEntry : response.body()) {
-                        if (messageEntry != null) {
-                           _decryptMessage(messageEntry);
-                           messageDatabaseUtil.insertMessageEntry(messageEntry);
+                     for (MessageDTO messageDTO : response.body()) {
+                        if (messageDTO != null) {
+                          // _decryptMessage(messageEntry);
+                           messageDatabaseUtil.insertMessageEntry(messageDTO.getMessage());
+                           messageStatusDatabaseUtil.insertMessageStatus(messageDTO.getStatus());
                         }
                      }
                      callback.onResponse(call, response);
@@ -218,7 +224,7 @@ public class MessageRepositoryImpl implements MessageRepository {
 
                @Override
                public void onFailure(
-                  Call<List<MessageEntry>> call,
+                  Call<List<MessageDTO>> call,
                   Throwable throwable
                ) {
                   callback.onFailure(call, throwable);

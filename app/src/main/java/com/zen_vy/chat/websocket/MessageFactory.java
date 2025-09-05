@@ -1,7 +1,12 @@
 package com.zen_vy.chat.websocket;
 
+import static com.zen_vy.chat.models.message.constants.MessageTypeConstants.MESSAGE_STATUS_UPDATE;
+
 import com.google.gson.Gson;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
+import com.zen_vy.chat.models.message.entity.MessageEntry;
+import com.zen_vy.chat.models.message.entity.MessageStatusType;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,13 +22,19 @@ public class MessageFactory {
       return gson.toJson(map);
    }
 
-   public static String arrivalConfirmation(String uuid, long userId) {
+   public static String messageStatusUpdate(MessageEntry messageEntry,  long userId, MessageStatusType messageStatusType) {
       BaseMessage base = new BaseMessage(
-         MessageTypeConstants.ARRIVAL_CONFIRMATION,
-         uuid,
+      MESSAGE_STATUS_UPDATE,
+              messageEntry.getUuid(),
          userId
       );
-      return build(base, null);
+
+      Map<String, Object> extra = new HashMap<>();
+      extra.put("messageStatusType", messageStatusType);
+      extra.put("conversationId", messageEntry.getConversationId());
+
+
+      return build(base, extra);
    }
 
    public static String pingMessage(String uuid, long userId) {
@@ -55,6 +66,19 @@ public class MessageFactory {
       extra.put("content", content);
       extra.put("encrypted", encrypted);
       return build(base, extra);
+   }
+
+   public static String MessageEntryMessage(
+           MessageEntry messageEntry
+   ) {
+     return textMessage(
+           messageEntry.getUuid(),
+           messageEntry.getSenderId(),
+           messageEntry.getConversationId(),
+           messageEntry.getTimestamp(),
+           messageEntry.getContent(),
+           messageEntry.isEncrypted()
+   );
    }
 
    public static String imageMessage(String uuid, long userId, String text) {

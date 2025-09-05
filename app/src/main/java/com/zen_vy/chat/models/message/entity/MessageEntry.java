@@ -24,8 +24,6 @@ public class MessageEntry implements Serializable {
    @Expose
    private boolean encrypted;
 
-   private boolean isRead;
-
    @Expose
    private int type;
 
@@ -76,13 +74,6 @@ public class MessageEntry implements Serializable {
       this.timestamp = timestamp;
    }
 
-   public boolean isRead() {
-      return isRead;
-   }
-
-   public void setRead(boolean read) {
-      isRead = read;
-   }
 
    public int getType() {
       return type;
@@ -98,14 +89,6 @@ public class MessageEntry implements Serializable {
 
    public void setContent(String content) {
       this.content = content;
-   }
-
-   public String getUuId() {
-      return uuid;
-   }
-
-   public void setUuId(String uuid) {
-      this.uuid = uuid;
    }
 
    public boolean isUploaded() {
@@ -148,7 +131,6 @@ public class MessageEntry implements Serializable {
          conversationId,
          senderId,
          timestamp,
-         false,
          type,
          content,
          encrypted,
@@ -161,7 +143,7 @@ public class MessageEntry implements Serializable {
       Long conversationId,
       Long senderId,
       Long timestamp,
-      boolean isRead,
+
       int type,
       String content,
       boolean encrypted,
@@ -172,7 +154,7 @@ public class MessageEntry implements Serializable {
          conversationId,
          senderId,
          timestamp,
-         isRead,
+
          type,
          content,
          encrypted,
@@ -186,7 +168,7 @@ public class MessageEntry implements Serializable {
       Long conversationId,
       Long senderId,
       Long timestamp,
-      boolean isRead,
+
       int type,
       String content,
       boolean encrypted,
@@ -197,7 +179,7 @@ public class MessageEntry implements Serializable {
       this.conversationId = conversationId;
       this.senderId = senderId;
       this.timestamp = timestamp;
-      this.isRead = isRead;
+
       this.type = type;
       this.content = content;
       this.encrypted = encrypted;

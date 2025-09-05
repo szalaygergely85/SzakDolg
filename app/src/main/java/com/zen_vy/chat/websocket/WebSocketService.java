@@ -15,6 +15,7 @@ import com.zen_vy.chat.constans.IntentConstants;
 import com.zen_vy.chat.models.message.MessageDatabaseUtil;
 import com.zen_vy.chat.models.message.constants.MessageTypeConstants;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
+import com.zen_vy.chat.models.message.entity.MessageStatusType;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.List;
 import okhttp3.OkHttpClient;
@@ -136,8 +137,8 @@ public class WebSocketService extends Service {
                      int type = jsonObject.getInt("type");
 
                      switch (type) {
-                        case MessageTypeConstants.READ_CONFIRMATION:
-                        case MessageTypeConstants.ARRIVAL_CONFIRMATION:
+                        case MessageTypeConstants.MESSAGE_STATUS:
+
                            handleStatus(jsonObject);
                            break;
                         case MessageTypeConstants.ERROR:
@@ -351,11 +352,12 @@ public class WebSocketService extends Service {
          sendMessageBroadcast(messageEntry);
          Timber.e(messageEntry.toString());
       }
-      String message = MessageFactory.arrivalConfirmation(
-         uuid,
-         currentUser.getUserId()
+      String message = MessageFactory.messageStatusUpdate(
+              messageEntry,
+         currentUser.getUserId(),
+              MessageStatusType.DELIVERED
       );
-      Timber.e(message);
+      Timber.i(message);
       sendMessage(message);
    }
 
@@ -366,58 +368,6 @@ public class WebSocketService extends Service {
       intent.putExtra("message", message);
       LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
    }
-
-   /*
-private void showIncomingMessageNotification(
-	String messageText,
-	long conversationId
-) {
-	ConversationService conversationService = new ConversationService(
-		context,
-		currentUser
-	);
-	conversationService.getConversation(
-		conversationId,
-		new ConversationService.ConversationCallback<ConversationDTO>() {
-			@Override
-			public void onSuccess(ConversationDTO data) {
-			// 1. Create the intent to open ChatActivity
-			Intent intent = new Intent(context, ChatActivity.class);
-			intent.putExtra(IntentConstants.CONVERSATION_DTO, data);
-			intent.setFlags(
-				Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
-			);
-
-			// 2. Create the pending intent
-			PendingIntent pendingIntent = PendingIntent.getActivity(
-				context,
-				RandomUtil.getSecureRandomInt(),
-				intent,
-				PendingIntent.FLAG_UPDATE_CURRENT |
-				PendingIntent.FLAG_IMMUTABLE // FLAG_IMMUTABLE for Android 12+
-			);
-
-			NotificationCompat.Builder builder =
-				new NotificationCompat.Builder(context, "MESSAGE_CHANNEL")
-					.setSmallIcon(R.drawable.ic_chat)
-					.setContentTitle("New Message")
-					.setContentText(messageText)
-					.setPriority(NotificationCompat.PRIORITY_HIGH)
-					.setAutoCancel(true)
-					.setContentIntent(pendingIntent);
-
-			NotificationManager notificationManager =
-				(NotificationManager) getSystemService(
-					Context.NOTIFICATION_SERVICE
-				);
-			notificationManager.notify(2, builder.build());
-			}
-
-			@Override
-			public void onError(Throwable t) {}
-		}
-	);
-}*/
 
    private boolean isAppInForeground() {
       ActivityManager activityManager = (ActivityManager) getSystemService(

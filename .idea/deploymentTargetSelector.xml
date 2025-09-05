@@ -19,7 +19,13 @@
       <SelectionState runConfigName="testConversationOfTwo()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testArrivingMessages()">
+      <SelectionState runConfigName="testConversationWithThreeParticipant() (1)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testSendingReceivingWebsocketMessage()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testSendMessages()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -1,5 +1,6 @@
 package com.zen_vy.chat.models.message.repository;
 
+import com.zen_vy.chat.DTO.MessageDTO;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import java.util.List;
 import retrofit2.Callback;
@@ -24,7 +25,7 @@ public interface MessageRepository {
    public void getMessages(
       String token,
       Long conversationId,
-      Callback<List<MessageEntry>> callback
+      Callback<List<MessageDTO>> callback
    );
 
    public void getPendingMessages(

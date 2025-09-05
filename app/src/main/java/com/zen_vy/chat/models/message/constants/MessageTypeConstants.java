@@ -9,10 +9,8 @@ public class MessageTypeConstants {
    public static final int IMAGE = 3;
 
    public static final int PING = 4;
-   public static final int ARRIVAL_CONFIRMATION = 5;
-
-   public static final int READ_CONFIRMATION = 6;
-
+   public static final int MESSAGE_STATUS = 5;
+   public static final int MESSAGE_STATUS_UPDATE = 6;
    public static final int ERROR = 0;
 
    public static final int ERROR_USER_NOT_FOUND = 101;

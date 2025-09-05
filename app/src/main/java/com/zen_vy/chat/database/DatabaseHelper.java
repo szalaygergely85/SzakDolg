@@ -9,25 +9,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
    private static volatile DatabaseHelper instance;
    private static final int DATABASE_VERSION = 3;
 
-   public static final String TABLE_CONTACT = "Contact";
+   public static final String TABLE_CONTACT = "contact";
    public static final String TABLE_CONVERSATION_PARTICIPANTS =
-      "Conversation_participants";
-   public static final String TABLE_CONVERSATIONS = "Conversations";
-   public static final String TABLE_IMAGE = "Image";
-   public static final String TABLE_MESSAGE_ENTRY = "MessageEntry";
+      "conversation_participants";
+   public static final String TABLE_CONVERSATIONS = "conversations";
+   public static final String TABLE_IMAGE = "image";
+   public static final String TABLE_MESSAGE_ENTRY = "message";
 
-   public static final String TABLE_MESSAGE_STATUS = "MessageStatus";
-   public static final String TABLE_USER_ENTRY = "UserEntry";
+   public static final String TABLE_MESSAGE_STATUS = "message_status";
+   public static final String TABLE_MESSAGE_STATUS_DELIVERED = "message_status_delivered";
+   public static final String TABLE_MESSAGE_STATUS_USER = "message_status_user";
+   public static final String TABLE_USER_ENTRY = "user_table";
 
-   public static final String TABLE_KEYS = "Keys";
+   public static final String TABLE_KEYS = "keys";
+   private static final String CREATE_TABLE_MESSAGE_STATUS_DELIVERED =
+           "CREATE TABLE " +
+                   TABLE_MESSAGE_STATUS_DELIVERED +
+                   " (" +
+                   "messageStatusId INTEGER, " +
+                   "delivered BOOLEAN NOT NULL, " +
+                   "userId INTEGER NOT NULL, " +
+                   "PRIMARY KEY (messageStatusId, userId) "+
+                   ");";
+
+   private static final String CREATE_TABLE_MESSAGE_STATUS_USER =
+           "CREATE TABLE " +
+                   TABLE_MESSAGE_STATUS_USER +
+                   " (" +
+                   "messageStatusId INTEGER, " +
+                   "status TEXT NOT NULL, " +
+                   "userId INTEGER NOT NULL, " +
+                   "PRIMARY KEY (messageStatusId, userId)"+
+                   ");";
+
+
+
 
    private static final String CREATE_TABLE_MESSAGE_STATUS =
       "CREATE TABLE " +
       TABLE_MESSAGE_STATUS +
       " (" +
       "messageStatusId INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      "uuid TEXT NOT NULL," +
-      "messageStatusType TEXT NOT NULL" +
+      "uuid TEXT NOT NULL UNIQUE" +
+
       ");";
 
    private static final String CREATE_TABLE_KEYS =
@@ -97,9 +121,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       "timestamp INTEGER NOT NULL, " +
       "content TEXT, " +
       "isEncrypted BOOLEAN NOT NULL, " +
-      "isRead BOOLEAN NOT NULL, " +
       "type INTEGER NOT NULL, " +
-      "uUId TEXT NOT NULL," +
+      "uuid TEXT NOT NULL," +
       "isUploaded BOOLEAN DEFAULT false" +
       ");";
 
@@ -125,6 +148,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL(CREATE_TABLE_CONTACT);
       db.execSQL(CREATE_TABLE_MESSAGE_ENTRY);
       db.execSQL(CREATE_TABLE_MESSAGE_STATUS);
+      db.execSQL(CREATE_TABLE_MESSAGE_STATUS_DELIVERED);
+      db.execSQL(CREATE_TABLE_MESSAGE_STATUS_USER);
       db.execSQL(CREATE_TABLE_USER_ENTRY);
       db.execSQL(CREATE_TABLE_CONVERSATION_PARTICIPANTS);
       db.execSQL(CREATE_TABLE_CONVERSATIONS);

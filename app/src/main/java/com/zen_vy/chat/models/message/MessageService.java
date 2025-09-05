@@ -1,8 +1,12 @@
 package com.zen_vy.chat.models.message;
 
 import android.content.Context;
+
+import com.zen_vy.chat.DTO.MessageDTO;
 import com.zen_vy.chat.activity.base.BaseService;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
+import com.zen_vy.chat.models.message.entity.MessageStatus;
+import com.zen_vy.chat.models.message.entity.MessageStatusType;
 import com.zen_vy.chat.models.message.repository.MessageRepository;
 import com.zen_vy.chat.models.message.repository.MessageRepositoryImpl;
 import com.zen_vy.chat.models.user.entity.User;
@@ -10,6 +14,8 @@ import com.zen_vy.chat.websocket.MessageFactory;
 import com.zen_vy.chat.websocket.WebSocketService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,10 +27,13 @@ public class MessageService extends BaseService {
 
    private MessageDatabaseUtil messageDatabaseUtil;
 
+   private MessageStatusDatabaseUtil messageStatusDatabaseUtil;
+
    public MessageService(Context context, User currentUser) {
       super(context, currentUser);
       this.messageDatabaseUtil = new MessageDatabaseUtil(context, currentUser);
       this.messageRepository = new MessageRepositoryImpl(context, currentUser);
+      this.messageStatusDatabaseUtil = new MessageStatusDatabaseUtil(context, currentUser);
    }
 
    public void addMessage(
@@ -41,14 +50,7 @@ public class MessageService extends BaseService {
 
       if (wsService != null && wsService.isConnected()) {
          try {
-            String messageString = MessageFactory.textMessage(
-               messageEntry.getUuId(),
-               messageEntry.getSenderId(),
-               messageEntry.getConversationId(),
-               messageEntry.getTimestamp(),
-               messageEntry.getContent(),
-               messageEntry.isEncrypted()
-            );
+            String messageString = MessageFactory.MessageEntryMessage(messageEntry);
 
             wsService.sendMessage(messageString);
             messageDatabaseUtil.insertMessageEntry(messageEntry);
@@ -163,7 +165,7 @@ public class MessageService extends BaseService {
                      List<String> uuids = new ArrayList<>();
                      for (MessageEntry messageEntry : messages) {
                         messageDatabaseUtil.insertMessageEntry(messageEntry);
-                        uuids.add(messageEntry.getUuId());
+                        uuids.add(messageEntry.getUuid());
                      }
                      messageRepository.setMessageDownloaded(
                         currentUser.getToken(),
@@ -202,7 +204,7 @@ public class MessageService extends BaseService {
 
    public void getMessagesByConversationId(
       Long conversationId,
-      final MessageCallback<List<MessageEntry>> callback
+      final MessageCallback<List<MessageDTO>> callback
    ) {
       getPendingMessages();
 
@@ -214,11 +216,11 @@ public class MessageService extends BaseService {
       messageRepository.getMessages(
          currentUser.getToken(),
          conversationId,
-         new Callback<List<MessageEntry>>() {
+         new Callback<List<MessageDTO>>() {
             @Override
             public void onResponse(
-               Call<List<MessageEntry>> call,
-               Response<List<MessageEntry>> response
+               Call<List<MessageDTO>> call,
+               Response<List<MessageDTO>> response
             ) {
                if (response.isSuccessful()) {
                   callback.onSuccess(response.body());
@@ -229,7 +231,7 @@ public class MessageService extends BaseService {
 
             @Override
             public void onFailure(
-               Call<List<MessageEntry>> call,
+               Call<List<MessageDTO>> call,
                Throwable throwable
             ) {
                callback.onError(throwable);
@@ -258,8 +260,19 @@ public class MessageService extends BaseService {
       return notReadCount;
    }
 
-   public void setMessagesAsReadByConversationId(Long conversationId) {
-      messageDatabaseUtil.setMessagesAsReadByConversationId(conversationId);
+   public void setMessagesAsRead(List<MessageDTO> messages) {
+if (messages.size()>0) {
+    messageDatabaseUtil.setMessagesAsReadByConversationId(messages.get(0).getMessage().getMessageId(), currentUser.getUserId());
+    WebSocketService service = WebSocketService.getInstance();
+    for (MessageDTO messageDTO : messages) {
+        MessageEntry messageEntry = messageDTO.getMessage();
+        MessageStatus messageStatus = messageDTO.getStatus();
+        Map<Long, MessageStatusType> status = messageStatus.getUserStatuses();
+        if (status.get(currentUser.getUserId()) != MessageStatusType.READ) {
+            service.sendMessage(MessageFactory.messageStatusUpdate(messageEntry, currentUser.getUserId(), MessageStatusType.READ));
+        }
+    }
+}
    }
 
    public void deleteMessage(
@@ -268,7 +281,7 @@ public class MessageService extends BaseService {
    ) {
       messageRepository.deleteMessage(
          currentUser.getToken(),
-         messageEntry.getUuId(),
+         messageEntry.getUuid(),
          new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {}
@@ -279,7 +292,11 @@ public class MessageService extends BaseService {
       );
    }
 
-   public interface MessageCallback<T> {
+    public String getLatestReadMessage(Long conversationId) {
+       return messageDatabaseUtil.getLastReadMessageInConversation(conversationId, currentUser.getUserId());
+    }
+
+    public interface MessageCallback<T> {
       void onSuccess(T data);
       void onError(Throwable t);
    }

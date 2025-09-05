@@ -1,5 +1,6 @@
 package com.zen_vy.chat.models.message.api;
 
+import com.zen_vy.chat.DTO.MessageDTO;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
 import java.util.List;
 import retrofit2.Call;
@@ -37,7 +38,7 @@ public interface MessageApiService {
    );
 
    @GET("message/get-messages")
-   Call<List<MessageEntry>> getMessages(
+   Call<List<MessageDTO>> getMessages(
       @Header("Authorization") String token,
       @Query("conversationId") Long conversationId
    );

@@ -39,6 +39,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    private final Context mContext;
    private List<Object> messageEntries = new ArrayList<>();
 
+   private String latestReadMessageUuid;
+
    private ArrayList<String> imageUrls = new ArrayList<>();
 
    private final User currentUser;
@@ -159,12 +161,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             messageEntry.getSenderId()
          );
 
-         GlideUrl glideProfileUrl = new GlideUrl(
-            imageProfileUrl,
-            new LazyHeaders.Builder()
-               .addHeader("Authorization", currentUser.getToken())
-               .build()
-         );
+
+            GlideUrl glideProfileUrl = new GlideUrl(
+                    imageProfileUrl,
+                    new LazyHeaders.Builder()
+                            .addHeader("Authorization", currentUser.getToken().trim())
+                            .build()
+            );
+
+
 
          if (holder instanceof ChatAdapter.InboundTextViewHolder) {
             ((InboundTextViewHolder) holder).txtText.setText(
@@ -244,6 +249,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
          }
          if (holder instanceof ChatAdapter.OutboundTextViewHolder) {
+            if (messageEntry.getUuid().equals(latestReadMessageUuid)){
+               ((OutboundTextViewHolder) holder).icRead.setVisibility(View.VISIBLE);
+            }else {
+               ((OutboundTextViewHolder) holder).icRead.setVisibility(View.GONE);
+            }
+
+
             ((OutboundTextViewHolder) holder).txtTextFrMe.setText(
                   messageEntry.getContent()
                );
@@ -374,6 +386,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       }
    }
 
+
    @Override
    public int getItemCount() {
       return messageEntries.size();
@@ -383,9 +396,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
       if (messageEntries != null) {
          this.messageEntries = messageEntries;
          notifyDataSetChanged();
-         // chatRecView.post(() -> chatRecView.scrollToPosition(getItemCount() - 1));
+
       }
    }
+
+
 
    static class DateViewHolder extends RecyclerView.ViewHolder {
 
@@ -420,10 +435,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
       private final TextView txtTime;
 
+      private final ImageView icRead;
+
       OutBoundImageHolder(View itemView) {
          super(itemView);
          outImageView = itemView.findViewById(R.id.sentImageView);
          txtTime = itemView.findViewById(R.id.chatImageTimeOut);
+         icRead = itemView.findViewById(R.id.icReadImage);
       }
    }
 
@@ -447,11 +465,18 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
       private final TextView txtTimeOut;
       private final TextView txtTextFrMe;
+      private final ImageView icRead;
 
       OutboundTextViewHolder(View itemView) {
          super(itemView);
          txtTextFrMe = itemView.findViewById(R.id.chatTextFrMe);
          txtTimeOut = itemView.findViewById(R.id.chatTextTimeOut);
+         icRead = itemView.findViewById(R.id.icReadText);
+
       }
+   }
+
+   public void setLatestReadMessageUuid(String uuid){
+      this.latestReadMessageUuid = uuid;
    }
 }

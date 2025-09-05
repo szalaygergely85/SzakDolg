@@ -32,4 +32,5 @@
 
     <color name="white">#FFFFFF</color>
     <color name="bottom_nav_active">#33FFFFFF</color>
+    <color name="green">#2CC724</color>
 </resources>

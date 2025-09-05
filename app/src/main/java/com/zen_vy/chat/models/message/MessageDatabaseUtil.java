@@ -4,10 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import com.zen_vy.chat.database.DatabaseHelper;
 import com.zen_vy.chat.models.message.entity.MessageEntry;
-import com.zen_vy.chat.models.message.entity.MessageStatus;
 import com.zen_vy.chat.models.message.entity.MessageStatusType;
 import com.zen_vy.chat.models.user.entity.User;
 import java.util.ArrayList;
@@ -33,9 +33,8 @@ public class MessageDatabaseUtil {
          values.put("timestamp", message.getTimestamp());
          values.put("content", message.getContent());
          values.put("isEncrypted", message.isEncrypted());
-         values.put("isRead", message.isRead());
          values.put("type", message.getType());
-         values.put("uUId", message.getUuId());
+         values.put("uUId", message.getUuid());
          db.insertWithOnConflict(
             dbHelper.TABLE_MESSAGE_ENTRY,
             null,
@@ -46,7 +45,7 @@ public class MessageDatabaseUtil {
    }
 
    private boolean isExistingEntry(MessageEntry message) {
-      MessageEntry messageEntry = getMessageByUuid(message.getUuId());
+      MessageEntry messageEntry = getMessageByUuid(message.getUuid());
 
       if (messageEntry == null) {
          return false;
@@ -74,11 +73,10 @@ public class MessageDatabaseUtil {
             Long timestamp = cursor.getLong(4); // Assuming timestamp is the fourth column
             String content = cursor.getString(5); // Assuming content is the fifth column
             boolean isEncrypted = cursor.getInt(6) > 0; // Assuming isRead is the sixth column
-            boolean isRead = cursor.getInt(7) > 0; // Assuming isRead is the sixth column
-            int type = cursor.getInt(8); // Assuming type is the seventh column
+            int type = cursor.getInt(7); // Assuming type is the seventh column
 
-            String uuid = cursor.getString(9);
-            boolean isUploaded = cursor.getInt(10) > 0;
+            String uuid = cursor.getString(8);
+            boolean isUploaded = cursor.getInt(9) > 0;
 
             // Create a new MessageEntry object
             latestMessage =
@@ -87,7 +85,6 @@ public class MessageDatabaseUtil {
                convId,
                senderId,
                timestamp,
-               isRead,
                type,
                content,
                isEncrypted,
@@ -110,7 +107,7 @@ public class MessageDatabaseUtil {
       Cursor cursor = null;
 
       try {
-         cursor = db.query("MessageEntry", null, null, null, null, null, null);
+         cursor = db.query(dbHelper.TABLE_MESSAGE_ENTRY, null, null, null, null, null, null);
 
          while (cursor.moveToNext()) {
             MessageEntry message = new MessageEntry();
@@ -127,14 +124,15 @@ public class MessageDatabaseUtil {
                cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
             );
             message.setContent(
-               cursor.getString(cursor.getColumnIndexOrThrow("content"))
+               cursor.getString(
+                  cursor.getColumnIndexOrThrow("content")
+               )
             );
             message.setEncrypted(
-               cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
+                    cursor.getInt(
+                            cursor.getColumnIndexOrThrow("isEncrypted")) == 1
             );
-            message.setRead(
-               cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
-            );
+
             message.setType(
                cursor.getInt(cursor.getColumnIndexOrThrow("type"))
             );
@@ -155,18 +153,11 @@ public class MessageDatabaseUtil {
    ) {
       List<MessageEntry> messages = new ArrayList<>();
 
-      String sql =
-              "SELECT m.*, " +
-                      "s.messageStatusType " +
-                      "FROM MessageEntry m " +
-                      "LEFT JOIN MessageStatus s ON m.uuid = s.uuid " +
-                      "WHERE m.conversationId = ?";
-
       // Try-with-resources ensures that resources are closed automatically
       try (
          SQLiteDatabase db = dbHelper.getReadableDatabase();
          Cursor cursor = db.query(
-            "MessageEntry", // Table name
+                 dbHelper.TABLE_MESSAGE_ENTRY, // Table name
             null, // Columns (null fetches all columns)
             "conversationId = ?", // WHERE clause
             new String[] { String.valueOf(conversationId) }, // WHERE arguments
@@ -177,9 +168,6 @@ public class MessageDatabaseUtil {
       ) {
          if (cursor != null) {
             while (cursor.moveToNext()) {
-
-
-
                MessageEntry message = new MessageEntry();
 
                // Assign values from the cursor to the message object
@@ -196,16 +184,15 @@ public class MessageDatabaseUtil {
                   cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
                );
                message.setContent(
-                  cursor.getString(cursor.getColumnIndexOrThrow("content"))
+                  cursor.getString(
+                     cursor.getColumnIndexOrThrow("content")
+                  )
                );
                message.setEncrypted(
-                  cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) ==
-                  1
+                       cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
                );
 
-               message.setRead(
-                  cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
-               ); // SQLite BOOLEAN mapped as INTEGER
+
                message.setType(
                   cursor.getInt(cursor.getColumnIndexOrThrow("type"))
                );
@@ -213,14 +200,6 @@ public class MessageDatabaseUtil {
                   cursor.getInt(cursor.getColumnIndexOrThrow("isUploaded")) == 1
                );
 
-               MessageStatus status = new MessageStatus();
-               if (!cursor.isNull(cursor.getColumnIndexOrThrow("messageStatusType"))) {
-                  status = new MessageStatus();
-                  status.setMessageStatusType(
-                          MessageStatusType.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("messageStatusType")))
-                  );
-               }
-               message.setMessageStatus(status);
                messages.add(message);
             }
          }
@@ -239,7 +218,7 @@ public class MessageDatabaseUtil {
       try {
          cursor =
          db.query(
-            "MessageEntry",
+                 dbHelper.TABLE_MESSAGE_ENTRY,
             new String[] { "uUId" },
             null,
             null,
@@ -284,22 +263,22 @@ public class MessageDatabaseUtil {
          values.put("senderId", message.getSenderId());
          values.put("timestamp", message.getTimestamp());
          values.put("content", message.getContent());
-         values.put("isEncrypted", message.isRead() ? 1 : 0); // Convert boolean to SQLite-compatible integer
-         values.put("isRead", message.isRead() ? 1 : 0); // Convert boolean to SQLite-compatible integer
+         values.put("isEncrypted", message.isEncrypted() ? 1 : 0); // Convert boolean to SQLite-compatible integer
+// Convert boolean to SQLite-compatible integer
          values.put("type", message.getType());
          values.put("isUploaded", message.isUploaded() ? 1 : 0); // Handle isUploaded column
 
          // Perform update using uUId as the unique identifier
          int rowsUpdated = db.update(
-            "MessageEntry",
+                 dbHelper.TABLE_MESSAGE_ENTRY,
             values,
             "uUId = ?", // WHERE clause
-            new String[] { message.getUuId() } // WHERE arguments
+            new String[] { message.getUuid() } // WHERE arguments
          );
 
          if (rowsUpdated == 0) {
             // Handle the case where no rows were updated (optional)
-            Log.w("Database", "No rows updated for uUId: " + message.getUuId());
+            Log.w("Database", "No rows updated for uUId: " + message.getUuid());
          }
       } catch (Exception e) {
          Log.e("DatabaseError", "Failed to update message entry", e);
@@ -310,7 +289,7 @@ public class MessageDatabaseUtil {
       SQLiteDatabase db = dbHelper.getWritableDatabase();
       try {
          db.delete(
-            "MessageEntry",
+                 dbHelper.TABLE_MESSAGE_ENTRY,
             "messageId = ?",
             new String[] { String.valueOf(messageId) }
          );
@@ -326,7 +305,7 @@ public class MessageDatabaseUtil {
 
       try (
          Cursor cursor = db.query(
-            "MessageEntry", // Table name
+                 dbHelper.TABLE_MESSAGE_ENTRY, // Table name
             null, // Columns (null fetches all columns)
             "uUId = ?", // WHERE clause
             new String[] { uuid }, // WHERE arguments
@@ -351,14 +330,14 @@ public class MessageDatabaseUtil {
                cursor.getLong(cursor.getColumnIndexOrThrow("timestamp"))
             );
             message.setContent(
-               cursor.getString(cursor.getColumnIndexOrThrow("content"))
+               cursor.getString(
+                  cursor.getColumnIndexOrThrow("content")
+               )
             );
             message.setEncrypted(
-               cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
+                    cursor.getInt(cursor.getColumnIndexOrThrow("isEncrypted")) == 1
             ); // SQLite BOOLEAN
-            message.setRead(
-               cursor.getInt(cursor.getColumnIndexOrThrow("isRead")) == 1
-            ); // SQLite BOOLEAN
+
             message.setType(
                cursor.getInt(cursor.getColumnIndexOrThrow("type"))
             );
@@ -366,7 +345,7 @@ public class MessageDatabaseUtil {
             message.setUploaded(
                cursor.getInt(cursor.getColumnIndexOrThrow("isUploaded")) == 1
             ); // SQLite BOOLEAN
-            message.setUuId(
+            message.setUuid(
                cursor.getString(cursor.getColumnIndexOrThrow("uUId"))
             );
          }
@@ -384,52 +363,103 @@ public class MessageDatabaseUtil {
       long userId
    ) {
       int unreadCount = 0;
+try {
 
-      // Try-with-resources ensures resources are closed automatically
-      try (
-         SQLiteDatabase db = dbHelper.getReadableDatabase();
-         Cursor cursor = db.query(
-            "MessageEntry", // Table name
-            new String[] { "COUNT(*) AS unreadCount" }, // Columns to fetch
-            "conversationId = ? AND isRead = 0 AND senderId != ?", // WHERE clause
-            new String[] {
-               String.valueOf(conversationId),
-               String.valueOf(userId),
-            }, // WHERE arguments
-            null, // GROUP BY
-            null, // HAVING
-            null // ORDER BY
-         )
-      ) {
+
+
+      SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+      String sql = "SELECT COUNT(DISTINCT m.uuid)  AS unreadCount " +
+              "FROM " + dbHelper.TABLE_MESSAGE_ENTRY + " m " +
+              "LEFT JOIN " + dbHelper.TABLE_MESSAGE_STATUS + " s " +
+              "ON m.uuid = s.uuid " +
+              "LEFT JOIN " + dbHelper.TABLE_MESSAGE_STATUS_USER + " u " +
+              "ON u.messageStatusId = s.messageStatusId " +
+
+              "WHERE m.conversationId = ? AND (u.status IS NULL OR u.status != ?)  AND m.senderId != ?";
+
+     Cursor cursor = db.rawQuery(sql, new String[] {
+              String.valueOf(conversationId),
+             MessageStatusType.READ.name(),
+              String.valueOf(userId),
+      });
+
+
          if (cursor != null && cursor.moveToFirst()) {
             unreadCount =
-            cursor.getInt(cursor.getColumnIndexOrThrow("unreadCount"));
+                    cursor.getInt(cursor.getColumnIndexOrThrow("unreadCount"));
          }
       } catch (Exception e) {
          Timber.tag("DatabaseError").e(e, "Failed to retrieve messages");
       }
-
       return unreadCount;
    }
 
-   public void setMessagesAsReadByConversationId(Long conversationId) {
+   public String getLastReadMessageInConversation(
+           long conversationId,
+           long userId
+   ) {
+      String uuid = "";
+      try {
+
+
+
+         SQLiteDatabase db = dbHelper.getReadableDatabase();
+         String sql = "SELECT m.uuid  AS uuid " +
+                 "FROM " + dbHelper.TABLE_MESSAGE_ENTRY + " m " +
+                 "LEFT JOIN " + dbHelper.TABLE_MESSAGE_STATUS + " s " +
+                 "ON m.uuid = s.uuid " +
+                 "LEFT JOIN " + dbHelper.TABLE_MESSAGE_STATUS_USER + " u " +
+                 "ON u.messageStatusId = s.messageStatusId " +
+         "WHERE m.conversationId = ? AND (u.status IS NULL OR u.status = ?)  AND m.senderId = ? AND u.userId != ? " +
+         "ORDER BY m.timestamp DESC "+
+         "LIMIT 1;";
+
+         Cursor cursor = db.rawQuery(sql, new String[] {
+                 String.valueOf(conversationId),
+                 MessageStatusType.READ.name(),
+                 String.valueOf(userId),
+                 String.valueOf(userId),
+         });
+
+
+         if (cursor != null && cursor.moveToFirst()) {
+            uuid =
+                    cursor.getString(cursor.getColumnIndexOrThrow("uuid"));
+         }
+      } catch (Exception e) {
+         Timber.tag("DatabaseError").e(e, "Failed to retrieve messages");
+      }
+      return uuid;
+   }
+
+
+   public void setMessagesAsReadByConversationId(Long conversationId, long userId) {
       // Ensure valid conversationId
       if (conversationId == null) return;
 
       try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
-         ContentValues values = new ContentValues();
-         values.put("isRead", 1); // Set isRead to true
 
-         int rowsUpdated = db.update(
-            "MessageEntry", // Table name
-            values, // Values to update
-            "conversationId = ? AND isRead = 0", // WHERE clause
-            new String[] { String.valueOf(conversationId) } // WHERE arguments
-         );
 
-         System.out.println("Messages marked as read: " + rowsUpdated);
+         String sql = "UPDATE " + dbHelper.TABLE_MESSAGE_STATUS_USER + " u " +
+                 "JOIN " + dbHelper.TABLE_MESSAGE_STATUS + " s ON u.messageStatusId = s.messageStatusId " +
+                 "JOIN " + dbHelper.TABLE_MESSAGE_ENTRY + " m ON m.uuid = s.uuid " +
+                 "SET u.status = ? " +
+                 "WHERE m.conversationId = ? " +
+                 "AND (u.status IS NULL OR u.status != ?) " +
+                 "AND m.senderId != ? " +
+                 "AND u.userId != ?;";
+
+         db.execSQL(sql, new Object[] {
+                 MessageStatusType.READ.name(),
+                 conversationId,
+                 MessageStatusType.READ.name(),
+                 userId,
+                 userId
+         });
+
       } catch (Exception e) {
-         e.printStackTrace(); // Logging exceptions; consider using a logger
+         Timber.e(e); // Logging exceptions; consider using a logger
       }
    }
 }

@@ -12,6 +12,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibilit
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +34,7 @@ import com.zen_vy.chat.models.message.entity.MessageEntry;
 import com.zen_vy.chat.models.user.entity.User;
 import com.zen_vy.chat.util.DateTimeUtil;
 import com.zen_vy.chat.util.RandomUtil;
+import com.zen_vy.chat.websocket.MessageFactory;
 import com.zen_vy.chat.websocket.WebSocketService;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -358,6 +360,92 @@ public class ChatActivityTest {
       }
    }
 
+
+    @Test
+    public void testSendingReceivingWebsocketMessage() throws IOException {
+
+        ConversationDTO conversationDTO = new ConversationDTO();
+
+
+
+        try {
+            List<Long> userIds = Arrays.asList(
+                    testUser.getUserId(),
+                    testUser2.getUserId()
+            );
+
+            conversationDTO =
+                    ApiHelper.addConversationByUserIds(userIds, testUser.getToken());
+
+            MessageEntry firstMessage = ApiHelper.addMessage(
+                    TestUtil.getRandomMessage(
+                            conversationDTO.getConversationId(),
+                            testUser.getUserId()
+                    ),
+                    testUser.getToken()
+            );
+
+            conversationDTO.setMessageEntry(firstMessage);
+
+            Intent intent = new Intent(
+                    ApplicationProvider.getApplicationContext(),
+                    ChatActivity.class
+            );
+            intent.putExtra(IntentConstants.CONVERSATION_DTO, conversationDTO);
+
+            ActivityScenario<ChatActivity> scenario = ActivityScenario.launch(
+                    intent
+            );
+
+            WebSocketService wsService =  WebSocketService.getInstance();
+
+            MessageEntry secondMessage = ApiHelper.addMessage(
+                    TestUtil.getRandomMessage(
+                            conversationDTO.getConversationId(),
+                            testUser2.getUserId()
+                    ),
+                    testUser2.getToken()
+            );
+
+            String messageString = MessageFactory.MessageEntryMessage(secondMessage);
+
+            assertTrue(
+                    "WebSocketService should be running",
+                    WebSocketService.isServiceRunning()
+            );
+
+            wsService.sendMessage(messageString);
+
+
+
+            Thread.sleep(2000);
+
+            onView(withId(R.id.recViewChat))
+                    .check(
+                            matches(
+                                    RecycleViewTestHelper.atPosition(
+                                            2,
+                                            hasDescendant(
+                                                    allOf(
+                                                            withId(R.id.chatText),
+                                                            withText(secondMessage.getContent()) // your expected message
+                                                    )
+                                            )
+                                    )
+                            )
+                    );
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            // ApiHelper.deleteMessage(lastMessage, context, testUser);
+            ApiHelper.deleteConversation(
+                    conversationDTO.getConversationId(),
+                    testUser,
+                    context
+            );
+        }
+    }
    private void _assertsForTwo(List<MessageEntry> messageEntries) {
       onView(withId(R.id.recViewChat))
          .check(

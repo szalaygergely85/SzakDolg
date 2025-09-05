@@ -18,6 +18,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.zen_vy.chat.DTO.MessageDTO;
 import com.zen_vy.chat.MyEditText;
 import com.zen_vy.chat.R;
 import com.zen_vy.chat.activity.base.BaseActivity;
@@ -60,7 +61,6 @@ public class ChatActivity extends BaseActivity {
 
       _getIntentExtras();
 
-      setMessagesRead();
 
       _setListeners();
 
@@ -132,9 +132,9 @@ public class ChatActivity extends BaseActivity {
       }
    }
 
-   public void setMessagesRead() {
-      messageService.setMessagesAsReadByConversationId(
-         conversation.getConversationId()
+   public void setMessagesRead(List<MessageDTO> messageEntries) {
+      messageService.setMessagesAsRead(
+              messageEntries
       );
    }
 
@@ -233,10 +233,11 @@ public class ChatActivity extends BaseActivity {
       galleryLauncher.launch(intent);
    }
 
-   private List<Object> _prepareMessageList(List<MessageEntry> messageEntries) {
+   private List<Object> _prepareMessageList(List<MessageDTO> messageDTOS) {
       List<Object> sortedList = new ArrayList<>();
       long previousTimestamp = 0L;
-      for (MessageEntry messageEntry : messageEntries) {
+      for (MessageDTO messageDTO : messageDTOS) {
+         MessageEntry messageEntry = messageDTO.getMessage();
          if (
             DateTimeUtil.isNewDay(
                previousTimestamp,
@@ -292,7 +293,6 @@ public class ChatActivity extends BaseActivity {
          conversation.getConversationId(),
          currentUser.getUserId(),
          System.currentTimeMillis(),
-         true,
          messageType,
          content,
          false,
@@ -379,12 +379,15 @@ public class ChatActivity extends BaseActivity {
 
       messageService.getMessagesByConversationId(
          conversation.getConversationId(),
-         new MessageService.MessageCallback<List<MessageEntry>>() {
+         new MessageService.MessageCallback<List<MessageDTO>>() {
             @Override
-            public void onSuccess(List<MessageEntry> results) {
+            public void onSuccess(List<MessageDTO> results) {
+
+
                results.sort(
-                  Comparator.comparingLong(MessageEntry::getTimestamp)
+                  Comparator.comparingLong(MessageDTO::getTimestamp)
                );
+               setMessagesRead(results);
 
                messageEntries = _prepareMessageList(results);
 
@@ -392,7 +395,7 @@ public class ChatActivity extends BaseActivity {
 
                adapter.setImageUrls(imageUrls);
 
-               setMessagesRead();
+               adapter.setLatestReadMessageUuid(messageService.getLatestReadMessage(conversationId));
 
                chatRecView.post(() ->
                   chatRecView.scrollToPosition(adapter.getItemCount() - 1)
